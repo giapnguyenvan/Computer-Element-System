@@ -5,9 +5,9 @@ import java.sql.DriverManager;
 
 public class DBContext {
     private static DBContext instance = new DBContext();
-    private Connection connection;
-
-    //Static lan 3
+    protected Connection connection;
+    
+    //Static lanf 2
     public static DBContext getInstance() {
         return instance;
     }
@@ -16,7 +16,7 @@ public class DBContext {
         return connection;
     }
 
-    private DBContext() {
+    protected DBContext() {
         try {
             if (connection == null || connection.isClosed()) {
                 String user = "root";
