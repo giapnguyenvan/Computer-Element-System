@@ -7,6 +7,7 @@ public class DBContext {
     private static DBContext instance = new DBContext();
     private Connection connection;
 
+    //Static
     public static DBContext getInstance() {
         return instance;
     }
