@@ -7,7 +7,7 @@ import java.sql.SQLException;
 import java.util.Vector;
 import Product_Management.model.*;
 
-//Them "connection" trong DBContext
+//Them "getConnection()" trong DBContext
 //----------------------------Get all product
 public class ProductDAO extends DBContext {
 
@@ -15,7 +15,7 @@ public class ProductDAO extends DBContext {
         Vector<Products> listProduct = new Vector<>();
         String sql = "SELECT * FROM products";
         try {
-            PreparedStatement ptm = connection.prepareStatement(sql);
+            PreparedStatement ptm = getConnection().prepareStatement(sql);
             ResultSet rs = ptm.executeQuery();
             while (rs.next()) {
                 String jsonSpec = rs.getString("spec_description");
@@ -45,7 +45,7 @@ public class ProductDAO extends DBContext {
         Vector<Products> list = new Vector<>();
         String sql = "SELECT * FROM products WHERE name LIKE ?";
         try {
-            PreparedStatement ptm = connection.prepareStatement(sql);
+            PreparedStatement ptm = getConnection().prepareStatement(sql);
             ptm.setString(1, "%" + productName + "%");
             ResultSet rs = ptm.executeQuery();
             while (rs.next()) {
@@ -77,7 +77,7 @@ public class ProductDAO extends DBContext {
                 + "stock, status, image_url, description, spec_description) "
                 + "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
         try {
-            PreparedStatement ptm = connection.prepareStatement(sql);
+            PreparedStatement ptm = getConnection().prepareStatement(sql);
             ptm.setString(1, p.getName());
             ptm.setString(2, p.getBrand());
             ptm.setInt(3, p.getCategory_id());
@@ -99,7 +99,7 @@ public class ProductDAO extends DBContext {
                 + "stock = ?, status = ?, "
                 + "image_url = ?, description = ?, spec_description = ? WHERE id = ?";
         try {
-            PreparedStatement ptm = connection.prepareStatement(sql);
+            PreparedStatement ptm = getConnection().prepareStatement(sql);
             ptm.setString(1, p.getName());
             ptm.setString(2, p.getBrand());
             ptm.setInt(3, p.getCategory_id());
@@ -120,7 +120,7 @@ public class ProductDAO extends DBContext {
     public void deactivateProduct(int id) {
         String sql = "UPDATE products SET status = 'inactive' WHERE id = ?";
         try {
-            PreparedStatement ptm = connection.prepareStatement(sql);
+            PreparedStatement ptm = getConnection().prepareStatement(sql);
             ptm.setInt(1, id);
             ptm.executeUpdate();
         } catch (SQLException ex) {
@@ -133,7 +133,7 @@ public class ProductDAO extends DBContext {
         Vector<Products> list = new Vector<>();
         String sql = "SELECT * FROM products WHERE category_id = ?";
         try {
-            PreparedStatement ptm = connection.prepareStatement(sql);
+            PreparedStatement ptm = getConnection().prepareStatement(sql);
             ptm.setInt(1, categoryId);
             ResultSet rs = ptm.executeQuery();
             while (rs.next()) {
@@ -164,7 +164,7 @@ public class ProductDAO extends DBContext {
                 + "FROM products WHERE id=?";
         Products p = null;
         try {
-            PreparedStatement ps = connection.prepareStatement(sql);
+            PreparedStatement ps = getConnection().prepareStatement(sql);
             ps.setInt(1, productId);
             ResultSet rs = ps.executeQuery();
 

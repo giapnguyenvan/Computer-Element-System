@@ -16,7 +16,7 @@ public class DBContext {
         return connection;
     }
 
-    private DBContext() {
+    protected DBContext() {
         try {
             if (connection == null || connection.isClosed()) {
                 String user = "root";
@@ -41,7 +41,8 @@ public class DBContext {
             System.out.println("❌ Không thể kết nối đến database!");
         }
     }
-
+    
+    
     public static void main(String[] args) {
         testConnection();
     }
