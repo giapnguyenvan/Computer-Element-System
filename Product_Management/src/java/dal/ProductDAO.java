@@ -1,6 +1,6 @@
 package dal;
 
-import DAO.DBContext;
+import dal.DBContext;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
