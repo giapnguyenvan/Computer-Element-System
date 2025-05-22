@@ -7,7 +7,7 @@ public class DBContext {
     private static DBContext instance = new DBContext();
     private Connection connection;
 
-    //Static lanf 2
+    //Static lan 3
     public static DBContext getInstance() {
         return instance;
     }
