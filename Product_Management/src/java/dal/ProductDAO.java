@@ -1,5 +1,6 @@
-package Product_Management.dal;
+package dal;
 
+import DAO.DBContext;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -8,7 +9,7 @@ import Product_Management.model.*;
 
 //Them "connection" trong DBContext
 //----------------------------Get all product
-public class ProductDAO {
+public class ProductDAO extends DBContext {
 
     public Vector<Products> getAllProduct() {
         Vector<Products> listProduct = new Vector<>();
@@ -161,13 +162,15 @@ public class ProductDAO {
     public Products getProductById(int productId) {
         String sql = "SELECT id, name, brand, category_id, price, stock, status, image_url, description, spec_description "
                 + "FROM products WHERE id=?";
+        Products p = null;
         try {
             PreparedStatement ps = connection.prepareStatement(sql);
             ps.setInt(1, productId);
             ResultSet rs = ps.executeQuery();
+
             if (rs.next()) {
                 String jsonSpec = rs.getString("spec_description");
-                Products p = new Products(
+                p = new Products(
                         rs.getInt("id"),
                         rs.getString("name"),
                         rs.getString("brand"),
@@ -177,8 +180,8 @@ public class ProductDAO {
                         rs.getString("status"),
                         rs.getString("image_url"),
                         rs.getString("description"),
-                        jsonSpec     
-                    );
+                        jsonSpec
+                );
             }
         } catch (SQLException e) {
             e.printStackTrace();
