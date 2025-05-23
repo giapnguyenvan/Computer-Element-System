@@ -1,4 +1,4 @@
-package DAO;
+package dal;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -16,7 +16,7 @@ public class DBContext {
         return connection;
     }
 
-    private DBContext() {
+    protected DBContext() {
         try {
             if (connection == null || connection.isClosed()) {
                 String user = "root";
@@ -25,23 +25,21 @@ public class DBContext {
 
                 Class.forName("com.mysql.cj.jdbc.Driver");
                 connection = DriverManager.getConnection(url, user, password);
-                System.out.println("✅ Kết nối MySQL thành công!");
+                System.out.println(" Kết nối MySQL thành công!");
             }
         } catch (Exception e) {
             connection = null;
-            System.out.println("❌ Kết nối MySQL thất bại: " + e.getMessage());
+            System.out.println(" Kết nối MySQL thất bại: " + e.getMessage());
         }
     }
-
     public static void testConnection() {
         Connection conn = DBContext.getInstance().getConnection();
         if (conn != null) {
-            System.out.println("✅ Database đã kết nối!");
+            System.out.println(" Database đã kết nối!");
         } else {
-            System.out.println("❌ Không thể kết nối đến database!");
+            System.out.println(" Không thể kết nối đến database!");
         }
     }
-
     public static void main(String[] args) {
         testConnection();
     }
