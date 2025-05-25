@@ -53,6 +53,23 @@
         .login-container input[type="submit"]:hover {
             background-color: #45a049;
         }
+        .remember-me {
+            margin: 15px 0;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .remember-me input[type="checkbox"] {
+            width: 16px;
+            height: 16px;
+            cursor: pointer;
+        }
+        .remember-me label {
+            margin: 0;
+            font-size: 14px;
+            color: #666;
+            cursor: pointer;
+        }
         .error {
             color: red;
             text-align: center;
@@ -86,7 +103,12 @@
 
             <label for="password">Mật khẩu:</label>
             <input type="password" name="password" required>
-
+            
+            <div class="remember-me">
+                <input type="checkbox" id="remember" name="remember" value="ON">
+                <label for="remember">Ghi nhớ đăng nhập</label>
+            </div>
+            
             <input type="submit" value="Đăng nhập">
         </form>
 

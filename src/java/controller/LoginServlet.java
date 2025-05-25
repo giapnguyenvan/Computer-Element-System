@@ -8,10 +8,14 @@ package controller;
 import java.io.IOException;
 import java.io.PrintWriter;
 import jakarta.servlet.ServletException;
+import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
+import java.net.URLEncoder;
+import java.net.URLDecoder;
+import java.nio.charset.StandardCharsets;
 
 /**
  *
@@ -70,10 +74,37 @@ public class LoginServlet extends HttpServlet {
     throws ServletException, IOException {
         String username = request.getParameter("username");
         String password = request.getParameter("password");
+        String remember = request.getParameter("remember");
         
         if (username.equals(USERNAME_SYSTEM)&password.equals(PASSWORD_SYSTEM)){
             HttpSession session = request.getSession();
             session.setAttribute("session_login", username);
+            
+            // Handle remember me cookie
+            if (remember != null){
+                String encodedUsername = URLEncoder.encode(username, StandardCharsets.UTF_8);
+                String encodedPassword = URLEncoder.encode(password, StandardCharsets.UTF_8);
+                
+                Cookie usernameCookie = new Cookie("COOKIE_USERNAME", encodedUsername);
+                Cookie passwordCookie = new Cookie("COOKIE_PASSWORD", encodedPassword);
+                
+                usernameCookie.setMaxAge(60*60*24); // 24 hours
+                passwordCookie.setMaxAge(60*60*24);
+                
+                response.addCookie(usernameCookie);
+                response.addCookie(passwordCookie);
+            } else {
+                // If remember is not checked, delete existing cookies
+                Cookie usernameCookie = new Cookie("COOKIE_USERNAME", "");
+                Cookie passwordCookie = new Cookie("COOKIE_PASSWORD", "");
+                
+                usernameCookie.setMaxAge(0); // Delete cookie
+                passwordCookie.setMaxAge(0);
+                
+                response.addCookie(usernameCookie);
+                response.addCookie(passwordCookie);
+            }
+            
             response.sendRedirect("welcome.jsp");
         }else{
             request.setAttribute("error", "Please enter valid account");
