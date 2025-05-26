@@ -86,6 +86,18 @@
         .forgot-link a:hover {
             text-decoration: underline;
         }
+        .register-link {
+            text-align: center;
+            margin-top: 10px;
+        }
+        .register-link a {
+            color: #4CAF50;
+            text-decoration: none;
+            font-weight: bold;
+        }
+        .register-link a:hover {
+            text-decoration: underline;
+        }
     </style>
 </head>
 <body>
@@ -114,6 +126,9 @@
 
         <div class="forgot-link">
             <a href="forget_password.jsp">Quên mật khẩu?</a>
+        </div>
+        <div class="register-link">
+            <a href="Register.jsp">Chưa có tài khoản? Đăng ký ngay!</a>
         </div>
     </div>
 </body>

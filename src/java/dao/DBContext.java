@@ -3,73 +3,65 @@ package dao;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-import java.sql.Statement;
-import java.sql.ResultSet;
 
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
-/**
- *
- * @author FPT University - PRJ30X
- */
 public class DBContext {
+    private static DBContext instance = null;
+    private Connection connection;
 
-    protected Connection connection;
+    public static synchronized DBContext getInstance() {
+        if (instance == null) {
+            instance = new DBContext();
+        }
+        return instance;
+    }
 
-    public DBContext() {
-        //@Students: You are allowed to edit user, pass, url variables to fit 
-        //your system configuration
-        //You can also add more methods for Database Interaction tasks. 
-        //But we recommend you to do it in another class
-        // For example : StudentDBContext extends DBContext , 
-        //where StudentDBContext is located in dal package, 
+    public Connection getConnection() throws SQLException {
         try {
-            String user = "sa";
-            String pass = "123";
-            String url = "jdbc:sqlserver://localhost:9999;databaseName=Project_G2";
-            Class.forName("com.microsoft.sqlserver.jdbc.SQLServerDriver");
-            connection = DriverManager.getConnection(url, user, pass);
-        } catch (ClassNotFoundException | SQLException ex) {
-            Logger.getLogger(DBContext.class.getName()).log(Level.SEVERE, null, ex);
+            if (connection == null || connection.isClosed()) {
+                String user = "root";
+                String password = "msqldt154A!";
+                String url = "jdbc:mysql://localhost:3306/project_g2?useSSL=false&serverTimezone=UTC";
+
+                Class.forName("com.mysql.cj.jdbc.Driver");
+                connection = DriverManager.getConnection(url, user, password);
+                System.out.println("Kết nối MySQL thành công!");
+            }
+        } catch (ClassNotFoundException e) {
+            System.out.println("Lỗi Driver MySQL: " + e.getMessage());
+            throw new SQLException("Không thể tìm thấy MySQL Driver");
+        } catch (SQLException e) {
+            System.out.println("Lỗi kết nối MySQL: " + e.getMessage());
+            throw e;
+        }
+        return connection;
+    }
+
+    private DBContext() {
+        // Private constructor để đảm bảo Singleton
+    }
+
+    public void closeConnection() {
+        try {
+            if (connection != null && !connection.isClosed()) {
+                connection.close();
+                System.out.println("Đã đóng kết nối MySQL!");
+            }
+        } catch (SQLException e) {
+            System.out.println("Lỗi khi đóng kết nối: " + e.getMessage());
         }
     }
 
-    public ResultSet getData(String sql) {
-
-        ResultSet rs = null;
+    public static void testConnection() {
         try {
-
-            Statement st = connection.createStatement(ResultSet.TYPE_SCROLL_SENSITIVE, ResultSet.CONCUR_UPDATABLE);
-            rs = st.executeQuery(sql);
-
-        } catch (SQLException ex) {
-            ex.getStackTrace();
-        }
-        return rs;
-    }
-
-    public boolean isConnected() {
-        try {
-            return connection != null && !connection.isClosed();
-        } catch (SQLException ex) {
-            Logger.getLogger(DBContext.class.getName()).log(Level.SEVERE, null, ex);
-            return false;
+            Connection conn = DBContext.getInstance().getConnection();
+            System.out.println("Database đã kết nối thành công!");
+            DBContext.getInstance().closeConnection();
+        } catch (SQLException e) {
+            System.out.println("Không thể kết nối đến database: " + e.getMessage());
         }
     }
 
-    // Phương thức main để kiểm tra kết nối
     public static void main(String[] args) {
-        DBContext dbContext = new DBContext();
-        if (dbContext.isConnected()) {
-            System.out.println("Kết nối cơ sở dữ liệu thành công!");
-        } else {
-            System.out.println("Kết nối cơ sở dữ liệu thất bại.");
-        }
-
+        testConnection();
     }
-
 }
