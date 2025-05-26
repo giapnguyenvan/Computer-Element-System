@@ -1,114 +1,164 @@
 package dal;
 
-
 import model.Category;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.Vector;
-public class CategoryDAO extends DBContext {
+import java.util.ArrayList;
+
+public class CategoryDAO {
     
     // Lấy tất cả categories
-    public Vector<Category> getAllCategories() {
-        Vector<Category> listCategory = new Vector<>();
-        String sql = "SELECT * FROM categories";
+    public static ArrayList<Category> getAllCategories() {
+        DBContext db = DBContext.getInstance();
+        ArrayList<Category> listCategory = new ArrayList<>();
+        String sql = """
+                    SELECT * 
+                    FROM categories
+                    """;
         try {
-            PreparedStatement ptm = getConnection().prepareStatement(sql);
-            ResultSet rs = ptm.executeQuery();
+            PreparedStatement statement = db.getConnection().prepareStatement(sql);
+            ResultSet rs = statement.executeQuery();
             while (rs.next()) {
-                Category c = new Category(
+                Category category = new Category(
                         rs.getInt("id"),
                         rs.getString("name"),
                         rs.getString("description")
                 );
-                listCategory.add(c);
+                listCategory.add(category);
             }
         } catch (SQLException ex) {
-            ex.printStackTrace();
+            return listCategory;
         }
         return listCategory;
     }
     
     // Tìm category theo tên
-    public Vector<Category> searchCategory(String categoryName) {
-        Vector<Category> list = new Vector<>();
-        String sql = "SELECT * FROM categories WHERE name LIKE ?";
+    public static ArrayList<Category> searchCategory(String categoryName) {
+        DBContext db = DBContext.getInstance();
+        ArrayList<Category> list = new ArrayList<>();
+        String sql = """
+                    SELECT * 
+                    FROM categories 
+                    WHERE name LIKE ?
+                    """;
         try {
-            PreparedStatement ptm = getConnection().prepareStatement(sql);
-            ptm.setString(1, "%" + categoryName + "%");
-            ResultSet rs = ptm.executeQuery();
+            PreparedStatement statement = db.getConnection().prepareStatement(sql);
+            statement.setString(1, "%" + categoryName + "%");
+            ResultSet rs = statement.executeQuery();
             while (rs.next()) {
-                Category c = new Category(
+                Category category = new Category(
                         rs.getInt("id"),
                         rs.getString("name"),
                         rs.getString("description")
                 );
-                list.add(c);
+                list.add(category);
             }
         } catch (SQLException ex) {
-            ex.printStackTrace();
+            return list;
         }
         return list;
     }
     
     // Thêm category mới
-    public void insertCategory(Category c) {
-        String sql = "INSERT INTO categories (name, description) VALUES (?, ?)";
+    public static Category addCategory(Category category) {
+        DBContext db = DBContext.getInstance();
+        int rs = 0;
         try {
-            PreparedStatement ptm = getConnection().prepareStatement(sql);
-            ptm.setString(1, c.getName());
-            ptm.setString(2, c.getDescription());
-            ptm.executeUpdate();
-        } catch (SQLException ex) {
-            ex.printStackTrace();
+            String sql = """
+                        INSERT INTO categories(name, description)
+                        VALUES (?, ?)
+                        """;
+            PreparedStatement statement = db.getConnection().prepareStatement(sql);
+            statement.setString(1, category.getName());
+            statement.setString(2, category.getDescription());
+            rs = statement.executeUpdate();
+        } catch (SQLException e) {
+            return null;
+        }
+        if (rs == 0) {
+            return null;
+        } else {
+            return category;
         }
     }
     
     // Cập nhật category
-    public void updateCategory(Category c) {
-        String sql = "UPDATE categories SET name = ?, description = ? WHERE id = ?";
+    public static Category updateCategory(Category category) {
+        DBContext db = DBContext.getInstance();
+        int rs = 0;
         try {
-            PreparedStatement ptm = getConnection().prepareStatement(sql);
-            ptm.setString(1, c.getName());
-            ptm.setString(2, c.getDescription());
-            ptm.setInt(3, c.getId());
-            ptm.executeUpdate();
-        } catch (SQLException ex) {
-            ex.printStackTrace();
+            String sql = """
+                        UPDATE categories 
+                        SET name = ?, description = ? 
+                        WHERE id = ?
+                        """;
+            PreparedStatement statement = db.getConnection().prepareStatement(sql);
+            statement.setString(1, category.getName());
+            statement.setString(2, category.getDescription());
+            statement.setInt(3, category.getId());
+            rs = statement.executeUpdate();
+        } catch (SQLException e) {
+            return null;
+        }
+        if (rs == 0) {
+            return null;
+        } else {
+            return category;
         }
     }
     
     // Xóa category
-    public void deleteCategory(int id) {
-        String sql = "DELETE FROM categories WHERE id = ?";
+    public static Category deleteCategory(int id) {
+        DBContext db = DBContext.getInstance();
+        Category category = getCategoryById(id);
+        if (category == null) {
+            return null;
+        }
+        
+        int rs = 0;
         try {
-            PreparedStatement ptm = getConnection().prepareStatement(sql);
-            ptm.setInt(1, id);
-            ptm.executeUpdate();
-        } catch (SQLException ex) {
-            ex.printStackTrace();
+            String sql = """
+                        DELETE FROM categories 
+                        WHERE id = ?
+                        """;
+            PreparedStatement statement = db.getConnection().prepareStatement(sql);
+            statement.setInt(1, id);
+            rs = statement.executeUpdate();
+        } catch (SQLException e) {
+            return null;
+        }
+        if (rs == 0) {
+            return null;
+        } else {
+            return category;
         }
     }
     
     // Lấy category theo ID
-    public Category getCategoryById(int categoryId) {
-        String sql = "SELECT * FROM categories WHERE id = ?";
-        Category c = null;
+    public static Category getCategoryById(int categoryId) {
+        DBContext db = DBContext.getInstance();
+        String sql = """
+                    SELECT * 
+                    FROM categories 
+                    WHERE id = ?
+                    """;
+        Category category = null;
         try {
-            PreparedStatement ps = getConnection().prepareStatement(sql);
-            ps.setInt(1, categoryId);
-            ResultSet rs = ps.executeQuery();
+            PreparedStatement statement = db.getConnection().prepareStatement(sql);
+            statement.setInt(1, categoryId);
+            ResultSet rs = statement.executeQuery();
             
             if (rs.next()) {
-                c = new Category(
+                category = new Category(
                         rs.getInt("id"),
                         rs.getString("name"),
                         rs.getString("description")
                 );
             }
         } catch (SQLException e) {
-            e.printStackTrace();
+            return null;
         }
-        return c;
+        return category;
     }
 } 
