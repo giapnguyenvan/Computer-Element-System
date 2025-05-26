@@ -7,7 +7,7 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 
 public class CategoryDAO {
-    
+
     // Lấy tất cả categories
     public static ArrayList<Category> getAllCategories() {
         DBContext db = DBContext.getInstance();
@@ -32,7 +32,7 @@ public class CategoryDAO {
         }
         return listCategory;
     }
-    
+
     // Tìm category theo tên
     public static ArrayList<Category> searchCategory(String categoryName) {
         DBContext db = DBContext.getInstance();
@@ -59,7 +59,7 @@ public class CategoryDAO {
         }
         return list;
     }
-    
+
     // Thêm category mới
     public static Category addCategory(Category category) {
         DBContext db = DBContext.getInstance();
@@ -82,7 +82,7 @@ public class CategoryDAO {
             return category;
         }
     }
-    
+
     // Cập nhật category
     public static Category updateCategory(Category category) {
         DBContext db = DBContext.getInstance();
@@ -107,7 +107,7 @@ public class CategoryDAO {
             return category;
         }
     }
-    
+
     // Xóa category
     public static Category deleteCategory(int id) {
         DBContext db = DBContext.getInstance();
@@ -115,7 +115,7 @@ public class CategoryDAO {
         if (category == null) {
             return null;
         }
-        
+
         int rs = 0;
         try {
             String sql = """
@@ -134,7 +134,7 @@ public class CategoryDAO {
             return category;
         }
     }
-    
+
     // Lấy category theo ID
     public static Category getCategoryById(int categoryId) {
         DBContext db = DBContext.getInstance();
@@ -148,7 +148,7 @@ public class CategoryDAO {
             PreparedStatement statement = db.getConnection().prepareStatement(sql);
             statement.setInt(1, categoryId);
             ResultSet rs = statement.executeQuery();
-            
+
             if (rs.next()) {
                 category = new Category(
                         rs.getInt("id"),
@@ -161,4 +161,50 @@ public class CategoryDAO {
         }
         return category;
     }
-} 
+
+    //Them phan trang
+    public static ArrayList<Category> getCategoriesByPage(int page, int size) {
+        DBContext db = DBContext.getInstance();
+        ArrayList<Category> list = new ArrayList<>();
+        int offset = (page - 1) * size;
+        String sql = """
+                SELECT * FROM categories
+                LIMIT ? OFFSET ?
+                """;
+        try {
+            PreparedStatement statement = db.getConnection().prepareStatement(sql);
+            statement.setInt(1, size);
+            statement.setInt(2, offset);
+            ResultSet rs = statement.executeQuery();
+            while (rs.next()) {
+                Category category = new Category(
+                        rs.getInt("id"),
+                        rs.getString("name"),
+                        rs.getString("description")
+                );
+                list.add(category);
+            }
+        } catch (SQLException e) {
+            return list;
+        }
+        return list;
+    }
+
+    //Phuong thuc dem tong so ban ghi.
+    //Dung de biet co bao nhieu trang.
+    public static int getTotalCategories() {
+        DBContext db = DBContext.getInstance();
+        String sql = "SELECT COUNT(*) AS total FROM categories";
+        try {
+            PreparedStatement statement = db.getConnection().prepareStatement(sql);
+            ResultSet rs = statement.executeQuery();
+            if (rs.next()) {
+                return rs.getInt("total");
+            }
+        } catch (SQLException e) {
+            return 0;
+        }
+        return 0;
+    }
+
+}
