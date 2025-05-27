@@ -1,4 +1,4 @@
-package dao;
+package dal;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -64,4 +64,4 @@ public class DBContext {
     public static void main(String[] args) {
         testConnection();
     }
-}
+} 

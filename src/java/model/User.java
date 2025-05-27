@@ -1,14 +1,6 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
 package model;
 
-/**
- *
- * @author admin
- */
-public class Users {
+public class User {
     private String username;
     private String password;
     private String role;
@@ -17,10 +9,10 @@ public class Users {
     private String phone;
     private String address;
 
-    public Users() {
+    public User() {
     }
 
-    public Users(String username, String password, String role, String fullname, String email, String phone, String address) {
+    public User(String username, String password, String role, String fullname, String email, String phone, String address) {
         this.username = username;
         this.password = password;
         this.role = role;
@@ -88,7 +80,7 @@ public class Users {
 
     @Override
     public String toString() {
-        return "Users{" + "username=" + username + ", password=" + password + ", role=" + role + 
+        return "User{" + "username=" + username + ", password=" + password + ", role=" + role + 
                ", fullname=" + fullname + ", email=" + email + ", phone=" + phone + ", address=" + address + '}';
     }
-}
+} 

@@ -110,11 +110,14 @@
         <% } %>
 
         <form action="login" method="post">
-            <label for="username">Tên đăng nhập:</label>
-            <input type="text" name="username" required>
+            <label for="email">Email:</label>
+            <input type="email" name="email" id="email" required 
+                   placeholder="Nhập địa chỉ email của bạn"
+                   pattern="[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,}$"
+                   title="Vui lòng nhập một địa chỉ email hợp lệ">
 
             <label for="password">Mật khẩu:</label>
-            <input type="password" name="password" required>
+            <input type="password" name="password" id="password" required>
             
             <div class="remember-me">
                 <input type="checkbox" id="remember" name="remember" value="ON">

@@ -5,6 +5,7 @@
 
 package controller;
 
+import dal.UserDAO;
 import java.io.IOException;
 import java.io.PrintWriter;
 import jakarta.servlet.ServletException;
@@ -16,6 +17,8 @@ import jakarta.servlet.http.HttpSession;
 import java.net.URLEncoder;
 import java.net.URLDecoder;
 import java.nio.charset.StandardCharsets;
+import java.sql.SQLException;
+import model.User;
 
 /**
  *
@@ -59,7 +62,7 @@ public class LoginServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
     throws ServletException, IOException {
-        processRequest(request, response);
+        request.getRequestDispatcher("login.jsp").forward(request, response);
     } 
 
     /** 
@@ -72,45 +75,53 @@ public class LoginServlet extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
     throws ServletException, IOException {
-        String username = request.getParameter("username");
+        String email = request.getParameter("email");
         String password = request.getParameter("password");
         String remember = request.getParameter("remember");
         
-        if (username.equals(USERNAME_SYSTEM)&password.equals(PASSWORD_SYSTEM)){
-            HttpSession session = request.getSession();
-            session.setAttribute("session_login", username);
+        try {
+            User user = UserDAO.getInstance().login(email, password);
             
-            // Handle remember me cookie
-            if (remember != null){
-                String encodedUsername = URLEncoder.encode(username, StandardCharsets.UTF_8);
-                String encodedPassword = URLEncoder.encode(password, StandardCharsets.UTF_8);
+            if (user != null) {
+                HttpSession session = request.getSession();
+                session.setAttribute("session_login", email);
+                session.setAttribute("user_role", user.getRole());
+                session.setAttribute("user_name", user.getFullname());
                 
-                Cookie usernameCookie = new Cookie("COOKIE_USERNAME", encodedUsername);
-                Cookie passwordCookie = new Cookie("COOKIE_PASSWORD", encodedPassword);
+                // Handle remember me cookie
+                if (remember != null) {
+                    String encodedEmail = URLEncoder.encode(email, StandardCharsets.UTF_8);
+                    String encodedPassword = URLEncoder.encode(password, StandardCharsets.UTF_8);
+                    
+                    Cookie emailCookie = new Cookie("COOKIE_EMAIL", encodedEmail);
+                    Cookie passwordCookie = new Cookie("COOKIE_PASSWORD", encodedPassword);
+                    
+                    emailCookie.setMaxAge(60*60*24); // 24 hours
+                    passwordCookie.setMaxAge(60*60*24);
+                    
+                    response.addCookie(emailCookie);
+                    response.addCookie(passwordCookie);
+                } else {
+                    // If remember is not checked, delete existing cookies
+                    Cookie emailCookie = new Cookie("COOKIE_EMAIL", "");
+                    Cookie passwordCookie = new Cookie("COOKIE_PASSWORD", "");
+                    
+                    emailCookie.setMaxAge(0); // Delete cookie
+                    passwordCookie.setMaxAge(0);
+                    
+                    response.addCookie(emailCookie);
+                    response.addCookie(passwordCookie);
+                }
                 
-                usernameCookie.setMaxAge(60*60*24); // 24 hours
-                passwordCookie.setMaxAge(60*60*24);
-                
-                response.addCookie(usernameCookie);
-                response.addCookie(passwordCookie);
+                response.sendRedirect("welcome.jsp");
             } else {
-                // If remember is not checked, delete existing cookies
-                Cookie usernameCookie = new Cookie("COOKIE_USERNAME", "");
-                Cookie passwordCookie = new Cookie("COOKIE_PASSWORD", "");
-                
-                usernameCookie.setMaxAge(0); // Delete cookie
-                passwordCookie.setMaxAge(0);
-                
-                response.addCookie(usernameCookie);
-                response.addCookie(passwordCookie);
+                request.setAttribute("error", "Email hoặc mật khẩu không đúng");
+                request.getRequestDispatcher("login.jsp").forward(request, response);
             }
-            
-            response.sendRedirect("welcome.jsp");
-        }else{
-            request.setAttribute("error", "Please enter valid account");
-            request.getRequestDispatcher("login.jsp").forward(request,response);
+        } catch (SQLException e) {
+            request.setAttribute("error", "Lỗi hệ thống: " + e.getMessage());
+            request.getRequestDispatcher("login.jsp").forward(request, response);
         }
-            
     }
 
     /** 
