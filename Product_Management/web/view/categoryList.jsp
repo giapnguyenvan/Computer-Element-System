@@ -5,6 +5,8 @@
 <%
     List<Category> list = (List<Category>) request.getAttribute("categories");
     String ctx = request.getContextPath();
+    String sortOrder = (String) request.getAttribute("sortOrder");
+    String currentSort = sortOrder != null ? sortOrder : "asc";
 %>
 
 <!DOCTYPE html>
@@ -28,15 +30,33 @@
                     </button>
                 </div>
                 <div class="card-body">
-                    <!-- Form tìm kiếm -->
-                    <form action="<%= ctx %>/category" method="get" class="mb-4">
-                        <div class="input-group">
-                            <input type="text" name="search" class="form-control" placeholder="Search by name..." />
-                            <button type="submit" class="btn btn-outline-secondary">
-                                <i class="fas fa-search"></i> Search
-                            </button>
+                    <!-- Form tìm kiếm và sắp xếp -->
+                    <div class="row mb-4">
+                        <div class="col-md-8">
+                            <form action="<%= ctx %>/category" method="get" class="d-flex">
+                                <div class="input-group">
+                                    <input type="text" name="search" class="form-control" placeholder="Search by name..." 
+                                           value="<%= request.getAttribute("search") != null ? request.getAttribute("search") : "" %>"/>
+                                    <button type="submit" class="btn btn-outline-secondary">
+                                        <i class="fas fa-search"></i> Search
+                                    </button>
+                                </div>
+                            </form>
                         </div>
-                    </form>
+                        <div class="col-md-4 text-end">
+                            <div class="btn-group">
+                                <a href="<%= ctx %>/category?sort=default" class="btn btn-outline-primary <%= currentSort.equals("default") ? "active" : "" %>">
+                                    <i class="fas fa-sort"></i> Default
+                                </a>
+                                <a href="<%= ctx %>/category?sort=asc" class="btn btn-outline-primary <%= currentSort.equals("asc") ? "active" : "" %>">
+                                    <i class="fas fa-sort-alpha-down"></i> A-Z
+                                </a>
+                                <a href="<%= ctx %>/category?sort=desc" class="btn btn-outline-primary <%= currentSort.equals("desc") ? "active" : "" %>">
+                                    <i class="fas fa-sort-alpha-up"></i> Z-A
+                                </a>
+                            </div>
+                        </div>
+                    </div>
 
                     <!-- Danh sách category -->
                     <div class="table-responsive">
@@ -44,7 +64,7 @@
                             <thead class="table-dark">
                                 <tr>
                                     <th>ID</th>
-                                    <th>Name</th>
+                                    <th>Name <i class="fas fa-sort"></i></th>
                                     <th>Description</th>
                                     <th>Actions</th>
                                 </tr>
@@ -62,10 +82,11 @@
                                                 data-bs-toggle="modal" data-bs-target="#editCategoryModal">
                                             <i class="fas fa-edit"></i>
                                         </button>
-                                        <button class="btn btn-danger btn-sm" 
-                                                onclick="return confirm('Are you sure to delete this category?');">
+                                        <a href="<%= ctx %>/category?action=delete&id=<%= c.getId() %>"
+                                           class="btn btn-danger btn-sm"
+                                           onclick="return confirm('Bạn có chắc chắn muốn xóa danh mục này?');">
                                             <i class="fas fa-trash"></i>
-                                        </button>
+                                        </a>
                                     </td>
                                 </tr>
                                 <%  }
@@ -77,22 +98,19 @@
                     </div>
 
                     <!-- Phân trang -->
-                    <%
-                        Integer currentPage = (Integer) request.getAttribute("currentPage");
-                        Integer totalPages = (Integer) request.getAttribute("totalPages");
-                        String search = (String) request.getAttribute("search");
-                    %>
-
-                    <% if (totalPages != null && totalPages > 1) { %>
+                    <% if (request.getAttribute("totalPages") != null && (Integer)request.getAttribute("totalPages") > 1) { %>
                     <nav aria-label="Page navigation" class="mt-4">
                         <ul class="pagination justify-content-center">
-                            <% for (int i = 1; i <= totalPages; i++) {
+                            <% for (int i = 1; i <= (Integer)request.getAttribute("totalPages"); i++) {
                                 String link = ctx + "/category?page=" + i;
-                                if (search != null && !search.isEmpty()) {
-                                    link += "&search=" + search;
+                                if (request.getAttribute("search") != null) {
+                                    link += "&search=" + request.getAttribute("search");
+                                }
+                                if (currentSort != null) {
+                                    link += "&sort=" + currentSort;
                                 }
                             %>
-                            <li class="page-item <%= (i == currentPage) ? "active" : "" %>">
+                            <li class="page-item <%= (i == (Integer)request.getAttribute("currentPage")) ? "active" : "" %>">
                                 <a class="page-link" href="<%= link %>"><%= i %></a>
                             </li>
                             <% } %>

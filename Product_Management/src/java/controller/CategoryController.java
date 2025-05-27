@@ -19,6 +19,12 @@ public class CategoryController extends HttpServlet {
             throws ServletException, IOException {
         String action = request.getParameter("action");
         String search = request.getParameter("search");
+        String sortOrder = request.getParameter("sort"); // asc, desc, or default
+        
+        // Nếu không có sort order, mặc định là default (không sắp xếp)
+        if (sortOrder == null) {
+            sortOrder = "default";
+        }
 
         // Xóa category
         if ("delete".equals(action)) {
@@ -47,11 +53,9 @@ public class CategoryController extends HttpServlet {
             return;
         }
 
-        // Hiển thị danh sách có phân trang
-        int pageSize = 5; // 5 bản ghi/trang
+        // Lấy trang hiện tại
         int currentPage = 1;
         String pageParam = request.getParameter("page");
-
         try {
             if (pageParam != null) {
                 currentPage = Integer.parseInt(pageParam);
@@ -61,23 +65,30 @@ public class CategoryController extends HttpServlet {
         }
 
         List<Category> categories;
-        int totalRecords = CategoryDAO.getTotalCategories();
-        int totalPages = (int) Math.ceil((double) totalRecords / pageSize);
+        int totalRecords;
+        int totalPages;
+        int pageSize;
 
         if (search != null && !search.isEmpty()) {
-            // Nếu đang tìm kiếm thì không phân trang
-            categories = CategoryDAO.searchCategory(search);
+            // Tìm kiếm có phân trang - 7 bản ghi/trang
+            pageSize = 7;
+            categories = CategoryDAO.searchCategoryWithPaging(search, currentPage, pageSize);
+            totalRecords = CategoryDAO.getTotalSearchResults(search);
+            totalPages = (int) Math.ceil((double) totalRecords / pageSize);
             request.setAttribute("search", search);
-            totalPages = 1;
         } else {
-            categories = CategoryDAO.getCategoriesByPage(currentPage, pageSize);
+            // Hiển thị thông thường - 5 bản ghi/trang
+            pageSize = 5;
+            categories = CategoryDAO.getCategoriesByPageAndSort(currentPage, pageSize, sortOrder);
+            totalRecords = CategoryDAO.getTotalCategories();
+            totalPages = (int) Math.ceil((double) totalRecords / pageSize);
         }
 
         request.setAttribute("categories", categories);
         request.setAttribute("currentPage", currentPage);
         request.setAttribute("totalPages", totalPages);
+        request.setAttribute("sortOrder", sortOrder);
         request.getRequestDispatcher("/view/categoryList.jsp").forward(request, response);
-
     }
 
     @Override

@@ -207,4 +207,93 @@ public class CategoryDAO {
         return 0;
     }
 
+    // Lấy danh sách có sắp xếp theo tên
+    public static ArrayList<Category> getCategoriesByPageAndSort(int page, int size, String sortOrder) {
+        DBContext db = DBContext.getInstance();
+        ArrayList<Category> list = new ArrayList<>();
+        int offset = (page - 1) * size;
+        String sql;
+        
+        if (sortOrder == null || sortOrder.equals("default")) {
+            sql = "SELECT * FROM categories LIMIT ? OFFSET ?";
+        } else {
+            sql = "SELECT * FROM categories ORDER BY name " + 
+                  (sortOrder.equals("desc") ? "DESC" : "ASC") + 
+                  " LIMIT ? OFFSET ?";
+        }
+        
+        try {
+            PreparedStatement statement = db.getConnection().prepareStatement(sql);
+            statement.setInt(1, size);
+            statement.setInt(2, offset);
+            ResultSet rs = statement.executeQuery();
+            while (rs.next()) {
+                Category category = new Category(
+                        rs.getInt("id"),
+                        rs.getString("name"),
+                        rs.getString("description")
+                );
+                list.add(category);
+            }
+        } catch (SQLException e) {
+            System.out.println("Error in getCategoriesByPageAndSort: " + e.getMessage());
+            return list;
+        }
+        return list;
+    }
+
+    // Tìm category theo tên có phân trang
+    public static ArrayList<Category> searchCategoryWithPaging(String categoryName, int page, int size) {
+        DBContext db = DBContext.getInstance();
+        ArrayList<Category> list = new ArrayList<>();
+        int offset = (page - 1) * size;
+        String sql = """
+                    SELECT * 
+                    FROM categories 
+                    WHERE name LIKE ? 
+                    LIMIT ? OFFSET ?
+                    """;
+        try {
+            PreparedStatement statement = db.getConnection().prepareStatement(sql);
+            statement.setString(1, "%" + categoryName + "%");
+            statement.setInt(2, size);
+            statement.setInt(3, offset);
+            ResultSet rs = statement.executeQuery();
+            while (rs.next()) {
+                Category category = new Category(
+                        rs.getInt("id"),
+                        rs.getString("name"),
+                        rs.getString("description")
+                );
+                list.add(category);
+            }
+        } catch (SQLException ex) {
+            System.out.println("Error in searchCategoryWithPaging: " + ex.getMessage());
+            return list;
+        }
+        return list;
+    }
+
+    // Đếm tổng số kết quả search
+    public static int getTotalSearchResults(String categoryName) {
+        DBContext db = DBContext.getInstance();
+        String sql = """
+                    SELECT COUNT(*) as total 
+                    FROM categories 
+                    WHERE name LIKE ?
+                    """;
+        try {
+            PreparedStatement statement = db.getConnection().prepareStatement(sql);
+            statement.setString(1, "%" + categoryName + "%");
+            ResultSet rs = statement.executeQuery();
+            if (rs.next()) {
+                return rs.getInt("total");
+            }
+        } catch (SQLException e) {
+            System.out.println("Error in getTotalSearchResults: " + e.getMessage());
+            return 0;
+        }
+        return 0;
+    }
+
 }
