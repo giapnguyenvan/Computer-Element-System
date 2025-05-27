@@ -31,7 +31,7 @@ public class CartApiServlet extends HttpServlet {
     @Override
     public void init(ServletConfig config) throws ServletException {
         super.init(config);
-        config.getServletContext().setAttribute("/", this);
+        config.getServletContext().setAttribute("/CartApiServlet", this);
     }
 
     @Override

@@ -4,7 +4,10 @@
  */
 package shop.DAO;
 
+import java.sql.SQLException;
+import java.util.List;
 import shop.JDBC.GenericDAO;
+import shop.anotation.FindBy;
 import shop.entities.User;
 
 /**
@@ -17,4 +20,10 @@ public class UserDAO extends GenericDAO<User, Integer> {
         super(User.class);
     }
 
+    @FindBy(columns = {"email"})
+    public User findUserByEmail(String email) throws SQLException{
+        List<User> users = findByAnd(email);
+        if(users.isEmpty()) return null;
+        return users.get(0);
+    }
 }
