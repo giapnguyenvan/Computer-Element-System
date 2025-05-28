@@ -57,7 +57,7 @@ public class ResponseUtils {
         BufferedReader reader = request.getReader();
         String line;
         while ((line = reader.readLine()) != null) {
-            sb.append(line);
+            sb.append(line); 
         }
         return sb.toString();
     }
