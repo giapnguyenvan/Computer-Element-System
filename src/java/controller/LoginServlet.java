@@ -25,8 +25,7 @@ import model.User;
  * @author admin
  */
 public class LoginServlet extends HttpServlet {
-    private final String USERNAME_SYSTEM = "John Doe";
-    private final String PASSWORD_SYSTEM = "abc123123";
+   
     /** 
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code> methods.
      * @param request servlet request

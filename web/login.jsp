@@ -30,15 +30,36 @@
         .login-container label {
             display: block;
             margin-top: 10px;
-            font-weight: bold;
+            margin-bottom: 5px;
+            font-weight: 600;
+            color: #333;
+            font-size: 14px;
         }
-        .login-container input[type="text"],
+        .form-field {
+            position: relative;
+            margin-bottom: 20px;
+        }
+        .login-container input[type="email"],
         .login-container input[type="password"] {
             width: 100%;
-            padding: 8px 10px;
-            margin-top: 5px;
-            border: 1px solid #ccc;
+            padding: 12px 15px;
+            border: 2px solid #e0e0e0;
             border-radius: 8px;
+            font-size: 14px;
+            transition: all 0.3s ease;
+            box-sizing: border-box;
+            outline: none;
+            background-color: #fff;
+        }
+        .login-container input[type="email"]:focus,
+        .login-container input[type="password"]:focus {
+            border-color: #4CAF50;
+            box-shadow: 0 0 0 3px rgba(76, 175, 80, 0.1);
+        }
+        .login-container input[type="email"]::placeholder,
+        .login-container input[type="password"]::placeholder {
+            color: #aaa;
+            font-size: 13px;
         }
         .login-container input[type="submit"] {
             width: 100%;
@@ -110,14 +131,19 @@
         <% } %>
 
         <form action="login" method="post">
-            <label for="email">Email:</label>
-            <input type="email" name="email" id="email" required 
-                   placeholder="Nhập địa chỉ email của bạn"
-                   pattern="[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,}$"
-                   title="Vui lòng nhập một địa chỉ email hợp lệ">
+            <div class="form-field">
+                <label for="email">Email:</label>
+                <input type="email" name="email" id="email" required 
+                       placeholder="Nhập địa chỉ email của bạn"
+                       pattern="[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,}$"
+                       title="Vui lòng nhập một địa chỉ email hợp lệ">
+            </div>
 
-            <label for="password">Mật khẩu:</label>
-            <input type="password" name="password" id="password" required>
+            <div class="form-field">
+                <label for="password">Mật khẩu:</label>
+                <input type="password" name="password" id="password" required
+                       placeholder="Nhập mật khẩu của bạn">
+            </div>
             
             <div class="remember-me">
                 <input type="checkbox" id="remember" name="remember" value="ON">
