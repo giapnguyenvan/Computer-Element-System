@@ -116,7 +116,7 @@ public class CartApiServlet extends HttpServlet {
             return;
         }
 
-        int userId = Integer.parseInt(userIdStr);
+        int userId = Integer.parseInt(userIdStr);         
         List<CartItem> cartItems = cartItemDAO.getAllByUserId(userId);
 
         // Set product data for each cart item
