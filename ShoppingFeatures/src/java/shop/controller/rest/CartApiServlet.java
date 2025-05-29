@@ -101,7 +101,7 @@ public class CartApiServlet extends HttpServlet {
             } else {
                 ResponseUtils.sendErrorResponse(response, 404, "Endpoint not found");
             }
-        } catch (Exception e) {
+        } catch (Exception e) {             
             e.printStackTrace();
             ResponseUtils.sendErrorResponse(response, 500, "Internal server error: " + e.getMessage());
         }
