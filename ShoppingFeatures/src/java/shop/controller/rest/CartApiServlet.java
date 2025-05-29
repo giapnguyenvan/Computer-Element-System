@@ -120,8 +120,8 @@ public class CartApiServlet extends HttpServlet {
         List<CartItem> cartItems = cartItemDAO.getAllByUserId(userId);
 
         // Set product data for each cart item
-        for (CartItem item : cartItems) {
-            item.setProductFunc();
+        for (CartItem item : cartItems) { 
+            item.setProductFunc();        
         }
 
         JsonObject responseObj = new JsonObject();
