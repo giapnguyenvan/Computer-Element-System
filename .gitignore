@@ -11,14 +11,6 @@ nb-configuration.xml
 *.class
 hs_err_pid*
 
-# Package Files #
-*.jar
-*.war
-*.ear
-*.zip
-*.tar.gz
-*.rar
-
 # IDE specific files #
 .idea/
 *.iml
@@ -45,13 +37,8 @@ buildNumber.properties
 .gradle/
 build/
 
-# Dependencies #
-lib/
-node_modules/
-
 # Logs and databases #
 *.log
-*.sql
 *.sqlite
 *.db
 
