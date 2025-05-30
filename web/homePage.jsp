@@ -263,20 +263,22 @@
                     <a href="#" class="btn btn-link">View All</a>
                 </div>
                 <div class="row">
+                    <c:forEach var="product" items="${product}">
                     <div class="col-md-3">
                         <div class="card product-card">
-                            <img src="https://images.unsplash.com/photo-1591799264318-7e6ef8ddb7ea" class="card-img-top" alt="CPU">
+                            <img src="${product.image_url}" class="card-img-top" alt="${product.name}">
                             <div class="card-body">
-                                <h5 class="card-title">Intel Core i7-12700K</h5>
-                                <p class="card-text">12 Cores, Up to 5.0 GHz</p>
+                                <h5 class="card-title">${product.name}</h5>
+                                <p class="card-text">${product.description}</p>
                                 <div class="d-flex align-items-center mb-3">
-                                    <span class="old-price">$449.99</span>
-                                    <span class="price">$399.99</span>
+                                    <span class="old-price">$${product.price}</span>
+                                    <span class="price">$${product.price}</span>
                                 </div>
                                 <button class="btn btn-primary w-100">Add to Cart</button>
                             </div>
                         </div>
                     </div>
+                    </c:forEach>
                     <!-- Add more product cards here -->
                 </div>
             </div>
