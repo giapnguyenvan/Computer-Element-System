@@ -31,7 +31,7 @@ pom.xml.next
 release.properties
 dependency-reduced-pom.xml
 buildNumber.properties
-.mvn/timing.properties
+.mvn/
 
 # Gradle
 .gradle/
@@ -46,6 +46,7 @@ build/
 /test-output/
 /.apt_generated/
 /.apt_generated_tests/
+/test/
 
 # OS generated files #
 .DS_Store
@@ -65,3 +66,21 @@ Thumbs.db
 /bin/
 /tmp/
 /out/
+
+# User-specific and private files #
+*.properties
+*.private
+*.env
+*.secret
+
+# Miscellaneous #
+*.war
+*.ear
+*.zip
+*.tar.gz
+*.tar
+*.rar
+*.7z
+
+# Ignore generated sources #
+build/generated-sources/
