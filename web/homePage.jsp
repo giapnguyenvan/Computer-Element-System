@@ -17,117 +17,7 @@
         <!-- Font Awesome -->
         <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
         <!-- Custom CSS -->
-        <style>
-            :root {
-                --primary-color: #0d6efd;
-                --secondary-color: #6c757d;
-                --accent-color: #ffc107;
-            }
-            
-            .top-bar {
-                background: #2b2b2b;
-                color: #fff;
-                padding: 8px 0;
-                font-size: 14px;
-            }
-            
-            .hero-section {
-                background: linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7)),
-                            url('https://images.unsplash.com/photo-1597872200969-2b65d56bd16b?auto=format&fit=crop&q=80');
-                background-size: cover;
-                background-position: center;
-                color: white;
-                padding: 120px 0;
-            }
-
-            .feature-card {
-                text-align: center;
-                padding: 30px;
-                background: #f8f9fa;
-                border-radius: 10px;
-                transition: transform 0.3s;
-            }
-
-            .feature-card:hover {
-                transform: translateY(-10px);
-            }
-
-            .feature-icon {
-                font-size: 2.5rem;
-                color: var(--primary-color);
-                margin-bottom: 20px;
-            }
-
-            .category-card {
-                border: none;
-                transition: all 0.3s;
-                margin-bottom: 20px;
-            }
-
-            .category-card:hover {
-                transform: translateY(-5px);
-                box-shadow: 0 5px 15px rgba(0,0,0,0.1);
-            }
-
-            .category-card img {
-                height: 200px;
-                object-fit: cover;
-            }
-
-            .deal-section {
-                background: #f8f9fa;
-                padding: 60px 0;
-            }
-
-            .product-card {
-                border: none;
-                transition: all 0.3s;
-            }
-
-            .product-card:hover {
-                transform: translateY(-5px);
-                box-shadow: 0 5px 15px rgba(0,0,0,0.1);
-            }
-
-            .price {
-                color: var(--primary-color);
-                font-weight: bold;
-                font-size: 1.2rem;
-            }
-
-            .old-price {
-                text-decoration: line-through;
-                color: var(--secondary-color);
-                margin-right: 10px;
-            }
-
-            footer {
-                background: #2b2b2b;
-                color: #fff;
-                padding: 60px 0 30px;
-            }
-
-            .social-icons a {
-                color: #fff;
-                margin-right: 15px;
-                font-size: 1.2rem;
-            }
-
-            .newsletter-form {
-                position: relative;
-            }
-
-            .newsletter-form input {
-                padding-right: 120px;
-            }
-
-            .newsletter-form button {
-                position: absolute;
-                right: 0;
-                top: 0;
-                height: 100%;
-            }
-        </style>
+        <link href="css/homePage.css" rel="stylesheet">
     </head>
     <body>
         <!-- Top Bar -->
@@ -188,10 +78,10 @@
                         </div>
                     </form>
                     <div class="d-flex align-items-center">
-                        <a href="#" class="btn btn-outline-primary me-2">
+                        <a href="login.jsp" class="btn btn-outline-primary me-2">
                             <i class="fas fa-user me-1"></i> Login
                         </a>
-                        <a href="#" class="btn btn-primary me-2">
+                        <a href="Register.jsp" class="btn btn-primary me-2">
                             <i class="fas fa-user-plus me-1"></i> Register
                         </a>
                         <a href="#" class="btn btn-outline-primary position-relative">
