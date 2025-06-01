@@ -6,7 +6,8 @@ dist/
 nbdist/
 nbactions.xml
 nb-configuration.xml
-nbproject/private/
+build/
+*.class
 
 # Java specific #
 *.class
