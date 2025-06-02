@@ -9,6 +9,13 @@ nb-configuration.xml
 build/
 *.class
 
+
+nbproject/private/
+nbproject/private.properties
+nbproject/build-impl.xml
+nbproject/genfiles.properties
+nbproject/ant-deploy.xml
+
 # Java specific #
 *.class
 hs_err_pid*
