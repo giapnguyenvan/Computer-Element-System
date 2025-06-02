@@ -22,7 +22,6 @@ public class CategoryController extends HttpServlet {
         String sortOrder = request.getParameter("sort"); // asc, desc, or default
         
         // Nếu không có sort order, mặc định là default (không sắp xếp)
-        //Easter Egg hehehehe
         if (sortOrder == null) {
             sortOrder = "default";
         }
