@@ -4,7 +4,7 @@
 <html>
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-    <title>Customer Management</title>
+    <title>Account Management</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.7.2/font/bootstrap-icons.css" rel="stylesheet">
     <style>
@@ -56,12 +56,12 @@
 </head>
 <body>
     <div class="container mt-5">
-        <h1 class="text-center mb-4">Customer Management</h1>
+        <h1 class="text-center mb-4">Accounts Management</h1>
         
         <!-- Add New Customer Button -->
         <div class="text-end mb-4">
             <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addCustomerModal">
-                <i class="bi bi-person-plus"></i> Add New Customer
+                <i class="bi bi-person-plus"></i> Add New Account
             </button>
         </div>
 
@@ -70,7 +70,7 @@
             <div class="col-md-12">
                 <div class="card">
                     <div class="card-body text-center">
-                        <h5>Total Customers: ${totalCustomers}</h5>
+                        <h5>Total Accounts: ${totalCustomers}</h5>
                         <p class="mb-0">Page ${currentPage} of ${totalPages}</p>
                     </div>
                 </div>
@@ -199,7 +199,7 @@
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title">Add New Customer</h5>
+                    <h5 class="modal-title">Add New Account</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                 </div>
                 <form action="Customer_control" method="POST">
@@ -242,7 +242,7 @@
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                        <button type="submit" class="btn btn-primary">Add Customer</button>
+                        <button type="submit" class="btn btn-primary">Add Account</button>
                     </div>
                 </form>
             </div>
