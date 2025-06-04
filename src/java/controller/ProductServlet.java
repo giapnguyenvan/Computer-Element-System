@@ -36,12 +36,8 @@ public class ProductServlet extends HttpServlet {
         response.setContentType("text/html;charset=UTF-8");
         String service = request.getParameter("service");
         ProductDAO dao = new ProductDAO();
-        Vector<Products> plist = dao.getAllProduct();
 
-        request.setAttribute("product", plist);
-        request.getRequestDispatcher("homePage.jsp").forward(request, response);
-        /*
-         if (service != null) {
+        if (service != null) {
             switch (service) {
                 case "viewProduct":
                     Vector<Products> plist = dao.getAllProduct();
@@ -132,8 +128,6 @@ public class ProductServlet extends HttpServlet {
         } else {
             response.sendRedirect("productservlet?service=viewProduct");
         }
-    }       
-         */
     }
 
 // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
