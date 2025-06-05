@@ -39,9 +39,9 @@
         <div class="container">
             <h2>Edit Product</h2>
 
-            <!-- EDIT PRODUCT FORM -->
             <form action="productservlet?service=updateProduct" method="post" class="edit-form">
-                <input type="hidden" name="productID" value="${product.id}" />
+                <input type="hidden" name="id" value="${product.id}" />
+
 
                 <label>Name:</label>
                 <input type="text" name="name" value="${product.name}" required />

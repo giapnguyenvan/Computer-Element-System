@@ -7,6 +7,8 @@ package controller;
 import java.util.Vector;
 import model.Products;
 import dal.ProductDAO;
+import model.Category;
+import dal.CategoryDAO;
 import java.io.IOException;
 import java.io.PrintWriter;
 import jakarta.servlet.ServletException;
@@ -14,6 +16,7 @@ import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import java.util.ArrayList;
 
 /**
  *
@@ -36,13 +39,26 @@ public class ProductServlet extends HttpServlet {
         response.setContentType("text/html;charset=UTF-8");
         String service = request.getParameter("service");
         ProductDAO dao = new ProductDAO();
+        CategoryDAO cdao = new CategoryDAO();
+        Vector<Products> plist;
+        ArrayList<Category> clist = cdao.getAllCategories();
+        Vector<String> brands = dao.getAllBrands();
 
         if (service != null) {
             switch (service) {
                 case "viewProduct":
-                    Vector<Products> plist = dao.getAllProduct();
+                    String sortBy = request.getParameter("sortBy");
+                    String order = request.getParameter("order");
+
+                    if (sortBy == null || order == null || order.equals("none")) {
+                        plist = dao.getAllProduct();
+                    } else {
+                        plist = dao.getSortedProduct(sortBy, order); // You’ll need to create this method
+                    }
 
                     request.setAttribute("product", plist);
+                    request.setAttribute("brand", brands);
+                    request.setAttribute("category", clist);
                     request.getRequestDispatcher("viewProduct.jsp").forward(request, response);
                     break;
                 case "insertProduct":
@@ -71,24 +87,23 @@ public class ProductServlet extends HttpServlet {
                                 status
                         );
                         dao.insertProduct(newProduct);
-                        response.sendRedirect("productservlet?service=listProduct");
+                        response.sendRedirect("productservlet?service=viewProduct");
                     } else {
                         request.getRequestDispatcher("insertProduct.jsp").forward(request, response);
                     }
                     break;
                 case "updateProduct":
-                    ProductDAO pdao = new ProductDAO();  // Declare once here
-
-                    if (request.getParameter("productID") != null && request.getParameter("name") == null) {
-                        // Load product to pre-fill form
-                        int productID = Integer.parseInt(request.getParameter("productID"));
+                    if (request.getParameter("id") != null && request.getParameter("name") == null) {
+                        int productID = Integer.parseInt(request.getParameter("id"));
+                        
+                        ProductDAO pdao = new ProductDAO();
                         Products product = pdao.getProductById(productID);
+                        
                         request.setAttribute("product", product);
                         request.getRequestDispatcher("updateProduct.jsp").forward(request, response);
-
                     } else {
                         // Update product data from form submission
-                        int id = Integer.parseInt(request.getParameter("productID"));
+                        int id = Integer.parseInt(request.getParameter("id"));
                         String name = request.getParameter("name");
                         String brand = request.getParameter("brand");
                         int category_id = Integer.parseInt(request.getParameter("category_id"));
@@ -100,8 +115,7 @@ public class ProductServlet extends HttpServlet {
                         String status = request.getParameter("status");
 
                         Products updatedProduct = new Products(id, name, brand, category_id, price, stock, image_url, description, spec_description, status);
-
-                        pdao.updateProduct(updatedProduct);
+                        dao.updateProduct(updatedProduct);
 
                         response.sendRedirect("productservlet?service=viewProduct");
                     }
@@ -112,12 +126,34 @@ public class ProductServlet extends HttpServlet {
                     Vector<Products> productList;
                     if (keyword == null || keyword.trim().isEmpty()) {
                         // Return all products if keyword is empty
-                        result = dao.getAllProduct();  // Your DAO method to get all
+                        result = dao.getAllProduct();
                     } else {
                         // Otherwise, perform search
                         result = dao.searchProduct(keyword.trim());
                     }
+                    request.setAttribute("brand", brands);
+                    request.setAttribute("category", clist);
                     request.setAttribute("product", result);
+                    request.getRequestDispatcher("viewProduct.jsp").forward(request, response);
+                    break;
+                case "filterByBrand":
+                    String brand = request.getParameter("brand");
+                    Vector<Products> blist = dao.getProductByBrand(brand);
+
+                    request.setAttribute("product", blist);            // Đặt danh sách sản phẩm
+                    request.setAttribute("brand", brands);             // Danh sách brand để đổ dropdown
+                    request.setAttribute("category", clist);
+                    request.getRequestDispatcher("viewProduct.jsp").forward(request, response);
+                    break;
+
+                case "filterByCategory":
+                    String categoryIdRaw = request.getParameter("category_id");
+                    int categoryId = Integer.parseInt(categoryIdRaw);
+                    Vector<Products> categoryList = dao.getProductByCategory(categoryId);
+
+                    request.setAttribute("product", categoryList);      // Đặt danh sách sản phẩm
+                    request.setAttribute("brand", brands);              // Danh sách brand để đổ dropdown
+                    request.setAttribute("category", clist);            // Danh sách category để đổ dropdown
                     request.getRequestDispatcher("viewProduct.jsp").forward(request, response);
                     break;
                 default:
