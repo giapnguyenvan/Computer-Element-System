@@ -343,13 +343,18 @@
                             <div class="card-body">
                                 <h5 class="card-title">Processors</h5>
                                 <p class="card-text">Latest CPUs from Intel & AMD</p>
-                                <a href="#" class="btn btn-outline-primary">Shop Now</a>
+                                <a href="#cpuProducts" class="btn btn-outline-primary">Shop Now</a>
                             </div>
                         </div>
                     </div>
                     <!-- Add more category cards -->
                 </div>
             </div>
+        </section>
+
+        <!-- CPU Products Section -->
+        <section id="cpuProducts" class="py-5 bg-light">
+            <jsp:include page="CPUCategory.jsp" />
         </section>
 
         <!-- Newsletter -->
