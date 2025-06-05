@@ -1,5 +1,20 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@ page import="model.User" %>
+<%
+    // Check if user is logged in and is an admin
+    User user = (User) session.getAttribute("userAuth");
+    if (user == null) {
+        response.sendRedirect(request.getContextPath() + "/login");
+        return;
+    }
+    
+    // Check if user is admin
+    if (!"admin".equals(user.getRole())) {
+        response.sendRedirect(request.getContextPath() + "/home");
+        return;
+    }
+%>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -15,6 +30,33 @@
             min-height: 100vh;
             background-color: #343a40;
             padding-top: 20px;
+        }
+        .sidebar .logo-container {
+            padding: 15px 20px;
+        }
+        .sidebar .logo-container h3 {
+            margin: 0;
+        }
+        .admin-profile {
+            padding: 15px 20px;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+            margin-bottom: 15px;
+        }
+        .admin-profile img {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            margin-right: 10px;
+        }
+        .admin-profile .admin-info {
+            color: #fff;
+        }
+        .admin-profile .admin-info h6 {
+            margin: 0;
+            font-weight: 600;
+        }
+        .admin-profile .admin-info small {
+            color: rgba(255,255,255,0.7);
         }
         .sidebar a {
             color: #fff;
@@ -46,27 +88,42 @@
         <div class="row">
             <!-- Sidebar -->
             <div class="col-md-3 col-lg-2 sidebar">
-                <h3 class="text-light text-center mb-4">Admin Panel</h3>
+                <div class="logo-container">
+                    <h3 class="text-light">
+                        <i class="fas fa-microchip me-2"></i>
+                        <span class="fw-bold">CES</span>
+                    </h3>
+                </div>
+                
+                <!-- Admin Profile -->
+                <div class="admin-profile d-flex align-items-center">
+                    <img src="https://ui-avatars.com/api/?name=${user.fullname}&background=random" alt="Admin Avatar" class="admin-avatar">
+                    <div class="admin-info">
+                        <h6>${user.fullname}</h6>
+                        <small>Administrator</small>
+                    </div>
+                </div>
+
                 <nav>
-                    <a href="adminDashboard.jsp" class="active">
+                    <a href="${pageContext.request.contextPath}/adminDashboard.jsp" class="active">
                         <i class="fas fa-home me-2"></i> Dashboard
                     </a>
-                    <a href="categoryList.jsp">
+                    <a href="${pageContext.request.contextPath}/categoryList.jsp">
                         <i class="fas fa-list me-2"></i> Categories
                     </a>
-                    <a href="viewProduct.jsp">
+                    <a href="${pageContext.request.contextPath}/productservlet?service=viewProduct">
                         <i class="fas fa-box me-2"></i> Products
                     </a>
-                    <a href="viewcustomers.jsp">
+                    <a href="${pageContext.request.contextPath}/viewcustomers">
                         <i class="fas fa-users me-2"></i> Customers
                     </a>
-                    <a href="viewblogs.jsp">
+                    <a href="${pageContext.request.contextPath}/viewblogs">
                         <i class="fas fa-blog me-2"></i> Blogs
                     </a>
-                    <a href="viewfeedback.jsp">
+                    <a href="${pageContext.request.contextPath}/viewfeedback">
                         <i class="fas fa-comments me-2"></i> Feedback
                     </a>
-                    <a href="logout.jsp">
+                    <a href="${pageContext.request.contextPath}/logout">
                         <i class="fas fa-sign-out-alt me-2"></i> Logout
                     </a>
                 </nav>
@@ -142,23 +199,23 @@
                             <div class="card-body">
                                 <div class="row">
                                     <div class="col-md-3">
-                                        <a href="insertProduct.jsp" class="btn btn-primary w-100 mb-3">
-                                            <i class="fas fa-plus me-2"></i>Add New Product
+                                        <a href="${pageContext.request.contextPath}/productservlet?service=insertProduct" class="btn btn-primary w-100">
+                                            <i class="fas fa-plus me-2"></i> Add New Product
                                         </a>
                                     </div>
                                     <div class="col-md-3">
-                                        <a href="categoryForm.jsp" class="btn btn-success w-100 mb-3">
-                                            <i class="fas fa-folder-plus me-2"></i>Add Category
+                                        <a href="${pageContext.request.contextPath}/categoryList.jsp" class="btn btn-success w-100">
+                                            <i class="fas fa-folder-plus me-2"></i> Manage Categories
                                         </a>
                                     </div>
                                     <div class="col-md-3">
-                                        <a href="viewfeedback.jsp" class="btn btn-info w-100 mb-3">
-                                            <i class="fas fa-comments me-2"></i>View Feedback
+                                        <a href="${pageContext.request.contextPath}/viewcustomers" class="btn btn-info w-100">
+                                            <i class="fas fa-user-plus me-2"></i> View Customers
                                         </a>
                                     </div>
                                     <div class="col-md-3">
-                                        <a href="viewblogs.jsp" class="btn btn-warning w-100 mb-3">
-                                            <i class="fas fa-blog me-2"></i>Manage Blogs
+                                        <a href="${pageContext.request.contextPath}/viewblogs" class="btn btn-warning w-100">
+                                            <i class="fas fa-edit me-2"></i> Manage Blogs
                                         </a>
                                     </div>
                                 </div>
@@ -209,9 +266,7 @@
         </div>
     </div>
 
-    <!-- Bootstrap Bundle with Popper -->
+    <!-- Bootstrap JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-    <!-- Chart.js -->
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </body>
 </html> 

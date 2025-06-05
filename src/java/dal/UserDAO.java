@@ -111,4 +111,21 @@ public class UserDAO {
         }
         return null;
     }
+
+    // Method to insert admin user Peter Jones
+    public void insertAdminUser() throws SQLException {
+        // Check if admin already exists
+        if (!isEmailExists("peterj_admin@example.com")) {
+            User adminUser = new User(
+                "Peter Jones",  // username
+                "abc123123",    // password
+                "admin",        // role
+                "Peter Jones",  // fullname
+                "peterj_admin@example.com", // email
+                "0987654321",  // phone
+                "100 Admin Road, District 5, HCMC" // address
+            );
+            register(adminUser);
+        }
+    }
 }

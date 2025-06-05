@@ -19,7 +19,7 @@ import jakarta.servlet.http.HttpServletResponse;
  *
  * @author nghia
  */
-@WebServlet(name = "HomePageServlet", urlPatterns = {"/homepageservlet"})
+@WebServlet(name = "HomePageServlet", urlPatterns = {"/", "/home"})
 public class HomePageServlet extends HttpServlet {
 
     /**
@@ -34,10 +34,29 @@ public class HomePageServlet extends HttpServlet {
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         response.setContentType("text/html;charset=UTF-8");
-        ProductDAO dao = new ProductDAO();
-        Vector<Products> plist = dao.getAllProduct();
-        request.setAttribute("product", plist);
-        request.getRequestDispatcher("homePage.jsp").forward(request, response);
+        try {
+            ProductDAO dao = new ProductDAO();
+            Vector<Products> plist = dao.getAllProduct();
+            
+            // Add debug information
+            System.out.println("Number of products loaded: " + (plist != null ? plist.size() : 0));
+            if (plist != null && !plist.isEmpty()) {
+                System.out.println("First product: " + plist.get(0).getName());
+            } else {
+                System.out.println("No products found in database");
+            }
+            
+            request.setAttribute("product", plist);
+            request.getRequestDispatcher("homePage.jsp").forward(request, response);
+        } catch (Exception e) {
+            // Log the error
+            System.err.println("Error in HomePageServlet: " + e.getMessage());
+            e.printStackTrace();
+            
+            // Set error message for the JSP
+            request.setAttribute("errorMessage", "An error occurred while loading products. Please try again later.");
+            request.getRequestDispatcher("homePage.jsp").forward(request, response);
+        }
     }
 
     // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
@@ -76,7 +95,7 @@ public class HomePageServlet extends HttpServlet {
      */
     @Override
     public String getServletInfo() {
-        return "Short description";
+        return "Homepage Servlet";
     }// </editor-fold>
 
 }

@@ -99,7 +99,7 @@ public class ProductDAO {
     public void updateProduct(Products p) {
         DBContext db = DBContext.getInstance();
         String sql = "UPDATE products SET name = ?, brand = ?, category_id = ?, price = ?, "
-                + "stock = ? "
+                + "stock = ?, "
                 + "image_url = ?, description = ?, spec_description = ?, status = ? WHERE id = ?";
         try {
             PreparedStatement ptm = db.getConnection().prepareStatement(sql);
@@ -107,12 +107,12 @@ public class ProductDAO {
             ptm.setString(2, p.getBrand());
             ptm.setInt(3, p.getCategory_id());
             ptm.setDouble(4, p.getPrice());
-            ptm.setInt(7, p.getStock());
-            ptm.setString(8, p.getImage_url());
-            ptm.setString(9, p.getDescription());
-            ptm.setString(10, p.getSpec_description());
-            ptm.setString(11, p.getStatus());
-            ptm.setInt(12, p.getId());
+            ptm.setInt(5, p.getStock());
+            ptm.setString(6, p.getImage_url());
+            ptm.setString(7, p.getDescription());
+            ptm.setString(8, p.getSpec_description());
+            ptm.setString(9, p.getStatus());
+            ptm.setInt(10, p.getId());
             ptm.executeUpdate();
         } catch (SQLException ex) {
             ex.printStackTrace();
