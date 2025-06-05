@@ -7,14 +7,12 @@ package controller;
 
 import dal.CustomerDAO;
 import java.io.IOException;
-import java.io.PrintWriter;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.ServletResponse;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import jakarta.servlet.http.HttpSession;
 import model.Customer;
 import java.util.Vector;
 
@@ -47,30 +45,23 @@ public class CustomerControl extends HttpServlet {
             String redirectUrl = "viewcustomers";
 
             switch (action) {
-                case "add":
-                    handleAddCustomer(request, customerDAO);
-                    break;
+                case "add" -> handleAddCustomer(request, customerDAO);
                     
-                case "update":
-                    handleUpdateCustomer(request, customerDAO);
-                    break;
+                case "update" -> handleUpdateCustomer(request, customerDAO);
                     
-                case "delete":
-                    handleDeleteCustomer(request, customerDAO);
-                    break;
+                case "delete" -> handleDeleteCustomer(request, customerDAO);
                     
-                case "updatePassword":
-                    handleUpdatePassword(request, customerDAO);
-                    break;
+                case "updatePassword" -> handleUpdatePassword(request, customerDAO);
                     
-                case "search":
+                case "search" -> {
                     handleSearchCustomers(request, customerDAO);
                     return; // Return here as we'll forward to a different page
-                    
-                default:
+                }
+                default -> {
                     request.setAttribute("error", "Invalid action specified");
                     request.getRequestDispatcher("error.jsp").forward(request, response);
                     return;
+                }
             }
 
             // Preserve the current page and filters in the redirect
