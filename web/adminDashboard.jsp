@@ -11,7 +11,7 @@
     
     // Check if user is admin
     if (!"admin".equals(user.getRole())) {
-        response.sendRedirect(request.getContextPath() + "/home");
+        response.sendRedirect(request.getContextPath() + "/homepageservlet");
         return;
     }
 %>

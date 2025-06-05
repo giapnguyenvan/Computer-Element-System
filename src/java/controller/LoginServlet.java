@@ -114,7 +114,7 @@ public class LoginServlet extends HttpServlet {
                 }
                 
                 // Always redirect to homepage first
-                response.sendRedirect(request.getContextPath() + "/home");
+                response.sendRedirect(request.getContextPath() + "/homepageservlet");
                 return;
             } else {
                 request.setAttribute("error", "Email hoặc mật khẩu không đúng");

@@ -19,7 +19,7 @@ import jakarta.servlet.http.HttpServletResponse;
  *
  * @author nghia
  */
-@WebServlet(name = "HomePageServlet", urlPatterns = {"/", "/home"})
+@WebServlet(name = "HomePageServlet", urlPatterns = {"/homepageservlet"})
 public class HomePageServlet extends HttpServlet {
 
     /**
