@@ -150,6 +150,9 @@
                         <li class="nav-item">
                             <a class="nav-link" href="#">Custom Builds</a>
                         </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="#">Blog</a>
+                        </li>
                     </ul>
                     <form class="d-flex me-3">
                         <div class="input-group">
