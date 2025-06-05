@@ -40,7 +40,7 @@
             <h2>Edit Product</h2>
 
             <!-- EDIT PRODUCT FORM -->
-            <form action="adminoptions?service=updateProduct" method="post" class="edit-form">
+            <form action="productservlet?service=updateProduct" method="post" class="edit-form">
                 <input type="hidden" name="productID" value="${product.id}" />
 
                 <label>Name:</label>
