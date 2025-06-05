@@ -10,7 +10,7 @@
     <style>
         body {
             font-family: Arial, sans-serif;
-            background: linear-gradient(to right, #74ebd5, #ACB6E5);
+            background: #705FBC;
             display: flex;
             height: 100vh;
             align-items: center;
@@ -65,14 +65,14 @@
             width: 100%;
             padding: 10px;
             margin-top: 20px;
-            background-color: #4CAF50;
+            background-color: #0D6CF8;
             color: white;
             border: none;
             border-radius: 8px;
             cursor: pointer;
         }
         .login-container input[type="submit"]:hover {
-            background-color: #45a049;
+            background-color: #0b5ad3;
         }
         .remember-me {
             margin: 15px 0;
@@ -112,7 +112,7 @@
             margin-top: 10px;
         }
         .register-link a {
-            color: #4CAF50;
+            color: #0D6CF8;
             text-decoration: none;
             font-weight: bold;
         }

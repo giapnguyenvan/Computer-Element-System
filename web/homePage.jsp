@@ -150,6 +150,9 @@
                         <li class="nav-item">
                             <a class="nav-link" href="#">Custom Builds</a>
                         </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="#">Blog</a>
+                        </li>
                     </ul>
                     <form class="d-flex me-3">
                         <div class="input-group">
@@ -160,12 +163,51 @@
                         </div>
                     </form>
                     <div class="d-flex align-items-center">
-                        <a href="login.jsp" class="btn btn-outline-primary me-2">
-                            <i class="fas fa-user me-1"></i> Login
-                        </a>
-                        <a href="Register.jsp" class="btn btn-primary me-2">
-                            <i class="fas fa-user-plus me-1"></i> Register
-                        </a>
+                        <c:choose>
+                            <c:when test="${not empty sessionScope.userAuth}">
+                                <!-- User Dropdown -->
+                                <div class="dropdown me-3">
+                                    <button class="btn btn-outline-primary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                        <i class="fas fa-user me-1"></i> ${sessionScope.user_name}
+                                    </button>
+                                    <ul class="dropdown-menu dropdown-menu-end">
+                                        <c:if test="${sessionScope.user_role eq 'admin'}">
+                                            <li>
+                                                <a class="dropdown-item text-primary" href="${pageContext.request.contextPath}/adminDashboard.jsp">
+                                                    <i class="fas fa-gauge-high me-2"></i>Admin Dashboard
+                                                </a>
+                                            </li>
+                                            <li><hr class="dropdown-divider"></li>
+                                        </c:if>
+                                        <li>
+                                            <c:choose>
+                                                <c:when test="${sessionScope.user_role eq 'admin'}">
+                                                    <a class="dropdown-item" href="${pageContext.request.contextPath}/adminDashboard.jsp">
+                                                        <i class="fas fa-user-circle me-2"></i>Profile
+                                                    </a>
+                                                </c:when>
+                                                <c:otherwise>
+                                                    <a class="dropdown-item" href="${pageContext.request.contextPath}/profile">
+                                                        <i class="fas fa-user-circle me-2"></i>Profile
+                                                    </a>
+                                                </c:otherwise>
+                                            </c:choose>
+                                        </li>
+                                        <li><a class="dropdown-item" href="${pageContext.request.contextPath}/orderHistory"><i class="fas fa-history me-2"></i>Order History</a></li>
+                                        <li><hr class="dropdown-divider"></li>
+                                        <li><a class="dropdown-item text-danger" href="${pageContext.request.contextPath}/logout"><i class="fas fa-sign-out-alt me-2"></i>Logout</a></li>
+                                    </ul>
+                                </div>
+                            </c:when>
+                            <c:otherwise>
+                                <a href="${pageContext.request.contextPath}/login" class="btn btn-outline-primary me-2">
+                                    <i class="fas fa-user me-1"></i> Login
+                                </a>
+                                <a href="${pageContext.request.contextPath}/register" class="btn btn-primary me-2">
+                                    <i class="fas fa-user-plus me-1"></i> Register
+                                </a>
+                            </c:otherwise>
+                        </c:choose>
                         <a href="view-cart" class="btn btn-outline-primary position-relative">
                             <i class="fas fa-shopping-cart"></i>
                             <span id="cartCount" class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
@@ -234,6 +276,21 @@
                     <h2 class="mb-0">Today's Best Deals</h2>
                     <a href="#" class="btn btn-link">View All</a>
                 </div>
+                
+                <!-- Display error message if any -->
+                <c:if test="${not empty errorMessage}">
+                    <div class="alert alert-danger" role="alert">
+                        ${errorMessage}
+                    </div>
+                </c:if>
+                
+                <!-- Debug information -->
+                <c:if test="${empty product}">
+                    <div class="alert alert-warning" role="alert">
+                        No products available at the moment.
+                    </div>
+                </c:if>
+                
                 <div class="row">
                     <c:forEach var="product" items="${product}">
                         <div class="col-md-3 mb-4">
@@ -522,5 +579,4 @@
 
     </style>
 </body>
-</html>
 </html>

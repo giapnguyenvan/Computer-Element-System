@@ -10,7 +10,7 @@
     <style>
         body {
             font-family: Arial, sans-serif;
-            background: linear-gradient(to right, #74ebd5, #ACB6E5);
+            background: #705FBC;
             display: flex;
             min-height: 100vh;
             align-items: center;
@@ -53,7 +53,7 @@
         button[type="submit"] {
             width: 100%;
             padding: 12px;
-            background-color: #4CAF50;
+            background-color: #0D6CF8;
             color: white;
             border: none;
             border-radius: 8px;
@@ -62,7 +62,7 @@
             margin-top: 20px;
         }
         button[type="submit"]:hover {
-            background-color: #45a049;
+            background-color: #0b5ad3;
         }
         .error {
             color: red;

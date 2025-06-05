@@ -83,6 +83,7 @@ public class LoginServlet extends HttpServlet {
             
             if (user != null) {
                 HttpSession session = request.getSession();
+                session.setAttribute("userAuth", user);
                 session.setAttribute("session_login", email);
                 session.setAttribute("user_role", user.getRole());
                 session.setAttribute("user_name", user.getFullname());
@@ -112,7 +113,9 @@ public class LoginServlet extends HttpServlet {
                     response.addCookie(passwordCookie);
                 }
                 
-                response.sendRedirect("welcome.jsp");
+                // Always redirect to homepage first
+                response.sendRedirect(request.getContextPath() + "/homepageservlet");
+                return;
             } else {
                 request.setAttribute("error", "Email hoặc mật khẩu không đúng");
                 request.getRequestDispatcher("login.jsp").forward(request, response);
@@ -129,7 +132,7 @@ public class LoginServlet extends HttpServlet {
      */
     @Override
     public String getServletInfo() {
-        return "Short description";
+        return "Login Servlet";
     }// </editor-fold>
 
 }
