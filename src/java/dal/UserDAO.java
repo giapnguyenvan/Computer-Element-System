@@ -112,6 +112,30 @@ public class UserDAO {
         return null;
     }
 
+    public User getUserById(int userId) throws SQLException {
+        String sql = "SELECT * FROM users WHERE id = ?";
+        try (Connection conn = dbContext.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+            
+            stmt.setInt(1, userId);
+            
+            try (ResultSet rs = stmt.executeQuery()) {
+                if (rs.next()) {
+                    return new User(
+                        rs.getString("name"),
+                        rs.getString("password"),
+                        rs.getString("role"),
+                        rs.getString("name"),
+                        rs.getString("email"),
+                        rs.getString("phone_number"),
+                        rs.getString("address")
+                    );
+                }
+            }
+        }
+        return null;
+    }
+
     // Method to insert admin user Peter Jones
     public void insertAdminUser() throws SQLException {
         // Check if admin already exists

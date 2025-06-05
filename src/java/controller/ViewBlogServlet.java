@@ -6,6 +6,7 @@
 package controller;
 
 import dal.BlogDAO;
+import dal.UserDAO;
 import java.io.IOException;
 import java.io.PrintWriter;
 import jakarta.servlet.ServletException;
@@ -15,7 +16,10 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.util.Vector;
 import model.Blog;
+import model.User;
 import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  *
@@ -26,9 +30,11 @@ public class ViewBlogServlet extends HttpServlet {
    
     private static final int PAGE_SIZE = 10; // Number of blogs per page
     private final BlogDAO blogDAO;
+    private final UserDAO userDAO;
 
     public ViewBlogServlet() {
         blogDAO = new BlogDAO();
+        userDAO = UserDAO.getInstance();
     }
 
     /** 
@@ -46,14 +52,38 @@ public class ViewBlogServlet extends HttpServlet {
             // Get all blogs first (we'll filter and sort them in memory)
             Vector<Blog> allBlogs = blogDAO.getAllBlogs(1, Integer.MAX_VALUE);
             
+            // Create a map to store user information
+            Map<Integer, String> userNames = new HashMap<>();
+            
+            // Fetch user information for each blog
+            for (Blog blog : allBlogs) {
+                try {
+                    int userId = blog.getUser_id();
+                    // Get user by ID and store their name
+                    User user = userDAO.getUserById(userId);
+                    if (user != null) {
+                        userNames.put(userId, user.getFullname());
+                    } else {
+                        userNames.put(userId, "Unknown User");
+                    }
+                } catch (Exception e) {
+                    userNames.put(blog.getUser_id(), "Unknown User");
+                }
+            }
+            
+            // Store the user names map in request
+            request.setAttribute("userNames", userNames);
+            
             // Apply search filter if specified
             String search = request.getParameter("search");
             if (search != null && !search.trim().isEmpty()) {
                 Vector<Blog> searchedList = new Vector<>();
                 search = search.toLowerCase();
                 for (Blog b : allBlogs) {
+                    String userName = userNames.get(b.getUser_id());
                     if (b.getTitle().toLowerCase().contains(search) || 
-                        b.getContent().toLowerCase().contains(search)) {
+                        b.getContent().toLowerCase().contains(search) ||
+                        (userName != null && userName.toLowerCase().contains(search))) {
                         searchedList.add(b);
                     }
                 }
@@ -79,6 +109,13 @@ public class ViewBlogServlet extends HttpServlet {
                     case "title":
                         Collections.sort(allBlogs, (b1, b2) -> 
                             b1.getTitle().compareToIgnoreCase(b2.getTitle()));
+                        break;
+                    case "author":
+                        Collections.sort(allBlogs, (b1, b2) -> {
+                            String name1 = userNames.get(b1.getUser_id());
+                            String name2 = userNames.get(b2.getUser_id());
+                            return name1.compareToIgnoreCase(name2);
+                        });
                         break;
                 }
             } else {

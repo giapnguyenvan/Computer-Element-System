@@ -87,6 +87,7 @@
                         <option value="newest" ${param.sortBy == 'newest' ? 'selected' : ''}>Newest First</option>
                         <option value="oldest" ${param.sortBy == 'oldest' ? 'selected' : ''}>Oldest First</option>
                         <option value="title" ${param.sortBy == 'title' ? 'selected' : ''}>Title</option>
+                        <option value="author" ${param.sortBy == 'author' ? 'selected' : ''}>Author Name</option>
                     </select>
                 </div>
                 <div class="col-md-8">
@@ -117,7 +118,7 @@
                                 <p class="card-text">${blog.content}</p>
                             </div>
                             <div class="blog-meta">
-                                <small>User ID: ${blog.user_id}</small>
+                                <small>Author: ${userNames[blog.user_id]}</small>
                             </div>
                         </div>
                         <div class="card-footer bg-transparent">
