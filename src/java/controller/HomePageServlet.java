@@ -36,17 +36,33 @@ public class HomePageServlet extends HttpServlet {
         response.setContentType("text/html;charset=UTF-8");
         try {
             ProductDAO dao = new ProductDAO();
-            Vector<Products> plist = dao.getAllProduct();
             
-            // Add debug information
-            System.out.println("Number of products loaded: " + (plist != null ? plist.size() : 0));
-            if (plist != null && !plist.isEmpty()) {
-                System.out.println("First product: " + plist.get(0).getName());
-            } else {
-                System.out.println("No products found in database");
+            // Xử lý phân trang
+            int page = 1;
+            int productsPerPage = 10;
+            String pageStr = request.getParameter("page");
+            if (pageStr != null) {
+                page = Integer.parseInt(pageStr);
             }
             
+            // Lấy tổng số sản phẩm và tính số trang
+            int totalProducts = dao.getTotalProducts();
+            int totalPages = (int) Math.ceil((double) totalProducts / productsPerPage);
+            
+            // Lấy danh sách sản phẩm theo trang
+            Vector<Products> plist = dao.getProductsByPage(page, productsPerPage);
+            
+            // Add debug information
+            System.out.println("Page: " + page);
+            System.out.println("Total products: " + totalProducts);
+            System.out.println("Total pages: " + totalPages);
+            System.out.println("Products on current page: " + (plist != null ? plist.size() : 0));
+            
+            // Set attributes for JSP
             request.setAttribute("product", plist);
+            request.setAttribute("currentPage", page);
+            request.setAttribute("totalPages", totalPages);
+            
             request.getRequestDispatcher("homePage.jsp").forward(request, response);
         } catch (Exception e) {
             // Log the error

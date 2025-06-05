@@ -194,6 +194,54 @@ public class ProductDAO {
         return p;
     }
 
+    // Phương thức đếm tổng số sản phẩm
+    public int getTotalProducts() {
+        DBContext db = DBContext.getInstance();
+        String sql = "SELECT COUNT(*) FROM products";
+        try {
+            PreparedStatement ptm = db.getConnection().prepareStatement(sql);
+            ResultSet rs = ptm.executeQuery();
+            if (rs.next()) {
+                return rs.getInt(1);
+            }
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+        }
+        return 0;
+    }
+
+    // Phương thức lấy sản phẩm theo trang
+    public Vector<Products> getProductsByPage(int page, int productsPerPage) {
+        DBContext db = DBContext.getInstance();
+        Vector<Products> listProduct = new Vector<>();
+        String sql = "SELECT * FROM products ORDER BY id OFFSET ? ROWS FETCH NEXT ? ROWS ONLY";
+        try {
+            PreparedStatement ptm = db.getConnection().prepareStatement(sql);
+            ptm.setInt(1, (page - 1) * productsPerPage);
+            ptm.setInt(2, productsPerPage);
+            ResultSet rs = ptm.executeQuery();
+            while (rs.next()) {
+                String jsonSpec = rs.getString("spec_description");
+                Products p = new Products(
+                        rs.getInt("id"),
+                        rs.getString("name"),
+                        rs.getString("brand"),
+                        rs.getInt("category_id"),
+                        rs.getDouble("price"),
+                        rs.getInt("stock"),
+                        rs.getString("image_url"),
+                        rs.getString("description"),
+                        jsonSpec,
+                        rs.getString("status")
+                );
+                listProduct.add(p);
+            }
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+        }
+        return listProduct;
+    }
+
     public static void main(String[] args) {
         ProductDAO dao = new ProductDAO();
         Vector<Products> products = dao.getAllProduct();
