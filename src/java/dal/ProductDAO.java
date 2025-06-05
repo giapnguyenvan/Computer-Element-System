@@ -318,6 +318,56 @@ public class ProductDAO {
         return listBrands;
     }
 
+    //---------------Get total CPU products count
+    public int getTotalCPUProducts() {
+        DBContext db = DBContext.getInstance();
+        String sql = "SELECT COUNT(*) FROM products WHERE category_id = 1 AND status = 'active'";
+        try {
+            PreparedStatement ptm = db.getConnection().prepareStatement(sql);
+            ResultSet rs = ptm.executeQuery();
+            if (rs.next()) {
+                return rs.getInt(1);
+            }
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+        }
+        return 0;
+    }
+
+    //---------------Get CPU products with pagination
+    public Vector<Products> getCPUProductsWithPaging(int page, int productsPerPage) {
+        DBContext db = DBContext.getInstance();
+        Vector<Products> list = new Vector<>();
+        String sql = "SELECT * FROM products WHERE category_id = 1 AND status = 'active' " +
+                    "ORDER BY id " +
+                    "LIMIT ? OFFSET ?";
+        try {
+            PreparedStatement ptm = db.getConnection().prepareStatement(sql);
+            ptm.setInt(1, productsPerPage);
+            ptm.setInt(2, (page - 1) * productsPerPage);
+            ResultSet rs = ptm.executeQuery();
+            while (rs.next()) {
+                String jsonSpec = rs.getString("spec_description");
+                Products p = new Products(
+                    rs.getInt("id"),
+                    rs.getString("name"),
+                    rs.getString("brand"),
+                    rs.getInt("category_id"),
+                    rs.getDouble("price"),
+                    rs.getInt("stock"),
+                    rs.getString("image_url"),
+                    rs.getString("description"),
+                    jsonSpec,
+                    rs.getString("status")
+                );
+                list.add(p);
+            }
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+        }
+        return list;
+    }
+
     public static void main(String[] args) {
         ProductDAO dao = new ProductDAO();
         Vector<Products> products = dao.getAllProduct();
