@@ -318,6 +318,11 @@
                                         </div>
                                     </div>
 
+                                    <!-- View Feedback Button -->
+                                    <button class="btn btn-outline-info w-100 mb-2" type="button">
+                                        <i class="fas fa-comments me-2"></i>View Feedback
+                                    </button>
+
                                     <!-- Add to Cart Button -->
                                     <div class="d-grid gap-2">
                                         <!-- View Feedback Button -->

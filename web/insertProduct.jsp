@@ -19,7 +19,7 @@
         <h2>Add New Product</h2>
 
         <!-- ADD PRODUCT FORM -->
-        <form action="adminoptions?service=insertProduct" method="post" class="edit-form">
+        <form action="productservlet?service=insertProduct" method="post" class="edit-form">
 
             <label>Name:</label>
             <input type="text" name="name" required />
@@ -31,7 +31,7 @@
             <input type="number" name="category_id" required />
 
             <label>Price:</label>
-            <input type="text" name="price" step="0.01" required />
+            <input type="number" name="price" step="0.01" required />
 
             <label>Stock:</label>
             <input type="number" name="stock" required />
@@ -52,7 +52,7 @@
             </select>
 
             <button type="submit">Add Product</button>
-            <a href="adminoptions?service=viewProduct" style="text-decoration:none;">
+            <a href="productservlet?service=viewProduct" style="text-decoration:none;">
                 <button type="button" style="margin-left:10px;">Cancel</button>
             </a>
         </form>

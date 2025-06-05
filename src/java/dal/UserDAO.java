@@ -10,7 +10,7 @@ public class UserDAO {
     private static UserDAO instance;
     private final DBContext dbContext;
     
-    private UserDAO() {
+    public UserDAO() {
         dbContext = DBContext.getInstance();
     }
     
@@ -151,5 +151,9 @@ public class UserDAO {
             );
             register(adminUser);
         }
+    }
+
+    public Object getUserById(int user_id) {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
 }
