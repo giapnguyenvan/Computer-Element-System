@@ -92,7 +92,7 @@
                 <div class="col-md-8">
                     <label class="form-label">Search:</label>
                     <div class="input-group">
-                        <input type="text" name="search" class="form-control" placeholder="Search in blogs..." 
+                    <input type="text" name="search" class="form-control" placeholder="Search in blogs..." 
                                value="${param.search}">
                         <button class="btn btn-outline-secondary" type="submit">Search</button>
                     </div>

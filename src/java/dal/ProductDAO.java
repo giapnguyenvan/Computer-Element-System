@@ -195,7 +195,6 @@ public class ProductDAO {
         return p;
     }
 
-
     public Vector<Products> getSortedProduct(String sortBy, String order) {
         DBContext db = DBContext.getInstance();
         Vector<Products> list = new Vector<>();
@@ -240,7 +239,6 @@ public class ProductDAO {
         }
         return list;
     }
-
 
     public Vector<Products> getProductByBrand(String brand) {
         DBContext db = DBContext.getInstance();

@@ -67,6 +67,9 @@
         .sidebar a:hover {
             background-color: #495057;
         }
+        .sidebar a.active {
+            background-color: #495057;
+        }
         .main-content {
             padding: 20px;
         }
@@ -86,49 +89,8 @@
 <body>
     <div class="container-fluid">
         <div class="row">
-            <!-- Sidebar -->
-            <div class="col-md-3 col-lg-2 sidebar">
-                <div class="logo-container">
-                    <h3 class="text-light">
-                        <i class="fas fa-microchip me-2"></i>
-                        <span class="fw-bold">CES</span>
-                    </h3>
-                </div>
-                
-                <!-- Admin Profile -->
-                <div class="admin-profile d-flex align-items-center">
-                    <img src="https://ui-avatars.com/api/?name=${user.fullname}&background=random" alt="Admin Avatar" class="admin-avatar">
-                    <div class="admin-info">
-                        <h6>${user.fullname}</h6>
-                        <small>Administrator</small>
-                    </div>
-                </div>
-
-                <nav>
-                    <a href="${pageContext.request.contextPath}/adminDashboard.jsp" class="active">
-                        <i class="fas fa-home me-2"></i> Dashboard
-                    </a>
-                    <a href="${pageContext.request.contextPath}/categoryList.jsp">
-                        <i class="fas fa-list me-2"></i> Categories
-                    </a>
-                    <a href="productservlet">
-                        <i class="fas fa-box me-2"></i> Products
-                    </a>
-                    <a href="${pageContext.request.contextPath}/viewcustomers">
-                        <i class="fas fa-users me-2"></i> Customers
-                    </a>
-                    <a href="${pageContext.request.contextPath}/viewblogs">
-                        <i class="fas fa-blog me-2"></i> Blogs
-                    </a>
-                    <a href="${pageContext.request.contextPath}/viewfeedback">
-                        <i class="fas fa-comments me-2"></i> Feedback
-                    </a>
-                    <a href="${pageContext.request.contextPath}/logout">
-                        <i class="fas fa-sign-out-alt me-2"></i> Logout
-                    </a>
-                </nav>
-            </div>
-
+            <jsp:include page="sidebar.jsp" />
+            
             <!-- Main Content -->
             <div class="col-md-9 col-lg-10 main-content">
                 <h2 class="mb-4">Dashboard Overview</h2>
@@ -199,22 +161,22 @@
                             <div class="card-body">
                                 <div class="row">
                                     <div class="col-md-3">
-                                        <a href="${pageContext.request.contextPath}/productservlet?service=insertProduct" class="btn btn-primary w-100">
+                                        <a href="${pageContext.request.contextPath}/adminLayout.jsp?content=addProduct.jsp&title=Add New Product" class="btn btn-primary w-100">
                                             <i class="fas fa-plus me-2"></i> Add New Product
                                         </a>
                                     </div>
                                     <div class="col-md-3">
-                                        <a href="${pageContext.request.contextPath}/categoryList.jsp" class="btn btn-success w-100">
+                                        <a href="${pageContext.request.contextPath}/adminLayout.jsp?content=categoryContent.jsp&title=Manage Categories" class="btn btn-success w-100">
                                             <i class="fas fa-folder-plus me-2"></i> Manage Categories
                                         </a>
                                     </div>
                                     <div class="col-md-3">
-                                        <a href="${pageContext.request.contextPath}/viewcustomers" class="btn btn-info w-100">
+                                        <a href="${pageContext.request.contextPath}/adminLayout.jsp?content=customerContent.jsp&title=Customer Management" class="btn btn-info w-100">
                                             <i class="fas fa-user-plus me-2"></i> View Customers
                                         </a>
                                     </div>
                                     <div class="col-md-3">
-                                        <a href="${pageContext.request.contextPath}/viewblogs" class="btn btn-warning w-100">
+                                        <a href="${pageContext.request.contextPath}/adminLayout.jsp?content=blogContent.jsp&title=Blog Management" class="btn btn-warning w-100">
                                             <i class="fas fa-edit me-2"></i> Manage Blogs
                                         </a>
                                     </div>
