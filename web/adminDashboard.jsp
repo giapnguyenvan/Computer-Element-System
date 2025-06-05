@@ -111,7 +111,7 @@
                     <a href="${pageContext.request.contextPath}/categoryList.jsp">
                         <i class="fas fa-list me-2"></i> Categories
                     </a>
-                    <a href="viewProduct.jsp">
+                    <a href="productservlet">
                         <i class="fas fa-box me-2"></i> Products
                     </a>
                     <a href="${pageContext.request.contextPath}/viewcustomers">

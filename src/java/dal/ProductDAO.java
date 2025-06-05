@@ -3,6 +3,7 @@ package dal;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.Vector;
 import model.*;
 
@@ -194,46 +195,43 @@ public class ProductDAO {
         return p;
     }
 
-    //---------------Get total CPU products count
-    public int getTotalCPUProducts() {
-        DBContext db = DBContext.getInstance();
-        String sql = "SELECT COUNT(*) FROM products WHERE category_id = 1 AND status = 'active'";
-        try {
-            PreparedStatement ptm = db.getConnection().prepareStatement(sql);
-            ResultSet rs = ptm.executeQuery();
-            if (rs.next()) {
-                return rs.getInt(1);
-            }
-        } catch (SQLException ex) {
-            ex.printStackTrace();
-        }
-        return 0;
-    }
 
-    //---------------Get CPU products with pagination
-    public Vector<Products> getCPUProductsWithPaging(int page, int productsPerPage) {
+    public Vector<Products> getSortedProduct(String sortBy, String order) {
         DBContext db = DBContext.getInstance();
         Vector<Products> list = new Vector<>();
-        String sql = "SELECT * FROM products WHERE category_id = 1 AND status = 'active' " +
-                    "LIMIT ? OFFSET ?";
+
+        if (sortBy == null || order == null) {
+            sortBy = "id";
+            order = "asc";
+        }
+
+        String validSortBy;
+        switch (sortBy) {
+            case "id", "category_id", "price", "stock":
+                validSortBy = sortBy;
+                break;
+            default:
+                validSortBy = "id";
+        }
+        String sortOrder = "asc".equalsIgnoreCase(order) ? "ASC" : "DESC";
+
+        String sql = "SELECT * FROM products ORDER BY " + validSortBy + " " + sortOrder;
         try {
             PreparedStatement ptm = db.getConnection().prepareStatement(sql);
-            ptm.setInt(1, productsPerPage);
-            ptm.setInt(2, (page - 1) * productsPerPage);
             ResultSet rs = ptm.executeQuery();
             while (rs.next()) {
                 String jsonSpec = rs.getString("spec_description");
                 Products p = new Products(
-                    rs.getInt("id"),
-                    rs.getString("name"),
-                    rs.getString("brand"),
-                    rs.getInt("category_id"),
-                    rs.getDouble("price"),
-                    rs.getInt("stock"),
-                    rs.getString("image_url"),
-                    rs.getString("description"),
-                    jsonSpec,
-                    rs.getString("status")
+                        rs.getInt("id"),
+                        rs.getString("name"),
+                        rs.getString("brand"),
+                        rs.getInt("category_id"),
+                        rs.getDouble("price"),
+                        rs.getInt("stock"),
+                        rs.getString("image_url"),
+                        rs.getString("description"),
+                        jsonSpec,
+                        rs.getString("status")
                 );
                 list.add(p);
             }
@@ -241,6 +239,85 @@ public class ProductDAO {
             ex.printStackTrace();
         }
         return list;
+    }
+
+
+    public Vector<Products> getProductByBrand(String brand) {
+        DBContext db = DBContext.getInstance();
+        Vector<Products> list = new Vector<>();
+        String sql = "SELECT * FROM products WHERE brand = ?";
+        try {
+            PreparedStatement ptm = db.getConnection().prepareStatement(sql);
+            ptm.setString(1, brand);
+            ResultSet rs = ptm.executeQuery();
+            while (rs.next()) {
+                String jsonSpec = rs.getString("spec_description");
+                Products p = new Products(
+                        rs.getInt("id"),
+                        rs.getString("name"),
+                        rs.getString("brand"),
+                        rs.getInt("category_id"),
+                        rs.getDouble("price"),
+                        rs.getInt("stock"),
+                        rs.getString("image_url"),
+                        rs.getString("description"),
+                        jsonSpec,
+                        rs.getString("status")
+                );
+                list.add(p);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return list;
+    }
+
+    public Vector<Products> getProductByCategory(int categoryId) {
+        DBContext db = DBContext.getInstance();
+        Vector<Products> list = new Vector<>();
+        String sql = "SELECT * FROM products WHERE category_id = ?";
+        try {
+            PreparedStatement ptm = db.getConnection().prepareStatement(sql);
+            ptm.setInt(1, categoryId);
+            ResultSet rs = ptm.executeQuery();
+            while (rs.next()) {
+                String jsonSpec = rs.getString("spec_description");
+                Products p = new Products(
+                        rs.getInt("id"),
+                        rs.getString("name"),
+                        rs.getString("brand"),
+                        rs.getInt("category_id"),
+                        rs.getDouble("price"),
+                        rs.getInt("stock"),
+                        rs.getString("image_url"),
+                        rs.getString("description"),
+                        jsonSpec,
+                        rs.getString("status")
+                );
+                list.add(p);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return list;
+    }
+
+    public static Vector<String> getAllBrands() {
+        DBContext db = DBContext.getInstance();
+        Vector<String> listBrands = new Vector<>();
+        String sql = "SELECT DISTINCT brand FROM products";
+
+        try {
+            PreparedStatement statement = db.getConnection().prepareStatement(sql);
+            ResultSet rs = statement.executeQuery();
+            while (rs.next()) {
+                String brand = rs.getString("brand");
+                listBrands.add(brand);
+            }
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+        }
+        return listBrands;
     }
 
     public static void main(String[] args) {
