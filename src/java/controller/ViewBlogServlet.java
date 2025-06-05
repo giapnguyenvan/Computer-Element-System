@@ -139,7 +139,20 @@ public class ViewBlogServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
     throws ServletException, IOException {
-        processRequest(request, response);
+        String action = request.getParameter("action");
+        
+        try {
+            if (action == null || action.equals("list")) {
+                listBlogs(request, response);
+            } else if (action.equals("view")) {
+                viewBlog(request, response);
+            } else {
+                response.sendRedirect("viewblogs");
+            }
+        } catch (Exception ex) {
+            request.setAttribute("error", "Error: " + ex.getMessage());
+            request.getRequestDispatcher("viewblogs.jsp").forward(request, response);
+        }
     } 
 
     /** 
@@ -152,7 +165,27 @@ public class ViewBlogServlet extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
     throws ServletException, IOException {
-        processRequest(request, response);
+        String action = request.getParameter("action");
+        
+        try {
+            switch (action) {
+                case "add":
+                    addBlog(request, response);
+                    break;
+                case "update":
+                    updateBlog(request, response);
+                    break;
+                case "delete":
+                    deleteBlog(request, response);
+                    break;
+                default:
+                    response.sendRedirect("viewblogs");
+                    break;
+            }
+        } catch (Exception ex) {
+            request.setAttribute("error", "Error: " + ex.getMessage());
+            request.getRequestDispatcher("viewblogs.jsp").forward(request, response);
+        }
     }
 
     /** 
@@ -161,7 +194,31 @@ public class ViewBlogServlet extends HttpServlet {
      */
     @Override
     public String getServletInfo() {
-        return "ViewBlog Servlet handles displaying and filtering blogs";
+        return "ViewBlog Servlet handles displaying and managing blogs";
     }// </editor-fold>
 
+    private void listBlogs(HttpServletRequest request, HttpServletResponse response)
+    throws ServletException, IOException {
+        processRequest(request, response);
+    }
+
+    private void viewBlog(HttpServletRequest request, HttpServletResponse response)
+    throws ServletException, IOException {
+        // Implementation of viewBlog method
+    }
+
+    private void addBlog(HttpServletRequest request, HttpServletResponse response)
+    throws ServletException, IOException {
+        // Implementation of addBlog method
+    }
+
+    private void updateBlog(HttpServletRequest request, HttpServletResponse response)
+    throws ServletException, IOException {
+        // Implementation of updateBlog method
+    }
+
+    private void deleteBlog(HttpServletRequest request, HttpServletResponse response)
+    throws ServletException, IOException {
+        // Implementation of deleteBlog method
+    }
 }

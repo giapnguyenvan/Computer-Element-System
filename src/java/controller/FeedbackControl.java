@@ -7,13 +7,11 @@ package controller;
 
 import dal.FeedbackDAO;
 import java.io.IOException;
-import java.io.PrintWriter;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import jakarta.servlet.http.HttpSession;
 import model.Feedback;
 import java.time.LocalDateTime;
 import java.util.Vector;
@@ -47,22 +45,17 @@ public class FeedbackControl extends HttpServlet {
             String redirectUrl = "viewfeedback";
 
             switch (action) {
-                case "add":
-                    handleAddFeedback(request, feedbackDAO);
-                    break;
+                case "add" -> handleAddFeedback(request, feedbackDAO);
                     
-                case "update":
-                    handleUpdateFeedback(request, feedbackDAO);
-                    break;
+                case "update" -> handleUpdateFeedback(request, feedbackDAO);
                     
-                case "delete":
-                    handleDeleteFeedback(request, feedbackDAO);
-                    break;
+                case "delete" -> handleDeleteFeedback(request, feedbackDAO);
                     
-                default:
+                default -> {
                     request.setAttribute("error", "Invalid action specified");
                     request.getRequestDispatcher("error.jsp").forward(request, response);
                     return;
+                }
             }
 
             // Preserve the current page and filters in the redirect
