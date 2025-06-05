@@ -153,7 +153,4 @@ public class UserDAO {
         }
     }
 
-    public Object getUserById(int user_id) {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
-    }
 }
