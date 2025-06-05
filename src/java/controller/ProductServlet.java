@@ -103,8 +103,7 @@ public class ProductServlet extends HttpServlet {
 
                         pdao.updateProduct(updatedProduct);
 
-                        // Redirect back to product listing page (adjust URL as needed)
-                        response.sendRedirect("productservlet?service=updateProduct");
+                        response.sendRedirect("productservlet?service=viewProduct");
                     }
                     break;
                 case "searchProduct":
