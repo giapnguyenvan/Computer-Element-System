@@ -319,11 +319,20 @@
                                     </div>
 
                                     <!-- Add to Cart Button -->
-                                    <button class="btn btn-primary w-100" 
-                                            onclick="addToCart(${product.id}, '${product.name}', ${product.price})"
-                                            id="addBtn_${product.id}">
-                                        <i class="fas fa-cart-plus me-2"></i>Add to Cart
-                                    </button>
+                                    <div class="d-grid gap-2">
+                                        <!-- View Feedback Button -->
+                                        <button class="btn btn-outline-secondary" 
+                                                onclick="viewFeedback(${product.id})"
+                                                id="feedbackBtn_${product.id}">
+                                            <i class="fas fa-comments me-2"></i>View Feedback
+                                        </button>
+                                        
+                                        <button class="btn btn-primary" 
+                                                onclick="addToCart(${product.id}, '${product.name}', ${product.price})"
+                                                id="addBtn_${product.id}">
+                                            <i class="fas fa-cart-plus me-2"></i>Add to Cart
+                                        </button>
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -547,6 +556,12 @@
                                                         });
                                                     });
                                                 });
+
+                                                // Function to view product feedback
+                                                function viewFeedback(productId) {
+                                                    // Empty function for now
+                                                    console.log('View feedback for product:', productId);
+                                                }
 
                                                 // Add keyboard support for quantity inputs
                                                 document.addEventListener('DOMContentLoaded', function () {
