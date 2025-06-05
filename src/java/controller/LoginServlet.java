@@ -112,7 +112,7 @@ public class LoginServlet extends HttpServlet {
                     response.addCookie(passwordCookie);
                 }
                 
-                response.sendRedirect("welcome.jsp");
+                response.sendRedirect("homePage.jsp");
             } else {
                 request.setAttribute("error", "Email hoặc mật khẩu không đúng");
                 request.getRequestDispatcher("login.jsp").forward(request, response);

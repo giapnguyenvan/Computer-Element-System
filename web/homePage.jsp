@@ -160,12 +160,29 @@
                         </div>
                     </form>
                     <div class="d-flex align-items-center">
-                        <a href="login.jsp" class="btn btn-outline-primary me-2">
-                            <i class="fas fa-user me-1"></i> Login
-                        </a>
-                        <a href="Register.jsp" class="btn btn-primary me-2">
-                            <i class="fas fa-user-plus me-1"></i> Register
-                        </a>
+                        <c:choose>
+                            <c:when test="${sessionScope.userAuth != null}">
+                                <div class="dropdown me-2">
+                                    <button class="btn btn-outline-primary dropdown-toggle" type="button" id="userDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+                                        <i class="fas fa-user me-1"></i> Hello, ${sessionScope.userAuth.fullName}
+                                    </button>
+                                    <ul class="dropdown-menu" aria-labelledby="userDropdown">
+                                        <li><a class="dropdown-item" href="profile"><i class="fas fa-user-circle me-2"></i>Profile</a></li>
+                                        <li><a class="dropdown-item" href="orders"><i class="fas fa-shopping-bag me-2"></i>My Orders</a></li>
+                                        <li><hr class="dropdown-divider"></li>
+                                        <li><a class="dropdown-item" href="logout"><i class="fas fa-sign-out-alt me-2"></i>Logout</a></li>
+                                    </ul>
+                                </div>
+                            </c:when>
+                            <c:otherwise>
+                                <a href="login.jsp" class="btn btn-outline-primary me-2">
+                                    <i class="fas fa-user me-1"></i> Login
+                                </a>
+                                <a href="Register.jsp" class="btn btn-primary me-2">
+                                    <i class="fas fa-user-plus me-1"></i> Register
+                                </a>
+                            </c:otherwise>
+                        </c:choose>
                         <a href="view-cart" class="btn btn-outline-primary position-relative">
                             <i class="fas fa-shopping-cart"></i>
                             <span id="cartCount" class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
@@ -522,5 +539,4 @@
 
     </style>
 </body>
-</html>
 </html>
