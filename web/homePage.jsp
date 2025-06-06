@@ -334,13 +334,6 @@
                                         </button>
                                     </div>
                                 </div>
-
-                                <!-- Add to Cart Button -->
-                                <button class="btn btn-primary w-100" 
-                                        onclick="addToCart(${product.id}, '${product.name}', ${product.price})"
-                                        id="addBtn_${product.id}">
-                                    <i class="fas fa-cart-plus me-2">Add to Cart</i>
-                                </button>
                             </div>
                         </div>
                     </c:forEach>
