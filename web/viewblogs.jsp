@@ -37,11 +37,18 @@
             overflow: hidden;
             text-overflow: ellipsis;
         }
+        .stats-section {
+            margin: 30px 0;
+            padding: 15px;
+            background-color: #f8f9fa;
+            border-radius: 10px;
+            text-align: center;
+        }
     </style>
 </head>
 <body>
     <div class="container mt-5">
-        <h1 class="text-center mb-4">Blog Management</h1>
+        
         
         <!-- Success/Error Messages -->
         <c:if test="${not empty sessionScope.success}">
@@ -58,25 +65,6 @@
                 <% session.removeAttribute("error"); %>
             </div>
         </c:if>
-        
-        <!-- Add New Blog Button -->
-        <div class="text-end mb-4">
-            <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addBlogModal">
-                Add New Blog
-            </button>
-        </div>
-
-        <!-- Stats Section -->
-        <div class="row mb-4">
-            <div class="col-md-12">
-                <div class="card">
-                    <div class="card-body text-center">
-                        <h5>Total Blogs: ${totalBlogs}</h5>
-                        <p class="mb-0">Page ${currentPage} of ${totalPages}</p>
-                    </div>
-                </div>
-            </div>
-        </div>
         
         <!-- Filter Section -->
         <div class="filter-section">
@@ -121,19 +109,6 @@
                                 <small>Author: ${userNames[blog.user_id]}</small>
                             </div>
                         </div>
-                        <div class="card-footer bg-transparent">
-                            <div class="d-flex justify-content-between">
-                                <button type="button" class="btn btn-sm btn-primary" 
-                                        onclick="editBlog('${blog.id}', '${blog.title}', '${blog.content}', '${blog.user_id}')"
-                                        data-bs-toggle="modal" data-bs-target="#editBlogModal">
-                                    Edit
-                                </button>
-                                <button type="button" class="btn btn-sm btn-danger" 
-                                        onclick="confirmDelete('${blog.id}', '${blog.user_id}')">
-                                    Delete
-                                </button>
-                            </div>
-                        </div>
                     </div>
                 </div>
             </c:forEach>
@@ -145,6 +120,12 @@
                     </div>
                 </div>
             </c:if>
+        </div>
+
+        <!-- Stats Section (Moved to bottom) -->
+        <div class="stats-section">
+            <h5 class="mb-2">Total Blogs: ${totalBlogs}</h5>
+            <p class="mb-0">Page ${currentPage} of ${totalPages}</p>
         </div>
 
         <!-- Pagination -->
@@ -169,112 +150,6 @@
         </c:if>
     </div>
 
-    <!-- Add Blog Modal -->
-    <div class="modal fade" id="addBlogModal" tabindex="-1">
-        <div class="modal-dialog modal-lg">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title">Add New Blog</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-                </div>
-                <form action="${pageContext.request.contextPath}/CES/Blog_control" method="POST">
-                    <div class="modal-body">
-                        <input type="hidden" name="action" value="add">
-                        
-                        <div class="mb-3">
-                            <label class="form-label">Title:</label>
-                            <input type="text" class="form-control" name="title" required>
-                        </div>
-                        
-                        <div class="mb-3">
-                            <label class="form-label">Content:</label>
-                            <textarea class="form-control" name="content" rows="10" required></textarea>
-                        </div>
-                        
-                        <div class="mb-3">
-                            <label class="form-label">User ID:</label>
-                            <input type="number" class="form-control" name="user_id" required>
-                        </div>
-                    </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                        <button type="submit" class="btn btn-primary">Add Blog</button>
-                    </div>
-                </form>
-            </div>
-        </div>
-    </div>
-
-    <!-- Edit Blog Modal -->
-    <div class="modal fade" id="editBlogModal" tabindex="-1">
-        <div class="modal-dialog modal-lg">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title">Edit Blog</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-                </div>
-                <form action="${pageContext.request.contextPath}/CES/Blog_control" method="POST">
-                    <div class="modal-body">
-                        <input type="hidden" name="action" value="edit">
-                        <input type="hidden" name="id" id="edit_blog_id">
-                        <input type="hidden" name="user_id" id="edit_user_id">
-                        
-                        <div class="mb-3">
-                            <label class="form-label">Title:</label>
-                            <input type="text" class="form-control" name="title" id="edit_title" required>
-                        </div>
-                        
-                        <div class="mb-3">
-                            <label class="form-label">Content:</label>
-                            <textarea class="form-control" name="content" id="edit_content" rows="10" required></textarea>
-                        </div>
-                    </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                        <button type="submit" class="btn btn-primary">Update Blog</button>
-                    </div>
-                </form>
-            </div>
-        </div>
-    </div>
-
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
-    <script>
-        function editBlog(id, title, content, userId) {
-            document.getElementById('edit_blog_id').value = id;
-            document.getElementById('edit_title').value = title;
-            document.getElementById('edit_content').value = content;
-            document.getElementById('edit_user_id').value = userId;
-        }
-        
-        function confirmDelete(blogId, userId) {
-            if (confirm('Are you sure you want to delete this blog?')) {
-                const form = document.createElement('form');
-                form.method = 'POST';
-                form.action = '${pageContext.request.contextPath}/CES/Blog_control';
-                
-                const actionInput = document.createElement('input');
-                actionInput.type = 'hidden';
-                actionInput.name = 'action';
-                actionInput.value = 'delete';
-                
-                const idInput = document.createElement('input');
-                idInput.type = 'hidden';
-                idInput.name = 'id';
-                idInput.value = blogId;
-                
-                const userIdInput = document.createElement('input');
-                userIdInput.type = 'hidden';
-                userIdInput.name = 'user_id';
-                userIdInput.value = userId;
-                
-                form.appendChild(actionInput);
-                form.appendChild(idInput);
-                form.appendChild(userIdInput);
-                document.body.appendChild(form);
-                form.submit();
-            }
-        }
-    </script>
 </body>
 </html>
