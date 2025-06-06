@@ -320,7 +320,7 @@
                                                 id="addBtn_${product.id}">
                                             <i class="fas fa-cart-plus me-2"></i>Add to Cart
                                     </div>
-                                <!-- Quantity Selector -->
+                                <!-- Quantity Selector todo-->
                                 <div class="d-flex align-items-center mb-3">
                                     <label class="me-2">Qty:</label>
                                     <div class="input-group" style="width: 120px;">
