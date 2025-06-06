@@ -95,10 +95,10 @@ public class ProductServlet extends HttpServlet {
                 case "updateProduct":
                     if (request.getParameter("id") != null && request.getParameter("name") == null) {
                         int productID = Integer.parseInt(request.getParameter("id"));
-                        
+
                         ProductDAO pdao = new ProductDAO();
                         Products product = pdao.getProductById(productID);
-                        
+
                         request.setAttribute("product", product);
                         request.getRequestDispatcher("updateProduct.jsp").forward(request, response);
                     } else {
@@ -155,6 +155,16 @@ public class ProductServlet extends HttpServlet {
                     request.setAttribute("brand", brands);              // Danh sách brand để đổ dropdown
                     request.setAttribute("category", clist);            // Danh sách category để đổ dropdown
                     request.getRequestDispatcher("viewProduct.jsp").forward(request, response);
+                    break;
+                case "productDetail":
+                    int productID = Integer.parseInt(request.getParameter("id"));
+
+                    ProductDAO ppdao = new ProductDAO();
+                    Products product = ppdao.getProductById(productID);
+
+                    // Đẩy dữ liệu lên request để hiển thị trong JSP
+                    request.setAttribute("product", product);
+                    request.getRequestDispatcher("productDetail.jsp").forward(request, response);
                     break;
                 default:
                     service = "viewProduct";
