@@ -1,5 +1,6 @@
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 <!DOCTYPE html>
 <html lang="en">
     <head>
@@ -42,6 +43,42 @@
                 font-size: 1.25rem;
                 font-weight: bold;
                 color: #0d6efd;
+            }
+
+            /* Add new styles for product card elements */
+            .product-card .card-title {
+                color: #000000;
+                font-weight: 600;
+                margin-bottom: 1rem;
+            }
+
+            .product-card .btn {
+                width: 100%;
+                margin-bottom: 0.5rem;
+            }
+
+            .product-card .quantity-section {
+                width: 100%;
+                margin-bottom: 1rem;
+            }
+
+            .product-card .quantity-section .input-group {
+                width: 100%;
+            }
+
+            .product-card .quantity-section label {
+                width: 100%;
+                margin-bottom: 0.5rem;
+                font-weight: 500;
+            }
+
+            .product-card .card-body {
+                padding: 1.25rem;
+            }
+
+            .product-card .card-text {
+                color: #6c757d;
+                margin-bottom: 1rem;
             }
 
             .feature-card {
@@ -98,6 +135,10 @@
 
             .social-icons a:hover {
                 color: #0d6efd;
+            }
+
+            .dropdown-menu.show {
+                display: block !important;
             }
         </style>
     </head>
@@ -167,36 +208,46 @@
                             <c:when test="${not empty sessionScope.userAuth}">
                                 <!-- User Dropdown -->
                                 <div class="dropdown me-3">
-                                    <a class="btn btn-outline-primary dropdown-toggle" href="#" role="button" id="userDropdown" data-bs-toggle="dropdown" aria-expanded="false">
-                                        <i class="fas fa-user me-1"></i> ${sessionScope.user_name}
-                                    </a>
-                                    <ul class="dropdown-menu dropdown-menu-end shadow" aria-labelledby="userDropdown">
-                                        <c:if test="${sessionScope.user_role eq 'admin'}">
-                                            <li>
-                                                <a class="dropdown-item text-primary" href="${pageContext.request.contextPath}/adminDashboard.jsp">
-                                                    <i class="fas fa-gauge-high me-2"></i>Admin Dashboard
-                                                </a>
-                                            </li>
-                                            <li><hr class="dropdown-divider"></li>
-                                        </c:if>
-                                        <li>
-                                            <c:choose>
-                                                <c:when test="${sessionScope.user_role eq 'admin'}">
+                                    <c:choose>
+                                        <c:when test="${fn:toLowerCase(sessionScope.user_role) eq 'admin'}">
+                                            <a class="btn btn-outline-primary dropdown-toggle" href="#" role="button" id="userDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+                                                <i class="fas fa-user me-1"></i>
+                                                ${fn:trim(fn:replace(sessionScope.user_name, '(Admin)', ''))} (Admin)
+                                            </a>
+                                            <ul class="dropdown-menu dropdown-menu-end shadow" aria-labelledby="userDropdown">
+                                                <li>
+                                                    <a class="dropdown-item text-primary" href="${pageContext.request.contextPath}/adminDashboard.jsp">
+                                                        <i class="fas fa-gauge-high me-2"></i>Admin Dashboard
+                                                    </a>
+                                                </li>
+                                                <li><hr class="dropdown-divider"></li>
+                                                <li>
                                                     <a class="dropdown-item" href="${pageContext.request.contextPath}/adminDashboard.jsp">
                                                         <i class="fas fa-user-circle me-2"></i>Profile
                                                     </a>
-                                                </c:when>
-                                                <c:otherwise>
+                                     s           </li>
+                                                <li><a class="dropdown-item" href="${pageContext.request.contextPath}/orderHistory"><i class="fas fa-history me-2"></i>Order History</a></li>
+                                                <li><hr class="dropdown-divider"></li>
+                                                <li><a class="dropdown-item text-danger" href="${pageContext.request.contextPath}/logout"><i class="fas fa-sign-out-alt me-2"></i>Logout</a></li>
+                                            </ul>
+                                        </c:when>
+                                        <c:otherwise>
+                                            <a class="btn btn-outline-primary dropdown-toggle" href="#" role="button" id="userDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+                                                <i class="fas fa-user me-1"></i>
+                                                ${sessionScope.user_name}
+                                            </a>
+                                            <ul class="dropdown-menu dropdown-menu-end shadow" aria-labelledby="userDropdown">
+                                                <li>
                                                     <a class="dropdown-item" href="${pageContext.request.contextPath}/profile">
                                                         <i class="fas fa-user-circle me-2"></i>Profile
                                                     </a>
-                                                </c:otherwise>
-                                            </c:choose>
-                                        </li>
-                                        <li><a class="dropdown-item" href="${pageContext.request.contextPath}/orderHistory"><i class="fas fa-history me-2"></i>Order History</a></li>
-                                        <li><hr class="dropdown-divider"></li>
-                                        <li><a class="dropdown-item text-danger" href="${pageContext.request.contextPath}/logout"><i class="fas fa-sign-out-alt me-2"></i>Logout</a></li>
-                                    </ul>
+                                                </li>
+                                                <li><a class="dropdown-item" href="${pageContext.request.contextPath}/orderHistory"><i class="fas fa-history me-2"></i>Order History</a></li>
+                                                <li><hr class="dropdown-divider"></li>
+                                                <li><a class="dropdown-item text-danger" href="${pageContext.request.contextPath}/logout"><i class="fas fa-sign-out-alt me-2"></i>Logout</a></li>
+                                            </ul>
+                                        </c:otherwise>
+                                    </c:choose>
                                 </div>
                             </c:when>
                             <c:otherwise>
@@ -306,30 +357,33 @@
                                     </div>
                                 </a>       
 
-                                    <!-- Add to Cart Button -->
-                                    <div class="d-grid gap-2">
-                                        <!-- View Feedback Button -->
-                                        <button class="btn btn-outline-secondary" 
-                                                onclick="viewFeedback(${product.id})"
-                                                id="feedbackBtn_${product.id}">
-                                            <i class="fas fa-comments me-2"></i>View Feedback
-                                        </button>
-                                        
-                                        <button class="btn btn-primary" 
-                                                onclick="addToCart(${product.id}, '${product.name}', ${product.price})"
-                                                id="addBtn_${product.id}">
-                                            <i class="fas fa-cart-plus me-2"></i>Add to Cart
-                                    </div>
-                                <!-- Quantity Selector todo-->
-                                <div class="d-flex align-items-center mb-3">
-                                    <label class="me-2">Qty:</label>
-                                    <div class="input-group" style="width: 120px;">
-                                        <button class="btn btn-outline-secondary btn-sm" type="button" onclick="changeQuantity(${product.id}, -1)">
+
+                                <!-- Add to Cart Button -->
+                                <div class="d-grid gap-2">
+                                    <!-- View Feedback Button -->
+                                    <button class="btn btn-outline-secondary" 
+                                            onclick="viewFeedback(${product.id})"
+                                            id="feedbackBtn_${product.id}">
+                                        <i class="fas fa-comments me-2"></i>View Feedback
+                                    </button>
+                                    
+                                    <button class="btn btn-primary" 
+                                            onclick="addToCart(${product.id}, '${product.name}', ${product.price})"
+                                            id="addBtn_${product.id}">
+                                        <i class="fas fa-cart-plus me-2"></i>Add to Cart
+                                    </button>
+                                </div>
+
+                                <!-- Quantity Selector -->
+                                <div class="quantity-section">
+                                    <label>Quantity:</label>
+                                    <div class="input-group">
+                                        <button class="btn btn-outline-secondary" type="button" onclick="changeQuantity(${product.id}, -1)">
                                             <i class="fas fa-minus"></i>
                                         </button>
-                                        <input type="number" class="form-control form-control-sm text-center" 
+                                        <input type="number" class="form-control text-center" 
                                                id="quantity_${product.id}" value="1" min="1" max="99">
-                                        <button class="btn btn-outline-secondary btn-sm" type="button" onclick="changeQuantity(${product.id}, 1)">
+                                        <button class="btn btn-outline-secondary" type="button" onclick="changeQuantity(${product.id}, 1)">
                                             <i class="fas fa-plus"></i>
                                         </button>
                                     </div>
