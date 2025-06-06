@@ -11,7 +11,7 @@
         <!-- Font Awesome -->
         <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
         <!-- Custom CSS -->
-<!--        <link href="css/homePage.css" rel="stylesheet">-->
+        <!--        <link href="css/homePage.css" rel="stylesheet">-->
         <!-- SweetAlert2 for notifications -->
         <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
         <style>
@@ -178,7 +178,7 @@
                                                 </a>
                                             </li>
                                             <li><hr class="dropdown-divider"></li>
-                                        </c:if>
+                                            </c:if>
                                         <li>
                                             <c:choose>
                                                 <c:when test="${sessionScope.user_role eq 'admin'}">
@@ -276,55 +276,58 @@
                     <h2 class="mb-0">Today's Best Deals</h2>
                     <a href="#" class="btn btn-link">View All</a>
                 </div>
-                
+
                 <!-- Display error message if any -->
                 <c:if test="${not empty errorMessage}">
                     <div class="alert alert-danger" role="alert">
                         ${errorMessage}
                     </div>
                 </c:if>
-                
+
                 <!-- Debug information -->
                 <c:if test="${empty product}">
                     <div class="alert alert-warning" role="alert">
                         No products available at the moment.
                     </div>
                 </c:if>
-                
+
                 <div class="row">
                     <c:forEach var="product" items="${product}">
                         <div class="col-md-3 mb-4">
                             <div class="card product-card h-100">
-                                <img src="${product.image_url}" class="card-img-top" alt="${product.name}" style="height: 200px; object-fit: cover;">
-                                <div class="card-body d-flex flex-column">
-                                    <h5 class="card-title">${product.name}</h5>
-                                    <p class="card-text flex-grow-1">${product.description}</p>
-                                    <div class="d-flex align-items-center mb-3">
-                                        <span class="price fw-bold text-primary fs-5">$${product.price}</span>
-                                    </div>
-
-                                    <!-- Quantity Selector -->
-                                    <div class="d-flex align-items-center mb-3">
-                                        <label class="me-2">Qty:</label>
-                                        <div class="input-group" style="width: 120px;">
-                                            <button class="btn btn-outline-secondary btn-sm" type="button" onclick="changeQuantity(${product.id}, -1)">
-                                                <i class="fas fa-minus"></i>
-                                            </button>
-                                            <input type="number" class="form-control form-control-sm text-center" 
-                                                   id="quantity_${product.id}" value="1" min="1" max="99">
-                                            <button class="btn btn-outline-secondary btn-sm" type="button" onclick="changeQuantity(${product.id}, 1)">
-                                                <i class="fas fa-plus"></i>
-                                            </button>
+                                <a href="${pageContext.request.contextPath}/productservlet?service=productDetail&id=${product.id}" style="text-decoration: none;">
+                                    <img src="${product.image_url}" class="card-img-top" alt="${product.name}" style="height: 200px; object-fit: cover;">
+                                    <div class="card-body d-flex flex-column">
+                                        <h5 class="card-title">${product.name}</h5>
+                                        <p class="card-text flex-grow-1">${product.description}</p>
+                                        <div class="d-flex align-items-center mb-3">
+                                            <span class="price fw-bold text-primary fs-5">$${product.price}</span>
                                         </div>
                                     </div>
+                                </a>       
 
-                                    <!-- Add to Cart Button -->
-                                    <button class="btn btn-primary w-100" 
-                                            onclick="addToCart(${product.id}, '${product.name}', ${product.price})"
-                                            id="addBtn_${product.id}">
-                                        <i class="fas fa-cart-plus me-2"></i>Add to Cart
-                                    </button>
+
+                                <!-- Quantity Selector -->
+                                <div class="d-flex align-items-center mb-3">
+                                    <label class="me-2">Qty:</label>
+                                    <div class="input-group" style="width: 120px;">
+                                        <button class="btn btn-outline-secondary btn-sm" type="button" onclick="changeQuantity(${product.id}, -1)">
+                                            <i class="fas fa-minus"></i>
+                                        </button>
+                                        <input type="number" class="form-control form-control-sm text-center" 
+                                               id="quantity_${product.id}" value="1" min="1" max="99">
+                                        <button class="btn btn-outline-secondary btn-sm" type="button" onclick="changeQuantity(${product.id}, 1)">
+                                            <i class="fas fa-plus"></i>
+                                        </button>
+                                    </div>
                                 </div>
+
+                                <!-- Add to Cart Button -->
+                                <button class="btn btn-primary w-100" 
+                                        onclick="addToCart(${product.id}, '${product.name}', ${product.price})"
+                                        id="addBtn_${product.id}">
+                                    <i class="fas fa-cart-plus me-2">Add to Cart</i>
+                                </button>
                             </div>
                         </div>
                     </c:forEach>
@@ -423,157 +426,157 @@
 
         <!-- Custom JavaScript for Cart Functionality -->
         <script>
-                                                // Global variables
-                                                let cartCount = 0;
-                                                const currentUserId = ${sessionScope.userAuth.id}; // Thay đổi theo user đang đăng nhập
+                                            // Global variables
+                                            let cartCount = 0;
+                                            const currentUserId = ${sessionScope.userAuth.id}; // Thay đổi theo user đang đăng nhập
 
-                                                // Function to change quantity
-                                                function changeQuantity(productId, change) {
-                                                    const quantityInput = document.getElementById('quantity_' + productId);
-                                                    let currentQuantity = parseInt(quantityInput.value);
-                                                    let newQuantity = currentQuantity + change;
+                                            // Function to change quantity
+                                            function changeQuantity(productId, change) {
+                                                const quantityInput = document.getElementById('quantity_' + productId);
+                                                let currentQuantity = parseInt(quantityInput.value);
+                                                let newQuantity = currentQuantity + change;
 
-                                                    if (newQuantity < 1)
-                                                        newQuantity = 1;
-                                                    if (newQuantity > 99)
-                                                        newQuantity = 99;
+                                                if (newQuantity < 1)
+                                                    newQuantity = 1;
+                                                if (newQuantity > 99)
+                                                    newQuantity = 99;
 
-                                                    quantityInput.value = newQuantity;
-                                                }
+                                                quantityInput.value = newQuantity;
+                                            }
 
-                                                // Function to add product to cart
-                                                async function addToCart(productId, productName, productPrice) {
-                                                    const quantityInput = document.getElementById('quantity_' + productId);
-                                                    const quantity = parseInt(quantityInput.value);
-                                                    const addButton = document.getElementById('addBtn_' + productId);
+                                            // Function to add product to cart
+                                            async function addToCart(productId, productName, productPrice) {
+                                                const quantityInput = document.getElementById('quantity_' + productId);
+                                                const quantity = parseInt(quantityInput.value);
+                                                const addButton = document.getElementById('addBtn_' + productId);
 
-                                                    // Disable button and show loading
-                                                    addButton.disabled = true;
-                                                    addButton.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Adding...';
+                                                // Disable button and show loading
+                                                addButton.disabled = true;
+                                                addButton.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Adding...';
 
-                                                    try {
-                                                        console.log(JSON.stringify({
+                                                try {
+                                                    console.log(JSON.stringify({
+                                                        userId: currentUserId,
+                                                        productId: productId,
+                                                        quantity: quantity
+                                                    }));
+                                                    const response = await fetch('http://localhost:9999/Project_G2/CartApiServlet', {
+                                                        method: 'POST',
+                                                        headers: {
+                                                            'Content-Type': 'application/json'
+                                                        },
+                                                        body: JSON.stringify({
                                                             userId: currentUserId,
                                                             productId: productId,
                                                             quantity: quantity
-                                                        }));
-                                                        const response = await fetch('http://localhost:9999/Project_G2/CartApiServlet', {
-                                                            method: 'POST',
-                                                            headers: {
-                                                                'Content-Type': 'application/json'
-                                                            },
-                                                            body: JSON.stringify({
-                                                                userId: currentUserId,
-                                                                productId: productId,
-                                                                quantity: quantity
-                                                            })
-                                                        });
+                                                        })
+                                                    });
 
-                                                        const result = await response.json();
+                                                    const result = await response.json();
 
-                                                        if (result.success) {
-                                                            // Show success message
-                                                            Swal.fire({
-                                                                icon: 'success',
-                                                                title: 'Success!',
-                                                                text: productName + `has been added to your cart!`,
-                                                                timer: 2000,
-                                                                showConfirmButton: false
-                                                            });
-
-                                                            // Update cart count
-                                                            updateCartCount();
-
-                                                            // Reset quantity to 1
-                                                            quantityInput.value = 1;
-
-                                                            // Add visual feedback
-                                                            addButton.classList.add('btn-success');
-                                                            addButton.innerHTML = '<i class="fas fa-check me-2"></i>Added!';
-
-                                                            setTimeout(() => {
-                                                                addButton.classList.remove('btn-success');
-                                                                addButton.innerHTML = '<i class="fas fa-cart-plus me-2"></i>Add to Cart';
-                                                            }, 2000);
-                                                        } else {
-                                                            throw new Error(result.message || 'Failed to add to cart');
-                                                        }
-                                                    } catch (error) {
-                                                        console.error('Error adding to cart:', error);
+                                                    if (result.success) {
+                                                        // Show success message
                                                         Swal.fire({
-                                                            icon: 'error',
-                                                            title: 'Error!',
-                                                            text: error.message || 'Failed to add product to cart. Please try again.'
+                                                            icon: 'success',
+                                                            title: 'Success!',
+                                                            text: productName + `has been added to your cart!`,
+                                                            timer: 2000,
+                                                            showConfirmButton: false
                                                         });
-                                                    } finally {
-                                                        // Re-enable button
-                                                        addButton.disabled = false;
-                                                        if (!addButton.classList.contains('btn-success')) {
+
+                                                        // Update cart count
+                                                        updateCartCount();
+
+                                                        // Reset quantity to 1
+                                                        quantityInput.value = 1;
+
+                                                        // Add visual feedback
+                                                        addButton.classList.add('btn-success');
+                                                        addButton.innerHTML = '<i class="fas fa-check me-2"></i>Added!';
+
+                                                        setTimeout(() => {
+                                                            addButton.classList.remove('btn-success');
                                                             addButton.innerHTML = '<i class="fas fa-cart-plus me-2"></i>Add to Cart';
-                                                        }
+                                                        }, 2000);
+                                                    } else {
+                                                        throw new Error(result.message || 'Failed to add to cart');
+                                                    }
+                                                } catch (error) {
+                                                    console.error('Error adding to cart:', error);
+                                                    Swal.fire({
+                                                        icon: 'error',
+                                                        title: 'Error!',
+                                                        text: error.message || 'Failed to add product to cart. Please try again.'
+                                                    });
+                                                } finally {
+                                                    // Re-enable button
+                                                    addButton.disabled = false;
+                                                    if (!addButton.classList.contains('btn-success')) {
+                                                        addButton.innerHTML = '<i class="fas fa-cart-plus me-2"></i>Add to Cart';
                                                     }
                                                 }
+                                            }
 
-                                                // Function to update cart count
-                                                async function updateCartCount() {
-                                                    try {
-                                                        const response = await fetch('CartApiServlet?userId=' + currentUserId);
-                                                        const result = await response.json();
+                                            // Function to update cart count
+                                            async function updateCartCount() {
+                                                try {
+                                                    const response = await fetch('CartApiServlet?userId=' + currentUserId);
+                                                    const result = await response.json();
 
-                                                        if (result.success && result.data) {
-                                                            const totalItems = result.data.reduce((sum, item) => sum + item.quantity, 0);
-                                                            document.getElementById('cartCount').textContent = totalItems;
-                                                            cartCount = totalItems;
-                                                        }
-                                                    } catch (error) {
-                                                        console.error('Error updating cart count:', error);
+                                                    if (result.success && result.data) {
+                                                        const totalItems = result.data.reduce((sum, item) => sum + item.quantity, 0);
+                                                        document.getElementById('cartCount').textContent = totalItems;
+                                                        cartCount = totalItems;
                                                     }
+                                                } catch (error) {
+                                                    console.error('Error updating cart count:', error);
                                                 }
+                                            }
 
-                                                // Initialize cart count on page load
-                                                document.addEventListener('DOMContentLoaded', function () {
-                                                    updateCartCount();
+                                            // Initialize cart count on page load
+                                            document.addEventListener('DOMContentLoaded', function () {
+                                                updateCartCount();
 
-                                                    // Add hover effects to product cards
-                                                    const productCards = document.querySelectorAll('.product-card');
-                                                    productCards.forEach(card => {
-                                                        card.addEventListener('mouseenter', function () {
-                                                            this.style.transform = 'translateY(-5px)';
-                                                            this.style.transition = 'transform 0.3s ease';
-                                                        });
+                                                // Add hover effects to product cards
+                                                const productCards = document.querySelectorAll('.product-card');
+                                                productCards.forEach(card => {
+                                                    card.addEventListener('mouseenter', function () {
+                                                        this.style.transform = 'translateY(-5px)';
+                                                        this.style.transition = 'transform 0.3s ease';
+                                                    });
 
-                                                        card.addEventListener('mouseleave', function () {
-                                                            this.style.transform = 'translateY(0)';
-                                                        });
+                                                    card.addEventListener('mouseleave', function () {
+                                                        this.style.transform = 'translateY(0)';
                                                     });
                                                 });
+                                            });
 
-                                                // Add keyboard support for quantity inputs
-                                                document.addEventListener('DOMContentLoaded', function () {
-                                                    const quantityInputs = document.querySelectorAll('[id^="quantity_"]');
-                                                    quantityInputs.forEach(input => {
-                                                        input.addEventListener('keypress', function (e) {
-                                                            if (e.key === 'Enter') {
-                                                                const productId = this.id.split('_')[1];
-                                                                const productCard = this.closest('.product-card');
-                                                                const productName = productCard.querySelector('.card-title').textContent;
-                                                                const productPrice = parseFloat(productCard.querySelector('.price').textContent.replace(',', '')); // Sửa lỗi dấu ngoặc
-                                                                addToCart(parseInt(productId), productName, productPrice);
-                                                            }
-                                                        });
+                                            // Add keyboard support for quantity inputs
+                                            document.addEventListener('DOMContentLoaded', function () {
+                                                const quantityInputs = document.querySelectorAll('[id^="quantity_"]');
+                                                quantityInputs.forEach(input => {
+                                                    input.addEventListener('keypress', function (e) {
+                                                        if (e.key === 'Enter') {
+                                                            const productId = this.id.split('_')[1];
+                                                            const productCard = this.closest('.product-card');
+                                                            const productName = productCard.querySelector('.card-title').textContent;
+                                                            const productPrice = parseFloat(productCard.querySelector('.price').textContent.replace(',', '')); // Sửa lỗi dấu ngoặc
+                                                            addToCart(parseInt(productId), productName, productPrice);
+                                                        }
+                                                    });
 
-                                                        input.addEventListener('change', function () {
-                                                            let value = parseInt(this.value);
-                                                            if (isNaN(value) || value < 1) {
-                                                                value = 1;
-                                                            }
-                                                            if (value > 99) {
-                                                                value = 99;
-                                                            }
-                                                            this.value = value;
-                                                        });
+                                                    input.addEventListener('change', function () {
+                                                        let value = parseInt(this.value);
+                                                        if (isNaN(value) || value < 1) {
+                                                            value = 1;
+                                                        }
+                                                        if (value > 99) {
+                                                            value = 99;
+                                                        }
+                                                        this.value = value;
                                                     });
                                                 });
+                                            });
         </script>
 
 
