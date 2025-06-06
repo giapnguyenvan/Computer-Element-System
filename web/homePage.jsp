@@ -130,10 +130,10 @@
                 <div class="collapse navbar-collapse" id="navbarNav">
                     <ul class="navbar-nav me-auto">
                         <li class="nav-item dropdown">
-                            <a class="nav-link dropdown-toggle" href="#" data-bs-toggle="dropdown">
+                            <a class="nav-link dropdown-toggle" href="#" role="button" id="productsDropdown" data-bs-toggle="dropdown" aria-expanded="false">
                                 All Products
                             </a>
-                            <ul class="dropdown-menu">
+                            <ul class="dropdown-menu" aria-labelledby="productsDropdown">
                                 <li><a class="dropdown-item" href="#">CPUs</a></li>
                                 <li><a class="dropdown-item" href="#">Motherboards</a></li>
                                 <li><a class="dropdown-item" href="#">Graphics Cards</a></li>
@@ -167,10 +167,10 @@
                             <c:when test="${not empty sessionScope.userAuth}">
                                 <!-- User Dropdown -->
                                 <div class="dropdown me-3">
-                                    <button class="btn btn-outline-primary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                    <a class="btn btn-outline-primary dropdown-toggle" href="#" role="button" id="userDropdown" data-bs-toggle="dropdown" aria-expanded="false">
                                         <i class="fas fa-user me-1"></i> ${sessionScope.user_name}
-                                    </button>
-                                    <ul class="dropdown-menu dropdown-menu-end">
+                                    </a>
+                                    <ul class="dropdown-menu dropdown-menu-end shadow" aria-labelledby="userDropdown">
                                         <c:if test="${sessionScope.user_role eq 'admin'}">
                                             <li>
                                                 <a class="dropdown-item text-primary" href="${pageContext.request.contextPath}/adminDashboard.jsp">
@@ -178,7 +178,7 @@
                                                 </a>
                                             </li>
                                             <li><hr class="dropdown-divider"></li>
-                                            </c:if>
+                                        </c:if>
                                         <li>
                                             <c:choose>
                                                 <c:when test="${sessionScope.user_role eq 'admin'}">
@@ -434,6 +434,95 @@
 
         <!-- Bootstrap JS -->
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+        <!-- Initialize Bootstrap Components -->
+        <script>
+            // Function to initialize dropdowns
+            function initializeDropdowns() {
+                try {
+                    // Check if Bootstrap is loaded
+                    if (typeof bootstrap === 'undefined') {
+                        console.error('Bootstrap is not loaded properly');
+                        return;
+                    }
+
+                    // Initialize all dropdowns
+                    const dropdownElementList = document.querySelectorAll('[data-bs-toggle="dropdown"]');
+                    if (dropdownElementList.length === 0) {
+                        console.warn('No dropdown elements found');
+                        return;
+                    }
+
+                    dropdownElementList.forEach(dropdownToggle => {
+                        try {
+                            // Remove any existing dropdown instance
+                            const existingDropdown = bootstrap.Dropdown.getInstance(dropdownToggle);
+                            if (existingDropdown) {
+                                existingDropdown.dispose();
+                            }
+
+                            // Create new dropdown instance
+                            const dropdown = new bootstrap.Dropdown(dropdownToggle);
+                            
+                            // Add click handler
+                            dropdownToggle.addEventListener('click', function(e) {
+                                e.preventDefault();
+                                e.stopPropagation();
+                                dropdown.toggle();
+                            });
+
+                            // Debug info
+                            console.log('Dropdown initialized:', dropdownToggle.id);
+                        } catch (err) {
+                            console.error('Error initializing dropdown:', err);
+                        }
+                    });
+
+                    // Add hover functionality
+                    const dropdownMenus = document.querySelectorAll('.dropdown');
+                    dropdownMenus.forEach(dropdown => {
+                        const toggle = dropdown.querySelector('[data-bs-toggle="dropdown"]');
+                        
+                        dropdown.addEventListener('mouseenter', function() {
+                            const instance = bootstrap.Dropdown.getInstance(toggle);
+                            if (instance) {
+                                instance.show();
+                            } else {
+                                new bootstrap.Dropdown(toggle).show();
+                            }
+                        });
+                        
+                        dropdown.addEventListener('mouseleave', function() {
+                            const instance = bootstrap.Dropdown.getInstance(toggle);
+                            if (instance) {
+                                instance.hide();
+                            }
+                        });
+                    });
+
+                    // Log total number of dropdowns
+                    console.log('Total dropdowns found:', dropdownElementList.length);
+                    
+                } catch (err) {
+                    console.error('Error in dropdown initialization:', err);
+                }
+            }
+
+            // Initialize on DOMContentLoaded
+            document.addEventListener('DOMContentLoaded', initializeDropdowns);
+
+            // Re-initialize on dynamic content changes
+            const observer = new MutationObserver(function(mutations) {
+                mutations.forEach(function(mutation) {
+                    if (mutation.addedNodes.length || mutation.removedNodes.length) {
+                        initializeDropdowns();
+                    }
+                });
+            });
+
+            // Start observing the document with the configured parameters
+            observer.observe(document.body, { childList: true, subtree: true });
+        </script>
 
         <!-- Custom JavaScript for Cart Functionality -->
         <script>
