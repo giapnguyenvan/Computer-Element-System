@@ -107,7 +107,7 @@
                         <td>${product.id}</td>
                         <td>${product.name}</td>
                         <td>${product.brand}</td>
-                        <td>${product.category_id}</td>
+                        <td>${product.categoryName}</td>
                         <td>${product.price}</td>
                         <td>${product.stock}</td>
                         <td><img src="${product.image_url}" alt="${product.name}" width="100" /></td>

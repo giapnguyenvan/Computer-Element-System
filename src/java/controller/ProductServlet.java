@@ -51,7 +51,7 @@ public class ProductServlet extends HttpServlet {
                     String order = request.getParameter("order");
 
                     if (sortBy == null || order == null || order.equals("none")) {
-                        plist = dao.getAllProduct();
+                        plist = dao.getAllProductWithCategoryName();
                     } else {
                         plist = dao.getSortedProduct(sortBy, order); // You’ll need to create this method
                     }

@@ -140,6 +140,36 @@
             .dropdown-menu.show {
                 display: block !important;
             }
+
+            .quantity-selector {
+                display: flex;
+                border: 1px solid #ccc;
+                border-radius: 4px;
+                overflow: hidden;
+                width: 120px;
+                height: 36px;
+                background: #fff;
+            }
+            .qty-btn {
+                width: 36px;
+                border: none;
+                background: none;
+                font-size: 1.25rem;
+                color: #333;
+                cursor: pointer;
+                outline: none;
+                transition: background 0.2s;
+            }
+            .qty-btn:hover {
+                background: #f0f0f0;
+            }
+            .qty-input {
+                width: 48px;
+                border: none;
+                outline: none;
+                font-size: 1.25rem;
+                background: none;
+            }
         </style>
     </head>
     <body>
@@ -357,37 +387,21 @@
                                     </div>
                                 </a>       
 
-
-                                <!-- Add to Cart Button -->
-                                <div class="d-grid gap-2">
-                                    <!-- View Feedback Button -->
-                                    <button class="btn btn-outline-secondary" 
-                                            onclick="viewFeedback(${product.id})"
-                                            id="feedbackBtn_${product.id}">
-                                        <i class="fas fa-comments me-2"></i>View Feedback
-                                    </button>
-                                    
-                                    <button class="btn btn-primary" 
-                                            onclick="addToCart(${product.id}, '${product.name}', ${product.price})"
-                                            id="addBtn_${product.id}">
-                                        <i class="fas fa-cart-plus me-2"></i>Add to Cart
-                                    </button>
-                                </div>
-
                                 <!-- Quantity Selector -->
-                                <div class="quantity-section">
-                                    <label>Quantity:</label>
-                                    <div class="input-group">
-                                        <button class="btn btn-outline-secondary" type="button" onclick="changeQuantity(${product.id}, -1)">
-                                            <i class="fas fa-minus"></i>
-                                        </button>
-                                        <input type="number" class="form-control text-center" 
-                                               id="quantity_${product.id}" value="1" min="1" max="99">
-                                        <button class="btn btn-outline-secondary" type="button" onclick="changeQuantity(${product.id}, 1)">
-                                            <i class="fas fa-plus"></i>
-                                        </button>
+                                <div class="d-flex align-items-center mb-3">
+                                    <div class="quantity-selector" style="width: 120px; margin: 0 auto;">
+                                        <button type="button" class="qty-btn" onclick="changeQuantity(${product.id}, -1)">-</button>
+                                        <input type="number" id="quantity_${product.id}" value="1" min="1" max="99" class="qty-input" style="text-align:center;">
+                                        <button type="button" class="qty-btn" onclick="changeQuantity(${product.id}, 1)">+</button>
                                     </div>
                                 </div>
+
+                                <!-- Add to Cart Button -->
+                                <button class="btn btn-primary w-100" 
+                                        onclick="addToCart(${product.id}, '${product.name}', ${product.price})"
+                                        id="addBtn_${product.id}">
+                                    <i class="fas fa-cart-plus me-2"></i>Add to Cart
+                                </button>
                             </div>
                         </div>
                     </c:forEach>
