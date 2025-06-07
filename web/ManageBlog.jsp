@@ -11,6 +11,7 @@
         .blog-card {
             margin-bottom: 20px;
             transition: transform 0.2s;
+            cursor: pointer;
         }
         .blog-card:hover {
             transform: translateY(-5px);
@@ -37,6 +38,10 @@
             max-height: 150px;
             overflow: hidden;
             text-overflow: ellipsis;
+        }
+        .modal-content {
+            max-height: 90vh;
+            overflow-y: auto;
         }
     </style>
 </head>
@@ -107,7 +112,7 @@
             <c:forEach items="${blogList}" var="blog">
                 <div class="col-md-6 col-lg-4 mb-4">
                     <div class="card blog-card h-100">
-                        <div class="card-body">
+                        <div class="card-body" onclick="showBlogContent('${fn:escapeXml(blog.title)}', '${fn:escapeXml(blog.content)}', '${userNames[blog.user_id]}', '${blog.created_at}', '${blog.updated_at}')">
                             <h5 class="card-title">${blog.title}</h5>
                             <div class="blog-meta mb-2">
                                 <small>
@@ -116,13 +121,7 @@
                                 </small>
                             </div>
                             <div class="blog-content">
-                                <p class="card-text">
-                                    ${fn:substring(blog.content, 0, 100)}
-                                    ${fn:length(blog.content) > 100 ? '...' : ''}
-                                </p>
-                                <c:if test="${fn:length(blog.content) > 100}">
-                                    <button class="btn btn-link p-0" onclick="showFullContent(this, '${fn:escapeXml(blog.content)}')">Read More</button>
-                                </c:if>
+                                <p class="card-text">${blog.content}</p>
                             </div>
                             <div class="blog-meta">
                                 <small>Author: ${userNames[blog.user_id]}</small>
@@ -249,19 +248,47 @@
         </div>
     </div>
 
+    <!-- Blog Content Modal -->
+    <div class="modal fade" id="blogContentModal" tabindex="-1">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="modalBlogTitle"></h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="blog-meta mb-3">
+                        <small>
+                            Author: <span id="modalBlogAuthor"></span><br>
+                            Created: <span id="modalBlogCreated"></span><br>
+                            Updated: <span id="modalBlogUpdated"></span>
+                        </small>
+                    </div>
+                    <div id="modalBlogContent" style="white-space: pre-wrap;"></div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
     <script>
-        function showFullContent(button, content) {
-            const contentDiv = button.closest('.blog-content');
-            const paragraph = contentDiv.querySelector('p');
+        function showBlogContent(title, content, author, created, updated) {
+            document.getElementById('modalBlogTitle').textContent = decodeHtml(title);
+            document.getElementById('modalBlogContent').textContent = decodeHtml(content);
+            document.getElementById('modalBlogAuthor').textContent = decodeHtml(author);
+            document.getElementById('modalBlogCreated').textContent = created;
+            document.getElementById('modalBlogUpdated').textContent = updated;
             
-            if (button.textContent === 'Read More') {
-                paragraph.textContent = decodeHtml(content);
-                button.textContent = 'Show Less';
-            } else {
-                paragraph.textContent = decodeHtml(content).substring(0, 100) + '...';
-                button.textContent = 'Read More';
-            }
+            new bootstrap.Modal(document.getElementById('blogContentModal')).show();
+        }
+        
+        function decodeHtml(html) {
+            var txt = document.createElement("textarea");
+            txt.innerHTML = html;
+            return txt.value;
         }
         
         function editBlog(id, title, content, userId) {
@@ -269,12 +296,6 @@
             document.getElementById('edit_title').value = decodeHtml(title);
             document.getElementById('edit_content').value = decodeHtml(content);
             document.getElementById('edit_user_id').value = userId;
-        }
-        
-        function decodeHtml(html) {
-            var txt = document.createElement("textarea");
-            txt.innerHTML = html;
-            return txt.value;
         }
         
         function confirmDelete(blogId, userId) {
