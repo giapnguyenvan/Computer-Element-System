@@ -1,5 +1,6 @@
 <%@ page contentType="text/html" pageEncoding="UTF-8"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 <!DOCTYPE html>
 <html>
 <head>
@@ -103,7 +104,13 @@
                                 </small>
                             </div>
                             <div class="blog-content">
-                                <p class="card-text">${blog.content}</p>
+                                <p class="card-text">
+                                    ${fn:substring(blog.content, 0, 100)}
+                                    ${fn:length(blog.content) > 100 ? '...' : ''}
+                                </p>
+                                <c:if test="${fn:length(blog.content) > 100}">
+                                    <button class="btn btn-link p-0" onclick="showFullContent(this, '${fn:escapeXml(blog.content)}')">Read More</button>
+                                </c:if>
                             </div>
                             <div class="blog-meta">
                                 <small>Author: ${userNames[blog.user_id]}</small>
@@ -151,5 +158,25 @@
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        function showFullContent(button, content) {
+            const contentDiv = button.closest('.blog-content');
+            const paragraph = contentDiv.querySelector('p');
+            
+            if (button.textContent === 'Read More') {
+                paragraph.textContent = decodeHtml(content);
+                button.textContent = 'Show Less';
+            } else {
+                paragraph.textContent = decodeHtml(content).substring(0, 100) + '...';
+                button.textContent = 'Read More';
+            }
+        }
+        
+        function decodeHtml(html) {
+            var txt = document.createElement("textarea");
+            txt.innerHTML = html;
+            return txt.value;
+        }
+    </script>
 </body>
 </html>
