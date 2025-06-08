@@ -98,7 +98,7 @@
         <div class="row">
             <c:forEach items="${blogList}" var="blog">
                 <div class="col-md-6 col-lg-4 mb-4">
-                    <div class="card blog-card h-100" onclick="showBlogContent('${fn:escapeXml(blog.title)}', '${fn:escapeXml(blog.content)}', '${userNames[blog.user_id]}', '${blog.created_at}', '${blog.updated_at}')">
+                    <div class="card blog-card h-100">
                         <div class="card-body">
                             <h5 class="card-title">${blog.title}</h5>
                             <div class="blog-meta mb-2">
@@ -107,8 +107,22 @@
                                     Updated: ${blog.updated_at}
                                 </small>
                             </div>
+                            <div class="blog-content">
+                                <p class="card-text">${fn:substring(blog.content, 0, 200)}${fn:length(blog.content) > 200 ? '...' : ''}</p>
+                            </div>
                             <div class="blog-meta">
                                 <small>Author: ${userNames[blog.user_id]}</small>
+                            </div>
+                            <div class="mt-3">
+                                <button type="button" class="btn btn-sm btn-info" 
+                                        onclick="showBlogContent(this)" 
+                                        data-title="${fn:escapeXml(blog.title)}"
+                                        data-content="${fn:escapeXml(blog.content)}"
+                                        data-author="${fn:escapeXml(userNames[blog.user_id])}"
+                                        data-created="${blog.created_at}"
+                                        data-updated="${blog.updated_at}">
+                                    View Details
+                                </button>
                             </div>
                         </div>
                     </div>
@@ -179,20 +193,20 @@
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
     <script>
-        function showBlogContent(title, content, author, created, updated) {
-            document.getElementById('modalBlogTitle').textContent = decodeHtml(title);
-            document.getElementById('modalBlogContent').textContent = decodeHtml(content);
-            document.getElementById('modalBlogAuthor').textContent = decodeHtml(author);
+        function showBlogContent(element) {
+            const title = element.getAttribute('data-title');
+            const content = element.getAttribute('data-content');
+            const author = element.getAttribute('data-author');
+            const created = element.getAttribute('data-created');
+            const updated = element.getAttribute('data-updated');
+            
+            document.getElementById('modalBlogTitle').textContent = title;
+            document.getElementById('modalBlogContent').textContent = content;
+            document.getElementById('modalBlogAuthor').textContent = author;
             document.getElementById('modalBlogCreated').textContent = created;
             document.getElementById('modalBlogUpdated').textContent = updated;
             
             new bootstrap.Modal(document.getElementById('blogContentModal')).show();
-        }
-        
-        function decodeHtml(html) {
-            var txt = document.createElement("textarea");
-            txt.innerHTML = html;
-            return txt.value;
         }
     </script>
 </body>
