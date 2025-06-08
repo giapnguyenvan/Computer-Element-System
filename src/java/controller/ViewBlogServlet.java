@@ -241,21 +241,43 @@ public class ViewBlogServlet extends HttpServlet {
 
     private void viewBlog(HttpServletRequest request, HttpServletResponse response)
     throws ServletException, IOException {
-        // Implementation of viewBlog method
+        try {
+            int blogId = Integer.parseInt(request.getParameter("id"));
+            Blog blog = blogDAO.getBlogById(blogId);
+            
+            if (blog != null) {
+                // Get user information
+                User user = userDAO.getUserById(blog.getUser_id());
+                request.setAttribute("blog", blog);
+                request.setAttribute("author", user != null ? user.getFullname() : "Unknown User");
+                
+                // Forward to the view blogs page with the modal open
+                request.getRequestDispatcher("viewblogs.jsp").forward(request, response);
+            } else {
+                request.getSession().setAttribute("error", "Blog not found");
+                response.sendRedirect(request.getContextPath() + "/viewblogs");
+            }
+        } catch (Exception ex) {
+            request.getSession().setAttribute("error", "Error viewing blog: " + ex.getMessage());
+            response.sendRedirect(request.getContextPath() + "/viewblogs");
+        }
     }
 
     private void addBlog(HttpServletRequest request, HttpServletResponse response)
     throws ServletException, IOException {
-        // Implementation of addBlog method
+        // Implementation not needed for view servlet
+        response.sendRedirect(request.getContextPath() + "/viewblogs");
     }
 
     private void updateBlog(HttpServletRequest request, HttpServletResponse response)
     throws ServletException, IOException {
-        // Implementation of updateBlog method
+        // Implementation not needed for view servlet
+        response.sendRedirect(request.getContextPath() + "/viewblogs");
     }
 
     private void deleteBlog(HttpServletRequest request, HttpServletResponse response)
     throws ServletException, IOException {
-        // Implementation of deleteBlog method
+        // Implementation not needed for view servlet
+        response.sendRedirect(request.getContextPath() + "/viewblogs");
     }
 }

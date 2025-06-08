@@ -11,6 +11,7 @@
         .blog-card {
             margin-bottom: 20px;
             transition: transform 0.2s;
+            cursor: pointer;
         }
         .blog-card:hover {
             transform: translateY(-5px);
@@ -37,6 +38,10 @@
             max-height: 150px;
             overflow: hidden;
             text-overflow: ellipsis;
+        }
+        .modal-content {
+            max-height: 90vh;
+            overflow-y: auto;
         }
     </style>
 </head>
@@ -81,7 +86,7 @@
         
         <!-- Filter Section -->
         <div class="filter-section">
-            <form action="viewblogs" method="GET" class="row g-3">
+            <form action="manageblogs" method="GET" class="row g-3">
                 <div class="col-md-4">
                     <label class="form-label">Sort By:</label>
                     <select name="sortBy" class="form-select" onchange="this.form.submit()">
@@ -116,17 +121,29 @@
                                 </small>
                             </div>
                             <div class="blog-content">
-                                <p class="card-text">${blog.content}</p>
+                                <p class="card-text">${fn:substring(blog.content, 0, 200)}${fn:length(blog.content) > 200 ? '...' : ''}</p>
                             </div>
                             <div class="blog-meta">
                                 <small>Author: ${userNames[blog.user_id]}</small>
                             </div>
-                        </div>
-                        <div class="card-footer bg-transparent">
-                            <div class="d-flex justify-content-between">
+                            <div class="mt-3">
+                                <button type="button" class="btn btn-sm btn-info" 
+                                        onclick="showBlogContent(this)" 
+                                        data-title="${fn:escapeXml(blog.title)}"
+                                        data-content="${fn:escapeXml(blog.content)}"
+                                        data-author="${fn:escapeXml(userNames[blog.user_id])}"
+                                        data-created="${blog.created_at}"
+                                        data-updated="${blog.updated_at}">
+                                    View Details
+                                </button>
                                 <button type="button" class="btn btn-sm btn-primary" 
-                                        onclick="editBlog(${blog.id}, '${fn:escapeXml(blog.title)}', '${fn:escapeXml(blog.content)}', ${blog.user_id})"
-                                        data-bs-toggle="modal" data-bs-target="#editBlogModal">
+                                        onclick="editBlog(this)"
+                                        data-id="${blog.id}"
+                                        data-title="${fn:escapeXml(blog.title)}"
+                                        data-content="${fn:escapeXml(blog.content)}"
+                                        data-user-id="${blog.user_id}"
+                                        data-bs-toggle="modal" 
+                                        data-bs-target="#editBlogModal">
                                     Edit
                                 </button>
                                 <button type="button" class="btn btn-sm btn-danger" 
@@ -153,17 +170,17 @@
             <nav aria-label="Blog pagination">
                 <ul class="pagination justify-content-center">
                     <li class="page-item ${currentPage == 1 ? 'disabled' : ''}">
-                        <a class="page-link" href="viewblogs?page=${currentPage - 1}&sortBy=${param.sortBy}&search=${param.search}">Previous</a>
+                        <a class="page-link" href="manageblogs?page=${currentPage - 1}&sortBy=${param.sortBy}&search=${param.search}">Previous</a>
                     </li>
                     
                     <c:forEach begin="1" end="${totalPages}" var="i">
                         <li class="page-item ${currentPage == i ? 'active' : ''}">
-                            <a class="page-link" href="viewblogs?page=${i}&sortBy=${param.sortBy}&search=${param.search}">${i}</a>
+                            <a class="page-link" href="manageblogs?page=${i}&sortBy=${param.sortBy}&search=${param.search}">${i}</a>
                         </li>
                     </c:forEach>
                     
                     <li class="page-item ${currentPage == totalPages ? 'disabled' : ''}">
-                        <a class="page-link" href="viewblogs?page=${currentPage + 1}&sortBy=${param.sortBy}&search=${param.search}">Next</a>
+                        <a class="page-link" href="manageblogs?page=${currentPage + 1}&sortBy=${param.sortBy}&search=${param.search}">Next</a>
                     </li>
                 </ul>
             </nav>
@@ -243,26 +260,66 @@
         </div>
     </div>
 
+    <!-- Blog Content Modal -->
+    <div class="modal fade" id="blogContentModal" tabindex="-1">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="modalBlogTitle"></h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="blog-meta mb-3">
+                        <small>
+                            Author: <span id="modalBlogAuthor"></span><br>
+                            Created: <span id="modalBlogCreated"></span><br>
+                            Updated: <span id="modalBlogUpdated"></span>
+                        </small>
+                    </div>
+                    <div id="modalBlogContent" style="white-space: pre-wrap;"></div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
     <script>
-        function editBlog(id, title, content, userId) {
-            document.getElementById('edit_blog_id').value = id;
-            document.getElementById('edit_title').value = decodeHtml(title);
-            document.getElementById('edit_content').value = decodeHtml(content);
-            document.getElementById('edit_user_id').value = userId;
+        function showBlogContent(element) {
+            const title = element.getAttribute('data-title');
+            const content = element.getAttribute('data-content');
+            const author = element.getAttribute('data-author');
+            const created = element.getAttribute('data-created');
+            const updated = element.getAttribute('data-updated');
+            
+            document.getElementById('modalBlogTitle').textContent = title;
+            document.getElementById('modalBlogContent').textContent = content;
+            document.getElementById('modalBlogAuthor').textContent = author;
+            document.getElementById('modalBlogCreated').textContent = created;
+            document.getElementById('modalBlogUpdated').textContent = updated;
+            
+            new bootstrap.Modal(document.getElementById('blogContentModal')).show();
         }
         
-        function decodeHtml(html) {
-            var txt = document.createElement("textarea");
-            txt.innerHTML = html;
-            return txt.value;
+        function editBlog(element) {
+            const id = element.getAttribute('data-id');
+            const title = element.getAttribute('data-title');
+            const content = element.getAttribute('data-content');
+            const userId = element.getAttribute('data-user-id');
+            
+            document.getElementById('edit_blog_id').value = id;
+            document.getElementById('edit_title').value = title;
+            document.getElementById('edit_content').value = content;
+            document.getElementById('edit_user_id').value = userId;
         }
         
         function confirmDelete(blogId, userId) {
             if (confirm('Are you sure you want to delete this blog?')) {
                 const form = document.createElement('form');
                 form.method = 'POST';
-                form.action = '${pageContext.request.contextPath}/CES/Blog_control';
+                form.action = 'manageblogs';
                 
                 const actionInput = document.createElement('input');
                 actionInput.type = 'hidden';
