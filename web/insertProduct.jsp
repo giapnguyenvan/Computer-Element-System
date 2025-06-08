@@ -4,58 +4,71 @@
 <html>
 <head>
     <title>Add New Product</title>
-    <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/CSS/update.css"> 
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <style>
-        .product-img { max-width: 150px; margin-bottom: 10px; }
-        .delete-form { margin-top: 20px; }
-        .delete-button { background-color: red; color: white; border: none; padding: 10px; cursor: pointer; }
-        label { display: block; margin-top: 10px; }
-        input, select, textarea { width: 100%; padding: 8px; margin-top: 5px; }
-        button { margin-top: 15px; padding: 10px 20px; }
+        .product-img {
+            max-width: 150px;
+            margin-bottom: 10px;
+        }
     </style>
 </head>
 <body>
-    <div class="container">
-        <h2>Add New Product</h2>
+<div class="container my-5">
+    <h2 class="mb-4">Add New Product</h2>
 
-        <!-- ADD PRODUCT FORM -->
-        <form action="productservlet?service=insertProduct" method="post" class="edit-form">
+    <!-- ADD PRODUCT FORM -->
+    <form action="productservlet?service=insertProduct" method="post" novalidate>
+        <div class="mb-3">
+            <label for="name" class="form-label">Name:</label>
+            <input id="name" type="text" name="name" class="form-control" required />
+        </div>
 
-            <label>Name:</label>
-            <input type="text" name="name" required />
+        <div class="mb-3">
+            <label for="brand" class="form-label">Brand:</label>
+            <input id="brand" type="text" name="brand" class="form-control" required />
+        </div>
 
-            <label>Brand:</label>
-            <input type="text" name="brand" required />
+        <div class="mb-3">
+            <label for="category_id" class="form-label">Category ID:</label>
+            <input id="category_id" type="number" name="category_id" class="form-control" required />
+        </div>
 
-            <label>Category ID:</label>
-            <input type="number" name="category_id" required />
+        <div class="mb-3">
+            <label for="price" class="form-label">Price:</label>
+            <input id="price" type="number" step="0.01" name="price" class="form-control" required />
+        </div>
 
-            <label>Price:</label>
-            <input type="number" name="price" step="0.01" required />
+        <div class="mb-3">
+            <label for="stock" class="form-label">Stock:</label>
+            <input id="stock" type="number" name="stock" class="form-control" required />
+        </div>
 
-            <label>Stock:</label>
-            <input type="number" name="stock" required />
+        <div class="mb-3">
+            <label for="description" class="form-label">Description:</label>
+            <textarea id="description" name="description" rows="4" class="form-control"></textarea>
+        </div>
 
-            <label>Description:</label>
-            <textarea name="description" rows="4"></textarea>
+        <div class="mb-3">
+            <label for="spec_description" class="form-label">Spec Description:</label>
+            <textarea id="spec_description" name="spec_description" rows="4" class="form-control"></textarea>
+        </div>
 
-            <label>Spec Description:</label>
-            <textarea name="spec_description" rows="4"></textarea>
+        <div class="mb-3">
+            <label for="image_url" class="form-label">Image URL:</label>
+            <input id="image_url" type="text" name="image_url" class="form-control" required />
+        </div>
 
-            <label>Image URL:</label><br/>
-            <input type="text" name="image_url" required />
-
-            <label>Status:</label>
-            <select name="status" required>
+        <div class="mb-3">
+            <label for="status" class="form-label">Status:</label>
+            <select id="status" name="status" class="form-select" required>
                 <option value="Active">Active</option>
                 <option value="Inactive">Inactive</option>
             </select>
+        </div>
 
-            <button type="submit">Add Product</button>
-            <a href="productservlet?service=viewProduct" style="text-decoration:none;">
-                <button type="button" style="margin-left:10px;">Cancel</button>
-            </a>
-        </form>
-    </div>
+        <button type="submit" class="btn btn-primary">Add Product</button>
+        <a href="productservlet?service=viewProduct" class="btn btn-secondary ms-2">Cancel</a>
+    </form>
+</div>
 </body>
 </html>
