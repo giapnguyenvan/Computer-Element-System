@@ -159,7 +159,7 @@
                             "none".equals(getNextOrder("category_id", sortBy, order)) 
                             ? baseUrl 
                             : baseUrl + "&sortBy=category_id&order=" + getNextOrder("category_id", sortBy, order)
-                           %>">Category ID</a>
+                           %>">Category</a>
                     </th>
                     <th>
                         <a class="sort-link" href="<%= 
