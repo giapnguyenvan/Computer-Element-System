@@ -104,6 +104,8 @@
             }
 
         </style>
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+
     </head>
     <body>
         <div class="top-bar">
@@ -142,68 +144,125 @@
                 </form>
             </div>
         </div>
-        <table border="1" cellpadding="5" cellspacing="0">
-            <thead>
-                <tr>
-                    <th>
-                        <a class="sort-link" href="<%= 
-                            "none".equals(getNextOrder("id", sortBy, order)) 
-                            ? baseUrl 
-                            : baseUrl + "&sortBy=id&order=" + getNextOrder("id", sortBy, order)
-                           %>">Product ID</a>
-                    </th>
-                    <th>Name</th>
-                    <th>Brand</th>
-                    <th>
-                        <a class="sort-link" href="<%= 
-                            "none".equals(getNextOrder("category_id", sortBy, order)) 
-                            ? baseUrl 
-                            : baseUrl + "&sortBy=category_id&order=" + getNextOrder("category_id", sortBy, order)
-                           %>">Category</a>
-                    </th>
-                    <th>
-                        <a class="sort-link" href="<%= 
-                            "none".equals(getNextOrder("price", sortBy, order)) 
-                            ? baseUrl 
-                            : baseUrl + "&sortBy=price&order=" + getNextOrder("price", sortBy, order)
-                           %>">Price</a>
-                    </th>
-                    <th>
-                        <a class="sort-link" href="<%= 
-                        "none".equals(getNextOrder("stock", sortBy, order)) 
-                        ? baseUrl 
-                        : baseUrl + "&sortBy=stock&order=" + getNextOrder("stock", sortBy, order)
-                           %>">Stock</a>
-                    </th>
-                    <th>Image</th>
-                    <th>Description</th>
-                    <th>Spec_description</th>
-                    <th>Status</th>
-                    <th>Action</th>
-                </tr>
-            </thead>
-            <tbody>
-                <c:forEach items="${product}" var="product">
-                    <tr>
-                        <td>${product.id}</td>
-                        <td>${product.name}</td>
-                        <td>${product.brand}</td>
-                        <td>${product.categoryName}</td>
-                        <td>${product.price}</td>
-                        <td>${product.stock}</td>
-                        <td><img src="${product.image_url}" alt="${product.name}" width="100" /></td>
-                        <td>${product.description}</td>
-                        <td>${product.spec_description}</td>
-                        <td>${product.status}</td>
 
-                        <td>
-                            <a href="productservlet?service=updateProduct&id=${product.id}" style="padding: 5px 10px; background-color: #4CAF50; color: white; text-decoration: none; border-radius: 3px;">
-                                Edit
-                            </a>
-                        </td>
-                    </tr>
-                </c:forEach>
-            </tbody>
-        </table>
+        <div class="col-sm-12">
+            <div class="bg-light rounded p-4">
+                <table class="table table-striped table-hover align-middle">
+                    <thead class="table-light">
+                        <tr class="text-center">
+                            <th class="text-center">
+                                <a class="sort-link" href="<%= 
+                                    "none".equals(getNextOrder("id", sortBy, order)) 
+                                    ? baseUrl 
+                                    : baseUrl + "&sortBy=id&order=" + getNextOrder("id", sortBy, order)
+                                   %>">
+                                    Product ID
+                                    <c:choose>
+                                        <c:when test="${param.sortBy eq 'id'}">
+                                            <c:choose>
+                                                <c:when test="${param.order eq 'asc'}"> ↑</c:when>
+                                                <c:when test="${param.order eq 'desc'}"> ↓</c:when>
+                                            </c:choose>
+                                        </c:when>
+                                        <c:otherwise>
+                                            <!-- Two-way arrow when NOT sorted -->
+                                            ⇅
+                                        </c:otherwise>
+                                    </c:choose>
+                                </a>
+                            </th>
+                            <th>Name</th>
+                            <th>Brand</th>
+                            <th><a class="sort-link text-decoration-none text-primary fw-bold" 
+                                   href="<%= 
+                                       "none".equals(getNextOrder("category_id", sortBy, order)) 
+                                       ? baseUrl 
+                                       : baseUrl + "&sortBy=category_id&order=" + getNextOrder("category_id", sortBy, order) 
+                                   %>">Category
+                                    <c:choose>
+                                        <c:when test="${param.sortBy eq 'category_id'}">
+                                            <c:choose>
+                                                <c:when test="${param.order eq 'asc'}"> ↑</c:when>
+                                                <c:when test="${param.order eq 'desc'}"> ↓</c:when>
+                                            </c:choose>
+                                        </c:when>
+                                        <c:otherwise>
+                                            <!-- Two-way arrow when NOT sorted -->
+                                            ⇅
+                                        </c:otherwise>
+                                    </c:choose></a>
+                            </th>
+                            <th><a class="sort-link text-decoration-none text-primary fw-bold" 
+                                   href="<%= 
+                                       "none".equals(getNextOrder("price", sortBy, order)) 
+                                       ? baseUrl 
+                                       : baseUrl + "&sortBy=price&order=" + getNextOrder("price", sortBy, order) 
+                                   %>">Price
+                                    <c:choose>
+                                        <c:when test="${param.sortBy eq 'price'}">
+                                            <c:choose>
+                                                <c:when test="${param.order eq 'asc'}"> ↑</c:when>
+                                                <c:when test="${param.order eq 'desc'}"> ↓</c:when>
+                                            </c:choose>
+                                        </c:when>
+                                        <c:otherwise>
+                                            <!-- Two-way arrow when NOT sorted -->
+                                            ⇅
+                                        </c:otherwise>
+                                    </c:choose>
+                                </a>
+                            </th>
+                            <th><a class="sort-link text-decoration-none text-primary fw-bold" 
+                                   href="<%= 
+                                       "none".equals(getNextOrder("stock", sortBy, order)) 
+                                       ? baseUrl 
+                                       : baseUrl + "&sortBy=stock&order=" + getNextOrder("stock", sortBy, order) 
+                                   %>">Stock
+                                    <c:choose>
+                                        <c:when test="${param.sortBy eq 'stock'}">
+                                            <c:choose>
+                                                <c:when test="${param.order eq 'asc'}"> ↑</c:when>
+                                                <c:when test="${param.order eq 'desc'}"> ↓</c:when>
+                                            </c:choose>
+                                        </c:when>
+                                        <c:otherwise>
+                                            <!-- Two-way arrow when NOT sorted -->
+                                            ⇅
+                                        </c:otherwise>
+                                    </c:choose>
+                                </a>
+                            </th>
+                            <th>Image</th>
+                            <th>Description</th>
+                            <th>Spec</th>
+                            <th>Status</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <c:forEach items="${product}" var="product">
+                            <tr>
+                                <td>${product.id}</td>
+                                <td>${product.name}</td>
+                                <td>${product.brand}</td>
+                                <td>${product.categoryName}</td>
+                                <td>${product.price}</td>
+                                <td>${product.stock}</td>
+                                <td><img src="${product.image_url}" alt="${product.name}" class="img-thumbnail" style="max-width: 100px;"></td>
+                                <td>${product.description}</td>
+                                <td>${product.spec_description}</td>
+                                <td>${product.status}</td>
+                                <td>
+                                    <a href="productservlet?service=updateProduct&id=${product.id}" class="btn btn-success btn-sm">
+                                        Edit
+                                    </a>
+                                </td>
+                            </tr>
+                        </c:forEach>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
     </body>
 </html>
