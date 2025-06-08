@@ -596,7 +596,7 @@
         <script>
                                             // Global variables
                                             let cartCount = 0;
-                                            const currentUserId = ${sessionScope.userAuth.id}; // Thay đổi theo user đang đăng nhập
+                                            const currentUserId = ${sessionScope.userAuth2.id}; // Thay đổi theo user đang đăng nhập
 
                                             // Function to change quantity
                                             function changeQuantity(productId, change) {
@@ -628,7 +628,7 @@
                                                         productId: productId,
                                                         quantity: quantity
                                                     }));
-                                                    const response = await fetch('http://localhost:9999/Project_G2/CartApiServlet', {
+                                                    const response = await fetch('http://localhost:9999/CES/CartApiServlet', {
                                                         method: 'POST',
                                                         headers: {
                                                             'Content-Type': 'application/json'
