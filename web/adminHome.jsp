@@ -81,7 +81,7 @@
     document.body.classList.add('admin-home-bg');
 </script>
 <div class="admin-home-card">
-    <img src="https://cdn-icons-png.flaticon.com/512/3135/3135715.png" alt="Admin Home" class="admin-home-avatar">
+    <img src="${pageContext.request.contextPath}/assets/admin-avartar.png.jpg" alt="Admin Avatar" class="admin-home-avatar">
     <div class="admin-home-title">Welcome, <span>${user.fullname}</span>!</div>
     <div class="admin-home-desc">
         You are at the main administration page of the <b>CES</b> system.<br>
