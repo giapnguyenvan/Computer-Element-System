@@ -21,7 +21,7 @@ public class ViewFeedbackServlet extends HttpServlet {
         feedbackDAO = new FeedbackDAO();
     }
 
-    protected void processRequest(HttpServletRequest request, HttpServletResponse response)
+    public void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         response.setContentType("text/html;charset=UTF-8");
         
@@ -104,13 +104,13 @@ public class ViewFeedbackServlet extends HttpServlet {
     }
 
     @Override
-    protected void doGet(HttpServletRequest request, HttpServletResponse response)
+    public void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         processRequest(request, response);
     }
 
     @Override
-    protected void doPost(HttpServletRequest request, HttpServletResponse response)
+    public void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         // View-only servlet doesn't handle POST requests
         response.sendRedirect(request.getContextPath() + "/viewfeedback");
