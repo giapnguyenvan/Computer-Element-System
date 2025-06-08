@@ -504,7 +504,7 @@
                                                         productId: productId,
                                                         quantity: quantity
                                                     }));
-                                                    const response = await fetch('http://localhost:9999/CES/CartApiServlet', {
+                                                    const response = await fetch('http://localhost:8080/CES/CartApiServlet', {
                                                         method: 'POST',
                                                         headers: {
                                                             'Content-Type': 'application/json'

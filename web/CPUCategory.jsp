@@ -109,7 +109,7 @@
                 addButton.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Adding...';
 
                 try {
-                    const response = await fetch('http://localhost:9999/Project_G2/CartApiServlet', {
+                    const response = await fetch('http://localhost:8080/Project_G2/CartApiServlet', {
                         method: 'POST',
                         headers: {
                             'Content-Type': 'application/json'
