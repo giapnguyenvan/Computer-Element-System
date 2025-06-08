@@ -75,13 +75,13 @@
                                     </a>
                                     <ul class="dropdown-menu dropdown-menu-end shadow" aria-labelledby="userDropdown">
                                         <li>
-                                            <a class="dropdown-item text-primary" href="${pageContext.request.contextPath}/adminDashboard.jsp">
+                                            <a class="dropdown-item text-primary" href="${pageContext.request.contextPath}/adminservlet">
                                                 <i class="fas fa-gauge-high me-2"></i>Admin Dashboard
                                             </a>
                                         </li>
                                         <li><hr class="dropdown-divider"></li>
                                         <li>
-                                            <a class="dropdown-item" href="${pageContext.request.contextPath}/adminDashboard.jsp">
+                                            <a class="dropdown-item" href="${pageContext.request.contextPath}/adminservlet">
                                                 <i class="fas fa-user-circle me-2"></i>Profile
                                             </a>
                                         </li>
