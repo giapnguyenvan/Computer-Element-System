@@ -12,11 +12,14 @@ Click nbfs://nbhost/SystemFileSystem/Templates/JSP_Servlet/CascadeStyleSheet.css
     --secondary-color: #6c757d;
     --accent-color: #ffc107;
     --topbar-height: 40px;
+    --navbar-height: 76px;
+    --total-header-height: calc(var(--topbar-height) + var(--navbar-height));
 }
 
-/* Add padding to body to prevent content from hiding under fixed navbar */
+/* Add padding to body to prevent content from hiding under fixed header */
 body {
-    padding-top: calc(76px + var(--topbar-height));
+    padding-top: var(--total-header-height);
+    margin: 0;
 }
 
 .top-bar {
@@ -29,13 +32,39 @@ body {
     top: 0;
     width: 100%;
     z-index: 1030;
+    margin: 0;
 }
 
 .hero-section {
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    background: linear-gradient(rgba(102, 126, 234, 0.8), rgba(118, 75, 162, 0.8)),
+                url('https://images.unsplash.com/photo-1518770660439-4636190af475?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80');
+    background-size: cover;
+    background-position: center;
+    background-attachment: fixed;
     color: white;
     padding: 100px 0;
-    margin-bottom: 50px;
+    margin: 0;
+    min-height: calc(100vh - var(--total-header-height));
+    display: flex;
+    align-items: center;
+    position: relative;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+.hero-section::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.4);
+    pointer-events: none;
+}
+
+.hero-section .container {
+    position: relative;
+    z-index: 1;
 }
 
 .feature-card {
@@ -160,6 +189,8 @@ footer {
 .navbar.fixed-top {
     box-shadow: 0 2px 10px rgba(0,0,0,0.1);
     top: var(--topbar-height);
+    height: var(--navbar-height);
+    margin: 0;
 }
 
 .navbar.fixed-top .navbar-brand {
