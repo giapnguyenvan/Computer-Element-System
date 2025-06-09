@@ -9,17 +9,27 @@
         <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
         <style>
             body {
-                padding-top: 120px; /* Add padding to prevent content from being hidden under fixed navbar */
+                padding-top: 110px; /* Giảm padding-top để top-bar và navbar dính vào nhau */
             }
             .top-bar {
                 background-color: #343a40;
                 color: white;
-                padding: 10px 0;
+                padding: 8px 0;
                 font-size: 0.9rem;
+                position: fixed;
+                top: 0;
+                left: 0;
+                right: 0;
+                z-index: 1030;
             }
             .navbar {
                 background-color: white;
                 box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+                position: fixed;
+                top: 37px; /* Chiều cao của top-bar */
+                left: 0;
+                right: 0;
+                z-index: 1020;
             }
             .navbar-brand {
                 font-size: 1.5rem;
@@ -35,6 +45,24 @@
             .dropdown-menu {
                 border: none;
                 box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            }
+            /* Chỉnh lại form search */
+            .navbar form.d-flex {
+                margin: 0;
+                align-items: center;
+            }
+            .navbar .input-group {
+                width: 100%;
+                align-items: center;
+            }
+            .navbar .form-control {
+                height: 38px;
+            }
+            .navbar .btn-outline-primary {
+                height: 38px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
             }
         </style>
     </head>
