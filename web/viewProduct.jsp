@@ -109,7 +109,7 @@
 
         </style>
         <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-
+        <link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/jquery.dataTables.min.css">
     </head>
     <body>
         <div class="top-bar">
@@ -148,91 +148,15 @@
 
         <div class="col-sm-12">
             <div class="bg-light rounded p-4">
-                <table class="table table-striped table-hover align-middle">
+                <table class="table table-striped table-hover align-middle display text-center" id="myTable">
                     <thead class="table-light">
                         <tr class="text-center">
-                            <th>
-                                <a class="sort-link" href="<%= 
-                                    "none".equals(getNextOrder("product_id", sortBy, order)) 
-                                    ? baseUrl 
-                                    : baseUrl + "&sortBy=id&order=" + getNextOrder("product_id", sortBy, order)
-                                   %>">
-                                    Product ID
-                                    <c:choose>
-                                        <c:when test="${param.sortBy eq 'id'}">
-                                            <c:choose>
-                                                <c:when test="${param.order eq 'asc'}"> ↑</c:when>
-                                                <c:when test="${param.order eq 'desc'}"> ↓</c:when>
-                                            </c:choose>
-                                        </c:when>
-                                        <c:otherwise>
-                                            <!-- Two-way arrow when NOT sorted -->
-                                            ⇅
-                                        </c:otherwise>
-                                    </c:choose>
-                                </a>
-                            </th>
+                            <th>Product ID</th>
                             <th>Name</th>
                             <th>Brand</th>
-                            <th><a class="sort-link text-decoration-none text-primary fw-bold" 
-                                   href="<%= 
-                                       "none".equals(getNextOrder("category_id", sortBy, order)) 
-                                       ? baseUrl 
-                                       : baseUrl + "&sortBy=category_id&order=" + getNextOrder("category_id", sortBy, order) 
-                                   %>">Category
-                                    <c:choose>
-                                        <c:when test="${param.sortBy eq 'category_id'}">
-                                            <c:choose>
-                                                <c:when test="${param.order eq 'asc'}"> ↑</c:when>
-                                                <c:when test="${param.order eq 'desc'}"> ↓</c:when>
-                                            </c:choose>
-                                        </c:when>
-                                        <c:otherwise>
-                                            <!-- Two-way arrow when NOT sorted -->
-                                            ⇅
-                                        </c:otherwise>
-                                    </c:choose></a>
-                            </th>
-                            <th><a class="sort-link text-decoration-none text-primary fw-bold" 
-                                   href="<%= 
-                                       "none".equals(getNextOrder("price", sortBy, order)) 
-                                       ? baseUrl 
-                                       : baseUrl + "&sortBy=price&order=" + getNextOrder("price", sortBy, order) 
-                                   %>">Price
-                                    <c:choose>
-                                        <c:when test="${param.sortBy eq 'price'}">
-                                            <c:choose>
-                                                <c:when test="${param.order eq 'asc'}"> ↑</c:when>
-                                                <c:when test="${param.order eq 'desc'}"> ↓</c:when>
-                                            </c:choose>
-                                        </c:when>
-                                        <c:otherwise>
-                                            <!-- Two-way arrow when NOT sorted -->
-                                            ⇅
-                                        </c:otherwise>
-                                    </c:choose>
-                                </a>
-                            </th>
-                            <th><a class="sort-link text-decoration-none text-primary fw-bold" 
-                                   href="<%= 
-                                       "none".equals(getNextOrder("stock", sortBy, order)) 
-                                       ? baseUrl 
-                                       : baseUrl + "&sortBy=stock&order=" + getNextOrder("stock", sortBy, order) 
-                                   %>">Stock
-                                    <c:choose>
-                                        <c:when test="${param.sortBy eq 'stock'}">
-                                            <c:choose>
-                                                <c:when test="${param.order eq 'asc'}"> ↑</c:when>
-                                                <c:when test="${param.order eq 'desc'}"> ↓</c:when>
-                                            </c:choose>
-                                        </c:when>
-                                        <c:otherwise>
-                                            <!-- Two-way arrow when NOT sorted -->
-                                            ⇅
-                                        </c:otherwise>
-                                    </c:choose>
-                                </a>
-                            </th>
+                            <th>Category</th>
+                            <th>Price</th>
+                            <th>Stock</th>
                             <th>Image</th>
                             <th>Description</th>
                             <th>Spec</th>
@@ -429,6 +353,9 @@
                 </div>
             </div>
         </div>
+        <script src="https://code.jquery.com/jquery-3.7.0.min.js"></script>
+
+        <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
 
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
         <script>
@@ -457,6 +384,16 @@
                                                 document.getElementById('edit-status').value = status;
                                             }
 
+                                            $(document).ready(function () {
+                                                $('#myTable').DataTable({
+                                                    order: [[0, 'asc']], // Sort Product ID column (index 0) ascending initially
+                                                    searching: false,
+                                                    columnDefs: [
+                                                        {targets: [2, 3, 6, 7, 8, 10], orderable: false} // Disable sorting for Brand, Description, Spec, Action
+                                                    ]
+                                                });
+                                            }
+                                            );
         </script>
     </body>
 </html>
