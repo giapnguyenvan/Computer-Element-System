@@ -40,7 +40,7 @@
         <a href="${pageContext.request.contextPath}/viewblogs" target="mainFrame" class="<%= request.getRequestURI().contains("viewblogs") ? "active" : "" %>">
             <i class="fas fa-blog me-2"></i> Blogs
         </a>
-        <a href="${pageContext.request.contextPath}/viewfeedback" target="mainFrame" class="<%= request.getRequestURI().contains("viewfeedback") ? "active" : "" %>">
+        <a href="${pageContext.request.contextPath}/managefeedback" target="mainFrame" class="<%= request.getRequestURI().contains("managefeedback") ? "active" : "" %>">
             <i class="fas fa-comments me-2"></i> Feedback
         </a>
         <a href="${pageContext.request.contextPath}/logout">
