@@ -91,7 +91,7 @@
         <a href="${pageContext.request.contextPath}/categoryList.jsp" target="mainFrame" class="admin-home-shortcut-btn">
             <i class="fas fa-list"></i> Categories
         </a>
-        <a href="productservlet" target="mainFrame" class="admin-home-shortcut-btn">
+        <a href="${pageContext.request.contextPath}/productservlet" target="mainFrame" class="admin-home-shortcut-btn">
             <i class="fas fa-box"></i> Products
         </a>
         <a href="${pageContext.request.contextPath}/viewcustomers" target="mainFrame" class="admin-home-shortcut-btn">
