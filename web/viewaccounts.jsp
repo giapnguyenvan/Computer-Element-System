@@ -122,32 +122,46 @@
         }
 
         .account-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
-            gap: 1.5rem;
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
             margin-bottom: 2rem;
         }
 
         .account-card {
             background: var(--card-bg);
             border-radius: 20px;
-            padding: 1.5rem;
+            padding: 1.5rem 2rem;
             box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
             transition: all 0.3s ease;
             border: 2px solid transparent;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 2rem;
+            position: relative;
+            overflow: hidden;
         }
 
         .account-card:hover {
-            transform: translateY(-5px);
+            transform: translateX(5px);
             border-color: var(--primary-color);
             box-shadow: 0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1);
         }
 
+        .account-info {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            gap: 2rem;
+        }
+
         .account-header {
             display: flex;
-            justify-content: space-between;
             align-items: center;
-            margin-bottom: 1.5rem;
+            gap: 1.5rem;
+            margin-bottom: 0;
+            flex: 1;
         }
 
         .account-name {
@@ -155,6 +169,7 @@
             font-weight: 600;
             color: var(--text-primary);
             margin: 0;
+            min-width: 200px;
         }
 
         .role-badge {
@@ -182,16 +197,21 @@
         }
 
         .account-meta {
-            margin-bottom: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 2rem;
+            margin: 0;
+            flex: 1;
         }
 
         .account-meta p {
             display: flex;
             align-items: center;
             gap: 0.75rem;
-            margin-bottom: 0.75rem;
+            margin: 0;
             color: var(--text-secondary);
             font-size: 0.95rem;
+            min-width: 200px;
         }
 
         .account-meta i {
@@ -202,19 +222,9 @@
         .action-buttons {
             display: flex;
             gap: 0.75rem;
-        }
-
-        .action-buttons .btn {
-            flex: 1;
-            padding: 0.75rem;
-            border-radius: 12px;
-            font-weight: 500;
-            font-size: 0.9rem;
-            transition: all 0.3s ease;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 0.5rem;
+            justify-content: flex-end;
+            flex-wrap: wrap;
+            margin-top: 0.5rem;
         }
 
         .btn-primary {
@@ -315,17 +325,32 @@
             box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
         }
 
-        @media (max-width: 768px) {
-            .account-grid {
-                grid-template-columns: 1fr;
-            }
-            
-            .stats-container {
+        @media (max-width: 1200px) {
+            .account-card {
                 flex-direction: column;
+                align-items: flex-start;
             }
-            
+
+            .account-info {
+                flex-direction: column;
+                align-items: flex-start;
+                width: 100%;
+            }
+
+            .account-header {
+                width: 100%;
+                justify-content: space-between;
+            }
+
+            .account-meta {
+                flex-direction: column;
+                align-items: flex-start;
+                width: 100%;
+            }
+
             .action-buttons {
-                flex-direction: column;
+                width: 100%;
+                justify-content: flex-start;
             }
         }
     </style>
@@ -395,41 +420,43 @@
         <div class="account-grid">
             <c:forEach items="${accountList}" var="account">
                 <div class="account-card">
-                    <div class="account-header">
-                        <h5 class="account-name">${account.name}</h5>
-                        <span class="role-badge role-${account.role.toLowerCase()}">${account.role}</span>
-                    </div>
-                    <div class="account-meta">
-                        <p>
-                            <i class="bi bi-envelope"></i>
-                            ${account.email}
-                        </p>
-                        <p>
-                            <i class="bi bi-telephone"></i>
-                            ${account.phone_number}
-                        </p>
-                        <p>
-                            <i class="bi bi-geo-alt"></i>
-                            ${account.address}
-                        </p>
-                    </div>
-                    <div class="action-buttons">
-                        <button type="button" class="btn btn-primary" 
-                                onclick="editAccount(${account.id}, '${account.name}', '${account.email}', 
-                                                   '${account.phone_number}', '${account.address}', '${account.role}')"
-                                data-bs-toggle="modal" data-bs-target="#editAccountModal">
-                            <i class="bi bi-pencil"></i> Edit
-                        </button>
-                        <button type="button" class="btn btn-warning" 
-                                onclick="resetPassword(${account.id})"
-                                data-bs-toggle="modal" data-bs-target="#resetPasswordModal">
-                            <i class="bi bi-key"></i> Reset
-                        </button>
-                        <button type="button" class="btn btn-danger" 
-                                onclick="deleteAccount(${account.id}, '${account.name}')"
-                                data-bs-toggle="modal" data-bs-target="#deleteAccountModal">
-                            <i class="bi bi-trash"></i> Delete
-                        </button>
+                    <div class="account-info">
+                        <div class="account-header">
+                            <h5 class="account-name">${account.name}</h5>
+                            <span class="role-badge role-${account.role.toLowerCase()}">${account.role}</span>
+                        </div>
+                        <div class="account-meta">
+                            <p>
+                                <i class="bi bi-envelope"></i>
+                                ${account.email}
+                            </p>
+                            <p>
+                                <i class="bi bi-telephone"></i>
+                                ${account.phone_number}
+                            </p>
+                            <p>
+                                <i class="bi bi-geo-alt"></i>
+                                ${account.address}
+                            </p>
+                        </div>
+                        <div class="action-buttons">
+                            <button type="button" class="btn btn-primary" 
+                                    onclick="editAccount(${account.id}, '${account.name}', '${account.email}', 
+                                                       '${account.phone_number}', '${account.address}', '${account.role}')"
+                                    data-bs-toggle="modal" data-bs-target="#editAccountModal">
+                                <i class="bi bi-pencil"></i> Edit
+                            </button>
+                            <button type="button" class="btn btn-warning" 
+                                    onclick="resetPassword(${account.id})"
+                                    data-bs-toggle="modal" data-bs-target="#resetPasswordModal">
+                                <i class="bi bi-key"></i> Reset
+                            </button>
+                            <button type="button" class="btn btn-danger" 
+                                    onclick="deleteAccount(${account.id}, '${account.name}')"
+                                    data-bs-toggle="modal" data-bs-target="#deleteAccountModal">
+                                <i class="bi bi-trash"></i> Delete
+                            </button>
+                        </div>
                     </div>
                 </div>
             </c:forEach>
