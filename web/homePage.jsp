@@ -101,10 +101,30 @@
             }
 
             .hero-section {
-                background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+                background: linear-gradient(135deg, rgba(102, 126, 234, 0.7) 0%, rgba(118, 75, 162, 0.7) 100%), url('https://images.unsplash.com/photo-1587202372775-e229f172b9d7?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1920&q=80');
+                background-size: cover;
+                background-position: center;
+                background-repeat: no-repeat;
                 color: white;
                 padding: 100px 0;
                 margin-bottom: 50px;
+            }
+
+            .hero-section h1 {
+                text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+                font-weight: 800;
+            }
+
+            .hero-section p {
+                text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.5);
+                font-weight: 500;
+            }
+
+            .hero-section .btn {
+                text-shadow: none;
+                font-weight: 600;
+                padding: 12px 30px;
+                box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
             }
 
             .deal-section {
