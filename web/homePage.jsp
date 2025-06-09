@@ -320,6 +320,16 @@
                             </div>
                         </div>
                     </div>
+                    <div class="col-md-4">
+                        <div class="card category-card">
+                            <img src="https://images.unsplash.com/photo-1587202372775-e229f172b9d7" class="card-img-top" alt="Graphics Cards">
+                            <div class="card-body">
+                                <h5 class="card-title">Graphics Cards</h5>
+                                <p class="card-text">High-performance GPUs for gaming & work</p>
+                                <a href="#gpuProducts" class="btn btn-outline-primary">Shop Now</a>
+                            </div>
+                        </div>
+                    </div>
                     <!-- Add more category cards -->
                 </div>
             </div>
@@ -328,6 +338,11 @@
         <!-- CPU Products Section -->
         <section id="cpuProducts" class="py-5 bg-light">
             <jsp:include page="CPUCategory.jsp" />
+        </section>
+
+        <!-- GPU Products Section -->
+        <section id="gpuProducts" class="py-5">
+            <jsp:include page="GPUCategory.jsp" />
         </section>
 
         <!-- Newsletter -->
