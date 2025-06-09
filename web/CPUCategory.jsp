@@ -24,6 +24,9 @@
                 font-size: 20px !important;
                 color: #FB4E4E !important;
             }
+            .page-link {
+                cursor: pointer;
+            }
         </style>
         <!-- SweetAlert2 -->
         <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
@@ -63,7 +66,7 @@
                     <h2 class="cpu-title">CPU Products</h2>
                 </div>
 
-                <div class="products-grid">
+                <div class="products-grid" id="productsContainer">
                     <c:forEach var="product" items="${cpuProducts}">
                         <div class="product-card">
                             <img src="${product.image_url}" class="product-image" alt="${product.name}">
@@ -85,22 +88,22 @@
 
                 <!-- Pagination -->
                 <div class="pagination-container">
-                    <ul class="pagination">
+                    <ul class="pagination" id="paginationContainer">
                         <!-- Previous button -->
                         <li class="page-item ${currentPage == 1 ? 'disabled' : ''}">
-                            <a class="page-link" href="?page=${currentPage - 1}" tabindex="-1">Previous</a>
+                            <a class="page-link" onclick="loadPage(${currentPage - 1})" tabindex="-1">Previous</a>
                         </li>
 
                         <!-- Page numbers -->
                         <c:forEach begin="1" end="${totalPages}" var="pageNumber">
                             <li class="page-item ${pageNumber == currentPage ? 'active' : ''}">
-                                <a class="page-link" href="?page=${pageNumber}">${pageNumber}</a>
+                                <a class="page-link" onclick="loadPage(${pageNumber})">${pageNumber}</a>
                             </li>
                         </c:forEach>
 
                         <!-- Next button -->
                         <li class="page-item ${currentPage == totalPages ? 'disabled' : ''}">
-                            <a class="page-link" href="?page=${currentPage + 1}">Next</a>
+                            <a class="page-link" onclick="loadPage(${currentPage + 1})">Next</a>
                         </li>
                     </ul>
                 </div>
@@ -112,6 +115,89 @@
 
         <!-- Custom JavaScript -->
         <script>
+            // Function to load page content using AJAX
+            function loadPage(pageNumber) {
+                // Prevent loading if it's a disabled button or current page
+                const currentPage = parseInt(document.querySelector('.page-item.active .page-link').textContent);
+                if (pageNumber === currentPage || 
+                    document.querySelector('.page-item.disabled .page-link[onclick*="loadPage(' + pageNumber + ')"]')) {
+                    return;
+                }
+
+                // Show loading indicator
+                const productsContainer = document.getElementById('productsContainer');
+                productsContainer.style.opacity = '0.5';
+
+                fetch('${pageContext.request.contextPath}/CPUCategoryServlet?page=' + pageNumber, {
+                    method: 'GET',
+                    headers: {
+                        'X-Requested-With': 'XMLHttpRequest'
+                    }
+                })
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Network response was not ok');
+                    }
+                    return response.text();
+                })
+                .then(html => {
+                    // Create a temporary container
+                    const temp = document.createElement('div');
+                    temp.innerHTML = html;
+
+                    // Update products
+                    const newProducts = temp.querySelector('#productsContainer');
+                    if (newProducts) {
+                        productsContainer.innerHTML = newProducts.innerHTML;
+                    }
+
+                    // Update pagination
+                    const newPagination = temp.querySelector('#paginationContainer');
+                    if (newPagination) {
+                        document.getElementById('paginationContainer').innerHTML = newPagination.innerHTML;
+                    }
+
+                    // Update active states
+                    document.querySelectorAll('.page-item').forEach(item => {
+                        item.classList.remove('active');
+                    });
+                    const activePageLink = document.querySelector('.page-link[onclick*="loadPage(' + pageNumber + ')"]');
+                    if (activePageLink) {
+                        activePageLink.parentElement.classList.add('active');
+                    }
+
+                    // Restore opacity
+                    productsContainer.style.opacity = '1';
+
+                    // Reinitialize event handlers if needed
+                    initializeEventHandlers();
+                })
+                .catch(error => {
+                    console.error('Error loading page:', error);
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Error',
+                        text: 'Failed to load page. Please try again.'
+                    });
+                    // Restore opacity
+                    productsContainer.style.opacity = '1';
+                });
+            }
+
+            // Function to initialize event handlers
+            function initializeEventHandlers() {
+                // Add any event handlers that need to be reinitialized after content update
+                document.querySelectorAll('.add-to-cart-btn').forEach(button => {
+                    const productId = button.id.replace('addBtn_', '');
+                    const productName = button.closest('.product-card').querySelector('.product-title').textContent;
+                    const productPrice = button.closest('.product-card').querySelector('.product-price').textContent;
+                    
+                    button.onclick = () => addToCart(productId, productName, productPrice);
+                });
+            }
+
+            // Initialize event handlers on page load
+            document.addEventListener('DOMContentLoaded', initializeEventHandlers);
 
             async function addToCart(productId, productName, productPrice) {
                 const addButton = document.getElementById('addBtn_' + productId);
@@ -121,7 +207,7 @@
                 addButton.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Adding...';
 
                 try {
-                    const response = await fetch('http://localhost:8080/Project_G2/CartApiServlet', {
+                    const response = await fetch('${pageContext.request.contextPath}/CartApiServlet', {
                         method: 'POST',
                         headers: {
                             'Content-Type': 'application/json'
