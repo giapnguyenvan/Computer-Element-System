@@ -136,7 +136,7 @@ public class ProductServlet extends HttpServlet {
                     request.setAttribute("product", result);
                     request.getRequestDispatcher("viewProduct.jsp").forward(request, response);
                     break;
-                case "filterByBrand":
+                /*case "filterByBrand":
                     String brand = request.getParameter("brand");
                     Vector<Products> blist = dao.getProductByBrand(brand);
 
@@ -154,6 +154,42 @@ public class ProductServlet extends HttpServlet {
                     request.setAttribute("product", categoryList);      // Đặt danh sách sản phẩm
                     request.setAttribute("brand", brands);              // Danh sách brand để đổ dropdown
                     request.setAttribute("category", clist);            // Danh sách category để đổ dropdown
+                    request.getRequestDispatcher("viewProduct.jsp").forward(request, response);
+                    break;*/
+                case "filterProducts":
+                    String brand = request.getParameter("brand"); // can be null or empty
+                    String categoryIdRaw = request.getParameter("category_id");
+
+                    CategoryDAO categoryDAO = new CategoryDAO();
+                    ProductDAO productDAO = new ProductDAO();
+
+                    Vector<Products> productl = null; // final product list
+                    Category category = null;
+
+                    if (categoryIdRaw != null && !categoryIdRaw.isEmpty()) {
+                        int categoryId = Integer.parseInt(categoryIdRaw);
+                        category = categoryDAO.getCategoryById(categoryId); // get category details
+                        productl = productDAO.getProductByCategory(categoryId);
+                    } else {
+                        // No category filter, get all products initially
+                        productl = productDAO.getAllProduct();
+                    }
+
+                    // Apply brand filter if specified and productList is not null
+                    if (brand != null && !brand.isEmpty() && productl != null) {
+                        Vector<Products> filteredByBrand = new Vector<>();
+                        for (Products p : productl) {
+                            if (brand.equals(p.getBrand())) {
+                                filteredByBrand.add(p);
+                            }
+                        }
+                        productl = filteredByBrand;
+                    }
+
+                    // Set attributes for display
+                    request.setAttribute("product", productl);
+                    request.setAttribute("brand", brands);
+                    request.setAttribute("category", clist);
                     request.getRequestDispatcher("viewProduct.jsp").forward(request, response);
                     break;
                 case "productDetail":

@@ -6,9 +6,9 @@
 
 <%
     String sortBy = request.getParameter("sortBy");
-    if (sortBy == null) sortBy = "id"; // Default sort by ID
+    if (sortBy == null) sortBy = "id";
     String order = request.getParameter("order");
-    if (order == null) order = "asc"; // Default ascending order
+    if (order == null) order = "asc";
     String baseUrl = request.getContextPath() + "/productservlet?service=viewProduct";
 %>
 
@@ -120,28 +120,21 @@
             <button class="insert-btn" data-bs-toggle="modal" data-bs-target="#addProductModal">Insert Product</button>
 
             <!-- Middle: Filters -->
-            <div class="filter-section">
-                <form action="productservlet" method="get" style="display: inline;">
-                    <input type="hidden" name="service" value="filterByBrand"/>
-                    <select name="brand" required>
-                        <option value="">-- Select Brand --</option>
-                        <c:forEach var="b" items="${brand}">
-                            <option value="${b}">${b}</option>
-                        </c:forEach>
-                    </select>
-                    <button type="submit">Filter Brand</button>
-                </form>
-                <form action="productservlet" method="get" style="display: inline;">
-                    <input type="hidden" name="service" value="filterByCategory"/>
-                    <select name="category_id" required>
-                        <option value="">-- Select Category --</option>
-                        <c:forEach var="c" items="${category}">
-                            <option value="${c.id}">${c.name}</option>
-                        </c:forEach>
-                    </select>
-                    <button type="submit">Filter Category</button>
-                </form>
-            </div>
+            <form action="productservlet" method="get" style="display: inline;">
+                <input type="hidden" name="service" value="filterProducts"/>
+                <select name="brand" onchange="this.form.submit()">
+                    <option value="">-- Select Brand --</option>
+                    <c:forEach var="b" items="${brand}">
+                        <option value="${b}" ${param.brand == b ? 'selected' : ''}>${b}</option>
+                    </c:forEach>
+                </select>
+                <select name="category_id" onchange="this.form.submit()">
+                    <option value="">-- Select Category --</option>
+                    <c:forEach var="c" items="${category}">
+                        <option value="${c.id}" ${param.category_id == c.id ? 'selected' : ''}>${c.name}</option>
+                    </c:forEach>
+                </select>
+            </form>
 
             <!-- Right: Search -->
             <div class="search-section">
@@ -286,7 +279,7 @@
                 </table>
             </div>
         </div>
-                                    
+
         <!-- ADD PRODUCT MODAL -->
         <div class="modal fade" id="addProductModal" tabindex="-1" aria-labelledby="addProductModalLabel" aria-hidden="true">
             <div class="modal-dialog modal-lg">
@@ -359,7 +352,7 @@
                 </div>
             </div>
         </div>
-        
+
         <!-- EDIT PRODUCT MODAL -->
         <div class="modal fade" id="editProductModal" tabindex="-1" aria-labelledby="editProductModalLabel" aria-hidden="true">
             <div class="modal-dialog modal-lg">
