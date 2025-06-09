@@ -1,6 +1,7 @@
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <%@page import="java.util.Vector, model.Products" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
+<%@ taglib  uri="http://java.sun.com/jsp/jstl/functions" prefix="fn"%>
 
 <%
     String sortBy = request.getParameter("sortBy");
@@ -110,7 +111,11 @@
     <body>
         <div class="top-bar">
             <!-- Left: Insert Button -->
+            <!--
             <a href="${pageContext.request.contextPath}/productservlet?service=insertProduct" class="insert-btn">Insert Product</a>
+            -->          
+            <button class="insert-btn" data-bs-toggle="modal" data-bs-target="#addProductModal">Insert Product</button>
+
             <!-- Middle: Filters -->
             <div class="filter-section">
                 <form action="productservlet" method="get" style="display: inline;">
@@ -253,9 +258,30 @@
                                 <td>${product.spec_description}</td>
                                 <td>${product.status}</td>
                                 <td>
+<<<<<<< HEAD
                                     <a href="productservlet?service=updateProduct&id=${product.id}" class="btn btn-success btn-sm">
                                         Edit
                                     </a>
+=======
+                                    <button 
+                                        type="button" 
+                                        class="btn btn-sm btn-info" 
+                                        onclick="editProduct(this)" 
+                                        data-id="${product.id}" 
+                                        data-name="${product.name}" 
+                                        data-brand="${product.brand}" 
+                                        data-category_id="${product.category_id}" 
+                                        data-price="${product.price}" 
+                                        data-stock="${product.stock}" 
+                                        data-description="${product.description}" 
+                                        data-spec_description="${product.spec_description}" 
+                                        data-image_url="${fn:escapeXml(product.image_url)}"
+                                        data-status="${product.status}"
+                                        data-bs-toggle="modal" 
+                                        data-bs-target="#editProductModal">
+                                        Edit
+                                    </button>
+>>>>>>> 85965a74eccc5fd5d39fcefccd64f2ffef34b42c
                                 </td>
                             </tr>
                         </c:forEach>
@@ -263,6 +289,187 @@
                 </table>
             </div>
         </div>
+<<<<<<< HEAD
+=======
+        <!-- ADD PRODUCT MODAL -->
+        <div class="modal fade" id="addProductModal" tabindex="-1" aria-labelledby="addProductModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-lg">
+                <div class="modal-content">
+                    <form action="productservlet?service=insertProduct" method="post">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="addProductModalLabel">Add New Product</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+
+                        <div class="modal-body">
+                            <div class="mb-3">
+                                <label for="name" class="form-label">Name:</label>
+                                <input id="name" type="text" name="name" class="form-control w-100" required />
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="brand" class="form-label">Brand:</label>
+                                <input id="brand" type="text" name="brand" class="form-control w-100" required />
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="category_id" class="form-label">Category:</label>
+                                <select id="category_id" name="category_id" class="form-select" required>
+                                    <option value="">-- Select Category --</option>
+                                    <c:forEach var="c" items="${category}">
+                                        <option value="${c.id}">${c.name}</option>
+                                    </c:forEach>
+                                </select>
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="price" class="form-label">Price:</label>
+                                <input id="price" type="number" name="price" step="0.01" class="form-control w-100" required />
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="stock" class="form-label">Stock:</label>
+                                <input id="stock" type="number" name="stock" class="form-control w-100" required />
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="image_url" class="form-label">Image URL:</label>
+                                <input id="image_url" type="text" name="image_url" class="form-control w-100" required />
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="description" class="form-label">Description:</label>
+                                <textarea id="description" name="description" class="form-control w-100" rows="3" required></textarea>
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="spec_description" class="form-label">Specification:</label>
+                                <textarea id="spec_description" name="spec_description" class="form-control w-100" rows="3"></textarea>
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="status" class="form-label">Status:</label>
+                                <select id="status" name="status" class="form-select" required>
+                                    <option value="Active">Active</option>
+                                    <option value="Inactive">Inactive</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="submit" class="btn btn-primary">Add Product</button>
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+        
+        <!-- EDIT PRODUCT MODAL -->
+        <div class="modal fade" id="editProductModal" tabindex="-1" aria-labelledby="editProductModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-lg">
+                <div class="modal-content">
+                    <form action="productservlet?service=updateProduct" method="post">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="editProductModalLabel">Edit Product</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+
+                        <div class="modal-body">
+                            <input type="hidden" id="edit-id" name="id" />
+
+                            <div class="mb-3">
+                                <label for="edit-name" class="form-label">Name:</label>
+                                <input id="edit-name" type="text" name="name" class="form-control w-100" required />
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="edit-brand" class="form-label">Brand:</label>
+                                <input id="edit-brand" type="text" name="brand" class="form-control w-100" required />
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="edit-category_id" class="form-label">Category:</label>
+                                <select id="edit-category_id" name="category_id" class="form-select" required>
+                                    <option value="">-- Select Category --</option>
+                                    <c:forEach var="c" items="${category}">
+                                        <option value="${c.id}">${c.name}</option>
+                                    </c:forEach>
+                                </select>
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="edit-price" class="form-label">Price:</label>
+                                <input id="edit-price" type="number" name="price" step="0.01" class="form-control w-100" required />
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="edit-stock" class="form-label">Stock:</label>
+                                <input id="edit-stock" type="number" name="stock" class="form-control w-100" required />
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="edit-image_url" class="form-label">Image URL:</label>
+                                <input id="edit-image_url" type="text" name="image_url" class="form-control w-100" required />
+                                <img id="edit-image-preview" src="" alt="Product Image" class="img-fluid mt-2" style="max-height: 200px;" />
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="edit-description" class="form-label">Description:</label>
+                                <textarea id="edit-description" name="description" class="form-control w-100" rows="3" required></textarea>
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="edit-spec_description" class="form-label">Specification:</label>
+                                <textarea id="edit-spec_description" name="spec_description" class="form-control w-100" rows="3"></textarea>
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="edit-status" class="form-label">Status:</label>
+                                <select id="edit-status" name="status" class="form-select" required>
+                                    <option value="Active">Active</option>
+                                    <option value="Inactive">Inactive</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="modal-footer">
+                            <button type="submit" class="btn btn-primary">Update Product</button>
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+        <script>
+                                            function editProduct(element) {
+                                                const id = element.getAttribute('data-id');
+                                                const name = element.getAttribute('data-name');
+                                                const brand = element.getAttribute('data-brand');
+                                                const category_id = element.getAttribute('data-category_id');
+                                                const price = element.getAttribute('data-price');
+                                                const stock = element.getAttribute('data-stock');
+                                                const description = element.getAttribute('data-description');
+                                                const spec_description = element.getAttribute('data-spec_description');
+                                                const image_url = element.getAttribute('data-image_url');
+                                                const status = element.getAttribute('data-status');
+
+                                                document.getElementById('edit-id').value = id;
+                                                document.getElementById('edit-name').value = name;
+                                                document.getElementById('edit-brand').value = brand;
+                                                document.getElementById('edit-category_id').value = category_id;
+                                                document.getElementById('edit-price').value = price;
+                                                document.getElementById('edit-stock').value = stock;
+                                                document.getElementById('edit-description').value = description;
+                                                document.getElementById('edit-spec_description').value = spec_description;
+                                                document.getElementById('edit-image_url').value = image_url;
+                                                document.getElementById('edit-image-preview').src = image_url;
+                                                document.getElementById('edit-status').value = status;
+                                            }
+
+        </script>
+>>>>>>> 85965a74eccc5fd5d39fcefccd64f2ffef34b42c
 
     </body>
 </html>
