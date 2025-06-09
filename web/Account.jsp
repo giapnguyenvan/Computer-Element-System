@@ -247,16 +247,16 @@
     <div class="container-fluid">
         <div class="header">
             <div class="d-flex justify-content-between align-items-center">
-                <h1>Account Management</h1>
+                <div class="d-flex align-items-center gap-3">
+                    <h1>Account Management</h1>
+                    <div class="stat-box" style="padding: 0.5rem 1rem; margin: 0;">
+                        <h3 style="font-size: 1.25rem; margin: 0;">${totalAccounts}</h3>
+                        <p style="font-size: 0.75rem; margin: 0;">Total Accounts</p>
+                    </div>
+                </div>
                 <button type="button" class="add-account-btn" data-bs-toggle="modal" data-bs-target="#addAccountModal">
                     <i class="bi bi-person-plus"></i> Add Account
                 </button>
-            </div>
-            <div class="stats-row">
-                <div class="stat-box">
-                    <h3>${totalAccounts}</h3>
-                    <p>Total Accounts</p>
-                </div>
             </div>
         </div>
 
