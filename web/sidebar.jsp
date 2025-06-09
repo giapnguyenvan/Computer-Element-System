@@ -28,14 +28,14 @@
         <a href="${pageContext.request.contextPath}/adminservlet" class="<%= request.getRequestURI().endsWith("adminservlet") ? "active" : "" %>">
             <i class="fas fa-home me-2"></i> Dashboard
         </a>
+        <a href="${pageContext.request.contextPath}/Account" target="mainFrame" class="<%= request.getRequestURI().contains("Account") ? "active" : "" %>">
+            <i class="fas fa-users me-2"></i> Accounts
+        </a>
         <a href="${pageContext.request.contextPath}/category?sort=default" target="mainFrame" class="<%= request.getRequestURI().endsWith("categoryList.jsp") ? "active" : "" %>">
             <i class="fas fa-list me-2"></i> Categories
         </a>
         <a href="${pageContext.request.contextPath}/productservlet" target="mainFrame" class="<%= request.getRequestURI().contains("productservlet") ? "active" : "" %>">
             <i class="fas fa-box me-2"></i> Products
-        </a>
-        <a href="${pageContext.request.contextPath}/viewaccounts" target="mainFrame" class="<%= request.getRequestURI().contains("viewaccounts") ? "active" : "" %>">
-            <i class="fas fa-users me-2"></i> Accounts
         </a>
         <a href="${pageContext.request.contextPath}/viewblogs" target="mainFrame" class="<%= request.getRequestURI().contains("viewblogs") ? "active" : "" %>">
             <i class="fas fa-blog me-2"></i> Blogs

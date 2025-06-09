@@ -36,13 +36,13 @@ public class AccountControl extends HttpServlet {
         
         String action = request.getParameter("action");
         if (action == null) {
-            response.sendRedirect("viewaccounts");
+            response.sendRedirect("Account");
             return;
         }
 
         try {
             AccountDAO accountDAO = new AccountDAO();
-            String redirectUrl = "viewaccounts";
+            String redirectUrl = "Account";
 
             switch (action) {
                 case "add" -> handleAddAccount(request, accountDAO);

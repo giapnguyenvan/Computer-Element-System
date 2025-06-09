@@ -4,6 +4,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Vector;
 import model.*;
 
@@ -378,6 +379,56 @@ public class ProductDAO {
         DBContext db = DBContext.getInstance();
         Vector<Products> list = new Vector<>();
         String sql = "SELECT * FROM products WHERE category_id = 1 AND status = 'active' "
+                + "ORDER BY id "
+                + "LIMIT ? OFFSET ?";
+        try {
+            PreparedStatement ptm = db.getConnection().prepareStatement(sql);
+            ptm.setInt(1, productsPerPage);
+            ptm.setInt(2, (page - 1) * productsPerPage);
+            ResultSet rs = ptm.executeQuery();
+            while (rs.next()) {
+                String jsonSpec = rs.getString("spec_description");
+                Products p = new Products(
+                        rs.getInt("id"),
+                        rs.getString("name"),
+                        rs.getString("brand"),
+                        rs.getInt("category_id"),
+                        rs.getDouble("price"),
+                        rs.getInt("stock"),
+                        rs.getString("image_url"),
+                        rs.getString("description"),
+                        jsonSpec,
+                        rs.getString("status")
+                );
+                list.add(p);
+            }
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+        }
+        return list;
+    }
+
+    //---------------Get total GPU products count
+    public int getTotalGPUProducts() {
+        DBContext db = DBContext.getInstance();
+        String sql = "SELECT COUNT(*) FROM products WHERE category_id = 2 AND status = 'active'";
+        try {
+            PreparedStatement ptm = db.getConnection().prepareStatement(sql);
+            ResultSet rs = ptm.executeQuery();
+            if (rs.next()) {
+                return rs.getInt(1);
+            }
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+        }
+        return 0;
+    }
+
+    //---------------Get GPU products with pagination
+    public List<Products> getGPUProductsWithPaging(int page, int productsPerPage) {
+        DBContext db = DBContext.getInstance();
+        List<Products> list = new ArrayList<>();
+        String sql = "SELECT * FROM products WHERE category_id = 2 AND status = 'active' "
                 + "ORDER BY id "
                 + "LIMIT ? OFFSET ?";
         try {
