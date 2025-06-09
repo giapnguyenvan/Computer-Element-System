@@ -17,6 +17,8 @@ import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.util.ArrayList;
+import dal.FeedbackDAO;
+import model.Feedback;
 
 /**
  *
@@ -194,14 +196,56 @@ public class ProductServlet extends HttpServlet {
                     break;
                 case "productDetail":
                     int productID = Integer.parseInt(request.getParameter("id"));
+                    int page = 1;
+                    final int ITEMS_PER_PAGE = 3;
+
+                    try {
+                        page = Integer.parseInt(request.getParameter("page"));
+                        if (page < 1) page = 1;
+                    } catch (NumberFormatException e) {
+                        // Keep page as 1 if not specified or invalid
+                    }
 
                     ProductDAO ppdao = new ProductDAO();
                     Products product = ppdao.getProductById(productID);
                     Vector<Products> relatedProducts = ppdao.getProductByCategory(product.getCategory_id());
 
-                    // Đẩy dữ liệu lên request để hiển thị trong JSP
+                    // Get feedback data
+                    FeedbackDAO feedbackDAO = new FeedbackDAO();
+                    Vector<Feedback> allFeedback = feedbackDAO.getFeedbackByProduct(productID);
+                    
+                    // Calculate total pages
+                    int totalFeedback = allFeedback.size();
+                    int totalPages = (int) Math.ceil((double) totalFeedback / ITEMS_PER_PAGE);
+                    
+                    // Get paginated feedback
+                    int startIdx = (page - 1) * ITEMS_PER_PAGE;
+                    int endIdx = Math.min(startIdx + ITEMS_PER_PAGE, totalFeedback);
+                    Vector<Feedback> paginatedFeedback = new Vector<>();
+                    
+                    for (int i = startIdx; i < endIdx; i++) {
+                        paginatedFeedback.add(allFeedback.get(i));
+                    }
+                    
+                    // Calculate average rating
+                    double averageRating = 0;
+                    if (!allFeedback.isEmpty()) {
+                        double totalRating = 0;
+                        for (Feedback f : allFeedback) {
+                            totalRating += f.getRating();
+                        }
+                        averageRating = totalRating / allFeedback.size();
+                    }
+
+                    // Set attributes for JSP
                     request.setAttribute("product", product);
                     request.setAttribute("relatedProducts", relatedProducts);
+                    request.setAttribute("feedbackList", paginatedFeedback);
+                    request.setAttribute("totalFeedback", totalFeedback);
+                    request.setAttribute("currentPage", page);
+                    request.setAttribute("totalPages", totalPages);
+                    request.setAttribute("averageRating", averageRating);
+                    
                     request.getRequestDispatcher("productDetail.jsp").forward(request, response);
                     break;
                 default:
