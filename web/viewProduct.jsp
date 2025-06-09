@@ -286,8 +286,7 @@
                 </table>
             </div>
         </div>
-<<<<<<< HEAD
-=======
+                                    
         <!-- ADD PRODUCT MODAL -->
         <div class="modal fade" id="addProductModal" tabindex="-1" aria-labelledby="addProductModalLabel" aria-hidden="true">
             <div class="modal-dialog modal-lg">
@@ -466,7 +465,5 @@
                                             }
 
         </script>
->>>>>>> 85965a74eccc5fd5d39fcefccd64f2ffef34b42c
-
     </body>
 </html>
