@@ -247,47 +247,45 @@
     <div class="container-fluid">
         <div class="header">
             <div class="d-flex justify-content-between align-items-center">
-                <h1>Account Management</h1>
+                <div class="d-flex align-items-center gap-3">
+                    <h1>Account Management</h1>
+                    <div class="stat-box" style="padding: 0.5rem 1rem; margin: 0;">
+                        <p style="font-size: 0.75rem; margin: 0;">Total Accounts</p>
+                        <h3 style="font-size: 1.25rem; margin: 0;">${totalAccounts}</h3>
+                    </div>
+                </div>
                 <button type="button" class="add-account-btn" data-bs-toggle="modal" data-bs-target="#addAccountModal">
                     <i class="bi bi-person-plus"></i> Add Account
                 </button>
             </div>
-            <div class="stats-row">
-                <div class="stat-box">
-                    <h3>${totalAccounts}</h3>
-                    <p>Total Accounts</p>
-                </div>
-            </div>
         </div>
 
         <div class="search-bar">
-            <form action="Account" method="GET" class="row g-3">
+            <form action="Account" method="GET" class="row g-3 align-items-stretch">
                 <input type="hidden" name="page" value="${currentPage}">
-                <div class="col-md-3">
-                    <select name="sortBy" class="form-select" onchange="this.form.submit()">
+                <div class="col-3">
+                    <select name="sortBy" class="form-select h-100" style="min-height:48px;" onchange="this.form.submit()">
                         <option value="id" ${param.sortBy == 'id' ? 'selected' : ''}>Sort by ID</option>
                         <option value="name" ${param.sortBy == 'name' ? 'selected' : ''}>Sort by Name</option>
                         <option value="email" ${param.sortBy == 'email' ? 'selected' : ''}>Sort by Email</option>
                         <option value="role" ${param.sortBy == 'role' ? 'selected' : ''}>Sort by Role</option>
                     </select>
                 </div>
-                <div class="col-md-3">
-                    <select name="role" class="form-select" onchange="this.form.submit()">
+                <div class="col-3">
+                    <select name="role" class="form-select h-100" style="min-height:48px;" onchange="this.form.submit()">
                         <option value="">All Roles</option>
                         <option value="admin" ${param.role == 'admin' ? 'selected' : ''}>Admin</option>
                         <option value="staff" ${param.role == 'staff' ? 'selected' : ''}>Staff</option>
                         <option value="customer" ${param.role == 'customer' ? 'selected' : ''}>Customer</option>
                     </select>
                 </div>
-                <div class="col-md-6">
-                    <div class="input-group">
-                        <input type="text" name="search" class="form-control" 
-                               placeholder="Search by name, email, or phone..." 
-                               value="${param.search}">
-                        <button class="btn btn-primary" type="submit">
-                            <i class="bi bi-search"></i> Search
-                        </button>
-                    </div>
+                <div class="col-4">
+                    <input type="text" name="search" class="form-control h-100" style="min-height:48px;" placeholder="Search by name, email, or phone..." value="${param.search}">
+                </div>
+                <div class="col-2 d-flex">
+                    <button class="btn btn-primary h-100 d-flex align-items-center justify-content-center px-3" style="min-height:48px; white-space:nowrap;" type="submit">
+                        <i class="bi bi-search me-2"></i> Search
+                    </button>
                 </div>
             </form>
         </div>
@@ -348,41 +346,19 @@
         </div>
 
         <c:if test="${totalPages > 1}">
-            <div class="d-flex justify-content-between align-items-center mt-4">
-                <div class="d-flex gap-3">
-                    <div class="stat-box">
-                        <h3>${currentPage}</h3>
-                        <p>Current Page</p>
-                    </div>
-                    <div class="stat-box">
-                        <h3>${totalPages}</h3>
-                        <p>Total Pages</p>
-                    </div>
-                </div>
-                <nav aria-label="Account pagination">
-                    <ul class="pagination mb-0">
-                        <li class="page-item ${currentPage == 1 ? 'disabled' : ''}">
-                            <a class="page-link" href="Account?page=${currentPage - 1}&sortBy=${param.sortBy}&role=${param.role}&search=${param.search}">
-                                <i class="bi bi-chevron-left"></i>
-                            </a>
-                        </li>
-                        
-                        <c:forEach begin="1" end="${totalPages}" var="i">
-                            <li class="page-item ${currentPage == i ? 'active' : ''}">
-                                <a class="page-link" href="Account?page=${i}&sortBy=${param.sortBy}&role=${param.role}&search=${param.search}">
-                                    ${i}
-                                </a>
-                            </li>
-                        </c:forEach>
-                        
-                        <li class="page-item ${currentPage == totalPages ? 'disabled' : ''}">
-                            <a class="page-link" href="Account?page=${currentPage + 1}&sortBy=${param.sortBy}&role=${param.role}&search=${param.search}">
-                                <i class="bi bi-chevron-right"></i>
-                            </a>
-                        </li>
-                    </ul>
-                </nav>
-            </div>
+            <nav aria-label="Account pagination">
+                <ul class="pagination justify-content-center mt-4">
+                    <li class="page-item ${currentPage == 1 ? 'disabled' : ''}">
+                        <a class="page-link" href="Account?page=${currentPage - 1}&sortBy=${param.sortBy}&role=${param.role}&search=${param.search}">Previous</a>
+                    </li>
+                    <li class="page-item active">
+                        <span class="page-link">${currentPage}</span>
+                    </li>
+                    <li class="page-item ${currentPage == totalPages ? 'disabled' : ''}">
+                        <a class="page-link" href="Account?page=${currentPage + 1}&sortBy=${param.sortBy}&role=${param.role}&search=${param.search}">Next</a>
+                    </li>
+                </ul>
+            </nav>
         </c:if>
     </div>
 
