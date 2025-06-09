@@ -346,41 +346,19 @@
         </div>
 
         <c:if test="${totalPages > 1}">
-            <div class="d-flex justify-content-between align-items-center mt-4">
-                <div class="d-flex gap-3">
-                    <div class="stat-box">
-                        <h3>${currentPage}</h3>
-                        <p>Current Page</p>
-                    </div>
-                    <div class="stat-box">
-                        <h3>${totalPages}</h3>
-                        <p>Total Pages</p>
-                    </div>
-                </div>
-                <nav aria-label="Account pagination">
-                    <ul class="pagination mb-0">
-                        <li class="page-item ${currentPage == 1 ? 'disabled' : ''}">
-                            <a class="page-link" href="Account?page=${currentPage - 1}&sortBy=${param.sortBy}&role=${param.role}&search=${param.search}">
-                                <i class="bi bi-chevron-left"></i>
-                            </a>
-                        </li>
-                        
-                        <c:forEach begin="1" end="${totalPages}" var="i">
-                            <li class="page-item ${currentPage == i ? 'active' : ''}">
-                                <a class="page-link" href="Account?page=${i}&sortBy=${param.sortBy}&role=${param.role}&search=${param.search}">
-                                    ${i}
-                                </a>
-                            </li>
-                        </c:forEach>
-                        
-                        <li class="page-item ${currentPage == totalPages ? 'disabled' : ''}">
-                            <a class="page-link" href="Account?page=${currentPage + 1}&sortBy=${param.sortBy}&role=${param.role}&search=${param.search}">
-                                <i class="bi bi-chevron-right"></i>
-                            </a>
-                        </li>
-                    </ul>
-                </nav>
-            </div>
+            <nav aria-label="Account pagination">
+                <ul class="pagination justify-content-center mt-4">
+                    <li class="page-item ${currentPage == 1 ? 'disabled' : ''}">
+                        <a class="page-link" href="Account?page=${currentPage - 1}&sortBy=${param.sortBy}&role=${param.role}&search=${param.search}">Previous</a>
+                    </li>
+                    <li class="page-item active">
+                        <span class="page-link">${currentPage}</span>
+                    </li>
+                    <li class="page-item ${currentPage == totalPages ? 'disabled' : ''}">
+                        <a class="page-link" href="Account?page=${currentPage + 1}&sortBy=${param.sortBy}&role=${param.role}&search=${param.search}">Next</a>
+                    </li>
+                </ul>
+            </nav>
         </c:if>
     </div>
 
