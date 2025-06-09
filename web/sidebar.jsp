@@ -7,10 +7,12 @@
 <!-- Sidebar -->
 <div class="col-md-3 col-lg-2 sidebar">
     <div class="logo-container">
-        <h3 class="text-light">
-            <i class="fas fa-microchip me-2"></i>
-            <span class="fw-bold">CES</span>
-        </h3>
+        <a href="${pageContext.request.contextPath}/homePage.jsp" class="text-decoration-none">
+            <h3 class="text-light">
+                <i class="fas fa-microchip me-2"></i>
+                <span class="fw-bold">CES</span>
+            </h3>
+        </a>
     </div>
     
     <!-- Admin Profile -->

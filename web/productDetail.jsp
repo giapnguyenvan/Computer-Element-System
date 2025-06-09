@@ -78,27 +78,33 @@
                     </c:if>
                 </div>
             </div>
-        </div>
-        <hr>
-        <div class="container">
-            <h4 class="mt-5">Related Products</h4>
-            <div class="row">
-                <c:forEach var="p" items="${relatedProducts}">
-                    <c:if test="${p.id != product.id}">
-                        <div class="col-md-3 mb-4">
-                            <div class="card h-100">
-                                <img src="${p.image_url}" class="card-img-top" alt="${p.name}">
-                                <div class="card-body">
-                                    <h5 class="card-title">${p.name}</h5>
-                                    <p class="card-text">${p.brand}</p>
-                                    <p class="card-text text-danger">$${p.price}</p>
-                                    <a href="${pageContext.request.contextPath}/productservlet?service=productDetail&id=${p.id}" class="btn btn-outline-primary btn-sm">View</a>
+
+            <hr>
+
+            <!-- Related Products Section -->
+            <div class="container">
+                <h4 class="mt-5">Related Products</h4>
+                <div class="row">
+                    <c:forEach var="p" items="${relatedProducts}">
+                        <c:if test="${p.id != product.id}">
+                            <div class="col-md-3 mb-4">
+                                <div class="card h-100">
+                                    <img src="${p.image_url}" class="card-img-top" alt="${p.name}">
+                                    <div class="card-body">
+                                        <h5 class="card-title">${p.name}</h5>
+                                        <p class="card-text">${p.brand}</p>
+                                        <p class="card-text text-danger">$${p.price}</p>
+                                        <a href="${pageContext.request.contextPath}/productservlet?service=productDetail&id=${p.id}" class="btn btn-outline-primary btn-sm">View</a>
+                                    </div>
                                 </div>
                             </div>
-                        </div>
-                    </c:if>
-                </c:forEach>
+                        </c:if>
+                    </c:forEach>
+                </div>
             </div>
+
+            <!-- Include Customer Feedback Section -->
+            <jsp:include page="viewCustomerFeedback.jsp" />
         </div>
 
         <!-- Bootstrap JS -->
