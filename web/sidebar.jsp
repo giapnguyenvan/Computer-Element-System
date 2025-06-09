@@ -29,7 +29,7 @@
             <i class="fas fa-home me-2"></i> Dashboard
         </a>
         <a href="${pageContext.request.contextPath}/Account" target="mainFrame" class="<%= request.getRequestURI().contains("Account") ? "active" : "" %>">
-            <i class="fas fa-users me-2"></i> Accounts
+            <i class="fas fa-user-gear me-2"></i> Accounts
         </a>
         <a href="${pageContext.request.contextPath}/category?sort=default" target="mainFrame" class="<%= request.getRequestURI().endsWith("categoryList.jsp") ? "active" : "" %>">
             <i class="fas fa-list me-2"></i> Categories
@@ -41,7 +41,7 @@
             <i class="fas fa-blog me-2"></i> Blogs
         </a>
         <a href="${pageContext.request.contextPath}/managefeedback" target="mainFrame" class="<%= request.getRequestURI().contains("managefeedback") ? "active" : "" %>">
-            <i class="fas fa-comments me-2"></i> Feedback
+            <i class="fas fa-comments me-2"></i> Feedbacks
         </a>
         <a href="${pageContext.request.contextPath}/logout">
             <i class="fas fa-sign-out-alt me-2"></i> Logout
