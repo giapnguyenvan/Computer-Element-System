@@ -4,14 +4,14 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Vector;
-import model.Customer;
+import model.Account;
 
-public class CustomerDAO {
+public class AccountDAO {
 
-    // Get all customers with pagination
-    public Vector<Customer> getAllCustomers(int page, int pageSize) {
+    // Get all accounts with pagination
+    public Vector<Account> getAllAccounts(int page, int pageSize) {
          DBContext db = DBContext.getInstance();
-        Vector<Customer> listCustomers = new Vector<>();
+        Vector<Account> listAccounts = new Vector<>();
         String sql = "SELECT * FROM users ORDER BY id LIMIT ? OFFSET ?";
         try {
             PreparedStatement ptm = db.getConnection().prepareStatement(sql);
@@ -19,7 +19,7 @@ public class CustomerDAO {
             ptm.setInt(2, (page - 1) * pageSize);
             ResultSet rs = ptm.executeQuery();
             while (rs.next()) {
-                Customer c = new Customer(
+                Account a = new Account(
                     rs.getInt("id"),
                     rs.getString("name"),
                     rs.getString("email"),
@@ -28,24 +28,24 @@ public class CustomerDAO {
                     rs.getString("address"),
                     rs.getString("role")
                 );
-                listCustomers.add(c);
+                listAccounts.add(a);
             }
         } catch (SQLException ex) {
             ex.printStackTrace();
         }
-        return listCustomers;
+        return listAccounts;
     }
 
-    // Get customer by ID
-    public Customer getCustomerById(int customerId) {
+    // Get account by ID
+    public Account getAccountById(int accountId) {
         DBContext db = DBContext.getInstance();
         String sql = "SELECT * FROM users WHERE id = ?";
         try {
             PreparedStatement ptm = db.getConnection().prepareStatement(sql);
-            ptm.setInt(1, customerId);
+            ptm.setInt(1, accountId);
             ResultSet rs = ptm.executeQuery();
             if (rs.next()) {
-                return new Customer(
+                return new Account(
                     rs.getInt("id"),
                     rs.getString("name"),
                     rs.getString("email"),
@@ -61,8 +61,8 @@ public class CustomerDAO {
         return null;
     }
 
-    // Get customer by email
-    public Customer getCustomerByEmail(String email) {
+    // Get account by email
+    public Account getAccountByEmail(String email) {
         DBContext db = DBContext.getInstance();
         String sql = "SELECT * FROM users WHERE email = ?";
         try {
@@ -70,7 +70,7 @@ public class CustomerDAO {
             ptm.setString(1, email);
             ResultSet rs = ptm.executeQuery();
             if (rs.next()) {
-                return new Customer(
+                return new Account(
                     rs.getInt("id"),
                     rs.getString("name"),
                     rs.getString("email"),
@@ -86,18 +86,18 @@ public class CustomerDAO {
         return null;
     }
 
-    // Insert new customer
-    public boolean insertCustomer(Customer c) {
+    // Insert new account
+    public boolean insertAccount(Account a) {
         DBContext db = DBContext.getInstance();
         String sql = "INSERT INTO users (name, email, password, phone_number, address, role) VALUES (?, ?, ?, ?, ?, ?)";
         try {
             PreparedStatement ptm = db.getConnection().prepareStatement(sql);
-            ptm.setString(1, c.getName());
-            ptm.setString(2, c.getEmail());
-            ptm.setString(3, c.getPassword());
-            ptm.setString(4, c.getPhone_number());
-            ptm.setString(5, c.getAddress());
-            ptm.setString(6, c.getRole());
+            ptm.setString(1, a.getName());
+            ptm.setString(2, a.getEmail());
+            ptm.setString(3, a.getPassword());
+            ptm.setString(4, a.getPhone_number());
+            ptm.setString(5, a.getAddress());
+            ptm.setString(6, a.getRole());
             return ptm.executeUpdate() > 0;
         } catch (SQLException ex) {
             ex.printStackTrace();
@@ -105,18 +105,18 @@ public class CustomerDAO {
         }
     }
 
-    // Update customer
-    public boolean updateCustomer(Customer c) {
+    // Update account
+    public boolean updateAccount(Account a) {
         DBContext db = DBContext.getInstance();
         String sql = "UPDATE users SET name = ?, email = ?, phone_number = ?, address = ?, role = ? WHERE id = ?";
         try {
             PreparedStatement ptm = db.getConnection().prepareStatement(sql);
-            ptm.setString(1, c.getName());
-            ptm.setString(2, c.getEmail());
-            ptm.setString(3, c.getPhone_number());
-            ptm.setString(4, c.getAddress());
-            ptm.setString(5, c.getRole());
-            ptm.setInt(6, c.getId());
+            ptm.setString(1, a.getName());
+            ptm.setString(2, a.getEmail());
+            ptm.setString(3, a.getPhone_number());
+            ptm.setString(4, a.getAddress());
+            ptm.setString(5, a.getRole());
+            ptm.setInt(6, a.getId());
             return ptm.executeUpdate() > 0;
         } catch (SQLException ex) {
             ex.printStackTrace();
@@ -124,14 +124,14 @@ public class CustomerDAO {
         }
     }
 
-    // Update customer password
-    public boolean updatePassword(int customerId, String newPassword) {
+    // Update account password
+    public boolean updatePassword(int accountId, String newPassword) {
         DBContext db = DBContext.getInstance();
         String sql = "UPDATE users SET password = ? WHERE id = ?";
         try {
             PreparedStatement ptm = db.getConnection().prepareStatement(sql);
             ptm.setString(1, newPassword);
-            ptm.setInt(2, customerId);
+            ptm.setInt(2, accountId);
             return ptm.executeUpdate() > 0;
         } catch (SQLException ex) {
             ex.printStackTrace();
@@ -139,13 +139,13 @@ public class CustomerDAO {
         }
     }
 
-    // Delete customer
-    public boolean deleteCustomer(int customerId) {
+    // Delete account
+    public boolean deleteAccount(int accountId) {
         DBContext db = DBContext.getInstance();
         String sql = "DELETE FROM users WHERE id = ?";
         try {
             PreparedStatement ptm = db.getConnection().prepareStatement(sql);
-            ptm.setInt(1, customerId);
+            ptm.setInt(1, accountId);
             return ptm.executeUpdate() > 0;
         } catch (SQLException ex) {
             ex.printStackTrace();
@@ -153,8 +153,8 @@ public class CustomerDAO {
         }
     }
 
-    // Get total count of customers
-    public int getTotalCustomerCount() {
+    // Get total count of accounts
+    public int getTotalAccountCount() {
         DBContext db = DBContext.getInstance();
         String sql = "SELECT COUNT(*) as total FROM users";
         try {
@@ -169,10 +169,10 @@ public class CustomerDAO {
         return 0;
     }
 
-    // Search customers by name or email
-    public Vector<Customer> searchCustomers(String searchTerm, int page, int pageSize) {
+    // Search accounts by name or email
+    public Vector<Account> searchAccounts(String searchTerm, int page, int pageSize) {
         DBContext db = DBContext.getInstance();
-        Vector<Customer> listCustomers = new Vector<>();
+        Vector<Account> listAccounts = new Vector<>();
         String sql = "SELECT * FROM users WHERE name LIKE ? OR email LIKE ? LIMIT ? OFFSET ?";
         try {
             PreparedStatement ptm = db.getConnection().prepareStatement(sql);
@@ -182,7 +182,7 @@ public class CustomerDAO {
             ptm.setInt(4, (page - 1) * pageSize);
             ResultSet rs = ptm.executeQuery();
             while (rs.next()) {
-                Customer c = new Customer(
+                Account a = new Account(
                     rs.getInt("id"),
                     rs.getString("name"),
                     rs.getString("email"),
@@ -191,12 +191,12 @@ public class CustomerDAO {
                     rs.getString("address"),
                     rs.getString("role")
                 );
-                listCustomers.add(c);
+                listAccounts.add(a);
             }
         } catch (SQLException ex) {
             ex.printStackTrace();
         }
-        return listCustomers;
+        return listAccounts;
     }
 
     // Check if email exists
@@ -216,17 +216,17 @@ public class CustomerDAO {
         return false;
     }
 
-    // Get customers by role
-    public Vector<Customer> getCustomersByRole(String role) {
+    // Get accounts by role
+    public Vector<Account> getAccountsByRole(String role) {
         DBContext db = DBContext.getInstance();
-        Vector<Customer> listCustomers = new Vector<>();
+        Vector<Account> listAccounts = new Vector<>();
         String sql = "SELECT * FROM users WHERE role = ?";
         try {
             PreparedStatement ptm = db.getConnection().prepareStatement(sql);
             ptm.setString(1, role);
             ResultSet rs = ptm.executeQuery();
             while (rs.next()) {
-                Customer c = new Customer(
+                Account a = new Account(
                     rs.getInt("id"),
                     rs.getString("name"),
                     rs.getString("email"),
@@ -235,47 +235,47 @@ public class CustomerDAO {
                     rs.getString("address"),
                     rs.getString("role")
                 );
-                listCustomers.add(c);
+                listAccounts.add(a);
             }
         } catch (SQLException ex) {
             ex.printStackTrace();
         }
-        return listCustomers;
+        return listAccounts;
     }
 
     public static void main(String[] args) {
-        CustomerDAO dao = new CustomerDAO();
+        AccountDAO dao = new AccountDAO();
         
-        System.out.println("=== Customer DAO Test Cases ===\n");
+        System.out.println("=== Account DAO Test Cases ===\n");
         
-        // Test 1: Insert a new customer
-        System.out.println("Test 1: Inserting a new customer");
-        Customer newCustomer = new Customer(0, "Test User", "test@email.com", "password123", 
+        // Test 1: Insert a new account
+        System.out.println("Test 1: Inserting a new account");
+        Account newAccount = new Account(0, "Test User", "test@email.com", "password123", 
                                           "1234567890", "123 Test St", "customer");
-        boolean inserted = dao.insertCustomer(newCustomer);
-        System.out.println("Customer insertion " + (inserted ? "successful" : "failed") + "\n");
+        boolean inserted = dao.insertAccount(newAccount);
+        System.out.println("Account insertion " + (inserted ? "successful" : "failed") + "\n");
         
-        // Test 2: Get all customers
-        System.out.println("Test 2: Getting all customers (page 1, 5 items per page)");
-        Vector<Customer> customers = dao.getAllCustomers(1, 5);
-        System.out.println("Total customers in database: " + dao.getTotalCustomerCount());
-        for (Customer c : customers) {
-            System.out.println("- " + c.getName() + " (" + c.getEmail() + ")");
+        // Test 2: Get all accounts
+        System.out.println("Test 2: Getting all accounts (page 1, 5 items per page)");
+        Vector<Account> accounts = dao.getAllAccounts(1, 5);
+        System.out.println("Total accounts in database: " + dao.getTotalAccountCount());
+        for (Account a : accounts) {
+            System.out.println("- " + a.getName() + " (" + a.getEmail() + ")");
         }
         System.out.println();
         
-        // Test 3: Search customers
-        System.out.println("Test 3: Searching for customers with 'test'");
-        Vector<Customer> searchResults = dao.searchCustomers("test", 1, 10);
-        for (Customer c : searchResults) {
-            System.out.println("- Found: " + c.getName() + " (" + c.getEmail() + ")");
+        // Test 3: Search accounts
+        System.out.println("Test 3: Searching for accounts with 'test'");
+        Vector<Account> searchResults = dao.searchAccounts("test", 1, 10);
+        for (Account a : searchResults) {
+            System.out.println("- Found: " + a.getName() + " (" + a.getEmail() + ")");
         }
         System.out.println();
         
-        // Test 4: Get customers by role
-        System.out.println("Test 4: Getting customers with role 'customer'");
-        Vector<Customer> customerRole = dao.getCustomersByRole("customer");
-        System.out.println("Found " + customerRole.size() + " customers with role 'customer'");
+        // Test 4: Get accounts by role
+        System.out.println("Test 4: Getting accounts with role 'customer'");
+        Vector<Account> customerRole = dao.getAccountsByRole("customer");
+        System.out.println("Found " + customerRole.size() + " accounts with role 'customer'");
         
         System.out.println("\n=== Test Cases Completed ===");
     }

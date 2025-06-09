@@ -76,8 +76,8 @@
                         </a>
                     </div>
                     <div class="col-md-3">
-                        <a href="${pageContext.request.contextPath}/adminLayout.jsp?content=customerContent.jsp&title=Customer Management" class="btn btn-info w-100">
-                            <i class="fas fa-user-plus me-2"></i> View Customers
+                        <a href="${pageContext.request.contextPath}/adminLayout.jsp?content=accountContent.jsp&title=Account Management" class="btn btn-info w-100">
+                            <i class="fas fa-user-plus me-2"></i> View Accounts
                         </a>
                     </div>
                     <div class="col-md-3">

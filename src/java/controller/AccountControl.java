@@ -5,7 +5,7 @@
 
 package controller;
 
-import dal.CustomerDAO;
+import dal.AccountDAO;
 import java.io.IOException;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.ServletResponse;
@@ -13,15 +13,15 @@ import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import model.Customer;
+import model.Account;
 import java.util.Vector;
 
 /**
  *
  * @author ADMIN
  */
-@WebServlet(name="Customer_control", urlPatterns={"/Customer_control"})
-public class CustomerControl extends HttpServlet {
+@WebServlet(name="AccountControl", urlPatterns={"/Account_control"})
+public class AccountControl extends HttpServlet {
    
     /** 
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code> methods.
@@ -36,25 +36,25 @@ public class CustomerControl extends HttpServlet {
         
         String action = request.getParameter("action");
         if (action == null) {
-            response.sendRedirect("viewcustomers");
+            response.sendRedirect("viewaccounts");
             return;
         }
 
         try {
-            CustomerDAO customerDAO = new CustomerDAO();
-            String redirectUrl = "viewcustomers";
+            AccountDAO accountDAO = new AccountDAO();
+            String redirectUrl = "viewaccounts";
 
             switch (action) {
-                case "add" -> handleAddCustomer(request, customerDAO);
+                case "add" -> handleAddAccount(request, accountDAO);
                     
-                case "update" -> handleUpdateCustomer(request, customerDAO);
+                case "update" -> handleUpdateAccount(request, accountDAO);
                     
-                case "delete" -> handleDeleteCustomer(request, customerDAO);
+                case "delete" -> handleDeleteAccount(request, accountDAO);
                     
-                case "updatePassword" -> handleUpdatePassword(request, customerDAO);
+                case "updatePassword" -> handleUpdatePassword(request, accountDAO);
                     
                 case "search" -> {
-                    handleSearchCustomers(request, customerDAO);
+                    handleSearchAccounts(request, accountDAO);
                     return; // Return here as we'll forward to a different page
                 }
                 default -> {
@@ -82,7 +82,7 @@ public class CustomerControl extends HttpServlet {
         }
     } 
 
-    private void handleAddCustomer(HttpServletRequest request, CustomerDAO customerDAO) throws Exception {
+    private void handleAddAccount(HttpServletRequest request, AccountDAO accountDAO) throws Exception {
         String name = request.getParameter("name");
         String email = request.getParameter("email");
         String password = request.getParameter("password");
@@ -91,12 +91,12 @@ public class CustomerControl extends HttpServlet {
         String role = request.getParameter("role");
 
         // Validate email uniqueness
-        if (customerDAO.isEmailExists(email)) {
+        if (accountDAO.isEmailExists(email)) {
             throw new Exception("Email already exists");
         }
 
-        // Create new customer
-        Customer newCustomer = new Customer(
+        // Create new account
+        Account newAccount = new Account(
             0, // ID will be auto-generated
             name,
             email,
@@ -106,59 +106,59 @@ public class CustomerControl extends HttpServlet {
             role
         );
 
-        if (!customerDAO.insertCustomer(newCustomer)) {
-            throw new Exception("Failed to add customer");
+        if (!accountDAO.insertAccount(newAccount)) {
+            throw new Exception("Failed to add account");
         }
     }
 
-    private void handleUpdateCustomer(HttpServletRequest request, CustomerDAO customerDAO) throws Exception {
-        int customerId = Integer.parseInt(request.getParameter("customer_id"));
+    private void handleUpdateAccount(HttpServletRequest request, AccountDAO accountDAO) throws Exception {
+        int accountId = Integer.parseInt(request.getParameter("account_id"));
         String name = request.getParameter("name");
         String email = request.getParameter("email");
         String phone_number = request.getParameter("phone_number");
         String address = request.getParameter("address");
         String role = request.getParameter("role");
 
-        // Get existing customer
-        Customer existingCustomer = customerDAO.getCustomerById(customerId);
-        if (existingCustomer == null) {
-            throw new Exception("Customer not found");
+        // Get existing account
+        Account existingAccount = accountDAO.getAccountById(accountId);
+        if (existingAccount == null) {
+            throw new Exception("Account not found");
         }
 
         // Check email uniqueness only if email is changed
-        if (!existingCustomer.getEmail().equals(email) && customerDAO.isEmailExists(email)) {
+        if (!existingAccount.getEmail().equals(email) && accountDAO.isEmailExists(email)) {
             throw new Exception("Email already exists");
         }
 
-        // Update customer details
-        existingCustomer.setName(name);
-        existingCustomer.setEmail(email);
-        existingCustomer.setPhone_number(phone_number);
-        existingCustomer.setAddress(address);
-        existingCustomer.setRole(role);
+        // Update account details
+        existingAccount.setName(name);
+        existingAccount.setEmail(email);
+        existingAccount.setPhone_number(phone_number);
+        existingAccount.setAddress(address);
+        existingAccount.setRole(role);
 
-        if (!customerDAO.updateCustomer(existingCustomer)) {
-            throw new Exception("Failed to update customer");
+        if (!accountDAO.updateAccount(existingAccount)) {
+            throw new Exception("Failed to update account");
         }
     }
 
-    private void handleDeleteCustomer(HttpServletRequest request, CustomerDAO customerDAO) throws Exception {
-        int customerId = Integer.parseInt(request.getParameter("customer_id"));
+    private void handleDeleteAccount(HttpServletRequest request, AccountDAO accountDAO) throws Exception {
+        int accountId = Integer.parseInt(request.getParameter("account_id"));
         
-        // Verify customer exists
-        Customer existingCustomer = customerDAO.getCustomerById(customerId);
-        if (existingCustomer == null) {
-            throw new Exception("Customer not found");
+        // Verify account exists
+        Account existingAccount = accountDAO.getAccountById(accountId);
+        if (existingAccount == null) {
+            throw new Exception("Account not found");
         }
 
-        // Delete the customer
-        if (!customerDAO.deleteCustomer(customerId)) {
-            throw new Exception("Failed to delete customer");
+        // Delete the account
+        if (!accountDAO.deleteAccount(accountId)) {
+            throw new Exception("Failed to delete account");
         }
     }
 
-    private void handleUpdatePassword(HttpServletRequest request, CustomerDAO customerDAO) throws Exception {
-        int customerId = Integer.parseInt(request.getParameter("customer_id"));
+    private void handleUpdatePassword(HttpServletRequest request, AccountDAO accountDAO) throws Exception {
+        int accountId = Integer.parseInt(request.getParameter("account_id"));
         String newPassword = request.getParameter("new_password");
         String confirmPassword = request.getParameter("confirm_password");
 
@@ -167,19 +167,19 @@ public class CustomerControl extends HttpServlet {
             throw new Exception("Passwords do not match");
         }
 
-        // Verify customer exists
-        Customer existingCustomer = customerDAO.getCustomerById(customerId);
-        if (existingCustomer == null) {
-            throw new Exception("Customer not found");
+        // Verify account exists
+        Account existingAccount = accountDAO.getAccountById(accountId);
+        if (existingAccount == null) {
+            throw new Exception("Account not found");
         }
 
         // Update password
-        if (!customerDAO.updatePassword(customerId, newPassword)) { // Note: In production, this should be hashed
+        if (!accountDAO.updatePassword(accountId, newPassword)) { // Note: In production, this should be hashed
             throw new Exception("Failed to update password");
         }
     }
 
-    private void handleSearchCustomers(HttpServletRequest request, CustomerDAO customerDAO) throws Exception {
+    private void handleSearchAccounts(HttpServletRequest request, AccountDAO accountDAO) throws Exception {
         String searchTerm = request.getParameter("search");
         int page = 1;
         try {
@@ -189,16 +189,16 @@ public class CustomerControl extends HttpServlet {
         }
         int pageSize = 10; // You can make this configurable
 
-        Vector<Customer> searchResults = customerDAO.searchCustomers(searchTerm, page, pageSize);
-        int totalCustomers = customerDAO.getTotalCustomerCount(); // This should be filtered by search term in production
+        Vector<Account> searchResults = accountDAO.searchAccounts(searchTerm, page, pageSize);
+        int totalAccounts = accountDAO.getTotalAccountCount(); // This should be filtered by search term in production
 
-        request.setAttribute("customers", searchResults);
+        request.setAttribute("accounts", searchResults);
         request.setAttribute("currentPage", page);
-        request.setAttribute("totalPages", (int) Math.ceil(totalCustomers / (double) pageSize));
+        request.setAttribute("totalPages", (int) Math.ceil(totalAccounts / (double) pageSize));
         request.setAttribute("searchTerm", searchTerm);
         ServletResponse response = null;
 
-        request.getRequestDispatcher("customers.jsp").forward(request, response);
+        request.getRequestDispatcher("accounts.jsp").forward(request, response);
     }
 
     // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
@@ -234,20 +234,20 @@ public class CustomerControl extends HttpServlet {
      */
     @Override
     public String getServletInfo() {
-        return "Customer Management Controller Servlet";
+        return "Account Management Controller Servlet";
     }// </editor-fold>
 
     public static void main(String[] args) {
         // Create DAO instance for testing
-        CustomerDAO customerDAO = new CustomerDAO();
+        AccountDAO accountDAO = new AccountDAO();
         
         try {
-            System.out.println("=== Starting Customer Management System Tests ===\n");
+            System.out.println("=== Starting Account Management System Tests ===\n");
             
-            // Test Case 1: Add new customer
-            System.out.println("Test Case 1: Adding new customer");
+            // Test Case 1: Add new account
+            System.out.println("Test Case 1: Adding new account");
             System.out.println("------------------------------");
-            Customer newCustomer = new Customer(
+            Account newAccount = new Account(
                 0,
                 "Test User",
                 "test" + System.currentTimeMillis() + "@example.com", // Ensure unique email
@@ -256,58 +256,58 @@ public class CustomerControl extends HttpServlet {
                 "123 Test Street",
                 "customer"
             );
-            boolean added = customerDAO.insertCustomer(newCustomer);
-            System.out.println("Added new customer: " + (added ? "SUCCESS ✓" : "FAILED ✗"));
+            boolean added = accountDAO.insertAccount(newAccount);
+            System.out.println("Added new account: " + (added ? "SUCCESS ✓" : "FAILED ✗"));
             
-            // Test Case 2: Search customers
-            System.out.println("\nTest Case 2: Searching for customers");
+            // Test Case 2: Search accounts
+            System.out.println("\nTest Case 2: Searching for accounts");
             System.out.println("--------------------------------");
-            Vector<Customer> searchResults = customerDAO.searchCustomers("Test", 1, 10);
-            System.out.println("Found " + searchResults.size() + " customers");
-            searchResults.forEach(customer -> 
-                System.out.println("- " + customer.getName() + " (" + customer.getEmail() + ")")
+            Vector<Account> searchResults = accountDAO.searchAccounts("Test", 1, 10);
+            System.out.println("Found " + searchResults.size() + " accounts");
+            searchResults.forEach(account -> 
+                System.out.println("- " + account.getName() + " (" + account.getEmail() + ")")
             );
             
-            // Test Case 3: Update customer
-            System.out.println("\nTest Case 3: Updating customer");
+            // Test Case 3: Update account
+            System.out.println("\nTest Case 3: Updating account");
             System.out.println("----------------------------");
             if (!searchResults.isEmpty()) {
-                Customer customerToUpdate = searchResults.get(0);
-                String originalName = customerToUpdate.getName();
-                customerToUpdate.setName("Updated Test User");
-                customerToUpdate.setPhone_number("9876543210");
-                boolean updated = customerDAO.updateCustomer(customerToUpdate);
-                System.out.println("Updating customer '" + originalName + "': " + (updated ? "SUCCESS ✓" : "FAILED ✗"));
+                Account accountToUpdate = searchResults.get(0);
+                String originalName = accountToUpdate.getName();
+                accountToUpdate.setName("Updated Test User");
+                accountToUpdate.setPhone_number("9876543210");
+                boolean updated = accountDAO.updateAccount(accountToUpdate);
+                System.out.println("Updating account '" + originalName + "': " + (updated ? "SUCCESS ✓" : "FAILED ✗"));
                 
                 // Verify update
-                Customer updatedCustomer = customerDAO.getCustomerById(customerToUpdate.getId());
-                System.out.println("Updated customer details: " + updatedCustomer.getName() + 
-                                 " (Phone: " + updatedCustomer.getPhone_number() + ")");
+                Account updatedAccount = accountDAO.getAccountById(accountToUpdate.getId());
+                System.out.println("Updated account details: " + updatedAccount.getName() + 
+                                 " (Phone: " + updatedAccount.getPhone_number() + ")");
             }
             
-            // Test Case 4: Get customers by role
-            System.out.println("\nTest Case 4: Getting customers by role");
+            // Test Case 4: Get accounts by role
+            System.out.println("\nTest Case 4: Getting accounts by role");
             System.out.println("---------------------------------");
-            Vector<Customer> customersByRole = customerDAO.getCustomersByRole("customer");
-            System.out.println("Found " + customersByRole.size() + " customers with role 'customer'");
-            customersByRole.forEach(customer -> 
-                System.out.println("- " + customer.getName() + " (Role: " + customer.getRole() + ")")
+            Vector<Account> accountsByRole = accountDAO.getAccountsByRole("customer");
+            System.out.println("Found " + accountsByRole.size() + " accounts with role 'customer'");
+            accountsByRole.forEach(account -> 
+                System.out.println("- " + account.getName() + " (Role: " + account.getRole() + ")")
             );
             
             // Test Case 5: Error handling
             System.out.println("\nTest Case 5: Error handling tests");
             System.out.println("------------------------------");
             
-            // Test 5.1: Invalid customer ID
-            System.out.println("5.1 Testing invalid customer ID:");
-            Customer invalidCustomer = customerDAO.getCustomerById(-1);
-            System.out.println("Invalid customer ID test: " + 
-                             (invalidCustomer == null ? "SUCCESS ✓" : "FAILED ✗"));
+            // Test 5.1: Invalid account ID
+            System.out.println("5.1 Testing invalid account ID:");
+            Account invalidAccount = accountDAO.getAccountById(-1);
+            System.out.println("Invalid account ID test: " + 
+                             (invalidAccount == null ? "SUCCESS ✓" : "FAILED ✗"));
             
             // Test 5.2: Duplicate email
             System.out.println("5.2 Testing duplicate email:");
             try {
-                Customer duplicateCustomer = new Customer(
+                Account duplicateAccount = new Account(
                     0,
                     "Duplicate User",
                     searchResults.get(0).getEmail(), // Using existing email
@@ -316,13 +316,13 @@ public class CustomerControl extends HttpServlet {
                     "123 Test Street",
                     "customer"
                 );
-                customerDAO.insertCustomer(duplicateCustomer);
+                accountDAO.insertAccount(duplicateAccount);
                 System.out.println("Duplicate email test: FAILED ✗");
             } catch (Exception e) {
                 System.out.println("Duplicate email test: SUCCESS ✓");
             }
             
-            System.out.println("\n=== Customer Management System Tests Completed ===");
+            System.out.println("\n=== Account Management System Tests Completed ===");
             
         } catch (Exception e) {
             System.out.println("\n❌ ERROR during testing: " + e.getMessage());

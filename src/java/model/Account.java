@@ -1,6 +1,6 @@
 package model;
 
-public class Customer {
+public class Account {
     private int id;
     private String name;
     private String email;
@@ -9,7 +9,7 @@ public class Customer {
     private String address;
     private String role;
 
-    public Customer(int id, String name, String email, String password, 
+    public Account(int id, String name, String email, String password, 
                    String phone_number, String address, String role) {
         this.id = id;
         this.name = name;
@@ -80,7 +80,7 @@ public class Customer {
 
     @Override
     public String toString() {
-        return "Customer{" + 
+        return "Account{" + 
                "id=" + id + 
                ", name='" + name + '\'' + 
                ", email='" + email + '\'' + 

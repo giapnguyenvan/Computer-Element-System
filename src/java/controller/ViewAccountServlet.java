@@ -1,6 +1,6 @@
 package controller;
 
-import dal.CustomerDAO;
+import dal.AccountDAO;
 import java.io.IOException;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
@@ -8,49 +8,49 @@ import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.util.Vector;
-import model.Customer;
+import model.Account;
 import java.util.Collections;
 
-@WebServlet(name = "ViewCustomerServlet", urlPatterns = {"/viewcustomers"})
-public class ViewCustomerServlet extends HttpServlet {
+@WebServlet(name = "ViewAccountServlet", urlPatterns = {"/viewaccounts"})
+public class ViewAccountServlet extends HttpServlet {
 
-    private static final int PAGE_SIZE = 10; // Number of customers per page
+    private static final int PAGE_SIZE = 10; // Number of accounts per page
 
     public void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         response.setContentType("text/html;charset=UTF-8");
         
         try {
-            CustomerDAO customerDAO = new CustomerDAO();
+            AccountDAO accountDAO = new AccountDAO();
             
-            // Get all customers first
-            Vector<Customer> allCustomers = customerDAO.getAllCustomers(1, Integer.MAX_VALUE);
+            // Get all accounts first
+            Vector<Account> allAccounts = accountDAO.getAllAccounts(1, Integer.MAX_VALUE);
             
             // Apply role filter if specified
             String roleFilter = request.getParameter("role");
             if (roleFilter != null && !roleFilter.isEmpty()) {
-                Vector<Customer> filteredList = new Vector<>();
-                for (Customer c : allCustomers) {
-                    if (c.getRole().equalsIgnoreCase(roleFilter)) {
-                        filteredList.add(c);
+                Vector<Account> filteredList = new Vector<>();
+                for (Account a : allAccounts) {
+                    if (a.getRole().equalsIgnoreCase(roleFilter)) {
+                        filteredList.add(a);
                     }
                 }
-                allCustomers = filteredList;
+                allAccounts = filteredList;
             }
             
             // Apply search filter
             String search = request.getParameter("search");
             if (search != null && !search.trim().isEmpty()) {
-                Vector<Customer> searchedList = new Vector<>();
+                Vector<Account> searchedList = new Vector<>();
                 search = search.toLowerCase();
-                for (Customer c : allCustomers) {
-                    if (c.getName().toLowerCase().contains(search) || 
-                        c.getEmail().toLowerCase().contains(search) ||
-                        c.getPhone_number().toLowerCase().contains(search)) {
-                        searchedList.add(c);
+                for (Account a : allAccounts) {
+                    if (a.getName().toLowerCase().contains(search) || 
+                        a.getEmail().toLowerCase().contains(search) ||
+                        a.getPhone_number().toLowerCase().contains(search)) {
+                        searchedList.add(a);
                     }
                 }
-                allCustomers = searchedList;
+                allAccounts = searchedList;
             }
             
             // Apply sorting
@@ -58,27 +58,27 @@ public class ViewCustomerServlet extends HttpServlet {
             if (sortBy != null) {
                 switch (sortBy) {
                     case "name":
-                        Collections.sort(allCustomers, (c1, c2) -> 
-                            c1.getName().compareToIgnoreCase(c2.getName()));
+                        Collections.sort(allAccounts, (a1, a2) -> 
+                            a1.getName().compareToIgnoreCase(a2.getName()));
                         break;
                     case "email":
-                        Collections.sort(allCustomers, (c1, c2) -> 
-                            c1.getEmail().compareToIgnoreCase(c2.getEmail()));
+                        Collections.sort(allAccounts, (a1, a2) -> 
+                            a1.getEmail().compareToIgnoreCase(a2.getEmail()));
                         break;
                     case "role":
-                        Collections.sort(allCustomers, (c1, c2) -> 
-                            c1.getRole().compareToIgnoreCase(c2.getRole()));
+                        Collections.sort(allAccounts, (a1, a2) -> 
+                            a1.getRole().compareToIgnoreCase(a2.getRole()));
                         break;
                     case "id":
-                        Collections.sort(allCustomers, (c1, c2) -> 
-                            Integer.compare(c1.getId(), c2.getId()));
+                        Collections.sort(allAccounts, (a1, a2) -> 
+                            Integer.compare(a1.getId(), a2.getId()));
                         break;
                 }
             }
             
             // Calculate pagination after filtering
-            int totalCustomers = allCustomers.size();
-            int totalPages = (int) Math.ceil((double) totalCustomers / PAGE_SIZE);
+            int totalAccounts = allAccounts.size();
+            int totalPages = (int) Math.ceil((double) totalAccounts / PAGE_SIZE);
             
             // Get page number from request
             int page = 1;
@@ -91,26 +91,26 @@ public class ViewCustomerServlet extends HttpServlet {
             }
             
             // Apply pagination to filtered and sorted results
-            Vector<Customer> pagedCustomers = new Vector<>();
+            Vector<Account> pagedAccounts = new Vector<>();
             int startIndex = (page - 1) * PAGE_SIZE;
-            int endIndex = Math.min(startIndex + PAGE_SIZE, totalCustomers);
+            int endIndex = Math.min(startIndex + PAGE_SIZE, totalAccounts);
             
             for (int i = startIndex; i < endIndex; i++) {
-                pagedCustomers.add(allCustomers.get(i));
+                pagedAccounts.add(allAccounts.get(i));
             }
             
             // Set attributes for the JSP
-            request.setAttribute("customerList", pagedCustomers);
+            request.setAttribute("accountList", pagedAccounts);
             request.setAttribute("currentPage", page);
             request.setAttribute("totalPages", totalPages);
-            request.setAttribute("totalCustomers", totalCustomers);
+            request.setAttribute("totalAccounts", totalAccounts);
             
             // Forward to JSP
-            request.getRequestDispatcher("viewcustomers.jsp").forward(request, response);
+            request.getRequestDispatcher("viewaccounts.jsp").forward(request, response);
             
         } catch (Exception e) {
             e.printStackTrace();
-            request.setAttribute("error", "An error occurred while fetching customers: " + e.getMessage());
+            request.setAttribute("error", "An error occurred while fetching accounts: " + e.getMessage());
             request.getRequestDispatcher("error.jsp").forward(request, response);
         }
     }
@@ -129,6 +129,6 @@ public class ViewCustomerServlet extends HttpServlet {
 
     @Override
     public String getServletInfo() {
-        return "ViewCustomer Servlet handles displaying and filtering customers";
+        return "ViewAccount Servlet handles displaying and filtering accounts";
     }
 } 

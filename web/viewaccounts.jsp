@@ -8,15 +8,15 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.7.2/font/bootstrap-icons.css" rel="stylesheet">
     <style>
-        .customer-card {
+        .account-card {
             margin-bottom: 20px;
             transition: transform 0.2s;
         }
-        .customer-card:hover {
+        .account-card:hover {
             transform: translateY(-5px);
             box-shadow: 0 4px 15px rgba(0,0,0,0.1);
         }
-        .customer-meta {
+        .account-meta {
             font-size: 0.9em;
             color: #666;
         }
@@ -58,9 +58,9 @@
     <div class="container mt-5">
         <h1 class="text-center mb-4">Accounts Management</h1>
         
-        <!-- Add New Customer Button -->
+        <!-- Add New Account Button -->
         <div class="text-end mb-4">
-            <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addCustomerModal">
+            <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addAccountModal">
                 <i class="bi bi-person-plus"></i> Add New Account
             </button>
         </div>
@@ -70,7 +70,7 @@
             <div class="col-md-12">
                 <div class="card">
                     <div class="card-body text-center">
-                        <h5>Total Accounts: ${totalCustomers}</h5>
+                        <h5>Total Accounts: ${totalAccounts}</h5>
                         <p class="mb-0">Page ${currentPage} of ${totalPages}</p>
                     </div>
                 </div>
@@ -79,7 +79,7 @@
         
         <!-- Filter Section -->
         <div class="filter-section">
-            <form action="viewcustomers" method="GET" class="row g-3">
+            <form action="viewaccounts" method="GET" class="row g-3">
                 <input type="hidden" name="page" value="${currentPage}">
                 <div class="col-md-3">
                     <label class="form-label">Sort By:</label>
@@ -113,42 +113,42 @@
             </form>
         </div>
 
-        <!-- Customers Display -->
+        <!-- Accounts Display -->
         <div class="row">
-            <c:forEach items="${customerList}" var="customer">
+            <c:forEach items="${accountList}" var="account">
                 <div class="col-md-6">
-                    <div class="card customer-card">
+                    <div class="card account-card">
                         <div class="card-body">
                             <div class="d-flex justify-content-between align-items-center mb-2">
-                                <h5 class="card-title mb-0">${customer.name}</h5>
-                                <span class="role-badge role-${customer.role.toLowerCase()}">${customer.role}</span>
+                                <h5 class="card-title mb-0">${account.name}</h5>
+                                <span class="role-badge role-${account.role.toLowerCase()}">${account.role}</span>
                             </div>
-                            <div class="customer-meta mb-3">
+                            <div class="account-meta mb-3">
                                 <p class="mb-1">
-                                    <i class="bi bi-envelope"></i> ${customer.email}
+                                    <i class="bi bi-envelope"></i> ${account.email}
                                 </p>
                                 <p class="mb-1">
-                                    <i class="bi bi-telephone"></i> ${customer.phone_number}
+                                    <i class="bi bi-telephone"></i> ${account.phone_number}
                                 </p>
                                 <p class="mb-1">
-                                    <i class="bi bi-geo-alt"></i> ${customer.address}
+                                    <i class="bi bi-geo-alt"></i> ${account.address}
                                 </p>
                             </div>
                             <div class="action-buttons">
                                 <button type="button" class="btn btn-sm btn-primary" 
-                                        onclick="editCustomer(${customer.id}, '${customer.name}', '${customer.email}', 
-                                                           '${customer.phone_number}', '${customer.address}', '${customer.role}')"
-                                        data-bs-toggle="modal" data-bs-target="#editCustomerModal">
+                                        onclick="editAccount(${account.id}, '${account.name}', '${account.email}', 
+                                                           '${account.phone_number}', '${account.address}', '${account.role}')"
+                                        data-bs-toggle="modal" data-bs-target="#editAccountModal">
                                     <i class="bi bi-pencil"></i> Edit
                                 </button>
                                 <button type="button" class="btn btn-sm btn-warning" 
-                                        onclick="resetPassword(${customer.id})"
+                                        onclick="resetPassword(${account.id})"
                                         data-bs-toggle="modal" data-bs-target="#resetPasswordModal">
                                     <i class="bi bi-key"></i> Reset Password
                                 </button>
                                 <button type="button" class="btn btn-sm btn-danger" 
-                                        onclick="deleteCustomer(${customer.id}, '${customer.name}')"
-                                        data-bs-toggle="modal" data-bs-target="#deleteCustomerModal">
+                                        onclick="deleteAccount(${account.id}, '${account.name}')"
+                                        data-bs-toggle="modal" data-bs-target="#deleteAccountModal">
                                     <i class="bi bi-trash"></i> Delete
                                 </button>
                             </div>
@@ -157,10 +157,10 @@
                 </div>
             </c:forEach>
             
-            <c:if test="${empty customerList}">
+            <c:if test="${empty accountList}">
                 <div class="col-12 text-center">
                     <div class="alert alert-info" role="alert">
-                        <i class="bi bi-info-circle"></i> No customers found.
+                        <i class="bi bi-info-circle"></i> No accounts found.
                     </div>
                 </div>
             </c:if>
@@ -168,24 +168,24 @@
 
         <!-- Pagination -->
         <c:if test="${totalPages > 1}">
-            <nav aria-label="Customer pagination" class="d-flex justify-content-center">
+            <nav aria-label="Account pagination" class="d-flex justify-content-center">
                 <ul class="pagination">
                     <li class="page-item ${currentPage == 1 ? 'disabled' : ''}">
-                        <a class="page-link" href="viewcustomers?page=${currentPage - 1}&sortBy=${param.sortBy}&role=${param.role}&search=${param.search}" aria-label="Previous">
+                        <a class="page-link" href="viewaccounts?page=${currentPage - 1}&sortBy=${param.sortBy}&role=${param.role}&search=${param.search}" aria-label="Previous">
                             <span aria-hidden="true">&laquo;</span>
                         </a>
                     </li>
                     
                     <c:forEach begin="1" end="${totalPages}" var="i">
                         <li class="page-item ${currentPage == i ? 'active' : ''}">
-                            <a class="page-link" href="viewcustomers?page=${i}&sortBy=${param.sortBy}&role=${param.role}&search=${param.search}">
+                            <a class="page-link" href="viewaccounts?page=${i}&sortBy=${param.sortBy}&role=${param.role}&search=${param.search}">
                                 ${i}
                             </a>
                         </li>
                     </c:forEach>
                     
                     <li class="page-item ${currentPage == totalPages ? 'disabled' : ''}">
-                        <a class="page-link" href="viewcustomers?page=${currentPage + 1}&sortBy=${param.sortBy}&role=${param.role}&search=${param.search}" aria-label="Next">
+                        <a class="page-link" href="viewaccounts?page=${currentPage + 1}&sortBy=${param.sortBy}&role=${param.role}&search=${param.search}" aria-label="Next">
                             <span aria-hidden="true">&raquo;</span>
                         </a>
                     </li>
@@ -194,15 +194,15 @@
         </c:if>
     </div>
 
-    <!-- Add Customer Modal -->
-    <div class="modal fade" id="addCustomerModal" tabindex="-1">
+    <!-- Add Account Modal -->
+    <div class="modal fade" id="addAccountModal" tabindex="-1">
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">
                     <h5 class="modal-title">Add New Account</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                 </div>
-                <form action="Customer_control" method="POST">
+                <form action="Account_control" method="POST">
                     <div class="modal-body">
                         <input type="hidden" name="action" value="add">
                         
@@ -249,18 +249,18 @@
         </div>
     </div>
 
-    <!-- Edit Customer Modal -->
-    <div class="modal fade" id="editCustomerModal" tabindex="-1">
+    <!-- Edit Account Modal -->
+    <div class="modal fade" id="editAccountModal" tabindex="-1">
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title">Edit Customer</h5>
+                    <h5 class="modal-title">Edit Account</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                 </div>
-                <form action="Customer_control" method="POST">
+                <form action="Account_control" method="POST">
                     <div class="modal-body">
                         <input type="hidden" name="action" value="update">
-                        <input type="hidden" name="customer_id" id="edit_customer_id">
+                        <input type="hidden" name="account_id" id="edit_account_id">
                         
                         <div class="mb-3">
                             <label class="form-label">Name:</label>
@@ -293,7 +293,7 @@
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                        <button type="submit" class="btn btn-primary">Update Customer</button>
+                        <button type="submit" class="btn btn-primary">Update Account</button>
                     </div>
                 </form>
             </div>
@@ -308,10 +308,10 @@
                     <h5 class="modal-title">Reset Password</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                 </div>
-                <form action="Customer_control" method="POST">
+                <form action="Account_control" method="POST">
                     <div class="modal-body">
                         <input type="hidden" name="action" value="updatePassword">
-                        <input type="hidden" name="customer_id" id="reset_customer_id">
+                        <input type="hidden" name="account_id" id="reset_account_id">
                         
                         <div class="mb-3">
                             <label class="form-label">New Password:</label>
@@ -332,19 +332,19 @@
         </div>
     </div>
 
-    <!-- Delete Customer Modal -->
-    <div class="modal fade" id="deleteCustomerModal" tabindex="-1">
+    <!-- Delete Account Modal -->
+    <div class="modal fade" id="deleteAccountModal" tabindex="-1">
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title">Delete Customer</h5>
+                    <h5 class="modal-title">Delete Account</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                 </div>
-                <form action="Customer_control" method="POST">
+                <form action="Account_control" method="POST">
                     <div class="modal-body">
                         <input type="hidden" name="action" value="delete">
-                        <input type="hidden" name="customer_id" id="delete_customer_id">
-                        <p>Are you sure you want to delete customer <span id="delete_customer_name" class="fw-bold"></span>? This action cannot be undone.</p>
+                        <input type="hidden" name="account_id" id="delete_account_id">
+                        <p>Are you sure you want to delete account <span id="delete_account_name" class="fw-bold"></span>? This action cannot be undone.</p>
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
@@ -357,8 +357,8 @@
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
     <script>
-        function editCustomer(id, name, email, phone, address, role) {
-            document.getElementById('edit_customer_id').value = id;
+        function editAccount(id, name, email, phone, address, role) {
+            document.getElementById('edit_account_id').value = id;
             document.getElementById('edit_name').value = name;
             document.getElementById('edit_email').value = email;
             document.getElementById('edit_phone').value = phone;
@@ -367,12 +367,12 @@
         }
         
         function resetPassword(id) {
-            document.getElementById('reset_customer_id').value = id;
+            document.getElementById('reset_account_id').value = id;
         }
         
-        function deleteCustomer(id, name) {
-            document.getElementById('delete_customer_id').value = id;
-            document.getElementById('delete_customer_name').textContent = name;
+        function deleteAccount(id, name) {
+            document.getElementById('delete_account_id').value = id;
+            document.getElementById('delete_account_name').textContent = name;
         }
     </script>
 </body>
