@@ -1,5 +1,6 @@
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 <%@ page import="dal.ProductDAO" %>
 <%@ page import="model.Products" %>
 <%@ page import="java.util.Vector" %>
@@ -13,8 +14,17 @@
         <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
         <!-- Font Awesome -->
         <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+        <!-- Chakra Petch Font -->
+        <link href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@400;500;600&display=swap" rel="stylesheet">
         <!-- Custom CSS -->
         <link href="css/cpuCategory.css" rel="stylesheet">
+        <style>
+            .product-price {
+                font-family: "Chakra Petch", sans-serif !important;
+                font-size: 20px !important;
+                color: #FB4E4E !important;
+            }
+        </style>
         <!-- SweetAlert2 -->
         <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     </head>
@@ -59,7 +69,9 @@
                             <img src="${product.image_url}" class="product-image" alt="${product.name}">
                             <h5 class="product-title">${product.name}</h5>
                             <p class="product-description">${product.description}</p>
-                            <span class="product-price">$${product.price}</span>
+                            <div class="product-price">
+                                <fmt:formatNumber value="${product.price}" type="number" pattern="###,###"/>đ
+                            </div>
 
                             <!-- Add to Cart Button -->
                             <button class="btn btn-primary add-to-cart-btn" 

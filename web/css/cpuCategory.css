@@ -72,10 +72,17 @@
 }
 
 .product-price {
-    font-size: 1.5rem;
-    font-weight: bold;
-    color: #0d6efd;
+    position: relative;
+    font-family: "Chakra Petch", sans-serif;
+    font-size: 20px;
+    font-weight: 500;
+    color: #FB4E4E;
     margin-bottom: 1rem;
+}
+
+.price-amount {
+    color: #FB4E4E;
+    font-size: 20px;
 }
 
 .quantity-control {
