@@ -3,9 +3,12 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib  uri="http://java.sun.com/jsp/jstl/functions" prefix="fn"%>
 
+
 <%
     String sortBy = request.getParameter("sortBy");
+    if (sortBy == null) sortBy = "id"; // Default sort by ID
     String order = request.getParameter("order");
+    if (order == null) order = "asc"; // Default ascending order
     String baseUrl = request.getContextPath() + "/productservlet?service=viewProduct";
 %>
 
