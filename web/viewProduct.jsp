@@ -261,11 +261,6 @@
                                 <td>${product.spec_description}</td>
                                 <td>${product.status}</td>
                                 <td>
-<<<<<<< HEAD
-                                    <a href="productservlet?service=updateProduct&id=${product.id}" class="btn btn-success btn-sm">
-                                        Edit
-                                    </a>
-=======
                                     <button 
                                         type="button" 
                                         class="btn btn-sm btn-info" 
@@ -284,7 +279,6 @@
                                         data-bs-target="#editProductModal">
                                         Edit
                                     </button>
->>>>>>> 85965a74eccc5fd5d39fcefccd64f2ffef34b42c
                                 </td>
                             </tr>
                         </c:forEach>
