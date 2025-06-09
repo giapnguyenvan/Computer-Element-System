@@ -59,7 +59,7 @@ public class ViewCart extends HttpServlet {
      * @throws IOException if an I/O error occurs
      */
     @Override
-    @AccessRoles(roles = {"customer"})
+    @AccessRoles(roles = {"customer","admin"})
     public void doGet(HttpServletRequest request, HttpServletResponse response)
     throws ServletException, IOException {
         request.getRequestDispatcher("view-cart.html").forward(request, response);
