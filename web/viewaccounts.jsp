@@ -7,82 +7,360 @@
     <title>Account Management</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.7.2/font/bootstrap-icons.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <style>
-        .account-card {
-            margin-bottom: 20px;
-            transition: transform 0.2s;
+        :root {
+            --primary-color: #6366f1;
+            --primary-dark: #4f46e5;
+            --secondary-color: #64748b;
+            --success-color: #22c55e;
+            --info-color: #0ea5e9;
+            --warning-color: #f59e0b;
+            --danger-color: #ef4444;
+            --background-color: #f1f5f9;
+            --card-bg: #ffffff;
+            --text-primary: #1e293b;
+            --text-secondary: #64748b;
         }
+
+        body {
+            background-color: var(--background-color);
+            font-family: 'Poppins', sans-serif;
+            color: var(--text-primary);
+        }
+
+        .container {
+            max-width: 1400px;
+            padding: 2rem;
+        }
+
+        .page-header {
+            background: var(--card-bg);
+            border-radius: 24px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .page-header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-dark) 100%);
+            opacity: 0.1;
+            z-index: 0;
+        }
+
+        .page-header h1 {
+            font-weight: 700;
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+            position: relative;
+            z-index: 1;
+        }
+
+        .stats-container {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+
+        .stat-card {
+            background: var(--card-bg);
+            border-radius: 16px;
+            padding: 1.5rem;
+            flex: 1;
+            box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+            transition: transform 0.3s ease;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .filter-section {
+            background: var(--card-bg);
+            border-radius: 24px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+        }
+
+        .form-control, .form-select {
+            border-radius: 12px;
+            padding: 0.75rem 1rem;
+            border: 2px solid #e2e8f0;
+            font-size: 0.95rem;
+            transition: all 0.3s ease;
+        }
+
+        .form-control:focus, .form-select:focus {
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.1);
+        }
+
+        .search-input {
+            border-radius: 12px 0 0 12px;
+            border-right: none;
+        }
+
+        .search-button {
+            border-radius: 0 12px 12px 0;
+            background: var(--primary-color);
+            border: none;
+            padding: 0.75rem 1.5rem;
+            transition: all 0.3s ease;
+        }
+
+        .search-button:hover {
+            background: var(--primary-dark);
+        }
+
+        .account-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .account-card {
+            background: var(--card-bg);
+            border-radius: 20px;
+            padding: 1.5rem;
+            box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+            transition: all 0.3s ease;
+            border: 2px solid transparent;
+        }
+
         .account-card:hover {
             transform: translateY(-5px);
-            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            border-color: var(--primary-color);
+            box-shadow: 0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1);
         }
-        .account-meta {
-            font-size: 0.9em;
-            color: #666;
-        }
-        .filter-section {
-            background-color: #f8f9fa;
-            padding: 20px;
-            border-radius: 10px;
-            margin-bottom: 30px;
-        }
-        .pagination {
-            margin-top: 30px;
-        }
-        .action-buttons {
-            margin-top: 10px;
+
+        .account-header {
             display: flex;
-            gap: 10px;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
         }
+
+        .account-name {
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin: 0;
+        }
+
         .role-badge {
-            padding: 5px 10px;
-            border-radius: 15px;
-            font-size: 0.8em;
-            font-weight: 500;
+            padding: 0.5rem 1rem;
+            border-radius: 50px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
         }
+
         .role-admin {
-            background-color: #dc3545;
+            background: linear-gradient(135deg, var(--danger-color), #dc2626);
             color: white;
         }
+
         .role-customer {
-            background-color: #28a745;
+            background: linear-gradient(135deg, var(--success-color), #16a34a);
             color: white;
         }
+
         .role-staff {
-            background-color: #007bff;
+            background: linear-gradient(135deg, var(--info-color), #0284c7);
             color: white;
+        }
+
+        .account-meta {
+            margin-bottom: 1.5rem;
+        }
+
+        .account-meta p {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            margin-bottom: 0.75rem;
+            color: var(--text-secondary);
+            font-size: 0.95rem;
+        }
+
+        .account-meta i {
+            color: var(--primary-color);
+            font-size: 1.1rem;
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 0.75rem;
+        }
+
+        .action-buttons .btn {
+            flex: 1;
+            padding: 0.75rem;
+            border-radius: 12px;
+            font-weight: 500;
+            font-size: 0.9rem;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+        }
+
+        .btn-primary {
+            background: var(--primary-color);
+            border: none;
+        }
+
+        .btn-primary:hover {
+            background: var(--primary-dark);
+            transform: translateY(-2px);
+        }
+
+        .btn-warning {
+            background: var(--warning-color);
+            border: none;
+            color: white;
+        }
+
+        .btn-warning:hover {
+            background: #d97706;
+            transform: translateY(-2px);
+        }
+
+        .btn-danger {
+            background: var(--danger-color);
+            border: none;
+        }
+
+        .btn-danger:hover {
+            background: #dc2626;
+            transform: translateY(-2px);
+        }
+
+        .modal-content {
+            border-radius: 24px;
+            border: none;
+            box-shadow: 0 25px 50px -12px rgb(0 0 0 / 0.25);
+        }
+
+        .modal-header {
+            background: linear-gradient(135deg, var(--primary-color), var(--primary-dark));
+            color: white;
+            border-radius: 24px 24px 0 0;
+            padding: 1.5rem;
+        }
+
+        .modal-body {
+            padding: 2rem;
+        }
+
+        .modal-footer {
+            padding: 1.5rem;
+            border-top: 2px solid #e2e8f0;
+        }
+
+        .pagination {
+            display: flex;
+            justify-content: center;
+            gap: 0.5rem;
+            margin-top: 2rem;
+        }
+
+        .page-link {
+            border-radius: 12px;
+            padding: 0.75rem 1rem;
+            color: var(--text-primary);
+            border: 2px solid #e2e8f0;
+            transition: all 0.3s ease;
+        }
+
+        .page-link:hover {
+            background: var(--primary-color);
+            border-color: var(--primary-color);
+            color: white;
+        }
+
+        .page-item.active .page-link {
+            background: var(--primary-color);
+            border-color: var(--primary-color);
+            color: white;
+        }
+
+        .add-account-btn {
+            background: linear-gradient(135deg, var(--primary-color), var(--primary-dark));
+            border: none;
+            padding: 1rem 2rem;
+            border-radius: 12px;
+            color: white;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            transition: all 0.3s ease;
+        }
+
+        .add-account-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+        }
+
+        @media (max-width: 768px) {
+            .account-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .stats-container {
+                flex-direction: column;
+            }
+            
+            .action-buttons {
+                flex-direction: column;
+            }
         }
     </style>
 </head>
 <body>
-    <div class="container mt-5">
-        <h1 class="text-center mb-4">Accounts Management</h1>
-        
-        <!-- Add New Account Button -->
-        <div class="text-end mb-4">
-            <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addAccountModal">
-                <i class="bi bi-person-plus"></i> Add New Account
-            </button>
-        </div>
-
-        <!-- Stats Section -->
-        <div class="row mb-4">
-            <div class="col-md-12">
-                <div class="card">
-                    <div class="card-body text-center">
-                        <h5>Total Accounts: ${totalAccounts}</h5>
-                        <p class="mb-0">Page ${currentPage} of ${totalPages}</p>
+    <div class="container">
+        <div class="page-header">
+            <h1>Account Management</h1>
+            <div class="d-flex justify-content-between align-items-center">
+                <div class="stats-container">
+                    <div class="stat-card">
+                        <h3 class="mb-2">${totalAccounts}</h3>
+                        <p class="text-muted mb-0">Total Accounts</p>
+                    </div>
+                    <div class="stat-card">
+                        <h3 class="mb-2">${currentPage}</h3>
+                        <p class="text-muted mb-0">Current Page</p>
+                    </div>
+                    <div class="stat-card">
+                        <h3 class="mb-2">${totalPages}</h3>
+                        <p class="text-muted mb-0">Total Pages</p>
                     </div>
                 </div>
+                <button type="button" class="add-account-btn" data-bs-toggle="modal" data-bs-target="#addAccountModal">
+                    <i class="bi bi-person-plus"></i> Add New Account
+                </button>
             </div>
         </div>
-        
+
         <!-- Filter Section -->
         <div class="filter-section">
             <form action="viewaccounts" method="GET" class="row g-3">
                 <input type="hidden" name="page" value="${currentPage}">
                 <div class="col-md-3">
-                    <label class="form-label">Sort By:</label>
+                    <label class="form-label fw-bold">Sort By</label>
                     <select name="sortBy" class="form-select" onchange="this.form.submit()">
                         <option value="id" ${param.sortBy == 'id' ? 'selected' : ''}>ID</option>
                         <option value="name" ${param.sortBy == 'name' ? 'selected' : ''}>Name</option>
@@ -91,7 +369,7 @@
                     </select>
                 </div>
                 <div class="col-md-3">
-                    <label class="form-label">Filter by Role:</label>
+                    <label class="form-label fw-bold">Filter by Role</label>
                     <select name="role" class="form-select" onchange="this.form.submit()">
                         <option value="">All Roles</option>
                         <option value="admin" ${param.role == 'admin' ? 'selected' : ''}>Admin</option>
@@ -100,13 +378,13 @@
                     </select>
                 </div>
                 <div class="col-md-6">
-                    <label class="form-label">Search:</label>
+                    <label class="form-label fw-bold">Search</label>
                     <div class="input-group">
-                        <input type="text" name="search" class="form-control" 
+                        <input type="text" name="search" class="form-control search-input" 
                                placeholder="Search by name, email, or phone..." 
                                value="${param.search}">
-                        <button class="btn btn-outline-secondary" type="submit">
-                            <i class="bi bi-search"></i>
+                        <button class="btn search-button" type="submit">
+                            <i class="bi bi-search"></i> Search
                         </button>
                     </div>
                 </div>
@@ -114,52 +392,51 @@
         </div>
 
         <!-- Accounts Display -->
-        <div class="row">
+        <div class="account-grid">
             <c:forEach items="${accountList}" var="account">
-                <div class="col-md-6">
-                    <div class="card account-card">
-                        <div class="card-body">
-                            <div class="d-flex justify-content-between align-items-center mb-2">
-                                <h5 class="card-title mb-0">${account.name}</h5>
-                                <span class="role-badge role-${account.role.toLowerCase()}">${account.role}</span>
-                            </div>
-                            <div class="account-meta mb-3">
-                                <p class="mb-1">
-                                    <i class="bi bi-envelope"></i> ${account.email}
-                                </p>
-                                <p class="mb-1">
-                                    <i class="bi bi-telephone"></i> ${account.phone_number}
-                                </p>
-                                <p class="mb-1">
-                                    <i class="bi bi-geo-alt"></i> ${account.address}
-                                </p>
-                            </div>
-                            <div class="action-buttons">
-                                <button type="button" class="btn btn-sm btn-primary" 
-                                        onclick="editAccount(${account.id}, '${account.name}', '${account.email}', 
-                                                           '${account.phone_number}', '${account.address}', '${account.role}')"
-                                        data-bs-toggle="modal" data-bs-target="#editAccountModal">
-                                    <i class="bi bi-pencil"></i> Edit
-                                </button>
-                                <button type="button" class="btn btn-sm btn-warning" 
-                                        onclick="resetPassword(${account.id})"
-                                        data-bs-toggle="modal" data-bs-target="#resetPasswordModal">
-                                    <i class="bi bi-key"></i> Reset Password
-                                </button>
-                                <button type="button" class="btn btn-sm btn-danger" 
-                                        onclick="deleteAccount(${account.id}, '${account.name}')"
-                                        data-bs-toggle="modal" data-bs-target="#deleteAccountModal">
-                                    <i class="bi bi-trash"></i> Delete
-                                </button>
-                            </div>
-                        </div>
+                <div class="account-card">
+                    <div class="account-header">
+                        <h5 class="account-name">${account.name}</h5>
+                        <span class="role-badge role-${account.role.toLowerCase()}">${account.role}</span>
+                    </div>
+                    <div class="account-meta">
+                        <p>
+                            <i class="bi bi-envelope"></i>
+                            ${account.email}
+                        </p>
+                        <p>
+                            <i class="bi bi-telephone"></i>
+                            ${account.phone_number}
+                        </p>
+                        <p>
+                            <i class="bi bi-geo-alt"></i>
+                            ${account.address}
+                        </p>
+                    </div>
+                    <div class="action-buttons">
+                        <button type="button" class="btn btn-primary" 
+                                onclick="editAccount(${account.id}, '${account.name}', '${account.email}', 
+                                                   '${account.phone_number}', '${account.address}', '${account.role}')"
+                                data-bs-toggle="modal" data-bs-target="#editAccountModal">
+                            <i class="bi bi-pencil"></i> Edit
+                        </button>
+                        <button type="button" class="btn btn-warning" 
+                                onclick="resetPassword(${account.id})"
+                                data-bs-toggle="modal" data-bs-target="#resetPasswordModal">
+                            <i class="bi bi-key"></i> Reset
+                        </button>
+                        <button type="button" class="btn btn-danger" 
+                                onclick="deleteAccount(${account.id}, '${account.name}')"
+                                data-bs-toggle="modal" data-bs-target="#deleteAccountModal">
+                            <i class="bi bi-trash"></i> Delete
+                        </button>
                     </div>
                 </div>
             </c:forEach>
             
             <c:if test="${empty accountList}">
-                <div class="col-12 text-center">
-                    <div class="alert alert-info" role="alert">
+                <div class="col-12">
+                    <div class="alert alert-info text-center" role="alert">
                         <i class="bi bi-info-circle"></i> No accounts found.
                     </div>
                 </div>
@@ -168,7 +445,7 @@
 
         <!-- Pagination -->
         <c:if test="${totalPages > 1}">
-            <nav aria-label="Account pagination" class="d-flex justify-content-center">
+            <nav aria-label="Account pagination">
                 <ul class="pagination">
                     <li class="page-item ${currentPage == 1 ? 'disabled' : ''}">
                         <a class="page-link" href="viewaccounts?page=${currentPage - 1}&sortBy=${param.sortBy}&role=${param.role}&search=${param.search}" aria-label="Previous">
