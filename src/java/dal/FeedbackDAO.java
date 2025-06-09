@@ -190,6 +190,36 @@ public class FeedbackDAO {
         return 0;
     }
 
+    // Get all feedback with user information for a specific product
+    public Vector<Feedback> getFeedbackWithUsersByProduct(int productId) {
+        DBContext db = DBContext.getInstance();
+        Vector<Feedback> listFeedback = new Vector<>();
+        String sql = "SELECT f.*, u.name as user_name FROM feedback f " +
+                    "LEFT JOIN users u ON f.user_id = u.id " +
+                    "WHERE f.product_id = ? " +
+                    "ORDER BY f.created_at DESC";
+        try {
+            PreparedStatement ptm = db.getConnection().prepareStatement(sql);
+            ptm.setInt(1, productId);
+            ResultSet rs = ptm.executeQuery();
+            while (rs.next()) {
+                Feedback f = new Feedback(
+                    rs.getInt("id"),
+                    rs.getInt("product_id"),
+                    rs.getInt("user_id"),
+                    rs.getInt("rating"),
+                    rs.getString("content"),
+                    rs.getString("created_at")
+                );
+                f.setUserName(rs.getString("user_name")); // You'll need to add this field to Feedback class
+                listFeedback.add(f);
+            }
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+        }
+        return listFeedback;
+    }
+
     public static void main(String[] args) {
         FeedbackDAO dao = new FeedbackDAO();
         // Test with product ID 1

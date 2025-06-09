@@ -212,7 +212,7 @@ public class ProductServlet extends HttpServlet {
 
                     // Get feedback data
                     FeedbackDAO feedbackDAO = new FeedbackDAO();
-                    Vector<Feedback> allFeedback = feedbackDAO.getFeedbackByProduct(productID);
+                    Vector<Feedback> allFeedback = feedbackDAO.getFeedbackWithUsersByProduct(productID);
                     
                     // Calculate total pages
                     int totalFeedback = allFeedback.size();

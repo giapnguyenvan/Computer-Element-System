@@ -49,7 +49,23 @@
                                             <small class="text-muted">${feedback.created_at}</small>
                                         </div>
                                         <p class="card-text">${feedback.content}</p>
-                                        <small class="text-muted">By User #${feedback.user_id}</small>
+                                        <div class="d-flex justify-content-between align-items-center">
+                                            <small class="text-muted">
+                                                By ${not empty feedback.userName ? feedback.userName : 'Anonymous User'}
+                                            </small>
+                                            <c:if test="${sessionScope.user.id == feedback.user_id}">
+                                                <div class="btn-group">
+                                                    <button type="button" class="btn btn-sm btn-outline-primary" 
+                                                            onclick="editFeedback(${feedback.id}, '${fn:escapeXml(feedback.content)}', ${feedback.rating})">
+                                                        Edit
+                                                    </button>
+                                                    <button type="button" class="btn btn-sm btn-outline-danger" 
+                                                            onclick="deleteFeedback(${feedback.id})">
+                                                        Delete
+                                                    </button>
+                                                </div>
+                                            </c:if>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
@@ -86,4 +102,18 @@
             </c:if>
         </div>
     </div>
-</div> 
+</div>
+
+<!-- Add JavaScript for edit/delete functionality -->
+<script>
+    function editFeedback(feedbackId, content, rating) {
+        // Implement edit functionality
+        // You can show a modal or redirect to an edit page
+    }
+    
+    function deleteFeedback(feedbackId) {
+        if (confirm('Are you sure you want to delete this review?')) {
+            window.location.href = 'productservlet?service=deleteFeedback&id=' + feedbackId;
+        }
+    }
+</script> 

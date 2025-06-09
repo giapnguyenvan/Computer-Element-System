@@ -7,6 +7,7 @@ public class Feedback {
     private int rating;
     private String content;
     private String created_at;
+    private String userName;
 
     public Feedback(int id, int product_id, int user_id, int rating, String content, String created_at) {
         this.id = id;
@@ -42,6 +43,10 @@ public class Feedback {
         return created_at;
     }
 
+    public String getUserName() {
+        return userName;
+    }
+
     // Setters
     public void setId(int id) {
         this.id = id;
@@ -65,6 +70,10 @@ public class Feedback {
 
     public void setCreated_at(String created_at) {
         this.created_at = created_at;
+    }
+
+    public void setUserName(String userName) {
+        this.userName = userName;
     }
 
     @Override
