@@ -28,7 +28,7 @@
         <a href="${pageContext.request.contextPath}/adminservlet" class="<%= request.getRequestURI().endsWith("adminservlet") ? "active" : "" %>">
             <i class="fas fa-home me-2"></i> Dashboard
         </a>
-        <a href="${pageContext.request.contextPath}/viewaccounts" target="mainFrame" class="<%= request.getRequestURI().contains("viewaccounts") ? "active" : "" %>">
+        <a href="${pageContext.request.contextPath}/Account" target="mainFrame" class="<%= request.getRequestURI().contains("Account") ? "active" : "" %>">
             <i class="fas fa-users me-2"></i> Accounts
         </a>
         <a href="${pageContext.request.contextPath}/category?sort=default" target="mainFrame" class="<%= request.getRequestURI().endsWith("categoryList.jsp") ? "active" : "" %>">

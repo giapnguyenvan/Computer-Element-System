@@ -11,7 +11,7 @@ import java.util.Vector;
 import model.Account;
 import java.util.Collections;
 
-@WebServlet(name = "ViewAccountServlet", urlPatterns = {"/viewaccounts"})
+@WebServlet(name = "ViewAccountServlet", urlPatterns = {"/Account"})
 public class ViewAccountServlet extends HttpServlet {
 
     private static final int PAGE_SIZE = 10; // Number of accounts per page
@@ -106,7 +106,7 @@ public class ViewAccountServlet extends HttpServlet {
             request.setAttribute("totalAccounts", totalAccounts);
             
             // Forward to JSP
-            request.getRequestDispatcher("viewaccounts.jsp").forward(request, response);
+            request.getRequestDispatcher("Account.jsp").forward(request, response);
             
         } catch (Exception e) {
             e.printStackTrace();
