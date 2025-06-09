@@ -46,7 +46,8 @@ public class ProductDAO {
         Vector<Products> listProduct = new Vector<>();
         String sql = "SELECT p.*, c.name AS category_name "
                 + "FROM products p "
-                + "JOIN categories c ON p.category_id = c.id";
+                + "JOIN categories c ON p.category_id = c.id"
+                + "ORDER BY p.id ASC";
         try {
             PreparedStatement ptm = db.getConnection().prepareStatement(sql);
             ResultSet rs = ptm.executeQuery();
@@ -247,7 +248,11 @@ public class ProductDAO {
         }
         String sortOrder = "asc".equalsIgnoreCase(order) ? "ASC" : "DESC";
 
-        String sql = "SELECT * FROM products ORDER BY " + validSortBy + " " + sortOrder;
+        String sql = "SELECT p.*, c.name AS category_name "
+                + "FROM products p "
+                + "JOIN categories c ON p.category_id = c.id "
+                + "ORDER BY p." + validSortBy + " " + sortOrder;
+
         try {
             PreparedStatement ptm = db.getConnection().prepareStatement(sql);
             ResultSet rs = ptm.executeQuery();
@@ -263,7 +268,8 @@ public class ProductDAO {
                         rs.getString("image_url"),
                         rs.getString("description"),
                         jsonSpec,
-                        rs.getString("status")
+                        rs.getString("status"),
+                        rs.getString("category_name") // <- Make sure your constructor includes this
                 );
                 list.add(p);
             }

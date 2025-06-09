@@ -151,11 +151,11 @@
                 <table class="table table-striped table-hover align-middle">
                     <thead class="table-light">
                         <tr class="text-center">
-                            <th class="text-center">
+                            <th>
                                 <a class="sort-link" href="<%= 
-                                    "none".equals(getNextOrder("id", sortBy, order)) 
+                                    "none".equals(getNextOrder("product_id", sortBy, order)) 
                                     ? baseUrl 
-                                    : baseUrl + "&sortBy=id&order=" + getNextOrder("id", sortBy, order)
+                                    : baseUrl + "&sortBy=id&order=" + getNextOrder("product_id", sortBy, order)
                                    %>">
                                     Product ID
                                     <c:choose>

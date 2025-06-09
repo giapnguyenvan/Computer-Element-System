@@ -40,6 +40,8 @@ public class ProductServlet extends HttpServlet {
             throws ServletException, IOException {
         response.setContentType("text/html;charset=UTF-8");
         String service = request.getParameter("service");
+        String sortBy = request.getParameter("sortBy");
+        String order = request.getParameter("order");
         ProductDAO dao = new ProductDAO();
         CategoryDAO cdao = new CategoryDAO();
         Vector<Products> plist;
@@ -49,14 +51,14 @@ public class ProductServlet extends HttpServlet {
         if (service != null) {
             switch (service) {
                 case "viewProduct":
-                    String sortBy = request.getParameter("sortBy");
-                    String order = request.getParameter("order");
-
-                    if (sortBy == null || order == null || order.equals("none")) {
-                        plist = dao.getAllProductWithCategoryName();
-                    } else {
-                        plist = dao.getSortedProduct(sortBy, order);
+                    if (sortBy == null || sortBy.equals("none")) {
+                        sortBy = "id"; // default sorting by product ID
                     }
+
+                    if (order == null || order.equals("none")) {
+                        order = "asc"; // default order is ascending
+                    }
+                    plist = dao.getSortedProduct(sortBy, order);
 
                     request.setAttribute("product", plist);
                     request.setAttribute("brand", brands);
@@ -174,7 +176,7 @@ public class ProductServlet extends HttpServlet {
                         productl = productDAO.getProductByCategory(categoryId);
                     } else {
                         // No category filter, get all products initially
-                        productl = productDAO.getAllProduct();
+                        productl = productDAO.getSortedProduct(sortBy, order);
                     }
 
                     // Apply brand filter if specified and productList is not null
@@ -201,7 +203,9 @@ public class ProductServlet extends HttpServlet {
 
                     try {
                         page = Integer.parseInt(request.getParameter("page"));
-                        if (page < 1) page = 1;
+                        if (page < 1) {
+                            page = 1;
+                        }
                     } catch (NumberFormatException e) {
                         // Keep page as 1 if not specified or invalid
                     }
@@ -213,20 +217,20 @@ public class ProductServlet extends HttpServlet {
                     // Get feedback data
                     FeedbackDAO feedbackDAO = new FeedbackDAO();
                     Vector<Feedback> allFeedback = feedbackDAO.getFeedbackWithUsersByProduct(productID);
-                    
+
                     // Calculate total pages
                     int totalFeedback = allFeedback.size();
                     int totalPages = (int) Math.ceil((double) totalFeedback / ITEMS_PER_PAGE);
-                    
+
                     // Get paginated feedback
                     int startIdx = (page - 1) * ITEMS_PER_PAGE;
                     int endIdx = Math.min(startIdx + ITEMS_PER_PAGE, totalFeedback);
                     Vector<Feedback> paginatedFeedback = new Vector<>();
-                    
+
                     for (int i = startIdx; i < endIdx; i++) {
                         paginatedFeedback.add(allFeedback.get(i));
                     }
-                    
+
                     // Calculate average rating
                     double averageRating = 0;
                     if (!allFeedback.isEmpty()) {
@@ -245,7 +249,7 @@ public class ProductServlet extends HttpServlet {
                     request.setAttribute("currentPage", page);
                     request.setAttribute("totalPages", totalPages);
                     request.setAttribute("averageRating", averageRating);
-                    
+
                     request.getRequestDispatcher("productDetail.jsp").forward(request, response);
                     break;
                 default:
