@@ -14,6 +14,8 @@ import shop.DAO.CartItemDAO;
 import shop.entities.CartItem;
 import shop.entities.User;
 import shop.utils.ResponseUtils;
+import shop.DAO.ProductDAO;
+import shop.entities.Product;
 
 @WebServlet(name = "CartApiServlet", urlPatterns = {"/CartApiServlet"})
 public class CartApiServlet extends HttpServlet {
@@ -121,12 +123,33 @@ public class CartApiServlet extends HttpServlet {
             return;
         }
 
+        // Check product stock
+        ProductDAO productDAO = new ProductDAO();
+        Product product = productDAO.getById(cartRequest.productId);
+        
+        if (product == null) {
+            ResponseUtils.sendErrorResponse(response, 404, "Product not found");
+            return;
+        }
+
+        if (product.getStock() < cartRequest.quantity) {
+            ResponseUtils.sendErrorResponse(response, 400, "Not enough stock available");
+            return;
+        }
+
         // Check if item already exists in cart
         CartItem existingItem = cartItemDAO.getByUserIdAndProductId(cartRequest.userId, cartRequest.productId);
 
         if (existingItem != null) {
+            // Check if total quantity (existing + new) exceeds stock
+            int totalQuantity = existingItem.getQuantity() + cartRequest.quantity;
+            if (totalQuantity > product.getStock()) {
+                ResponseUtils.sendErrorResponse(response, 400, "Not enough stock available for total quantity");
+                return;
+            }
+            
             // Update quantity
-            existingItem.setQuantity(existingItem.getQuantity() + cartRequest.quantity);
+            existingItem.setQuantity(totalQuantity);
             cartItemDAO.update(existingItem);
         } else {
             // Create new cart item
@@ -141,6 +164,7 @@ public class CartApiServlet extends HttpServlet {
         JsonObject responseObj = new JsonObject();
         responseObj.addProperty("success", true);
         responseObj.addProperty("message", "Item added to cart successfully");
+        responseObj.addProperty("remainingStock", product.getStock());
 
         ResponseUtils.sendJsonResponse(response, responseObj);
     }

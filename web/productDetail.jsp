@@ -64,6 +64,35 @@
                 align-items: center;
                 justify-content: center;
             }
+            .quantity-selector {
+                display: flex;
+                border: 1px solid #ccc;
+                border-radius: 4px;
+                overflow: hidden;
+                width: 120px;
+                height: 36px;
+                background: #fff;
+            }
+            .qty-btn {
+                width: 36px;
+                border: none;
+                background: none;
+                font-size: 1.25rem;
+                color: #333;
+                cursor: pointer;
+                outline: none;
+                transition: background 0.2s;
+            }
+            .qty-btn:hover {
+                background: #f0f0f0;
+            }
+            .qty-input {
+                width: 48px;
+                border: none;
+                outline: none;
+                font-size: 1.25rem;
+                background: none;
+            }
         </style>
     </head>
     <body>
@@ -85,10 +114,7 @@
 
                     <p><strong>Category ID:</strong> ${product.category_id}</p>
                     <p><strong>Stock:</strong> 
-                        <c:choose>
-                            <c:when test="${product.stock > 0}">${product.stock} available</c:when>
-                            <c:otherwise><span class="text-danger">Out of Stock</span></c:otherwise>
-                        </c:choose>
+                        <span id="stockDisplay">${product.stock}</span> available
                     </p>
 
                     <hr>
@@ -100,9 +126,18 @@
                     <p>${product.spec_description}</p>
 
                     <c:if test="${product.stock > 0}">
-                        <a href="${pageContext.request.contextPath}/cart?service=addToCart&productID=${product.id}" class="btn btn-primary mt-3">
-                            Add to Cart
-                        </a>
+                        <div class="d-flex align-items-center mt-4">
+                            <div class="quantity-selector" style="width: 120px; margin-right: 15px;">
+                                <button type="button" class="qty-btn" onclick="changeQuantity(${product.id}, -1)">-</button>
+                                <input type="number" id="quantity_${product.id}" value="1" min="1" max="${product.stock}" class="qty-input" style="text-align:center;">
+                                <button type="button" class="qty-btn" onclick="changeQuantity(${product.id}, 1)">+</button>
+                            </div>
+                            <button class="btn btn-primary" 
+                                    onclick="addToCart(${product.id}, '${product.name}', ${product.price})"
+                                    id="addBtn_${product.id}">
+                                <i class="fas fa-cart-plus me-2"></i>Add to Cart
+                            </button>
+                        </div>
                     </c:if>
                 </div>
             </div>
@@ -146,6 +181,200 @@
                 dropdowns.forEach(function(dropdown) {
                     new bootstrap.Dropdown(dropdown);
                 });
+            });
+
+            function validateQuantity() {
+                const quantityInput = document.getElementById('quantity');
+                const maxStock = ${product.stock};
+                let value = parseInt(quantityInput.value);
+                
+                if (isNaN(value) || value < 1) {
+                    value = 1;
+                } else if (value > maxStock) {
+                    value = maxStock;
+                }
+                
+                quantityInput.value = value;
+            }
+
+            function incrementQuantity() {
+                const quantityInput = document.getElementById('quantity');
+                const maxStock = ${product.stock};
+                let value = parseInt(quantityInput.value);
+                
+                if (value < maxStock) {
+                    quantityInput.value = value + 1;
+                }
+            }
+
+            function decrementQuantity() {
+                const quantityInput = document.getElementById('quantity');
+                let value = parseInt(quantityInput.value);
+                
+                if (value > 1) {
+                    quantityInput.value = value - 1;
+                }
+            }
+        </script>
+
+        <!-- SweetAlert2 for notifications -->
+        <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+        
+        <!-- Custom JavaScript for Cart Functionality -->
+        <script>
+            // Global variables
+            let cartCount = 0;
+            const currentUserId = ${sessionScope.userAuth2.id};
+
+            // Function to change quantity
+            function changeQuantity(productId, change) {
+                const quantityInput = document.getElementById('quantity_' + productId);
+                let currentQuantity = parseInt(quantityInput.value);
+                let newQuantity = currentQuantity + change;
+
+                if (newQuantity < 1)
+                    newQuantity = 1;
+                if (newQuantity > ${product.stock})
+                    newQuantity = ${product.stock};
+
+                quantityInput.value = newQuantity;
+            }
+
+            // Function to add product to cart
+            async function addToCart(productId, productName, productPrice) {
+                const quantityInput = document.getElementById('quantity_' + productId);
+                const quantity = parseInt(quantityInput.value);
+                const addButton = document.getElementById('addBtn_' + productId);
+
+                // Validate quantity
+                if (isNaN(quantity) || quantity < 1) {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Invalid Quantity',
+                        text: 'Please enter a valid quantity'
+                    });
+                    return;
+                }
+
+                // Disable button and show loading
+                addButton.disabled = true;
+                addButton.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Adding...';
+
+                try {
+                    console.log('Sending request to add to cart:', {
+                        userId: currentUserId,
+                        productId: productId,
+                        quantity: quantity
+                    });
+
+                    const response = await fetch('${pageContext.request.contextPath}/CartApiServlet', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({
+                            userId: currentUserId,
+                            productId: productId,
+                            quantity: quantity
+                        })
+                    });
+
+                    console.log('Response status:', response.status);
+                    const result = await response.json();
+                    console.log('Response data:', result);
+
+                    if (result.success) {
+                        // Show success message
+                        Swal.fire({
+                            icon: 'success',
+                            title: 'Success!',
+                            text: productName + ' has been added to your cart!',
+                            timer: 2000,
+                            showConfirmButton: false
+                        });
+
+                        // Update cart count
+                        updateCartCount();
+
+                        // Update stock display
+                        const stockDisplay = document.getElementById('stockDisplay');
+                        if (stockDisplay && result.remainingStock !== undefined) {
+                            stockDisplay.textContent = result.remainingStock;
+                        }
+
+                        // Reset quantity to 1
+                        quantityInput.value = 1;
+
+                        // Add visual feedback
+                        addButton.classList.add('btn-success');
+                        addButton.innerHTML = '<i class="fas fa-check me-2"></i>Added!';
+
+                        setTimeout(() => {
+                            addButton.classList.remove('btn-success');
+                            addButton.innerHTML = '<i class="fas fa-cart-plus me-2"></i>Add to Cart';
+                        }, 2000);
+                    } else {
+                        throw new Error(result.message || 'Failed to add to cart');
+                    }
+                } catch (error) {
+                    console.error('Error adding to cart:', error);
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Error!',
+                        text: error.message || 'Failed to add product to cart. Please try again.'
+                    });
+                } finally {
+                    // Re-enable button
+                    addButton.disabled = false;
+                    if (!addButton.classList.contains('btn-success')) {
+                        addButton.innerHTML = '<i class="fas fa-cart-plus me-2"></i>Add to Cart';
+                    }
+                }
+            }
+
+            // Function to update cart count
+            async function updateCartCount() {
+                try {
+                    const response = await fetch('${pageContext.request.contextPath}/CartApiServlet?userId=' + currentUserId);
+                    const result = await response.json();
+
+                    if (result.success && result.data) {
+                        const totalItems = result.data.reduce((sum, item) => sum + item.quantity, 0);
+                        const cartCountElement = document.getElementById('cartCount');
+                        if (cartCountElement) {
+                            cartCountElement.textContent = totalItems;
+                        }
+                        cartCount = totalItems;
+                    }
+                } catch (error) {
+                    console.error('Error updating cart count:', error);
+                }
+            }
+
+            // Initialize cart count on page load
+            document.addEventListener('DOMContentLoaded', function() {
+                updateCartCount();
+
+                // Add keyboard support for quantity input
+                const quantityInput = document.getElementById('quantity_${product.id}');
+                if (quantityInput) {
+                    quantityInput.addEventListener('keypress', function(e) {
+                        if (e.key === 'Enter') {
+                            addToCart(${product.id}, '${product.name}', ${product.price});
+                        }
+                    });
+
+                    quantityInput.addEventListener('change', function() {
+                        let value = parseInt(this.value);
+                        if (isNaN(value) || value < 1) {
+                            value = 1;
+                        }
+                        if (value > ${product.stock}) {
+                            value = ${product.stock};
+                        }
+                        this.value = value;
+                    });
+                }
             });
         </script>
     </body>
