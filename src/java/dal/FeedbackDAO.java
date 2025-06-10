@@ -149,9 +149,13 @@ public class FeedbackDAO {
 
     // Get all feedback with optional pagination
     public Vector<Feedback> getAllFeedback(int page, int pageSize) {
-         DBContext db = DBContext.getInstance();
+        DBContext db = DBContext.getInstance();
         Vector<Feedback> listFeedback = new Vector<>();
-        String sql = "SELECT * FROM feedback ORDER BY created_at DESC LIMIT ? OFFSET ?";
+        String sql = "SELECT f.*, u.name as user_name, p.name as product_name " +
+                    "FROM feedback f " +
+                    "LEFT JOIN users u ON f.user_id = u.id " +
+                    "LEFT JOIN products p ON f.product_id = p.id " +
+                    "ORDER BY f.created_at DESC LIMIT ? OFFSET ?";
         try {
             PreparedStatement ptm = db.getConnection().prepareStatement(sql);
             ptm.setInt(1, pageSize);
@@ -166,6 +170,8 @@ public class FeedbackDAO {
                     rs.getString("content"),
                     rs.getString("created_at")
                 );
+                f.setUserName(rs.getString("user_name"));
+                f.setProductName(rs.getString("product_name"));
                 listFeedback.add(f);
             }
         } catch (SQLException ex) {

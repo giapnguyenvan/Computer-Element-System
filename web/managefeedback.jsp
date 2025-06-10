@@ -176,7 +176,7 @@
                                 <p class="card-text">${fn:substring(feedback.content, 0, 100)}${fn:length(feedback.content) > 100 ? '...' : ''}</p>
                             </div>
                             <div class="feedback-meta mt-3">
-                                <small>Product ID: ${feedback.product_id} | User ID: ${feedback.user_id}</small>
+                                <small>Product: ${feedback.productName} | User: ${feedback.userName}</small>
                             </div>
                             <div class="action-buttons mt-3">
                                 <button type="button" class="btn btn-sm btn-info" 
@@ -184,8 +184,8 @@
                                         data-rating="${feedback.rating}"
                                         data-content="${fn:escapeXml(feedback.content)}"
                                         data-created="${feedback.created_at}"
-                                        data-product-id="${feedback.product_id}"
-                                        data-user-id="${feedback.user_id}">
+                                        data-product-name="${feedback.productName}"
+                                        data-user-name="${feedback.userName}">
                                     View Details
                                 </button>
                                 <button type="button" class="btn btn-sm btn-primary" 
@@ -193,13 +193,13 @@
                                         data-id="${feedback.id}"
                                         data-rating="${feedback.rating}"
                                         data-content="${fn:escapeXml(feedback.content)}"
-                                        data-user-id="${feedback.user_id}"
+                                        data-user-name="${feedback.userName}"
                                         data-bs-toggle="modal" 
                                         data-bs-target="#editFeedbackModal">
                                     Edit
                                 </button>
                                 <button type="button" class="btn btn-sm btn-danger" 
-                                        onclick="deleteFeedback('${feedback.id}', '${feedback.user_id}')"
+                                        onclick="deleteFeedback('${feedback.id}', '${feedback.userName}')"
                                         data-bs-toggle="modal" 
                                         data-bs-target="#deleteFeedbackModal">
                                     Delete
@@ -311,7 +311,7 @@
                     <div class="modal-body">
                         <input type="hidden" name="action" value="update">
                         <input type="hidden" name="feedback_id" id="edit_feedback_id">
-                        <input type="hidden" name="user_id" id="edit_user_id">
+                        <input type="hidden" name="user_name" id="edit_user_name">
                         
                         <div class="mb-3">
                             <label class="form-label">Rating:</label>
@@ -355,7 +355,7 @@
                     <div class="modal-body">
                         <input type="hidden" name="action" value="delete">
                         <input type="hidden" name="feedback_id" id="delete_feedback_id">
-                        <input type="hidden" name="user_id" id="delete_user_id">
+                        <input type="hidden" name="user_name" id="delete_user_name">
                         <p>Are you sure you want to delete this feedback? This action cannot be undone.</p>
                     </div>
                     <div class="modal-footer">
@@ -380,8 +380,8 @@
                         <div class="star-rating mb-2" id="modalFeedbackRating"></div>
                         <small>
                             Created: <span id="modalFeedbackCreated"></span><br>
-                            Product ID: <span id="modalFeedbackProductId"></span><br>
-                            User ID: <span id="modalFeedbackUserId"></span>
+                            Product: <span id="modalFeedbackProductName"></span><br>
+                            User: <span id="modalFeedbackUserName"></span>
                         </small>
                     </div>
                     <div id="modalFeedbackContent" style="white-space: pre-wrap;"></div>
@@ -399,8 +399,8 @@
             const rating = element.getAttribute('data-rating');
             const content = element.getAttribute('data-content');
             const created = element.getAttribute('data-created');
-            const productId = element.getAttribute('data-product-id');
-            const userId = element.getAttribute('data-user-id');
+            const productName = element.getAttribute('data-product-name');
+            const userName = element.getAttribute('data-user-name');
             
             // Create star rating HTML
             let starsHtml = '';
@@ -411,8 +411,8 @@
             document.getElementById('modalFeedbackRating').innerHTML = starsHtml;
             document.getElementById('modalFeedbackContent').textContent = content;
             document.getElementById('modalFeedbackCreated').textContent = created;
-            document.getElementById('modalFeedbackProductId').textContent = productId;
-            document.getElementById('modalFeedbackUserId').textContent = userId;
+            document.getElementById('modalFeedbackProductName').textContent = productName;
+            document.getElementById('modalFeedbackUserName').textContent = userName;
             
             new bootstrap.Modal(document.getElementById('feedbackContentModal')).show();
         }
@@ -421,17 +421,17 @@
             const id = element.getAttribute('data-id');
             const rating = element.getAttribute('data-rating');
             const content = element.getAttribute('data-content');
-            const userId = element.getAttribute('data-user-id');
+            const userName = element.getAttribute('data-user-name');
             
             document.getElementById('edit_feedback_id').value = id;
-            document.getElementById('edit_user_id').value = userId;
+            document.getElementById('edit_user_name').value = userName;
             document.getElementById('edit_content').value = content;
             document.querySelector(`#editFeedbackModal input[value="${rating}"]`).checked = true;
         }
         
-        function deleteFeedback(id, userId) {
+        function deleteFeedback(id, userName) {
             document.getElementById('delete_feedback_id').value = id;
-            document.getElementById('delete_user_id').value = userId;
+            document.getElementById('delete_user_name').value = userName;
         }
     </script>
 </body>

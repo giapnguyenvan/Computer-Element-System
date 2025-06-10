@@ -11,6 +11,8 @@ import java.util.Vector;
 import model.Feedback;
 import java.util.Collections;
 import java.time.LocalDateTime;
+import dal.UserDAO;
+import model.User;
 
 @WebServlet(name = "ManageFeedbackServlet", urlPatterns = {"/managefeedback"})
 public class ManageFeedbackServlet extends HttpServlet {
@@ -149,12 +151,19 @@ public class ManageFeedbackServlet extends HttpServlet {
             throws ServletException, IOException {
         try {
             int productId = Integer.parseInt(request.getParameter("product_id"));
-            int userId = Integer.parseInt(request.getParameter("user_id"));
+            String userName = request.getParameter("user_name");
             int rating = Integer.parseInt(request.getParameter("rating"));
             String content = request.getParameter("content");
 
+            // Get user ID from username
+            UserDAO userDAO = new UserDAO();
+            User user = userDAO.getUserByUsername(userName);
+            if (user == null) {
+                throw new Exception("User not found");
+            }
+
             // Create new feedback object
-            Feedback feedback = new Feedback(0, productId, userId, rating, content, LocalDateTime.now().toString());
+            Feedback feedback = new Feedback(0, productId, user.getId(), rating, content, LocalDateTime.now().toString());
             
             // Save feedback
             feedbackDAO.insertFeedback(feedback);
@@ -174,15 +183,22 @@ public class ManageFeedbackServlet extends HttpServlet {
             throws ServletException, IOException {
         try {
             int feedbackId = Integer.parseInt(request.getParameter("feedback_id"));
-            int userId = Integer.parseInt(request.getParameter("user_id"));
+            String userName = request.getParameter("user_name");
             int rating = Integer.parseInt(request.getParameter("rating"));
             String content = request.getParameter("content");
+
+            // Get user ID from username
+            UserDAO userDAO = new UserDAO();
+            User user = userDAO.getUserByUsername(userName);
+            if (user == null) {
+                throw new Exception("User not found");
+            }
 
             // Get existing feedback
             Feedback feedback = feedbackDAO.getFeedbackById(feedbackId);
             if (feedback != null) {
                 // Verify user owns this feedback
-                if (feedback.getUser_id() != userId) {
+                if (feedback.getUser_id() != user.getId()) {
                     throw new Exception("Unauthorized to update this feedback");
                 }
                 
@@ -208,18 +224,25 @@ public class ManageFeedbackServlet extends HttpServlet {
             throws ServletException, IOException {
         try {
             int feedbackId = Integer.parseInt(request.getParameter("feedback_id"));
-            int userId = Integer.parseInt(request.getParameter("user_id"));
+            String userName = request.getParameter("user_name");
+            
+            // Get user ID from username
+            UserDAO userDAO = new UserDAO();
+            User user = userDAO.getUserByUsername(userName);
+            if (user == null) {
+                throw new Exception("User not found");
+            }
             
             // Get existing feedback to verify ownership
             Feedback feedback = feedbackDAO.getFeedbackById(feedbackId);
             if (feedback != null) {
                 // Verify user owns this feedback
-                if (feedback.getUser_id() != userId) {
+                if (feedback.getUser_id() != user.getId()) {
                     throw new Exception("Unauthorized to delete this feedback");
                 }
                 
                 // Delete feedback
-                feedbackDAO.deleteFeedback(feedbackId, userId);
+                feedbackDAO.deleteFeedback(feedbackId, user.getId());
                 request.getSession().setAttribute("success", "Feedback deleted successfully");
             } else {
                 request.getSession().setAttribute("error", "Feedback not found");
