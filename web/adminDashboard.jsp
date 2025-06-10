@@ -87,6 +87,7 @@
     </style>
 </head>
 <body>
+    <jsp:include page="header.jsp" />
     <div class="container-fluid">
         <div class="row">
             <jsp:include page="sidebar.jsp" />

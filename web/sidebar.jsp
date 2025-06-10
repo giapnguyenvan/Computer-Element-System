@@ -6,14 +6,7 @@
 %>
 <!-- Sidebar -->
 <div class="col-md-3 col-lg-2 sidebar">
-    <div class="logo-container">
-        <a href="${pageContext.request.contextPath}/homePage.jsp" class="text-decoration-none">
-            <h3 class="text-light">
-                <i class="fas fa-microchip me-2"></i>
-                <span class="fw-bold">CES</span>
-            </h3>
-        </a>
-    </div>
+    <!-- Đã xóa logo-container và chữ CES -->
     
     <!-- Admin Profile -->
     <div class="admin-profile d-flex align-items-center">
