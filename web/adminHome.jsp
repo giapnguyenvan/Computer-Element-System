@@ -39,16 +39,16 @@
     .user-list li:last-child { border-bottom: none; }
 </style>
 <div class="container py-4 pt-5">
-    <!-- 1. Tổng quan hệ thống -->
+    <!-- 1. System Overview -->
     <div class="dashboard-section">
-        <div class="dashboard-title"><i class="fas fa-chart-pie me-2"></i> Tổng quan hệ thống</div>
+        <div class="dashboard-title"><i class="fas fa-chart-pie me-2"></i> System Overview</div>
         <div class="row g-4">
             <div class="col-md-3">
                 <div class="card stat-card p-3 d-flex flex-row align-items-center">
                     <i class="fas fa-users stat-icon text-primary"></i>
                     <div>
                         <div class="stat-value"><%= totalUsers %></div>
-                        <div class="stat-label">Người dùng</div>
+                        <div class="stat-label">Users</div>
                     </div>
                 </div>
             </div>
@@ -57,7 +57,7 @@
                     <i class="fas fa-boxes stat-icon text-success"></i>
                     <div>
                         <div class="stat-value"><%= totalProducts %></div>
-                        <div class="stat-label">Sản phẩm</div>
+                        <div class="stat-label">Products</div>
                     </div>
                 </div>
             </div>
@@ -66,7 +66,7 @@
                     <i class="fas fa-coins stat-icon text-warning"></i>
                     <div>
                         <div class="stat-value"><%= String.format("%,.0f", totalRevenue) %>₫</div>
-                        <div class="stat-label">Tổng doanh thu</div>
+                        <div class="stat-label">Total Revenue</div>
                     </div>
                 </div>
             </div>
@@ -75,7 +75,7 @@
                     <i class="fas fa-shopping-cart stat-icon text-danger"></i>
                     <div>
                         <div class="stat-value"><%= ordersProcessed %> / <span class="text-muted" style="font-size:1.2rem"><%= ordersPending %></span></div>
-                        <div class="stat-label">Đơn đã xử lý / chờ xử lý</div>
+                        <div class="stat-label">Orders Processed / Pending</div>
                     </div>
                 </div>
             </div>
@@ -86,7 +86,7 @@
                     <i class="fas fa-eye stat-icon text-info"></i>
                     <div>
                         <div class="stat-value"><%= visitsToday %></div>
-                        <div class="stat-label">Lượt truy cập hôm nay</div>
+                        <div class="stat-label">Visits Today</div>
                     </div>
                 </div>
             </div>
@@ -95,15 +95,15 @@
                     <i class="fas fa-calendar-week stat-icon text-secondary"></i>
                     <div>
                         <div class="stat-value"><%= visitsWeek %></div>
-                        <div class="stat-label">Lượt truy cập tuần</div>
+                        <div class="stat-label">Visits This Week</div>
                     </div>
                 </div>
             </div>
         </div>
     </div>
-    <!-- 2. Thống kê theo thời gian -->
+    <!-- 2. Time-based Statistics -->
     <div class="dashboard-section">
-        <div class="dashboard-title"><i class="fas fa-chart-line me-2"></i> Thống kê theo thời gian</div>
+        <div class="dashboard-title"><i class="fas fa-chart-line me-2"></i> Time-based Statistics</div>
         <div class="row g-4">
             <div class="col-md-6">
                 <div class="chart-container mb-2">
@@ -117,31 +117,31 @@
             </div>
         </div>
     </div>
-    <!-- 3. Thông tin người dùng -->
+    <!-- 3. User Information -->
     <div class="dashboard-section">
-        <div class="dashboard-title"><i class="fas fa-user-friends me-2"></i> Thông tin người dùng</div>
+        <div class="dashboard-title"><i class="fas fa-user-friends me-2"></i> User Information</div>
         <div class="row g-4">
             <div class="col-md-3">
                 <div class="card stat-card p-3">
-                    <div class="stat-label mb-1">Người dùng mới hôm nay</div>
+                    <div class="stat-label mb-1">New Users Today</div>
                     <div class="stat-value text-success"><%= newUsersToday %></div>
                 </div>
             </div>
             <div class="col-md-3">
                 <div class="card stat-card p-3">
-                    <div class="stat-label mb-1">Người dùng mới tuần</div>
+                    <div class="stat-label mb-1">New Users This Week</div>
                     <div class="stat-value text-info"><%= newUsersWeek %></div>
                 </div>
             </div>
             <div class="col-md-3">
                 <div class="card stat-card p-3">
-                    <div class="stat-label mb-1">Hoạt động gần nhất</div>
+                    <div class="stat-label mb-1">Last Active User</div>
                     <div class="stat-value text-primary"><%= lastActiveUser %></div>
                 </div>
             </div>
             <div class="col-md-3">
                 <div class="card stat-card p-3">
-                    <div class="stat-label mb-1">Tài khoản bị khóa</div>
+                    <div class="stat-label mb-1">Locked Accounts</div>
                     <div class="stat-value text-danger"><%= lockedAccounts %></div>
                 </div>
             </div>
@@ -149,7 +149,7 @@
         <div class="row g-4 mt-2">
             <div class="col-md-6">
                 <div class="card stat-card p-3">
-                    <div class="stat-label mb-2">Người dùng tương tác cao</div>
+                    <div class="stat-label mb-2">Top Active Users</div>
                     <ul class="user-list">
                         <li>Nguyen Van B <span class="badge bg-success">Top 1</span></li>
                         <li>Le Thi C <span class="badge bg-info">Top 2</span></li>
@@ -159,57 +159,57 @@
             </div>
             <div class="col-md-6">
                 <div class="card stat-card p-3">
-                    <div class="stat-label mb-2">Tài khoản có vấn đề</div>
+                    <div class="stat-label mb-2">Accounts with Issues</div>
                     <ul class="user-list">
-                        <li>Pham E <span class="badge bg-danger">Bị khóa</span></li>
-                        <li>Nguyen F <span class="badge bg-warning text-dark">Cảnh báo</span></li>
+                        <li>Pham E <span class="badge bg-danger">Locked</span></li>
+                        <li>Nguyen F <span class="badge bg-warning text-dark">Warning</span></li>
                     </ul>
                 </div>
             </div>
         </div>
     </div>
-    <!-- 4. Quản lý nội dung / dịch vụ -->
+    <!-- 4. Content / Service Management -->
     <div class="dashboard-section">
-        <div class="dashboard-title"><i class="fas fa-box-open me-2"></i> Quản lý nội dung / dịch vụ</div>
+        <div class="dashboard-title"><i class="fas fa-box-open me-2"></i> Content / Service Management</div>
         <div class="row g-4">
             <div class="col-md-3">
                 <div class="card stat-card p-3">
-                    <div class="stat-label mb-1">Sản phẩm hiển thị</div>
+                    <div class="stat-label mb-1">Visible Products</div>
                     <div class="stat-value text-success"><%= totalProducts - hiddenProducts %></div>
                 </div>
             </div>
             <div class="col-md-3">
                 <div class="card stat-card p-3">
-                    <div class="stat-label mb-1">Sản phẩm bị ẩn</div>
+                    <div class="stat-label mb-1">Hidden Products</div>
                     <div class="stat-value text-secondary"><%= hiddenProducts %></div>
                 </div>
             </div>
             <div class="col-md-3">
                 <div class="card stat-card p-3">
-                    <div class="stat-label mb-1">Hết hàng</div>
+                    <div class="stat-label mb-1">Out of Stock</div>
                     <div class="stat-value text-danger"><%= outOfStock %></div>
                 </div>
             </div>
             <div class="col-md-3">
                 <div class="card stat-card p-3">
-                    <div class="stat-label mb-1">Dịch vụ hot</div>
+                    <div class="stat-label mb-1">Top Service</div>
                     <div class="stat-value text-warning"><%= topService %></div>
                 </div>
             </div>
         </div>
     </div>
-    <!-- 5. Cảnh báo / sự kiện cần chú ý -->
+    <!-- 5. Alerts / Important Events -->
     <div class="dashboard-section">
-        <div class="dashboard-title"><i class="fas fa-exclamation-triangle me-2 text-danger"></i> Cảnh báo / Sự kiện</div>
+        <div class="dashboard-title"><i class="fas fa-exclamation-triangle me-2 text-danger"></i> Alerts / Important Events</div>
         <div class="row g-4">
             <div class="col-md-4">
-                <div class="alert alert-warning alert-custom d-flex align-items-center"><i class="fas fa-clock me-2"></i> <b><%= delayedOrders %></b> đơn hàng đang bị chậm xử lý!</div>
+                <div class="alert alert-warning alert-custom d-flex align-items-center"><i class="fas fa-clock me-2"></i> <b><%= delayedOrders %></b> orders are delayed!</div>
             </div>
             <div class="col-md-4">
-                <div class="alert alert-danger alert-custom d-flex align-items-center"><i class="fas fa-bug me-2"></i> <b><%= systemErrors %></b> lỗi hệ thống cần kiểm tra!</div>
+                <div class="alert alert-danger alert-custom d-flex align-items-center"><i class="fas fa-bug me-2"></i> <b><%= systemErrors %></b> system errors need attention!</div>
             </div>
             <div class="col-md-4">
-                <div class="alert alert-info alert-custom d-flex align-items-center"><i class="fas fa-comment-dots me-2"></i> <b><%= newFeedback %></b> phản hồi mới từ người dùng.</div>
+                <div class="alert alert-info alert-custom d-flex align-items-center"><i class="fas fa-comment-dots me-2"></i> <b><%= newFeedback %></b> new user feedbacks.</div>
             </div>
         </div>
     </div>
@@ -221,7 +221,7 @@ const revenueChart = new Chart(document.getElementById('revenueChart').getContex
     data: {
         labels: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
         datasets: [{
-            label: 'Doanh thu (triệu ₫)',
+            label: 'Revenue (million ₫)',
             data: [12, 19, 8, 15, 22, 30, 25],
             borderColor: '#2563eb',
             backgroundColor: 'rgba(37,99,235,0.08)',
@@ -236,7 +236,7 @@ const ordersChart = new Chart(document.getElementById('ordersChart').getContext(
     data: {
         labels: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
         datasets: [{
-            label: 'Đơn hàng',
+            label: 'Orders',
             data: [20, 25, 18, 30, 28, 35, 40],
             backgroundColor: '#f59e42',
             borderRadius: 8
