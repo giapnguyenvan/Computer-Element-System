@@ -9,7 +9,7 @@
     <!-- Đã xóa logo-container và chữ CES -->
     
     <!-- Admin Profile -->
-    <div class="admin-profile d-flex align-items-center">
+    <div class="admin-profile d-flex align-items-center" style="padding-top: 36px;">
         <img src="${pageContext.request.contextPath}/assets/admin-avartar.png.jpg" alt="Admin Avatar" class="admin-avatar" style="width:50px;height:50px;border-radius:50%;object-fit:cover;background:#e0e7ff;">
         <div class="admin-info">
             <h6>${user.fullname}</h6>
