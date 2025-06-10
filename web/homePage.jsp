@@ -330,6 +330,16 @@
                             </div>
                         </div>
                     </div>
+                    <div class="col-md-4">
+                        <div class="card category-card">
+                            <img src="https://images.unsplash.com/photo-1541029071515-84cc54f84dc5" class="card-img-top" alt="Memory (RAM)">
+                            <div class="card-body">
+                                <h5 class="card-title">Memory (RAM)</h5>
+                                <p class="card-text">High-speed RAM for smooth multitasking</p>
+                                <a href="#ramProducts" class="btn btn-outline-primary">Shop Now</a>
+                            </div>
+                        </div>
+                    </div>
                     <!-- Add more category cards -->
                 </div>
             </div>
@@ -343,6 +353,11 @@
         <!-- GPU Products Section -->
         <section id="gpuProducts" class="py-5">
             <jsp:include page="GPUCategory.jsp" />
+        </section>
+
+        <!-- RAM Products Section -->
+        <section id="ramProducts" class="py-5 bg-light">
+            <jsp:include page="RAMCategory.jsp" />
         </section>
 
         <!-- Newsletter -->
