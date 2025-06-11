@@ -83,6 +83,19 @@
             padding-bottom: 10px;
             border-bottom: 1px solid #eee;
         }
+        .star-rating-table {
+            display: inline-block;
+            font-size: 22px;
+            letter-spacing: 2px;
+            vertical-align: middle;
+            white-space: nowrap;
+        }
+        .star-rating-table .star-checked {
+            color: #ffd700;
+        }
+        .star-rating-table .star-unchecked {
+            color: #ddd;
+        }
     </style>
 </head>
 <body>
@@ -157,72 +170,85 @@
         </div>
 
         <!-- Feedback Display -->
-        <div class="row">
-            <c:forEach items="${feedbackList}" var="feedback">
-                <div class="col-md-6">
-                    <div class="card feedback-card">
-                        <div class="card-body">
-                            <div class="feedback-meta-info">
-                                <div class="star-rating">
+        <div class="table-responsive">
+            <table class="table table-hover">
+                <thead>
+                    <tr>
+                        <th>Rating</th>
+                        <th>Content</th>
+                        <th>Product</th>
+                        <th>User</th>
+                        <th>Date</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <c:forEach items="${feedbackList}" var="feedback">
+                        <tr>
+                            <td>
+                                <span class="star-rating-table">
                                     <c:forEach begin="1" end="5" var="i">
-                                        <span>${i <= feedback.rating ? '★' : '☆'}</span>
+                                        <span class="${i <= feedback.rating ? 'star-checked' : 'star-unchecked'}">&#9733;</span>
                                     </c:forEach>
+                                </span>
+                            </td>
+                            <td>
+                                <div class="feedback-content">
+                                    ${fn:substring(feedback.content, 0, 100)}${fn:length(feedback.content) > 100 ? '...' : ''}
                                 </div>
-                                <small class="feedback-meta">
-                                    ${feedback.created_at}
-                                </small>
-                            </div>
-                            <div class="feedback-content">
-                                <p class="card-text">${fn:substring(feedback.content, 0, 100)}${fn:length(feedback.content) > 100 ? '...' : ''}</p>
-                            </div>
-                            <div class="feedback-meta mt-3">
-                                <small>Product: ${feedback.productName} | User: ${feedback.userName}</small>
-                            </div>
-                            <div class="action-buttons mt-3">
-                                <button type="button" class="btn btn-sm btn-info" 
-                                        onclick="showFeedbackContent(this)" 
-                                        data-rating="${feedback.rating}"
-                                        data-content="${fn:escapeXml(feedback.content)}"
-                                        data-created="${feedback.created_at}"
-                                        data-product-name="${feedback.productName}"
-                                        data-user-name="${feedback.userName}">
-                                    View Details
-                                </button>
-                                <button type="button" class="btn btn-sm btn-primary" 
-                                        onclick="editFeedback(this)"
-                                        data-id="${feedback.id}"
-                                        data-rating="${feedback.rating}"
-                                        data-content="${fn:escapeXml(feedback.content)}"
-                                        data-user-name="${feedback.userName}"
-                                        data-bs-toggle="modal" 
-                                        data-bs-target="#editFeedbackModal">
-                                    Edit
-                                </button>
-                                <button type="button" class="btn btn-sm btn-danger" 
-                                        onclick="deleteFeedback('${feedback.id}', '${feedback.userName}')"
-                                        data-bs-toggle="modal" 
-                                        data-bs-target="#deleteFeedbackModal">
-                                    Delete
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </c:forEach>
-            
-            <c:if test="${empty feedbackList}">
-                <div class="col-12 text-center">
-                    <div class="alert alert-info" role="alert">
-                        No feedback found.
-                    </div>
-                </div>
-            </c:if>
+                            </td>
+                            <td>${feedback.productName}</td>
+                            <td>${feedback.userName}</td>
+                            <td>${feedback.created_at}</td>
+                            <td>
+                                <div class="action-buttons">
+                                    <button type="button" class="btn btn-sm btn-info" 
+                                            onclick="showFeedbackContent(this)" 
+                                            data-rating="${feedback.rating}"
+                                            data-content="${fn:escapeXml(feedback.content)}"
+                                            data-created="${feedback.created_at}"
+                                            data-product-name="${feedback.productName}"
+                                            data-user-name="${feedback.userName}">
+                                        View
+                                    </button>
+                                    <button type="button" class="btn btn-sm btn-primary" 
+                                            onclick="editFeedback(this)"
+                                            data-id="${feedback.id}"
+                                            data-rating="${feedback.rating}"
+                                            data-content="${fn:escapeXml(feedback.content)}"
+                                            data-user-name="${feedback.userName}"
+                                            data-bs-toggle="modal" 
+                                            data-bs-target="#editFeedbackModal">
+                                        Edit
+                                    </button>
+                                    <button type="button" class="btn btn-sm btn-danger" 
+                                            onclick="deleteFeedback('${feedback.id}', '${feedback.userName}')"
+                                            data-bs-toggle="modal" 
+                                            data-bs-target="#deleteFeedbackModal">
+                                        Delete
+                                    </button>
+                                </div>
+                            </td>
+                        </tr>
+                    </c:forEach>
+                    
+                    <c:if test="${empty feedbackList}">
+                        <tr>
+                            <td colspan="6" class="text-center">
+                                <div class="alert alert-info" role="alert">
+                                    No feedback found.
+                                </div>
+                            </td>
+                        </tr>
+                    </c:if>
+                </tbody>
+            </table>
         </div>
 
         <!-- Pagination -->
         <c:if test="${totalPages > 1}">
             <nav aria-label="Feedback pagination" class="d-flex justify-content-center">
-                <ul class="pagination">
+                <ul class="pagination flex-wrap">
                     <li class="page-item ${currentPage == 1 ? 'disabled' : ''}">
                         <a class="page-link" href="managefeedback?page=${currentPage - 1}&sortBy=${param.sortBy}&rating=${param.rating}&search=${param.search}" aria-label="Previous">
                             <span aria-hidden="true">&laquo;</span>
