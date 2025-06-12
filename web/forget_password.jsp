@@ -103,12 +103,14 @@
         <form action="forget-password" method="post">
             <div class="form-group">
                 <label for="username">Tên đăng nhập:</label>
-                <input type="text" id="username" name="username" required>
+                <input type="text" id="username" name="username" required
+                       value="${param.username != null ? param.username : (not empty username ? username : '')}">
             </div>
 
             <div class="form-group">
                 <label for="email">Email:</label>
-                <input type="email" id="email" name="email" required>
+                <input type="email" id="email" name="email" required
+                       value="${param.email != null ? param.email : (not empty email ? email : '')}">
             </div>
 
             <button type="submit">Lấy lại mật khẩu</button>
@@ -119,4 +121,4 @@
         </div>
     </div>
 </body>
-</html> 
+</html>

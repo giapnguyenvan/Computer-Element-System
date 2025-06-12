@@ -7,9 +7,11 @@
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
     <title>Đăng nhập</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- Bootstrap CSS (same as homepage) -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome (same as homepage) -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <!-- Custom CSS for login only -->
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -127,20 +129,6 @@
         }
         .register-link a:hover {
             text-decoration: underline;
-        }
-        .top-bar {
-            background: #23272b;
-            color: #fff;
-            padding: 0.5rem 0;
-            border-radius: 10px 10px 0 0;
-            font-size: 1rem;
-        }
-        .top-bar i {
-            color: #fff;
-        }
-        .top-bar .container {
-            width: 100%;
-            max-width: 100%;
         }
     </style>
 </head>
