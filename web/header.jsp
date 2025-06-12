@@ -30,6 +30,20 @@
     width: 100%;
     max-width: 100%;
 }
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    background: none;
+}
+.register-bg {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #705FBC;
+    padding-top: 120px;
+}
 </style>
 
 <!-- Main Navigation -->

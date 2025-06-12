@@ -7,15 +7,23 @@
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
     <title>Đăng ký tài khoản</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
     <style>
         body {
             font-family: Arial, sans-serif;
-            background: #705FBC;
-            display: flex;
+            margin: 0;
+            padding: 0;
+            background: none;
+        }
+        .register-bg {
             min-height: 100vh;
+            display: flex;
             align-items: center;
             justify-content: center;
-            padding: 20px;
+            background: #705FBC;
+            padding-top: 120px;
         }
         .register-container {
             background-color: white;
@@ -83,55 +91,58 @@
     </style>
 </head>
 <body>
-    <div class="register-container">
-        <h2>Đăng ký tài khoản</h2>
+    <%@ include file="header.jsp" %>
+    <div class="register-bg">
+        <div class="register-container">
+            <h2>Đăng ký tài khoản</h2>
 
-        <% String error = (String) request.getAttribute("error"); %>
-        <% if (error != null) { %>
-            <div class="error"><%= error %></div>
-        <% } %>
+            <% String error = (String) request.getAttribute("error"); %>
+            <% if (error != null) { %>
+                <div class="error"><%= error %></div>
+            <% } %>
 
-        <form action="register" method="post">
-            <div class="form-group">
-                <label for="fullname">Họ và tên:</label>
-                <input type="text" id="fullname" name="fullname" required>
+            <form action="register" method="post">
+                <div class="form-group">
+                    <label for="fullname">Họ và tên:</label>
+                    <input type="text" id="fullname" name="fullname" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="email">Email:</label>
+                    <input type="email" id="email" name="email" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="username">Tên đăng nhập:</label>
+                    <input type="text" id="username" name="username" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="password">Mật khẩu:</label>
+                    <input type="password" id="password" name="password" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="confirmPassword">Xác nhận mật khẩu:</label>
+                    <input type="password" id="confirmPassword" name="confirmPassword" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="phone">Số điện thoại:</label>
+                    <input type="tel" id="phone" name="phone" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="address">Địa chỉ:</label>
+                    <input type="text" id="address" name="address" required>
+                </div>
+
+                <button type="submit">Đăng ký</button>
+            </form>
+
+            <div class="login-link">
+                <p>Đã có tài khoản? <a href="login.jsp">Đăng nhập ngay</a></p>
             </div>
-
-            <div class="form-group">
-                <label for="email">Email:</label>
-                <input type="email" id="email" name="email" required>
-            </div>
-
-            <div class="form-group">
-                <label for="username">Tên đăng nhập:</label>
-                <input type="text" id="username" name="username" required>
-            </div>
-
-            <div class="form-group">
-                <label for="password">Mật khẩu:</label>
-                <input type="password" id="password" name="password" required>
-            </div>
-
-            <div class="form-group">
-                <label for="confirmPassword">Xác nhận mật khẩu:</label>
-                <input type="password" id="confirmPassword" name="confirmPassword" required>
-            </div>
-
-            <div class="form-group">
-                <label for="phone">Số điện thoại:</label>
-                <input type="tel" id="phone" name="phone" required>
-            </div>
-
-            <div class="form-group">
-                <label for="address">Địa chỉ:</label>
-                <input type="text" id="address" name="address" required>
-            </div>
-
-            <button type="submit">Đăng ký</button>
-        </form>
-
-        <div class="login-link">
-            <p>Đã có tài khoản? <a href="login.jsp">Đăng nhập ngay</a></p>
         </div>
     </div>
 </body>
