@@ -379,52 +379,7 @@
         </section>
 
         <!-- Footer -->
-        <footer>
-            <div class="container">
-                <div class="row">
-                    <div class="col-md-3">
-                        <h5>About CES</h5>
-                        <p>Your trusted source for premium computer components and custom PC builds.</p>
-                        <div class="social-icons">
-                            <a href="#"><i class="fab fa-facebook"></i></a>
-                            <a href="#"><i class="fab fa-twitter"></i></a>
-                            <a href="#"><i class="fab fa-instagram"></i></a>
-                            <a href="#"><i class="fab fa-youtube"></i></a>
-                        </div>
-                    </div>
-                    <div class="col-md-3">
-                        <h5>Quick Links</h5>
-                        <ul class="list-unstyled">
-                            <li><a href="#" class="text-white">About Us</a></li>
-                            <li><a href="#" class="text-white">Contact Us</a></li>
-                            <li><a href="#" class="text-white">Terms & Conditions</a></li>
-                            <li><a href="#" class="text-white">Privacy Policy</a></li>
-                        </ul>
-                    </div>
-                    <div class="col-md-3">
-                        <h5>Customer Service</h5>
-                        <ul class="list-unstyled">
-                            <li><a href="#" class="text-white">My Account</a></li>
-                            <li><a href="#" class="text-white">Track Order</a></li>
-                            <li><a href="#" class="text-white">Returns</a></li>
-                            <li><a href="#" class="text-white">Help Center</a></li>
-                        </ul>
-                    </div>
-                    <div class="col-md-3">
-                        <h5>Contact Info</h5>
-                        <ul class="list-unstyled">
-                            <li><i class="fas fa-map-marker-alt me-2"></i>123 Tech Street, Silicon Valley, CA</li>
-                            <li><i class="fas fa-phone me-2"></i>1-800-123-4567</li>
-                            <li><i class="fas fa-envelope me-2"></i>support@ces.com</li>
-                        </ul>
-                    </div>
-                </div>
-                <hr class="mt-4">
-                <div class="text-center">
-                    <p class="mb-0">&copy; 2025 Computer Element System (CES). All rights reserved.</p>
-                </div>
-            </div>
-        </footer>
+        <jsp:include page="footer.jsp"/>
 
         <!-- Bootstrap JS -->
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
