@@ -356,11 +356,13 @@
                                                 data-bs-toggle="modal" data-bs-target="#resetPasswordModal">
                                             <i class="bi bi-key"></i>
                                         </button>
-                                        <button type="button" class="action-btn delete" 
-                                                onclick="deleteAccount(${account.id}, '${account.name}')"
-                                                data-bs-toggle="modal" data-bs-target="#deleteAccountModal">
-                                            <i class="bi bi-trash"></i>
-                                        </button>
+                                        <c:if test="${account.role != 'admin'}">
+                                            <button type="button" class="action-btn delete" 
+                                                    onclick="deleteAccount(${account.id}, '${account.name}')"
+                                                    data-bs-toggle="modal" data-bs-target="#deleteAccountModal">
+                                                <i class="bi bi-trash"></i>
+                                            </button>
+                                        </c:if>
                                     </div>
                                 </td>
                             </tr>
@@ -574,6 +576,6 @@
             document.getElementById('delete_account_id').value = id;
             document.getElementById('delete_account_name').textContent = name;
         }
-    </script>
-</body>
-</html> 
+        ript>
+        function deleteAccount(id, name) {
+            document.getElementById('delete_account_id').value = id;            document.getElementById('delete_account_name').textContent = name;        }    </script></body></html>
