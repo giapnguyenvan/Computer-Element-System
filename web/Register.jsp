@@ -104,17 +104,20 @@
             <form action="register" method="post">
                 <div class="form-group">
                     <label for="fullname">Họ và tên:</label>
-                    <input type="text" id="fullname" name="fullname" required>
+                    <input type="text" id="fullname" name="fullname" required
+                           value="${param.fullname != null ? param.fullname : (not empty fullname ? fullname : '')}">
                 </div>
 
                 <div class="form-group">
                     <label for="email">Email:</label>
-                    <input type="email" id="email" name="email" required>
+                    <input type="email" id="email" name="email" required
+                           value="${param.email != null ? param.email : (not empty email ? email : '')}">
                 </div>
 
                 <div class="form-group">
                     <label for="username">Tên đăng nhập:</label>
-                    <input type="text" id="username" name="username" required>
+                    <input type="text" id="username" name="username" required
+                           value="${param.username != null ? param.username : (not empty username ? username : '')}">
                 </div>
 
                 <div class="form-group">
@@ -129,12 +132,14 @@
 
                 <div class="form-group">
                     <label for="phone">Số điện thoại:</label>
-                    <input type="tel" id="phone" name="phone" required>
+                    <input type="tel" id="phone" name="phone" required
+                           value="${param.phone != null ? param.phone : (not empty phone ? phone : '')}">
                 </div>
 
                 <div class="form-group">
                     <label for="address">Địa chỉ:</label>
-                    <input type="text" id="address" name="address" required>
+                    <input type="text" id="address" name="address" required
+                           value="${param.address != null ? param.address : (not empty address ? address : '')}">
                 </div>
 
                 <button type="submit">Đăng ký</button>
@@ -146,4 +151,4 @@
         </div>
     </div>
 </body>
-</html> 
+</html>
