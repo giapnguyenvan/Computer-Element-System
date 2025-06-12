@@ -147,15 +147,18 @@
                     <input type="email" name="email" id="email" required 
                            placeholder="Nhập địa chỉ email của bạn"
                            pattern="[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,}$"
-                           title="Vui lòng nhập một địa chỉ email hợp lệ">
+                           title="Vui lòng nhập một địa chỉ email hợp lệ"
+                           value="<c:out value='${param.email != null ? param.email : (not empty email ? email : "")}'/>">
                 </div>
                 <div class="form-field">
                     <label for="password">Mật khẩu:</label>
                     <input type="password" name="password" id="password" required
-                           placeholder="Nhập mật khẩu của bạn">
+                           placeholder="Nhập mật khẩu của bạn"
+                           value="<c:out value='${param.password != null ? param.password : (not empty password ? password : "")}'/>">
                 </div>
                 <div class="remember-me">
-                    <input type="checkbox" id="remember" name="remember" value="ON">
+                    <input type="checkbox" id="remember" name="remember" value="ON"
+                        <c:if test="${param.remember == 'ON' || remember == 'ON'}">checked</c:if>>
                     <label for="remember">Ghi nhớ đăng nhập</label>
                 </div>
                 <input type="submit" value="Đăng nhập">
