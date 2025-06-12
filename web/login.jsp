@@ -7,14 +7,23 @@
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
     <title>Đăng nhập</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
     <style>
         body {
             font-family: Arial, sans-serif;
-            background: #705FBC;
+            margin: 0;
+            padding: 0;
+            background: none;
+        }
+        .login-bg {
+            min-height: 100vh;
             display: flex;
-            height: 100vh;
             align-items: center;
             justify-content: center;
+            background: #705FBC;
+            padding-top: 120px;
         }
         .login-container {
             background-color: white;
@@ -119,45 +128,56 @@
         .register-link a:hover {
             text-decoration: underline;
         }
+        .top-bar {
+            background: #23272b;
+            color: #fff;
+            padding: 0.5rem 0;
+            border-radius: 10px 10px 0 0;
+            font-size: 1rem;
+        }
+        .top-bar i {
+            color: #fff;
+        }
+        .top-bar .container {
+            width: 100%;
+            max-width: 100%;
+        }
     </style>
 </head>
 <body>
-    <div class="login-container">
-        <h2>Đăng nhập</h2>
-
-        <% String error = (String) request.getAttribute("error"); %>
-        <% if (error != null) { %>
-            <div class="error"><%= error %></div>
-        <% } %>
-
-        <form action="login" method="post">
-            <div class="form-field">
-                <label for="email">Email:</label>
-                <input type="email" name="email" id="email" required 
-                       placeholder="Nhập địa chỉ email của bạn"
-                       pattern="[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,}$"
-                       title="Vui lòng nhập một địa chỉ email hợp lệ">
+    <%@ include file="header.jsp" %>
+    <div class="login-bg">
+        <div class="login-container">
+            <h2>Đăng nhập</h2>
+            <% String error = (String) request.getAttribute("error"); %>
+            <% if (error != null) { %>
+                <div class="error"><%= error %></div>
+            <% } %>
+            <form action="login" method="post">
+                <div class="form-field">
+                    <label for="email">Email:</label>
+                    <input type="email" name="email" id="email" required 
+                           placeholder="Nhập địa chỉ email của bạn"
+                           pattern="[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,}$"
+                           title="Vui lòng nhập một địa chỉ email hợp lệ">
+                </div>
+                <div class="form-field">
+                    <label for="password">Mật khẩu:</label>
+                    <input type="password" name="password" id="password" required
+                           placeholder="Nhập mật khẩu của bạn">
+                </div>
+                <div class="remember-me">
+                    <input type="checkbox" id="remember" name="remember" value="ON">
+                    <label for="remember">Ghi nhớ đăng nhập</label>
+                </div>
+                <input type="submit" value="Đăng nhập">
+            </form>
+            <div class="forgot-link">
+                <a href="forget_password.jsp">Quên mật khẩu?</a>
             </div>
-
-            <div class="form-field">
-                <label for="password">Mật khẩu:</label>
-                <input type="password" name="password" id="password" required
-                       placeholder="Nhập mật khẩu của bạn">
+            <div class="register-link">
+                <a href="Register.jsp">Chưa có tài khoản? Đăng ký ngay!</a>
             </div>
-            
-            <div class="remember-me">
-                <input type="checkbox" id="remember" name="remember" value="ON">
-                <label for="remember">Ghi nhớ đăng nhập</label>
-            </div>
-            
-            <input type="submit" value="Đăng nhập">
-        </form>
-
-        <div class="forgot-link">
-            <a href="forget_password.jsp">Quên mật khẩu?</a>
-        </div>
-        <div class="register-link">
-            <a href="Register.jsp">Chưa có tài khoản? Đăng ký ngay!</a>
         </div>
     </div>
 </body>

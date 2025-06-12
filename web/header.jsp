@@ -1,4 +1,3 @@
-<%@page contentType="text/html" pageEncoding="UTF-8"%>
 <%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 
@@ -16,6 +15,22 @@
         </div>
     </div>
 </div>
+<style>
+.top-bar {
+    background: #23272b;
+    color: #fff;
+    padding: 0.5rem 0;
+    border-radius: 10px 10px 0 0;
+    font-size: 1rem;
+}
+.top-bar i {
+    color: #fff;
+}
+.top-bar .container {
+    width: 100%;
+    max-width: 100%;
+}
+</style>
 
 <!-- Main Navigation -->
 <nav class="navbar navbar-expand-lg navbar-light bg-white fixed-top">
