@@ -8,12 +8,18 @@
     <style>
         body {
             font-family: Arial, sans-serif;
-            background: linear-gradient(to right, #74ebd5, #ACB6E5);
+            margin: 0;
+            padding: 0;
+            min-height: 100vh;
             display: flex;
-            height: 100vh;
+            flex-direction: column;
+        }
+        .forget-password-bg {
+            flex: 1;
+            display: flex;
             align-items: center;
             justify-content: center;
-            margin: 0;
+            background: linear-gradient(to right, #74ebd5, #ACB6E5);
         }
         .forget-password-container {
             background-color: white;
@@ -60,65 +66,46 @@
             font-size: 16px;
             margin-top: 10px;
         }
-        button[type="submit"]:hover {
-            background-color: #45a049;
-        }
-        .error {
-            color: #ff0000;
-            text-align: center;
-            margin: 10px 0;
-            font-size: 14px;
-        }
-        .success {
-            color: #4CAF50;
-            text-align: center;
-            margin: 10px 0;
-            font-size: 14px;
-        }
-        .login-link {
-            text-align: center;
-            margin-top: 20px;
-        }
-        .login-link a {
-            color: #333;
-            text-decoration: none;
-        }
-        .login-link a:hover {
-            text-decoration: underline;
-        }
+        button[type="submit"]:hover { background-color: #388e3c; }
+        .error { color: red; text-align: center; margin-top: 10px; }
+        .success { color: green; text-align: center; margin-top: 10px; }
+        .login-link { text-align: center; margin-top: 15px; }
+        .login-link a { color: #333; text-decoration: none; }
+        .login-link a:hover { text-decoration: underline; }
     </style>
 </head>
 <body>
-    <div class="forget-password-container">
-        <h2>Quên mật khẩu</h2>
-        
-        <c:if test="${not empty error}">
-            <div class="error">${error}</div>
-        </c:if>
-        
-        <c:if test="${not empty success}">
-            <div class="success">${success}</div>
-        </c:if>
+    <div class="forget-password-bg">
+        <div class="forget-password-container">
+            <h2>Quên mật khẩu</h2>
+            
+            <c:if test="${not empty error}">
+                <div class="error">${error}</div>
+            </c:if>
+            
+            <c:if test="${not empty success}">
+                <div class="success">${success}</div>
+            </c:if>
 
-        <form action="forget-password" method="post">
-            <div class="form-group">
-                <label for="username">Tên đăng nhập:</label>
-                <input type="text" id="username" name="username" required
-                       value="${param.username != null ? param.username : (not empty username ? username : '')}">
+            <form action="forget-password" method="post">
+                <div class="form-group">
+                    <label for="username">Tên đăng nhập:</label>
+                    <input type="text" id="username" name="username" required
+                           value="${param.username != null ? param.username : (not empty username ? username : '')}">
+                </div>
+                <div class="form-group">
+                    <label for="email">Email:</label>
+                    <input type="email" id="email" name="email" required
+                           value="${param.email != null ? param.email : (not empty email ? email : '')}">
+                </div>
+                <button type="submit">Lấy lại mật khẩu</button>
+            </form>
+
+            <div class="login-link">
+                <p>Đã có tài khoản? <a href="login.jsp">Đăng nhập ngay</a></p>
             </div>
-
-            <div class="form-group">
-                <label for="email">Email:</label>
-                <input type="email" id="email" name="email" required
-                       value="${param.email != null ? param.email : (not empty email ? email : '')}">
-            </div>
-
-            <button type="submit">Lấy lại mật khẩu</button>
-        </form>
-
-        <div class="login-link">
-            <a href="login.jsp">Quay lại đăng nhập</a>
         </div>
     </div>
+    <jsp:include page="footer.jsp"/>
 </body>
 </html>
