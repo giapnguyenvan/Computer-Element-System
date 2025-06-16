@@ -201,10 +201,9 @@
             <div class="container">
                 <div class="row align-items-center">
                     <div class="col-md-6">
-                        <h1 class="display-4 fw-bold mb-4">Build Your Dream PC</h1>
-                        <p class="lead mb-4">Premium computer components at competitive prices. Free expert consultation on custom builds.</p>
-                        <a href="#" class="btn btn-primary btn-lg me-2">Shop Now</a>
-                        <a href="#" class="btn btn-outline-light btn-lg">Custom Build</a>
+                        <h1 class="display-4 mb-4">Build Your Dream PC</h1>
+                        <p class="lead mb-4">Customize your perfect PC with our easy-to-use PC Builder tool. Select from our wide range of high-quality components.</p>
+                        <a href="PCBuilderServlet" class="btn btn-primary btn-lg">Build PC</a>
                     </div>
                 </div>
             </div>
