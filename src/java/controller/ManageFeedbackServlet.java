@@ -151,19 +151,12 @@ public class ManageFeedbackServlet extends HttpServlet {
             throws ServletException, IOException {
         try {
             int productId = Integer.parseInt(request.getParameter("product_id"));
-            String userName = request.getParameter("user_name");
+            int userId = Integer.parseInt(request.getParameter("user_id"));
             int rating = Integer.parseInt(request.getParameter("rating"));
             String content = request.getParameter("content");
 
-            // Get user ID from username
-            UserDAO userDAO = new UserDAO();
-            User user = userDAO.getUserByUsername(userName);
-            if (user == null) {
-                throw new Exception("User not found");
-            }
-
             // Create new feedback object
-            Feedback feedback = new Feedback(0, productId, user.getId(), rating, content, LocalDateTime.now().toString());
+            Feedback feedback = new Feedback(0, productId, userId, rating, content, LocalDateTime.now().toString());
             
             // Save feedback
             feedbackDAO.insertFeedback(feedback);
