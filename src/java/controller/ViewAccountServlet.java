@@ -24,20 +24,31 @@ public class ViewAccountServlet extends HttpServlet {
         
         try {
             AccountDAO accountDAO = new AccountDAO();
+            CustomerDAO customerDAO = new CustomerDAO();
             
-            // Get all accounts first
-            Vector<Account> allAccounts = accountDAO.getAllAccounts(1, Integer.MAX_VALUE);
+            // Phân trang cho user
+            int userPage = 1;
+            try { userPage = Integer.parseInt(request.getParameter("userPage")); } catch (Exception e) {}
+            if (userPage < 1) userPage = 1;
+            int userPageSize = 10;
+            java.util.List<Account> allUsers = accountDAO.getAllAccounts(1, Integer.MAX_VALUE);
+            int userTotal = allUsers.size();
+            int userTotalPages = (int) Math.ceil((double) userTotal / userPageSize);
+            if (userPage > userTotalPages && userTotalPages > 0) userPage = userTotalPages;
+            int userStart = (userPage-1)*userPageSize;
+            int userEnd = Math.min(userStart+userPageSize, userTotal);
+            java.util.List<Account> userList = allUsers.subList(userStart, userEnd);
             
             // Apply role filter if specified
             String roleFilter = request.getParameter("role");
             if (roleFilter != null && !roleFilter.isEmpty()) {
                 Vector<Account> filteredList = new Vector<>();
-                for (Account a : allAccounts) {
+                for (Account a : userList) {
                     if (a.getRole().equalsIgnoreCase(roleFilter)) {
                         filteredList.add(a);
                     }
                 }
-                allAccounts = filteredList;
+                userList = filteredList;
             }
             
             // Apply search filter
@@ -45,13 +56,13 @@ public class ViewAccountServlet extends HttpServlet {
             if (search != null && !search.trim().isEmpty()) {
                 Vector<Account> searchedList = new Vector<>();
                 search = search.toLowerCase();
-                for (Account a : allAccounts) {
+                for (Account a : userList) {
                     if (a.getUsername().toLowerCase().contains(search) || 
                         a.getEmail().toLowerCase().contains(search)) {
                         searchedList.add(a);
                     }
                 }
-                allAccounts = searchedList;
+                userList = searchedList;
             }
             
             // Apply sorting
@@ -59,59 +70,44 @@ public class ViewAccountServlet extends HttpServlet {
             if (sortBy != null) {
                 switch (sortBy) {
                     case "username":
-                        Collections.sort(allAccounts, (a1, a2) -> 
+                        Collections.sort(userList, (a1, a2) -> 
                             a1.getUsername().compareToIgnoreCase(a2.getUsername()));
                         break;
                     case "email":
-                        Collections.sort(allAccounts, (a1, a2) -> 
+                        Collections.sort(userList, (a1, a2) -> 
                             a1.getEmail().compareToIgnoreCase(a2.getEmail()));
                         break;
                     case "role":
-                        Collections.sort(allAccounts, (a1, a2) -> 
+                        Collections.sort(userList, (a1, a2) -> 
                             a1.getRole().compareToIgnoreCase(a2.getRole()));
                         break;
                     case "id":
-                        Collections.sort(allAccounts, (a1, a2) -> 
+                        Collections.sort(userList, (a1, a2) -> 
                             Integer.compare(a1.getId(), a2.getId()));
                         break;
                 }
             }
             
-            // Calculate pagination after filtering
-            int totalAccounts = allAccounts.size();
-            int totalPages = (int) Math.ceil((double) totalAccounts / PAGE_SIZE);
+            // Phân trang cho customer
+            int customerPage = 1;
+            try { customerPage = Integer.parseInt(request.getParameter("customerPage")); } catch (Exception e) {}
+            if (customerPage < 1) customerPage = 1;
+            int customerPageSize = 10;
+            java.util.List<Customer> allCustomers = customerDAO.getAllCustomers();
+            int customerTotal = allCustomers.size();
+            int customerTotalPages = (int) Math.ceil((double) customerTotal / customerPageSize);
+            if (customerPage > customerTotalPages && customerTotalPages > 0) customerPage = customerTotalPages;
+            int customerStart = (customerPage-1)*customerPageSize;
+            int customerEnd = Math.min(customerStart+customerPageSize, customerTotal);
+            java.util.List<Customer> customerList = allCustomers.subList(customerStart, customerEnd);
             
-            // Get page number from request
-            int page = 1;
-            try {
-                page = Integer.parseInt(request.getParameter("page"));
-                if (page < 1) page = 1;
-                if (page > totalPages && totalPages > 0) page = totalPages;
-            } catch (NumberFormatException e) {
-                // Keep page as 1 if not specified or invalid
-            }
-            
-            // Apply pagination to filtered and sorted results
-            Vector<Account> pagedAccounts = new Vector<>();
-            int startIndex = (page - 1) * PAGE_SIZE;
-            int endIndex = Math.min(startIndex + PAGE_SIZE, totalAccounts);
-            
-            for (int i = startIndex; i < endIndex; i++) {
-                pagedAccounts.add(allAccounts.get(i));
-            }
-            
-            // Lấy danh sách customer
-            CustomerDAO customerDAO = new CustomerDAO();
-            java.util.List<Customer> customerList = customerDAO.getAllCustomers();
+            // Truyền sang JSP
+            request.setAttribute("userList", userList);
+            request.setAttribute("userCurrentPage", userPage);
+            request.setAttribute("userTotalPages", userTotalPages);
             request.setAttribute("customerList", customerList);
-            
-            // Set attributes for the JSP
-            request.setAttribute("accountList", pagedAccounts);
-            request.setAttribute("currentPage", page);
-            request.setAttribute("totalPages", totalPages);
-            request.setAttribute("totalAccounts", totalAccounts);
-            
-            // Forward to JSP
+            request.setAttribute("customerCurrentPage", customerPage);
+            request.setAttribute("customerTotalPages", customerTotalPages);
             request.getRequestDispatcher("Account.jsp").forward(request, response);
             
         } catch (Exception e) {
