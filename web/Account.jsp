@@ -276,6 +276,10 @@
 <body>
     
     <div class="main-content">
+        <div class="d-flex justify-content-center my-4">
+            <a href="Account?view=user" class="btn btn-outline-primary mx-2 ${param.view != 'customer' ? 'active' : ''}">User</a>
+            <a href="Account?view=customer" class="btn btn-outline-primary mx-2 ${param.view == 'customer' ? 'active' : ''}">Customer</a>
+        </div>
         <div class="container-fluid">
             <div class="header">
                 <div class="d-flex justify-content-between align-items-center">
@@ -336,7 +340,7 @@
                                 <td>
                                     <div class="d-flex gap-2">
                                         <button type="button" class="action-btn edit" 
-                                                onclick="editAccount(${account.id}, '${account.username}', '${account.email}', '${account.role}')"
+                                                onclick="editAccount(${account.id}, '${fn:escapeXml(fn:replace(account.username, "'", "\\'") )}', '${fn:escapeXml(fn:replace(account.email, "'", "\\'") )}', '${fn:escapeXml(fn:replace(account.role, "'", "\\'") )}')"
                                                 data-bs-toggle="modal" data-bs-target="#editAccountModal">
                                             <i class="bi bi-pencil"></i>
                                         </button>
@@ -347,7 +351,7 @@
                                         </button>
                                         <c:if test="${account.role != 'admin'}">
                                             <button type="button" class="action-btn delete" 
-                                                    onclick="deleteAccount(${account.id}, '${fn:escapeXml(account.username)}')"
+                                                    onclick="deleteAccount(${account.id}, '${fn:escapeXml(fn:replace(account.username, "'", "\\'") )}')"
                                                     data-bs-toggle="modal" data-bs-target="#deleteAccountModal">
                                                 <i class="bi bi-trash"></i>
                                             </button>
@@ -378,139 +382,143 @@
                 </nav>
             </c:if>
 
-            <!-- Bảng User Accounts -->
-            <h2>User Accounts</h2>
-            <div class="accounts-table">
-                <table class="table">
-                    <thead>
-                        <tr>
-                            <th>Username</th>
-                            <th>Email</th>
-                            <th>Role</th>
-                            <th>Actions</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <c:forEach items="${userList}" var="account">
+            <c:if test="${param.view != 'customer'}">
+                <!-- Bảng User Accounts -->
+                <h2>User Accounts</h2>
+                <div class="accounts-table">
+                    <table class="table">
+                        <thead>
                             <tr>
-                                <td>${account.username}</td>
-                                <td>${account.email}</td>
-                                <td>
-                                    <span class="role-badge role-${account.role.toLowerCase()}">
-                                        ${account.role}
-                                    </span>
-                                </td>
-                                <td>
-                                    <div class="d-flex gap-2">
-                                        <button type="button" class="action-btn edit" 
-                                                onclick="editAccount(${account.id}, '${account.username}', '${account.email}', '${account.role}')"
-                                                data-bs-toggle="modal" data-bs-target="#editAccountModal">
-                                            <i class="bi bi-pencil"></i>
-                                        </button>
-                                        <button type="button" class="action-btn reset" 
-                                                onclick="resetPassword(${account.id})"
-                                                data-bs-toggle="modal" data-bs-target="#resetPasswordModal">
-                                            <i class="bi bi-key"></i>
-                                        </button>
-                                        <c:if test="${account.role != 'admin'}">
-                                            <button type="button" class="action-btn delete" 
-                                                    onclick="deleteAccount(${account.id}, '${fn:escapeXml(account.username)}')"
-                                                    data-bs-toggle="modal" data-bs-target="#deleteAccountModal">
+                                <th>Username</th>
+                                <th>Email</th>
+                                <th>Role</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <c:forEach items="${userList}" var="account">
+                                <tr>
+                                    <td>${account.username}</td>
+                                    <td>${account.email}</td>
+                                    <td>
+                                        <span class="role-badge role-${account.role.toLowerCase()}">
+                                            ${account.role}
+                                        </span>
+                                    </td>
+                                    <td>
+                                        <div class="d-flex gap-2">
+                                            <button type="button" class="action-btn edit" 
+                                                    onclick="editAccount(${account.id}, '${fn:escapeXml(fn:replace(account.username, "'", "\\'") )}', '${fn:escapeXml(fn:replace(account.email, "'", "\\'") )}', '${fn:escapeXml(fn:replace(account.role, "'", "\\'") )}')"
+                                                    data-bs-toggle="modal" data-bs-target="#editAccountModal">
+                                                <i class="bi bi-pencil"></i>
+                                            </button>
+                                            <button type="button" class="action-btn reset" 
+                                                    onclick="resetPassword(${account.id})"
+                                                    data-bs-toggle="modal" data-bs-target="#resetPasswordModal">
+                                                <i class="bi bi-key"></i>
+                                            </button>
+                                            <c:if test="${account.role != 'admin'}">
+                                                <button type="button" class="action-btn delete" 
+                                                        onclick="deleteAccount(${account.id}, '${fn:escapeXml(fn:replace(account.username, "'", "\\'") )}')"
+                                                        data-bs-toggle="modal" data-bs-target="#deleteAccountModal">
+                                                    <i class="bi bi-trash"></i>
+                                                </button>
+                                            </c:if>
+                                        </div>
+                                    </td>
+                                </tr>
+                            </c:forEach>
+                        </tbody>
+                    </table>
+                    <c:if test="${empty userList}">
+                        <div class="text-center py-5">
+                            <i class="bi bi-info-circle text-primary" style="font-size: 2rem;"></i>
+                            <p class="mt-3 text-muted">No accounts found</p>
+                        </div>
+                    </c:if>
+                    <!-- Phân trang user -->
+                    <nav aria-label="User pagination">
+                        <ul class="pagination justify-content-center mt-4">
+                            <li class="page-item ${userCurrentPage == 1 ? 'disabled' : ''}">
+                                <a class="page-link" href="Account?view=user&userPage=${userCurrentPage - 1}&customerPage=${customerCurrentPage}">Previous</a>
+                            </li>
+                            <li class="page-item active">
+                                <span class="page-link">${userCurrentPage} / ${userTotalPages}</span>
+                            </li>
+                            <li class="page-item ${userCurrentPage == userTotalPages ? 'disabled' : ''}">
+                                <a class="page-link" href="Account?view=user&userPage=${userCurrentPage + 1}&customerPage=${customerCurrentPage}">Next</a>
+                            </li>
+                        </ul>
+                    </nav>
+                </div>
+            </c:if>
+
+            <c:if test="${param.view == 'customer'}">
+                <!-- Bảng Customer Accounts -->
+                <h2 class="mt-5">Customer Accounts</h2>
+                <div class="accounts-table">
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>Name</th>
+                                <th>Email</th>
+                                <th>Phone</th>
+                                <th>Shipping Address</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <c:forEach items="${customerList}" var="customer">
+                                <tr>
+                                    <td>${customer.name}</td>
+                                    <td>${customer.email}</td>
+                                    <td>${customer.phone}</td>
+                                    <td>${customer.shipping_address}</td>
+                                    <td>
+                                        <div class="d-flex gap-2">
+                                            <button type="button" class="action-btn edit"
+                                                onclick="editCustomer(${customer.customer_id}, '${fn:escapeXml(fn:replace(customer.name, "'", "\\'") )}', '${fn:escapeXml(fn:replace(customer.email, "'", "\\'") )}', '${fn:escapeXml(fn:replace(customer.phone, "'", "\\'") )}', '${fn:escapeXml(fn:replace(customer.shipping_address, "'", "\\'") )}')"
+                                                data-bs-toggle="modal" data-bs-target="#editCustomerModal">
+                                                <i class="bi bi-pencil"></i>
+                                            </button>
+                                            <button type="button" class="action-btn reset"
+                                                onclick="resetCustomerPassword(${customer.customer_id})"
+                                                data-bs-toggle="modal" data-bs-target="#resetCustomerPasswordModal">
+                                                <i class="bi bi-key"></i>
+                                            </button>
+                                            <button type="button" class="action-btn delete"
+                                                onclick="deleteCustomer(${customer.customer_id}, '${fn:escapeXml(fn:replace(customer.name, "'", "\\'") )}')"
+                                                data-bs-toggle="modal" data-bs-target="#deleteCustomerModal">
                                                 <i class="bi bi-trash"></i>
                                             </button>
-                                        </c:if>
-                                    </div>
-                                </td>
-                            </tr>
-                        </c:forEach>
-                    </tbody>
-                </table>
-                <c:if test="${empty userList}">
-                    <div class="text-center py-5">
-                        <i class="bi bi-info-circle text-primary" style="font-size: 2rem;"></i>
-                        <p class="mt-3 text-muted">No accounts found</p>
-                    </div>
-                </c:if>
-                <!-- Phân trang user -->
-                <nav aria-label="User pagination">
-                    <ul class="pagination justify-content-center mt-4">
-                        <li class="page-item ${userCurrentPage == 1 ? 'disabled' : ''}">
-                            <a class="page-link" href="Account?userPage=${userCurrentPage - 1}&customerPage=${customerCurrentPage}">Previous</a>
-                        </li>
-                        <li class="page-item active">
-                            <span class="page-link">${userCurrentPage} / ${userTotalPages}</span>
-                        </li>
-                        <li class="page-item ${userCurrentPage == userTotalPages ? 'disabled' : ''}">
-                            <a class="page-link" href="Account?userPage=${userCurrentPage + 1}&customerPage=${customerCurrentPage}">Next</a>
-                        </li>
-                    </ul>
-                </nav>
-            </div>
-
-            <!-- Bảng Customer Accounts -->
-            <h2 class="mt-5">Customer Accounts</h2>
-            <div class="accounts-table">
-                <table class="table">
-                    <thead>
-                        <tr>
-                            <th>Name</th>
-                            <th>Email</th>
-                            <th>Phone</th>
-                            <th>Shipping Address</th>
-                            <th>Actions</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <c:forEach items="${customerList}" var="customer">
-                            <tr>
-                                <td>${customer.name}</td>
-                                <td>${customer.email}</td>
-                                <td>${customer.phone}</td>
-                                <td>${customer.shipping_address}</td>
-                                <td>
-                                    <div class="d-flex gap-2">
-                                        <button type="button" class="action-btn edit"
-                                            onclick="editCustomer(${customer.customer_id}, '${customer.name}', '${customer.email}', '${customer.phone}', '${customer.shipping_address}')"
-                                            data-bs-toggle="modal" data-bs-target="#editCustomerModal">
-                                            <i class="bi bi-pencil"></i>
-                                        </button>
-                                        <button type="button" class="action-btn reset"
-                                            onclick="resetCustomerPassword(${customer.customer_id})"
-                                            data-bs-toggle="modal" data-bs-target="#resetCustomerPasswordModal">
-                                            <i class="bi bi-key"></i>
-                                        </button>
-                                        <button type="button" class="action-btn delete"
-                                            onclick="deleteCustomer(${customer.customer_id}, '${customer.name}')"
-                                            data-bs-toggle="modal" data-bs-target="#deleteCustomerModal">
-                                            <i class="bi bi-trash"></i>
-                                        </button>
-                                    </div>
-                                </td>
-                            </tr>
-                        </c:forEach>
-                    </tbody>
-                </table>
-                <c:if test="${empty customerList}">
-                    <div class="text-center py-5">
-                        <i class="bi bi-info-circle text-primary" style="font-size: 2rem;"></i>
-                        <p class="mt-3 text-muted">No customers found</p>
-                    </div>
-                </c:if>
-                <!-- Phân trang customer -->
-                <nav aria-label="Customer pagination">
-                    <ul class="pagination justify-content-center mt-4">
-                        <li class="page-item ${customerCurrentPage == 1 ? 'disabled' : ''}">
-                            <a class="page-link" href="Account?userPage=${userCurrentPage}&customerPage=${customerCurrentPage - 1}">Previous</a>
-                        </li>
-                        <li class="page-item active">
-                            <span class="page-link">${customerCurrentPage} / ${customerTotalPages}</span>
-                        </li>
-                        <li class="page-item ${customerCurrentPage == customerTotalPages ? 'disabled' : ''}">
-                            <a class="page-link" href="Account?userPage=${userCurrentPage}&customerPage=${customerCurrentPage + 1}">Next</a>
-                        </li>
-                    </ul>
-                </nav>
-            </div>
+                                        </div>
+                                    </td>
+                                </tr>
+                            </c:forEach>
+                        </tbody>
+                    </table>
+                    <c:if test="${empty customerList}">
+                        <div class="text-center py-5">
+                            <i class="bi bi-info-circle text-primary" style="font-size: 2rem;"></i>
+                            <p class="mt-3 text-muted">No customers found</p>
+                        </div>
+                    </c:if>
+                    <!-- Phân trang customer -->
+                    <nav aria-label="Customer pagination">
+                        <ul class="pagination justify-content-center mt-4">
+                            <li class="page-item ${customerCurrentPage == 1 ? 'disabled' : ''}">
+                                <a class="page-link" href="Account?view=customer&userPage=${userCurrentPage}&customerPage=${customerCurrentPage - 1}">Previous</a>
+                            </li>
+                            <li class="page-item active">
+                                <span class="page-link">${customerCurrentPage} / ${customerTotalPages}</span>
+                            </li>
+                            <li class="page-item ${customerCurrentPage == customerTotalPages ? 'disabled' : ''}">
+                                <a class="page-link" href="Account?view=customer&userPage=${userCurrentPage}&customerPage=${customerCurrentPage + 1}">Next</a>
+                            </li>
+                        </ul>
+                    </nav>
+                </div>
+            </c:if>
         </div>
     </div>
 
