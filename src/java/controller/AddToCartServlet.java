@@ -8,7 +8,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 import model.PCComponent;
-import model.PCComponentDAO;
+import dal.PCComponentDAO;
 import java.util.ArrayList;
 import java.util.List;
 

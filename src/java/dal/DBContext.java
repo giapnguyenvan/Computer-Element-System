@@ -36,7 +36,7 @@ public class DBContext {
         return connection;
     }
 
-    private DBContext() {
+    DBContext() {
         // Private constructor để đảm bảo Singleton
     }
 
