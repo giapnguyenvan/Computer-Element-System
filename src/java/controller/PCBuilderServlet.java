@@ -8,7 +8,7 @@ import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import model.PCComponent;
-import model.DAO.PCComponentDAO;
+import model.PCComponentDAO;
 
 @WebServlet(name = "PCBuilderServlet", urlPatterns = {"/PCBuilderServlet"})
 public class PCBuilderServlet extends HttpServlet {
