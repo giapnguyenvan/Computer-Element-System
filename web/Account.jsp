@@ -362,18 +362,22 @@
                                     <td>
                                         <div class="d-flex gap-2">
                                             <button type="button" class="action-btn edit" 
-                                                    onclick="editAccount(${account.id}, '${fn:escapeXml(fn:replace(account.username, "'", "\\'") )}', '${fn:escapeXml(fn:replace(account.email, "'", "\\'") )}', '${fn:escapeXml(fn:replace(account.role, "'", "\\'") )}')"
+                                                    data-id="${account.id}"
+                                                    data-username="${fn:escapeXml(account.username)}"
+                                                    data-email="${fn:escapeXml(account.email)}"
+                                                    data-role="${fn:escapeXml(account.role)}"
                                                     data-bs-toggle="modal" data-bs-target="#editAccountModal">
                                                 <i class="bi bi-pencil"></i>
                                             </button>
                                             <button type="button" class="action-btn reset" 
-                                                    onclick="resetPassword(${account.id})"
+                                                    data-id="${account.id}"
                                                     data-bs-toggle="modal" data-bs-target="#resetPasswordModal">
                                                 <i class="bi bi-key"></i>
                                             </button>
-                                            <c:if test="${account.role != 'admin'}">
+                                            <c:if test="${fn:toLowerCase(account.role) != 'admin'}">
                                                 <button type="button" class="action-btn delete" 
-                                                        onclick="deleteAccount(${account.id}, '${fn:escapeXml(fn:replace(account.username, "'", "\\'") )}')"
+                                                        data-id="${account.id}"
+                                                        data-username="${fn:escapeXml(account.username)}"
                                                         data-bs-toggle="modal" data-bs-target="#deleteAccountModal">
                                                     <i class="bi bi-trash"></i>
                                                 </button>
@@ -431,17 +435,22 @@
                                     <td>
                                         <div class="d-flex gap-2">
                                             <button type="button" class="action-btn edit"
-                                                onclick="editCustomer(${customer.customer_id}, '${fn:escapeXml(fn:replace(customer.name, "'", "\\'") )}', '${fn:escapeXml(fn:replace(customer.email, "'", "\\'") )}', '${fn:escapeXml(fn:replace(customer.phone, "'", "\\'") )}', '${fn:escapeXml(fn:replace(customer.shipping_address, "'", "\\'") )}')"
+                                                data-id="${customer.customer_id}"
+                                                data-name="${fn:escapeXml(customer.name)}"
+                                                data-email="${fn:escapeXml(customer.email)}"
+                                                data-phone="${fn:escapeXml(customer.phone)}"
+                                                data-shipping_address="${fn:escapeXml(customer.shipping_address)}"
                                                 data-bs-toggle="modal" data-bs-target="#editCustomerModal">
                                                 <i class="bi bi-pencil"></i>
                                             </button>
                                             <button type="button" class="action-btn reset"
-                                                onclick="resetCustomerPassword(${customer.customer_id})"
+                                                data-id="${customer.customer_id}"
                                                 data-bs-toggle="modal" data-bs-target="#resetCustomerPasswordModal">
                                                 <i class="bi bi-key"></i>
                                             </button>
                                             <button type="button" class="action-btn delete"
-                                                onclick="deleteCustomer(${customer.customer_id}, '${fn:escapeXml(fn:replace(customer.name, "'", "\\'") )}')"
+                                                data-id="${customer.customer_id}"
+                                                data-name="${fn:escapeXml(customer.name)}"
                                                 data-bs-toggle="modal" data-bs-target="#deleteCustomerModal">
                                                 <i class="bi bi-trash"></i>
                                             </button>
@@ -703,37 +712,58 @@
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
     <script>
-        function editAccount(id, username, email, role) {
-            document.getElementById('edit_account_id').value = id;
-            document.getElementById('edit_username').value = username;
-            document.getElementById('edit_email').value = email;
-            document.getElementById('edit_role').value = role.toLowerCase();
+        // User action buttons
+        const editAccountModal = document.getElementById('editAccountModal');
+        if (editAccountModal) {
+            editAccountModal.addEventListener('show.bs.modal', function (event) {
+                const button = event.relatedTarget;
+                document.getElementById('edit_account_id').value = button.getAttribute('data-id');
+                document.getElementById('edit_username').value = button.getAttribute('data-username');
+                document.getElementById('edit_email').value = button.getAttribute('data-email');
+                document.getElementById('edit_role').value = button.getAttribute('data-role').toLowerCase();
+            });
         }
-        
-        function resetPassword(id) {
-            document.getElementById('reset_account_id').value = id;
+        const resetPasswordModal = document.getElementById('resetPasswordModal');
+        if (resetPasswordModal) {
+            resetPasswordModal.addEventListener('show.bs.modal', function (event) {
+                const button = event.relatedTarget;
+                document.getElementById('reset_account_id').value = button.getAttribute('data-id');
+            });
         }
-        
-        function deleteAccount(id, username) {
-            document.getElementById('delete_account_id').value = id;
-            document.getElementById('delete_account_name').textContent = username;
+        const deleteAccountModal = document.getElementById('deleteAccountModal');
+        if (deleteAccountModal) {
+            deleteAccountModal.addEventListener('show.bs.modal', function (event) {
+                const button = event.relatedTarget;
+                document.getElementById('delete_account_id').value = button.getAttribute('data-id');
+                document.getElementById('delete_account_name').textContent = button.getAttribute('data-username');
+            });
         }
-
-        function editCustomer(id, name, email, phone, shipping_address) {
-            document.getElementById('edit_customer_id').value = id;
-            document.getElementById('edit_customer_name').value = name;
-            document.getElementById('edit_customer_email').value = email;
-            document.getElementById('edit_customer_phone').value = phone;
-            document.getElementById('edit_customer_shipping_address').value = shipping_address;
+        // Customer action buttons
+        const editCustomerModal = document.getElementById('editCustomerModal');
+        if (editCustomerModal) {
+            editCustomerModal.addEventListener('show.bs.modal', function (event) {
+                const button = event.relatedTarget;
+                document.getElementById('edit_customer_id').value = button.getAttribute('data-id');
+                document.getElementById('edit_customer_name').value = button.getAttribute('data-name');
+                document.getElementById('edit_customer_email').value = button.getAttribute('data-email');
+                document.getElementById('edit_customer_phone').value = button.getAttribute('data-phone');
+                document.getElementById('edit_customer_shipping_address').value = button.getAttribute('data-shipping_address');
+            });
         }
-        
-        function resetCustomerPassword(id) {
-            document.getElementById('reset_customer_id').value = id;
+        const resetCustomerPasswordModal = document.getElementById('resetCustomerPasswordModal');
+        if (resetCustomerPasswordModal) {
+            resetCustomerPasswordModal.addEventListener('show.bs.modal', function (event) {
+                const button = event.relatedTarget;
+                document.getElementById('reset_customer_id').value = button.getAttribute('data-id');
+            });
         }
-        
-        function deleteCustomer(id, name) {
-            document.getElementById('delete_customer_id').value = id;
-            document.getElementById('delete_customer_name').textContent = name;
+        const deleteCustomerModal = document.getElementById('deleteCustomerModal');
+        if (deleteCustomerModal) {
+            deleteCustomerModal.addEventListener('show.bs.modal', function (event) {
+                const button = event.relatedTarget;
+                document.getElementById('delete_customer_id').value = button.getAttribute('data-id');
+                document.getElementById('delete_customer_name').textContent = button.getAttribute('data-name');
+            });
         }
     </script>
 </body>
