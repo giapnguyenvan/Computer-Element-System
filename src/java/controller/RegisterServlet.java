@@ -1,6 +1,6 @@
 package controller;
 
-import dal.UserDAO;
+import dal.CustomerDAO;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
@@ -8,7 +8,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.sql.SQLException;
-import model.User;
+import model.Customer;
 
 @WebServlet(name = "RegisterServlet", urlPatterns = {"/register"})
 public class RegisterServlet extends HttpServlet {
@@ -39,25 +39,34 @@ public class RegisterServlet extends HttpServlet {
                 return;
             }
 
-            UserDAO userDAO = UserDAO.getInstance();
-            
+            CustomerDAO customerDAO = new CustomerDAO();
             // Kiểm tra email đã tồn tại chưa
-            if (userDAO.isEmailExists(email)) {
+            if (customerDAO.isEmailExists(email)) {
                 request.setAttribute("error", "Email đã được sử dụng!");
                 request.getRequestDispatcher("Register.jsp").forward(request, response);
                 return;
             }
-
-            // Tạo đối tượng Users mới
-            User newUser = new User(username, password, "customer", fullname, email, phone, address);
-            
+            // Tạo đối tượng Customer mới
+            Customer newCustomer = new Customer(0, 0, fullname, phone, address);
+            newCustomer.setEmail(email);
+            newCustomer.setPassword(password);
             // Thực hiện đăng ký
-            if (userDAO.register(newUser)) {
-                response.sendRedirect("login.jsp");
-            } else {
-                request.setAttribute("error", "Đăng ký thất bại!");
-                request.getRequestDispatcher("Register.jsp").forward(request, response);
+            String sql = "INSERT INTO Customer (name, email, password, phone, shipping_address) VALUES (?, ?, ?, ?, ?)";
+            try (java.sql.Connection conn = dal.DBContext.getInstance().getConnection();
+                 java.sql.PreparedStatement stmt = conn.prepareStatement(sql)) {
+                stmt.setString(1, fullname);
+                stmt.setString(2, email);
+                stmt.setString(3, password);
+                stmt.setString(4, phone);
+                stmt.setString(5, address);
+                if (stmt.executeUpdate() > 0) {
+                    response.sendRedirect("login.jsp");
+                } else {
+                    request.setAttribute("error", "Đăng ký thất bại!");
+                    request.getRequestDispatcher("Register.jsp").forward(request, response);
+                }
             }
+            return;
             
         } catch (SQLException e) {
             request.setAttribute("error", "Lỗi hệ thống: " + e.getMessage());

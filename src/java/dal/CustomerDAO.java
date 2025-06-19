@@ -24,5 +24,37 @@ public class CustomerDAO {
         }
     }
 
+    public Customer login(String email, String password) throws SQLException {
+        String sql = "SELECT * FROM Customer WHERE email = ? AND password = ?";
+        try (Connection conn = dbContext.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+            stmt.setString(1, email);
+            stmt.setString(2, password);
+            try (java.sql.ResultSet rs = stmt.executeQuery()) {
+                if (rs.next()) {
+                    return new Customer(
+                        rs.getInt("customer_id"),
+                        0, // user_id không còn dùng
+                        rs.getString("name"),
+                        rs.getString("phone"),
+                        rs.getString("shipping_address")
+                    );
+                }
+            }
+        }
+        return null;
+    }
+
+    public boolean isEmailExists(String email) throws SQLException {
+        String sql = "SELECT email FROM Customer WHERE email = ?";
+        try (Connection conn = dbContext.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+            stmt.setString(1, email);
+            try (java.sql.ResultSet rs = stmt.executeQuery()) {
+                return rs.next();
+            }
+        }
+    }
+
     // You might want to add more methods here, e.g., getCustomerByUserId, updateCustomer, etc.
 } 

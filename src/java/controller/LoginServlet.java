@@ -19,6 +19,8 @@ import java.net.URLDecoder;
 import java.nio.charset.StandardCharsets;
 import java.sql.SQLException;
 import model.User;
+import dal.CustomerDAO;
+import model.Customer;
 
 /**
  *
@@ -79,13 +81,22 @@ public class LoginServlet extends HttpServlet {
         String remember = request.getParameter("remember");
         
         try {
-            User user = UserDAO.getInstance().login(email, password);
-            
+            // Thử đăng nhập với Customer
+            Customer customer = new dal.CustomerDAO().login(email, password);
+            if (customer != null) {
+                HttpSession session = request.getSession();
+                session.setAttribute("customerAuth", customer);
+                session.setAttribute("session_login", email);
+                session.setAttribute("user_role", "customer");
+                session.setAttribute("user_name", customer.getName());
+                response.sendRedirect(request.getContextPath() + "/homepageservlet");
+                return;
+            }
+            // Nếu không phải customer, thử với User (staff/admin)
+            User user = dal.UserDAO.getInstance().login(email, password);
             if (user != null) {
-                shop.entities.User userAuth = new shop.DAO.UserDAO().findUserByEmail(email);
                 HttpSession session = request.getSession();
                 session.setAttribute("userAuth", user);
-                session.setAttribute("userAuth2", userAuth);
                 session.setAttribute("session_login", email);
                 session.setAttribute("user_role", user.getRole());
                 session.setAttribute("user_name", user.getFullname());
@@ -115,7 +126,6 @@ public class LoginServlet extends HttpServlet {
                     response.addCookie(passwordCookie);
                 }
                 
-                // Always redirect to homepage first
                 response.sendRedirect(request.getContextPath() + "/homepageservlet");
                 return;
             } else {

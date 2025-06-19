@@ -13,14 +13,11 @@ public class User {
     public User() {
     }
 
-    public User(String username, String password, String role, String fullname, String email, String phone, String address) {
+    public User(String username, String password, String role, String email) {
         this.username = username;
         this.password = password;
         this.role = role;
-        this.fullname = fullname;
         this.email = email;
-        this.phone = phone;
-        this.address = address;
     }
 
     public int getId() {

@@ -6,6 +6,8 @@ public class Customer {
     private String name;
     private String phone;
     private String shipping_address;
+    private String email;
+    private String password;
 
     public Customer() {
     }
@@ -65,6 +67,22 @@ public class Customer {
 
     public void setShipping_address(String shipping_address) {
         this.shipping_address = shipping_address;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
     }
 
     @Override

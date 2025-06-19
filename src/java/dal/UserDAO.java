@@ -23,7 +23,7 @@ public class UserDAO {
     }
     
     public User login(String email, String password) throws SQLException {
-        String sql = "SELECT * FROM users WHERE email = ? AND password = ?";
+        String sql = "SELECT * FROM User WHERE email = ? AND password = ?";
         try (Connection conn = dbContext.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
             
@@ -33,13 +33,10 @@ public class UserDAO {
             try (ResultSet rs = stmt.executeQuery()) {
                 if (rs.next()) {
                     return new User(
-                        rs.getString("name"),
+                        rs.getString("username"),
                         rs.getString("password"),
                         rs.getString("role"),
-                        rs.getString("name"),
-                        rs.getString("email"),
-                        rs.getString("phone_number"),
-                        rs.getString("address")
+                        rs.getString("email")
                     );
                 }
             }
@@ -48,25 +45,21 @@ public class UserDAO {
     }
     
     public boolean register(User user) throws SQLException {
-        String sql = "INSERT INTO users (name, email, password, phone_number, address, role) " +
-                    "VALUES (?, ?, ?, ?, ?, ?)";
-                    
+        String sql = "INSERT INTO User (username, password, email, role, status, is_verified) VALUES (?, ?, ?, ?, ?, ?)";
         try (Connection conn = dbContext.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
-            
-            stmt.setString(1, user.getFullname());
-            stmt.setString(2, user.getEmail());
-            stmt.setString(3, user.getPassword());
-            stmt.setString(4, user.getPhone());
-            stmt.setString(5, user.getAddress());
-            stmt.setString(6, user.getRole());
-            
+            stmt.setString(1, user.getUsername());
+            stmt.setString(2, user.getPassword());
+            stmt.setString(3, user.getEmail());
+            stmt.setString(4, user.getRole());
+            stmt.setString(5, "Active");
+            stmt.setBoolean(6, true);
             return stmt.executeUpdate() > 0;
         }
     }
     
     public boolean isEmailExists(String email) throws SQLException {
-        String sql = "SELECT email FROM users WHERE email = ?";
+        String sql = "SELECT email FROM User WHERE email = ?";
         try (Connection conn = dbContext.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
             
@@ -78,7 +71,7 @@ public class UserDAO {
     }
     
     public boolean updatePassword(String email, String newPassword) throws SQLException {
-        String sql = "UPDATE users SET password = ? WHERE email = ?";
+        String sql = "UPDATE User SET password = ? WHERE email = ?";
         try (Connection conn = dbContext.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
             
@@ -90,7 +83,7 @@ public class UserDAO {
     }
     
     public User getUserByEmail(String email) throws SQLException {
-        String sql = "SELECT * FROM users WHERE email = ?";
+        String sql = "SELECT * FROM User WHERE email = ?";
         try (Connection conn = dbContext.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
             
@@ -99,13 +92,10 @@ public class UserDAO {
             try (ResultSet rs = stmt.executeQuery()) {
                 if (rs.next()) {
                     return new User(
-                        rs.getString("name"),
+                        rs.getString("username"),
                         rs.getString("password"),
                         rs.getString("role"),
-                        rs.getString("name"),
-                        rs.getString("email"),
-                        rs.getString("phone_number"),
-                        rs.getString("address")
+                        rs.getString("email")
                     );
                 }
             }
@@ -114,7 +104,7 @@ public class UserDAO {
     }
 
     public User getUserById(int userId) throws SQLException {
-        String sql = "SELECT * FROM users WHERE id = ?";
+        String sql = "SELECT * FROM User WHERE id = ?";
         try (Connection conn = dbContext.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
             
@@ -123,13 +113,10 @@ public class UserDAO {
             try (ResultSet rs = stmt.executeQuery()) {
                 if (rs.next()) {
                     return new User(
-                        rs.getString("name"),
+                        rs.getString("username"),
                         rs.getString("password"),
                         rs.getString("role"),
-                        rs.getString("name"),
-                        rs.getString("email"),
-                        rs.getString("phone_number"),
-                        rs.getString("address")
+                        rs.getString("email")
                     );
                 }
             }
@@ -139,7 +126,7 @@ public class UserDAO {
 
     public Vector<User> getAllUsers() throws SQLException {
         Vector<User> users = new Vector<>();
-        String sql = "SELECT * FROM users ORDER BY name";
+        String sql = "SELECT * FROM User ORDER BY name";
         
         try (Connection conn = dbContext.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql);
@@ -147,13 +134,10 @@ public class UserDAO {
             
             while (rs.next()) {
                 User user = new User(
-                    rs.getString("name"),
+                    rs.getString("username"),
                     rs.getString("password"),
                     rs.getString("role"),
-                    rs.getString("name"),
-                    rs.getString("email"),
-                    rs.getString("phone_number"),
-                    rs.getString("address")
+                    rs.getString("email")
                 );
                 user.setId(rs.getInt("id")); // You'll need to add setId() to User class
                 users.add(user);
@@ -163,7 +147,7 @@ public class UserDAO {
     }
 
     public User getUserByUsername(String username) throws SQLException {
-        String sql = "SELECT * FROM users WHERE name = ?";
+        String sql = "SELECT * FROM User WHERE name = ?";
         try (Connection conn = dbContext.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
             
@@ -172,13 +156,10 @@ public class UserDAO {
             try (ResultSet rs = stmt.executeQuery()) {
                 if (rs.next()) {
                     User user = new User(
-                        rs.getString("name"),
+                        rs.getString("username"),
                         rs.getString("password"),
                         rs.getString("role"),
-                        rs.getString("name"),
-                        rs.getString("email"),
-                        rs.getString("phone_number"),
-                        rs.getString("address")
+                        rs.getString("email")
                     );
                     user.setId(rs.getInt("id")); // You'll need to add setId() to User class
                     return user;
@@ -196,10 +177,7 @@ public class UserDAO {
                 "Peter Jones",  // username
                 "abc123123",    // password
                 "admin",        // role
-                "Peter Jones",  // fullname
-                "peterj_admin@example.com", // email
-                "0987654321",  // phone
-                "100 Admin Road, District 5, HCMC" // address
+                "peterj_admin@example.com" // email
             );
             register(adminUser);
         }
