@@ -323,16 +323,7 @@
             </div>
 
             <div class="accounts-table">
-                <table class="table">
-                    <thead>
-                        <tr>
-                            <th>Username</th>
-                            <th>Email</th>
-                            <th>Role</th>
-                            <th>Actions</th>
-                        </tr>
-                    </thead>
-                    <tbody>
+                                    <tbody>
                         <c:forEach items="${accountList}" var="account">
                             <tr>
                                 <td>${account.username}</td>
@@ -368,12 +359,7 @@
                     </tbody>
                 </table>
                 
-                <c:if test="${empty accountList}">
-                    <div class="text-center py-5">
-                        <i class="bi bi-info-circle text-primary" style="font-size: 2rem;"></i>
-                        <p class="mt-3 text-muted">No accounts found</p>
-                    </div>
-                </c:if>
+                
             </div>
 
             <c:if test="${totalPages > 1}">
@@ -392,7 +378,76 @@
                 </nav>
             </c:if>
 
-            <!-- Bảng hiển thị danh sách khách hàng -->
+            <!-- Bảng User Accounts -->
+            <h2>User Accounts</h2>
+            <div class="accounts-table">
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>Username</th>
+                            <th>Email</th>
+                            <th>Role</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <c:forEach items="${userList}" var="account">
+                            <tr>
+                                <td>${account.username}</td>
+                                <td>${account.email}</td>
+                                <td>
+                                    <span class="role-badge role-${account.role.toLowerCase()}">
+                                        ${account.role}
+                                    </span>
+                                </td>
+                                <td>
+                                    <div class="d-flex gap-2">
+                                        <button type="button" class="action-btn edit" 
+                                                onclick="editAccount(${account.id}, '${account.username}', '${account.email}', '${account.role}')"
+                                                data-bs-toggle="modal" data-bs-target="#editAccountModal">
+                                            <i class="bi bi-pencil"></i>
+                                        </button>
+                                        <button type="button" class="action-btn reset" 
+                                                onclick="resetPassword(${account.id})"
+                                                data-bs-toggle="modal" data-bs-target="#resetPasswordModal">
+                                            <i class="bi bi-key"></i>
+                                        </button>
+                                        <c:if test="${account.role != 'admin'}">
+                                            <button type="button" class="action-btn delete" 
+                                                    onclick="deleteAccount(${account.id}, '${fn:escapeXml(account.username)}')"
+                                                    data-bs-toggle="modal" data-bs-target="#deleteAccountModal">
+                                                <i class="bi bi-trash"></i>
+                                            </button>
+                                        </c:if>
+                                    </div>
+                                </td>
+                            </tr>
+                        </c:forEach>
+                    </tbody>
+                </table>
+                <c:if test="${empty userList}">
+                    <div class="text-center py-5">
+                        <i class="bi bi-info-circle text-primary" style="font-size: 2rem;"></i>
+                        <p class="mt-3 text-muted">No accounts found</p>
+                    </div>
+                </c:if>
+                <!-- Phân trang user -->
+                <nav aria-label="User pagination">
+                    <ul class="pagination justify-content-center mt-4">
+                        <li class="page-item ${userCurrentPage == 1 ? 'disabled' : ''}">
+                            <a class="page-link" href="Account?userPage=${userCurrentPage - 1}&customerPage=${customerCurrentPage}">Previous</a>
+                        </li>
+                        <li class="page-item active">
+                            <span class="page-link">${userCurrentPage} / ${userTotalPages}</span>
+                        </li>
+                        <li class="page-item ${userCurrentPage == userTotalPages ? 'disabled' : ''}">
+                            <a class="page-link" href="Account?userPage=${userCurrentPage + 1}&customerPage=${customerCurrentPage}">Next</a>
+                        </li>
+                    </ul>
+                </nav>
+            </div>
+
+            <!-- Bảng Customer Accounts -->
             <h2 class="mt-5">Customer Accounts</h2>
             <div class="accounts-table">
                 <table class="table">
@@ -402,6 +457,7 @@
                             <th>Email</th>
                             <th>Phone</th>
                             <th>Shipping Address</th>
+                            <th>Actions</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -411,6 +467,25 @@
                                 <td>${customer.email}</td>
                                 <td>${customer.phone}</td>
                                 <td>${customer.shipping_address}</td>
+                                <td>
+                                    <div class="d-flex gap-2">
+                                        <button type="button" class="action-btn edit"
+                                            onclick="editCustomer(${customer.customer_id}, '${customer.name}', '${customer.email}', '${customer.phone}', '${customer.shipping_address}')"
+                                            data-bs-toggle="modal" data-bs-target="#editCustomerModal">
+                                            <i class="bi bi-pencil"></i>
+                                        </button>
+                                        <button type="button" class="action-btn reset"
+                                            onclick="resetCustomerPassword(${customer.customer_id})"
+                                            data-bs-toggle="modal" data-bs-target="#resetCustomerPasswordModal">
+                                            <i class="bi bi-key"></i>
+                                        </button>
+                                        <button type="button" class="action-btn delete"
+                                            onclick="deleteCustomer(${customer.customer_id}, '${customer.name}')"
+                                            data-bs-toggle="modal" data-bs-target="#deleteCustomerModal">
+                                            <i class="bi bi-trash"></i>
+                                        </button>
+                                    </div>
+                                </td>
                             </tr>
                         </c:forEach>
                     </tbody>
@@ -421,6 +496,20 @@
                         <p class="mt-3 text-muted">No customers found</p>
                     </div>
                 </c:if>
+                <!-- Phân trang customer -->
+                <nav aria-label="Customer pagination">
+                    <ul class="pagination justify-content-center mt-4">
+                        <li class="page-item ${customerCurrentPage == 1 ? 'disabled' : ''}">
+                            <a class="page-link" href="Account?userPage=${userCurrentPage}&customerPage=${customerCurrentPage - 1}">Previous</a>
+                        </li>
+                        <li class="page-item active">
+                            <span class="page-link">${customerCurrentPage} / ${customerTotalPages}</span>
+                        </li>
+                        <li class="page-item ${customerCurrentPage == customerTotalPages ? 'disabled' : ''}">
+                            <a class="page-link" href="Account?userPage=${userCurrentPage}&customerPage=${customerCurrentPage + 1}">Next</a>
+                        </li>
+                    </ul>
+                </nav>
             </div>
         </div>
     </div>
@@ -559,6 +648,97 @@
         </div>
     </div>
 
+    <!-- Edit Customer Modal -->
+    <div class="modal fade" id="editCustomerModal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Edit Customer</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                </div>
+                <form action="Customer_control" method="POST">
+                    <div class="modal-body">
+                        <input type="hidden" name="action" value="update">
+                        <input type="hidden" name="customer_id" id="edit_customer_id">
+                        <div class="mb-3">
+                            <label class="form-label">Name</label>
+                            <input type="text" class="form-control" name="name" id="edit_customer_name" required>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Email</label>
+                            <input type="email" class="form-control" name="email" id="edit_customer_email" required>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Phone</label>
+                            <input type="text" class="form-control" name="phone" id="edit_customer_phone" required>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Shipping Address</label>
+                            <input type="text" class="form-control" name="shipping_address" id="edit_customer_shipping_address" required>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-light" data-bs-dismiss="modal">Cancel</button>
+                        <button type="submit" class="btn btn-primary">Update Customer</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Reset Customer Password Modal -->
+    <div class="modal fade" id="resetCustomerPasswordModal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Reset Customer Password</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                </div>
+                <form action="Customer_control" method="POST">
+                    <div class="modal-body">
+                        <input type="hidden" name="action" value="updatePassword">
+                        <input type="hidden" name="customer_id" id="reset_customer_id">
+                        <div class="mb-3">
+                            <label class="form-label">New Password</label>
+                            <input type="password" class="form-control" name="new_password" required>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Confirm Password</label>
+                            <input type="password" class="form-control" name="confirm_password" required>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-light" data-bs-dismiss="modal">Cancel</button>
+                        <button type="submit" class="btn btn-primary">Reset Password</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Delete Customer Modal -->
+    <div class="modal fade" id="deleteCustomerModal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Delete Customer</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                </div>
+                <form action="Customer_control" method="POST">
+                    <div class="modal-body">
+                        <input type="hidden" name="action" value="delete">
+                        <input type="hidden" name="customer_id" id="delete_customer_id">
+                        <p>Are you sure you want to delete customer <span id="delete_customer_name" class="fw-bold"></span>? This action cannot be undone.</p>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-light" data-bs-dismiss="modal">Cancel</button>
+                        <button type="submit" class="btn btn-danger">Delete</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
     <script>
         function editAccount(id, username, email, role) {
@@ -575,6 +755,23 @@
         function deleteAccount(id, username) {
             document.getElementById('delete_account_id').value = id;
             document.getElementById('delete_account_name').textContent = username;
+        }
+
+        function editCustomer(id, name, email, phone, shipping_address) {
+            document.getElementById('edit_customer_id').value = id;
+            document.getElementById('edit_customer_name').value = name;
+            document.getElementById('edit_customer_email').value = email;
+            document.getElementById('edit_customer_phone').value = phone;
+            document.getElementById('edit_customer_shipping_address').value = shipping_address;
+        }
+        
+        function resetCustomerPassword(id) {
+            document.getElementById('reset_customer_id').value = id;
+        }
+        
+        function deleteCustomer(id, name) {
+            document.getElementById('delete_customer_id').value = id;
+            document.getElementById('delete_customer_name').textContent = name;
         }
     </script>
 </body>
