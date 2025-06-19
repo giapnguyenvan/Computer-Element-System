@@ -44,9 +44,8 @@ public class ViewAccountServlet extends HttpServlet {
                 Vector<Account> searchedList = new Vector<>();
                 search = search.toLowerCase();
                 for (Account a : allAccounts) {
-                    if (a.getName().toLowerCase().contains(search) || 
-                        a.getEmail().toLowerCase().contains(search) ||
-                        a.getPhone_number().toLowerCase().contains(search)) {
+                    if (a.getUsername().toLowerCase().contains(search) || 
+                        a.getEmail().toLowerCase().contains(search)) {
                         searchedList.add(a);
                     }
                 }
@@ -57,9 +56,9 @@ public class ViewAccountServlet extends HttpServlet {
             String sortBy = request.getParameter("sortBy");
             if (sortBy != null) {
                 switch (sortBy) {
-                    case "name":
+                    case "username":
                         Collections.sort(allAccounts, (a1, a2) -> 
-                            a1.getName().compareToIgnoreCase(a2.getName()));
+                            a1.getUsername().compareToIgnoreCase(a2.getUsername()));
                         break;
                     case "email":
                         Collections.sort(allAccounts, (a1, a2) -> 

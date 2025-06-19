@@ -12,7 +12,7 @@ public class AccountDAO {
     public Vector<Account> getAllAccounts(int page, int pageSize) {
          DBContext db = DBContext.getInstance();
         Vector<Account> listAccounts = new Vector<>();
-        String sql = "SELECT * FROM users ORDER BY id LIMIT ? OFFSET ?";
+        String sql = "SELECT * FROM User ORDER BY user_id LIMIT ? OFFSET ?";
         try {
             PreparedStatement ptm = db.getConnection().prepareStatement(sql);
             ptm.setInt(1, pageSize);
@@ -20,12 +20,10 @@ public class AccountDAO {
             ResultSet rs = ptm.executeQuery();
             while (rs.next()) {
                 Account a = new Account(
-                    rs.getInt("id"),
-                    rs.getString("name"),
+                    rs.getInt("user_id"),
+                    rs.getString("username"),
                     rs.getString("email"),
                     rs.getString("password"),
-                    rs.getString("phone_number"),
-                    rs.getString("address"),
                     rs.getString("role")
                 );
                 listAccounts.add(a);
@@ -39,19 +37,17 @@ public class AccountDAO {
     // Get account by ID
     public Account getAccountById(int accountId) {
         DBContext db = DBContext.getInstance();
-        String sql = "SELECT * FROM users WHERE id = ?";
+        String sql = "SELECT * FROM User WHERE user_id = ?";
         try {
             PreparedStatement ptm = db.getConnection().prepareStatement(sql);
             ptm.setInt(1, accountId);
             ResultSet rs = ptm.executeQuery();
             if (rs.next()) {
                 return new Account(
-                    rs.getInt("id"),
-                    rs.getString("name"),
+                    rs.getInt("user_id"),
+                    rs.getString("username"),
                     rs.getString("email"),
                     rs.getString("password"),
-                    rs.getString("phone_number"),
-                    rs.getString("address"),
                     rs.getString("role")
                 );
             }
@@ -64,19 +60,17 @@ public class AccountDAO {
     // Get account by email
     public Account getAccountByEmail(String email) {
         DBContext db = DBContext.getInstance();
-        String sql = "SELECT * FROM users WHERE email = ?";
+        String sql = "SELECT * FROM User WHERE email = ?";
         try {
             PreparedStatement ptm = db.getConnection().prepareStatement(sql);
             ptm.setString(1, email);
             ResultSet rs = ptm.executeQuery();
             if (rs.next()) {
                 return new Account(
-                    rs.getInt("id"),
-                    rs.getString("name"),
+                    rs.getInt("user_id"),
+                    rs.getString("username"),
                     rs.getString("email"),
                     rs.getString("password"),
-                    rs.getString("phone_number"),
-                    rs.getString("address"),
                     rs.getString("role")
                 );
             }
@@ -89,15 +83,13 @@ public class AccountDAO {
     // Insert new account
     public boolean insertAccount(Account a) {
         DBContext db = DBContext.getInstance();
-        String sql = "INSERT INTO users (name, email, password, phone_number, address, role) VALUES (?, ?, ?, ?, ?, ?)";
+        String sql = "INSERT INTO User (username, email, password, role) VALUES (?, ?, ?, ?)";
         try {
             PreparedStatement ptm = db.getConnection().prepareStatement(sql);
-            ptm.setString(1, a.getName());
+            ptm.setString(1, a.getUsername());
             ptm.setString(2, a.getEmail());
             ptm.setString(3, a.getPassword());
-            ptm.setString(4, a.getPhone_number());
-            ptm.setString(5, a.getAddress());
-            ptm.setString(6, a.getRole());
+            ptm.setString(4, a.getRole());
             return ptm.executeUpdate() > 0;
         } catch (SQLException ex) {
             ex.printStackTrace();
@@ -108,15 +100,14 @@ public class AccountDAO {
     // Update account
     public boolean updateAccount(Account a) {
         DBContext db = DBContext.getInstance();
-        String sql = "UPDATE users SET name = ?, email = ?, phone_number = ?, address = ?, role = ? WHERE id = ?";
+        String sql = "UPDATE User SET username = ?, email = ?, password = ?, role = ? WHERE user_id = ?";
         try {
             PreparedStatement ptm = db.getConnection().prepareStatement(sql);
-            ptm.setString(1, a.getName());
+            ptm.setString(1, a.getUsername());
             ptm.setString(2, a.getEmail());
-            ptm.setString(3, a.getPhone_number());
-            ptm.setString(4, a.getAddress());
-            ptm.setString(5, a.getRole());
-            ptm.setInt(6, a.getId());
+            ptm.setString(3, a.getPassword());
+            ptm.setString(4, a.getRole());
+            ptm.setInt(5, a.getId());
             return ptm.executeUpdate() > 0;
         } catch (SQLException ex) {
             ex.printStackTrace();
@@ -127,7 +118,7 @@ public class AccountDAO {
     // Update account password
     public boolean updatePassword(int accountId, String newPassword) {
         DBContext db = DBContext.getInstance();
-        String sql = "UPDATE users SET password = ? WHERE id = ?";
+        String sql = "UPDATE User SET password = ? WHERE user_id = ?";
         try {
             PreparedStatement ptm = db.getConnection().prepareStatement(sql);
             ptm.setString(1, newPassword);
@@ -142,7 +133,7 @@ public class AccountDAO {
     // Delete account
     public boolean deleteAccount(int accountId) {
         DBContext db = DBContext.getInstance();
-        String sql = "DELETE FROM users WHERE id = ?";
+        String sql = "DELETE FROM User WHERE user_id = ?";
         try {
             PreparedStatement ptm = db.getConnection().prepareStatement(sql);
             ptm.setInt(1, accountId);
@@ -156,7 +147,7 @@ public class AccountDAO {
     // Get total count of accounts
     public int getTotalAccountCount() {
         DBContext db = DBContext.getInstance();
-        String sql = "SELECT COUNT(*) as total FROM users";
+        String sql = "SELECT COUNT(*) as total FROM User";
         try {
             PreparedStatement ptm = db.getConnection().prepareStatement(sql);
             ResultSet rs = ptm.executeQuery();
@@ -173,7 +164,7 @@ public class AccountDAO {
     public Vector<Account> searchAccounts(String searchTerm, int page, int pageSize) {
         DBContext db = DBContext.getInstance();
         Vector<Account> listAccounts = new Vector<>();
-        String sql = "SELECT * FROM users WHERE name LIKE ? OR email LIKE ? LIMIT ? OFFSET ?";
+        String sql = "SELECT * FROM User WHERE username LIKE ? OR email LIKE ? LIMIT ? OFFSET ?";
         try {
             PreparedStatement ptm = db.getConnection().prepareStatement(sql);
             ptm.setString(1, "%" + searchTerm + "%");
@@ -183,12 +174,10 @@ public class AccountDAO {
             ResultSet rs = ptm.executeQuery();
             while (rs.next()) {
                 Account a = new Account(
-                    rs.getInt("id"),
-                    rs.getString("name"),
+                    rs.getInt("user_id"),
+                    rs.getString("username"),
                     rs.getString("email"),
                     rs.getString("password"),
-                    rs.getString("phone_number"),
-                    rs.getString("address"),
                     rs.getString("role")
                 );
                 listAccounts.add(a);
@@ -202,7 +191,7 @@ public class AccountDAO {
     // Check if email exists
     public boolean isEmailExists(String email) {
         DBContext db = DBContext.getInstance();
-        String sql = "SELECT COUNT(*) as count FROM users WHERE email = ?";
+        String sql = "SELECT COUNT(*) as count FROM User WHERE email = ?";
         try {
             PreparedStatement ptm = db.getConnection().prepareStatement(sql);
             ptm.setString(1, email);
@@ -220,19 +209,17 @@ public class AccountDAO {
     public Vector<Account> getAccountsByRole(String role) {
         DBContext db = DBContext.getInstance();
         Vector<Account> listAccounts = new Vector<>();
-        String sql = "SELECT * FROM users WHERE role = ?";
+        String sql = "SELECT * FROM User WHERE role = ?";
         try {
             PreparedStatement ptm = db.getConnection().prepareStatement(sql);
             ptm.setString(1, role);
             ResultSet rs = ptm.executeQuery();
             while (rs.next()) {
                 Account a = new Account(
-                    rs.getInt("id"),
-                    rs.getString("name"),
+                    rs.getInt("user_id"),
+                    rs.getString("username"),
                     rs.getString("email"),
                     rs.getString("password"),
-                    rs.getString("phone_number"),
-                    rs.getString("address"),
                     rs.getString("role")
                 );
                 listAccounts.add(a);
@@ -250,8 +237,7 @@ public class AccountDAO {
         
         // Test 1: Insert a new account
         System.out.println("Test 1: Inserting a new account");
-        Account newAccount = new Account(0, "Test User", "test@email.com", "password123", 
-                                          "1234567890", "123 Test St", "customer");
+        Account newAccount = new Account(0, "Test User", "test@email.com", "password123", "customer");
         boolean inserted = dao.insertAccount(newAccount);
         System.out.println("Account insertion " + (inserted ? "successful" : "failed") + "\n");
         
@@ -260,7 +246,7 @@ public class AccountDAO {
         Vector<Account> accounts = dao.getAllAccounts(1, 5);
         System.out.println("Total accounts in database: " + dao.getTotalAccountCount());
         for (Account a : accounts) {
-            System.out.println("- " + a.getName() + " (" + a.getEmail() + ")");
+            System.out.println("- " + a.getUsername() + " (" + a.getEmail() + ")");
         }
         System.out.println();
         
@@ -268,7 +254,7 @@ public class AccountDAO {
         System.out.println("Test 3: Searching for accounts with 'test'");
         Vector<Account> searchResults = dao.searchAccounts("test", 1, 10);
         for (Account a : searchResults) {
-            System.out.println("- Found: " + a.getName() + " (" + a.getEmail() + ")");
+            System.out.println("- Found: " + a.getUsername() + " (" + a.getEmail() + ")");
         }
         System.out.println();
         

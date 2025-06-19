@@ -83,11 +83,9 @@ public class AccountControl extends HttpServlet {
     } 
 
     private void handleAddAccount(HttpServletRequest request, AccountDAO accountDAO) throws Exception {
-        String name = request.getParameter("name");
+        String username = request.getParameter("username");
         String email = request.getParameter("email");
         String password = request.getParameter("password");
-        String phone_number = request.getParameter("phone_number");
-        String address = request.getParameter("address");
         String role = request.getParameter("role");
 
         // Validate email uniqueness
@@ -98,11 +96,9 @@ public class AccountControl extends HttpServlet {
         // Create new account
         Account newAccount = new Account(
             0, // ID will be auto-generated
-            name,
+            username,
             email,
             password, // Note: In production, this should be hashed
-            phone_number,
-            address,
             role
         );
 
@@ -113,10 +109,8 @@ public class AccountControl extends HttpServlet {
 
     private void handleUpdateAccount(HttpServletRequest request, AccountDAO accountDAO) throws Exception {
         int accountId = Integer.parseInt(request.getParameter("account_id"));
-        String name = request.getParameter("name");
+        String username = request.getParameter("username");
         String email = request.getParameter("email");
-        String phone_number = request.getParameter("phone_number");
-        String address = request.getParameter("address");
         String role = request.getParameter("role");
 
         // Get existing account
@@ -131,10 +125,8 @@ public class AccountControl extends HttpServlet {
         }
 
         // Update account details
-        existingAccount.setName(name);
+        existingAccount.setUsername(username);
         existingAccount.setEmail(email);
-        existingAccount.setPhone_number(phone_number);
-        existingAccount.setAddress(address);
         existingAccount.setRole(role);
 
         if (!accountDAO.updateAccount(existingAccount)) {
@@ -252,8 +244,6 @@ public class AccountControl extends HttpServlet {
                 "Test User",
                 "test" + System.currentTimeMillis() + "@example.com", // Ensure unique email
                 "password123",
-                "1234567890",
-                "123 Test Street",
                 "customer"
             );
             boolean added = accountDAO.insertAccount(newAccount);
@@ -265,7 +255,7 @@ public class AccountControl extends HttpServlet {
             Vector<Account> searchResults = accountDAO.searchAccounts("Test", 1, 10);
             System.out.println("Found " + searchResults.size() + " accounts");
             searchResults.forEach(account -> 
-                System.out.println("- " + account.getName() + " (" + account.getEmail() + ")")
+                System.out.println("- " + account.getUsername() + " (" + account.getEmail() + ")")
             );
             
             // Test Case 3: Update account
@@ -273,16 +263,15 @@ public class AccountControl extends HttpServlet {
             System.out.println("----------------------------");
             if (!searchResults.isEmpty()) {
                 Account accountToUpdate = searchResults.get(0);
-                String originalName = accountToUpdate.getName();
-                accountToUpdate.setName("Updated Test User");
-                accountToUpdate.setPhone_number("9876543210");
+                String originalUsername = accountToUpdate.getUsername();
+                accountToUpdate.setUsername("Updated Test User");
                 boolean updated = accountDAO.updateAccount(accountToUpdate);
-                System.out.println("Updating account '" + originalName + "': " + (updated ? "SUCCESS ✓" : "FAILED ✗"));
+                System.out.println("Updating account '" + originalUsername + "': " + (updated ? "SUCCESS ✓" : "FAILED ✗"));
                 
                 // Verify update
                 Account updatedAccount = accountDAO.getAccountById(accountToUpdate.getId());
-                System.out.println("Updated account details: " + updatedAccount.getName() + 
-                                 " (Phone: " + updatedAccount.getPhone_number() + ")");
+                System.out.println("Updated account details: " + updatedAccount.getUsername() + 
+                                 " (Email: " + updatedAccount.getEmail() + ")");
             }
             
             // Test Case 4: Get accounts by role
@@ -291,7 +280,7 @@ public class AccountControl extends HttpServlet {
             Vector<Account> accountsByRole = accountDAO.getAccountsByRole("customer");
             System.out.println("Found " + accountsByRole.size() + " accounts with role 'customer'");
             accountsByRole.forEach(account -> 
-                System.out.println("- " + account.getName() + " (Role: " + account.getRole() + ")")
+                System.out.println("- " + account.getUsername() + " (Role: " + account.getRole() + ")")
             );
             
             // Test Case 5: Error handling
@@ -312,8 +301,6 @@ public class AccountControl extends HttpServlet {
                     "Duplicate User",
                     searchResults.get(0).getEmail(), // Using existing email
                     "password123",
-                    "1234567890",
-                    "123 Test Street",
                     "customer"
                 );
                 accountDAO.insertAccount(duplicateAccount);

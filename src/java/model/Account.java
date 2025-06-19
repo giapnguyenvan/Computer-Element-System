@@ -2,21 +2,16 @@ package model;
 
 public class Account {
     private int id;
-    private String name;
+    private String username;
     private String email;
     private String password;
-    private String phone_number;
-    private String address;
     private String role;
 
-    public Account(int id, String name, String email, String password, 
-                   String phone_number, String address, String role) {
+    public Account(int id, String username, String email, String password, String role) {
         this.id = id;
-        this.name = name;
+        this.username = username;
         this.email = email;
         this.password = password;
-        this.phone_number = phone_number;
-        this.address = address;
         this.role = role;
     }
 
@@ -25,8 +20,8 @@ public class Account {
         return id;
     }
 
-    public String getName() {
-        return name;
+    public String getUsername() {
+        return username;
     }
 
     public String getEmail() {
@@ -35,14 +30,6 @@ public class Account {
 
     public String getPassword() {
         return password;
-    }
-
-    public String getPhone_number() {
-        return phone_number;
-    }
-
-    public String getAddress() {
-        return address;
     }
 
     public String getRole() {
@@ -54,8 +41,8 @@ public class Account {
         this.id = id;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public void setUsername(String username) {
+        this.username = username;
     }
 
     public void setEmail(String email) {
@@ -66,27 +53,17 @@ public class Account {
         this.password = password;
     }
 
-    public void setPhone_number(String phone_number) {
-        this.phone_number = phone_number;
-    }
-
-    public void setAddress(String address) {
-        this.address = address;
-    }
-
     public void setRole(String role) {
         this.role = role;
     }
 
     @Override
     public String toString() {
-        return "Account{" + 
-               "id=" + id + 
-               ", name='" + name + '\'' + 
-               ", email='" + email + '\'' + 
-               ", phone_number='" + phone_number + '\'' + 
-               ", address='" + address + '\'' + 
-               ", role='" + role + '\'' + 
+        return "Account{" +
+               "id=" + id +
+               ", username='" + username + '\'' +
+               ", email='" + email + '\'' +
+               ", role='" + role + '\'' +
                '}';
     }
 } 

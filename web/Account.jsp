@@ -1,5 +1,6 @@
 <%@ page contentType="text/html" pageEncoding="UTF-8"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 <!DOCTYPE html>
 <html>
 <head>
@@ -254,7 +255,7 @@
             font-family: Arial, sans-serif;
             margin: 0;
             padding: 0;
-            background: #705FBC;
+            background: #fff;
         }
         .login-bg {
             min-height: 100vh;
@@ -325,9 +326,8 @@
                 <table class="table">
                     <thead>
                         <tr>
-                            <th>Name</th>
+                            <th>Username</th>
                             <th>Email</th>
-                            <th>Phone</th>
                             <th>Role</th>
                             <th>Actions</th>
                         </tr>
@@ -335,9 +335,8 @@
                     <tbody>
                         <c:forEach items="${accountList}" var="account">
                             <tr>
-                                <td>${account.name}</td>
+                                <td>${account.username}</td>
                                 <td>${account.email}</td>
-                                <td>${account.phone_number}</td>
                                 <td>
                                     <span class="role-badge role-${account.role.toLowerCase()}">
                                         ${account.role}
@@ -346,8 +345,7 @@
                                 <td>
                                     <div class="d-flex gap-2">
                                         <button type="button" class="action-btn edit" 
-                                                onclick="editAccount(${account.id}, '${account.name}', '${account.email}', 
-                                                           '${account.phone_number}', '${account.address}', '${account.role}')"
+                                                onclick="editAccount(${account.id}, '${account.username}', '${account.email}', '${account.role}')"
                                                 data-bs-toggle="modal" data-bs-target="#editAccountModal">
                                             <i class="bi bi-pencil"></i>
                                         </button>
@@ -358,7 +356,7 @@
                                         </button>
                                         <c:if test="${account.role != 'admin'}">
                                             <button type="button" class="action-btn delete" 
-                                                    onclick="deleteAccount(${account.id}, '${account.name}')"
+                                                    onclick="deleteAccount(${account.id}, '${fn:escapeXml(account.username)}')"
                                                     data-bs-toggle="modal" data-bs-target="#deleteAccountModal">
                                                 <i class="bi bi-trash"></i>
                                             </button>
@@ -407,36 +405,21 @@
                 <form action="Account_control" method="POST">
                     <div class="modal-body">
                         <input type="hidden" name="action" value="add">
-                        
                         <div class="mb-3">
-                            <label class="form-label">Name</label>
-                            <input type="text" class="form-control" name="name" required>
+                            <label class="form-label">Username</label>
+                            <input type="text" class="form-control" name="username" required>
                         </div>
-                        
                         <div class="mb-3">
                             <label class="form-label">Email</label>
                             <input type="email" class="form-control" name="email" required>
                         </div>
-                        
                         <div class="mb-3">
                             <label class="form-label">Password</label>
                             <input type="password" class="form-control" name="password" required>
                         </div>
-                        
-                        <div class="mb-3">
-                            <label class="form-label">Phone Number</label>
-                            <input type="tel" class="form-control" name="phone_number" required>
-                        </div>
-                        
-                        <div class="mb-3">
-                            <label class="form-label">Address</label>
-                            <textarea class="form-control" name="address" rows="2" required></textarea>
-                        </div>
-                        
                         <div class="mb-3">
                             <label class="form-label">Role</label>
                             <select class="form-select" name="role" required>
-                                <option value="customer">Customer</option>
                                 <option value="staff">Staff</option>
                                 <option value="admin">Admin</option>
                             </select>
@@ -463,31 +446,17 @@
                     <div class="modal-body">
                         <input type="hidden" name="action" value="update">
                         <input type="hidden" name="account_id" id="edit_account_id">
-                        
                         <div class="mb-3">
-                            <label class="form-label">Name</label>
-                            <input type="text" class="form-control" name="name" id="edit_name" required>
+                            <label class="form-label">Username</label>
+                            <input type="text" class="form-control" name="username" id="edit_username" required>
                         </div>
-                        
                         <div class="mb-3">
                             <label class="form-label">Email</label>
                             <input type="email" class="form-control" name="email" id="edit_email" required>
                         </div>
-                        
-                        <div class="mb-3">
-                            <label class="form-label">Phone Number</label>
-                            <input type="tel" class="form-control" name="phone_number" id="edit_phone" required>
-                        </div>
-                        
-                        <div class="mb-3">
-                            <label class="form-label">Address</label>
-                            <textarea class="form-control" name="address" id="edit_address" rows="2" required></textarea>
-                        </div>
-                        
                         <div class="mb-3">
                             <label class="form-label">Role</label>
                             <select class="form-select" name="role" id="edit_role" required>
-                                <option value="customer">Customer</option>
                                 <option value="staff">Staff</option>
                                 <option value="admin">Admin</option>
                             </select>
@@ -546,6 +515,8 @@
                     <div class="modal-body">
                         <input type="hidden" name="action" value="delete">
                         <input type="hidden" name="account_id" id="delete_account_id">
+                        <input type="hidden" name="account_email" id="delete_account_email">
+                        <input type="hidden" name="account_role" id="delete_account_role">
                         <p>Are you sure you want to delete account <span id="delete_account_name" class="fw-bold"></span>? This action cannot be undone.</p>
                     </div>
                     <div class="modal-footer">
@@ -559,12 +530,10 @@
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
     <script>
-        function editAccount(id, name, email, phone, address, role) {
+        function editAccount(id, username, email, role) {
             document.getElementById('edit_account_id').value = id;
-            document.getElementById('edit_name').value = name;
+            document.getElementById('edit_username').value = username;
             document.getElementById('edit_email').value = email;
-            document.getElementById('edit_phone').value = phone;
-            document.getElementById('edit_address').value = address;
             document.getElementById('edit_role').value = role.toLowerCase();
         }
         
@@ -572,10 +541,10 @@
             document.getElementById('reset_account_id').value = id;
         }
         
-        function deleteAccount(id, name) {
+        function deleteAccount(id, username) {
             document.getElementById('delete_account_id').value = id;
-            document.getElementById('delete_account_name').textContent = name;
+            document.getElementById('delete_account_name').textContent = username;
         }
-        ript>
-        function deleteAccount(id, name) {
-            document.getElementById('delete_account_id').value = id;            document.getElementById('delete_account_name').textContent = name;        }    </script></body></html>
+    </script>
+</body>
+</html>
