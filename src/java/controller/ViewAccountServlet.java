@@ -10,6 +10,8 @@ import jakarta.servlet.http.HttpServletResponse;
 import java.util.Vector;
 import model.Account;
 import java.util.Collections;
+import dal.CustomerDAO;
+import model.Customer;
 
 @WebServlet(name = "ViewAccountServlet", urlPatterns = {"/Account"})
 public class ViewAccountServlet extends HttpServlet {
@@ -97,6 +99,11 @@ public class ViewAccountServlet extends HttpServlet {
             for (int i = startIndex; i < endIndex; i++) {
                 pagedAccounts.add(allAccounts.get(i));
             }
+            
+            // Lấy danh sách customer
+            CustomerDAO customerDAO = new CustomerDAO();
+            java.util.List<Customer> customerList = customerDAO.getAllCustomers();
+            request.setAttribute("customerList", customerList);
             
             // Set attributes for the JSP
             request.setAttribute("accountList", pagedAccounts);

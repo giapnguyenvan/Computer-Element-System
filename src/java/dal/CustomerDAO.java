@@ -56,5 +56,27 @@ public class CustomerDAO {
         }
     }
 
+    public java.util.List<Customer> getAllCustomers() throws SQLException {
+        java.util.List<Customer> customers = new java.util.ArrayList<>();
+        String sql = "SELECT * FROM Customer";
+        try (Connection conn = dbContext.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql);
+             java.sql.ResultSet rs = stmt.executeQuery()) {
+            while (rs.next()) {
+                Customer customer = new Customer(
+                    rs.getInt("customer_id"),
+                    0, // user_id không còn dùng
+                    rs.getString("name"),
+                    rs.getString("phone"),
+                    rs.getString("shipping_address")
+                );
+                customer.setEmail(rs.getString("email"));
+                customer.setPassword(rs.getString("password"));
+                customers.add(customer);
+            }
+        }
+        return customers;
+    }
+
     // You might want to add more methods here, e.g., getCustomerByUserId, updateCustomer, etc.
 } 

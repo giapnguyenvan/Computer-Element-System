@@ -391,6 +391,37 @@
                     </ul>
                 </nav>
             </c:if>
+
+            <!-- Bảng hiển thị danh sách khách hàng -->
+            <h2 class="mt-5">Customer Accounts</h2>
+            <div class="accounts-table">
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>Name</th>
+                            <th>Email</th>
+                            <th>Phone</th>
+                            <th>Shipping Address</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <c:forEach items="${customerList}" var="customer">
+                            <tr>
+                                <td>${customer.name}</td>
+                                <td>${customer.email}</td>
+                                <td>${customer.phone}</td>
+                                <td>${customer.shipping_address}</td>
+                            </tr>
+                        </c:forEach>
+                    </tbody>
+                </table>
+                <c:if test="${empty customerList}">
+                    <div class="text-center py-5">
+                        <i class="bi bi-info-circle text-primary" style="font-size: 2rem;"></i>
+                        <p class="mt-3 text-muted">No customers found</p>
+                    </div>
+                </c:if>
+            </div>
         </div>
     </div>
 
