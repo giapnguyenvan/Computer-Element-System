@@ -1,5 +1,8 @@
 <%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+<link rel="stylesheet" href="css/header.css">
 
 <!-- Top Bar -->
 <div class="top-bar">
@@ -15,36 +18,6 @@
         </div>
     </div>
 </div>
-<style>
-.top-bar {
-    background: #23272b;
-    color: #fff;
-    padding: 0.5rem 0;
-    border-radius: 10px 10px 0 0;
-    font-size: 1rem;
-}
-.top-bar i {
-    color: #fff;
-}
-.top-bar .container {
-    width: 100%;
-    max-width: 100%;
-}
-body {
-    font-family: Arial, sans-serif;
-    margin: 0;
-    padding: 0;
-    background: none;
-}
-.register-bg {
-    min-height: 100vh;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    background: #705FBC;
-    padding-top: 120px;
-}
-</style>
 
 <!-- Main Navigation -->
 <nav class="navbar navbar-expand-lg navbar-light bg-white fixed-top">

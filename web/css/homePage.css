@@ -7,6 +7,7 @@ Click nbfs://nbhost/SystemFileSystem/Templates/JSP_Servlet/CascadeStyleSheet.css
     Author     : fpt shop
 */
 
+/* Đã loại bỏ các rule liên quan đến header để không đè lên header.jsp */
 :root {
     --primary-color: #0d6efd;
     --secondary-color: #6c757d;
@@ -14,25 +15,6 @@ Click nbfs://nbhost/SystemFileSystem/Templates/JSP_Servlet/CascadeStyleSheet.css
     --topbar-height: 40px;
     --navbar-height: 76px;
     --total-header-height: calc(var(--topbar-height) + var(--navbar-height));
-}
-
-/* Add padding to body to prevent content from hiding under fixed header */
-body {
-    padding-top: var(--total-header-height);
-    margin: 0;
-}
-
-.top-bar {
-    background-color: #343a40;
-    color: white;
-    padding: 10px 0;
-    font-size: 0.9rem;
-    height: var(--topbar-height);
-    position: fixed;
-    top: 0;
-    width: 100%;
-    z-index: 1030;
-    margin: 0;
 }
 
 .hero-section {
@@ -183,35 +165,6 @@ footer {
     font-size: 1.25rem;
     background: none;
     text-align: center;
-}
-
-/* Fixed Navigation Styles */
-.navbar.fixed-top {
-    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-    top: var(--topbar-height);
-    height: var(--navbar-height);
-    margin: 0;
-}
-
-.navbar.fixed-top .navbar-brand {
-    transition: all 0.3s ease;
-}
-
-.navbar.fixed-top .navbar-brand:hover {
-    transform: scale(1.05);
-}
-
-.btn:disabled {
-    opacity: 0.6;
-}
-
-.input-group .btn {
-    border-color: #dee2e6;
-}
-
-.input-group .form-control {
-    border-left: 0;
-    border-right: 0;
 }
 
 .product-card .card-title {
