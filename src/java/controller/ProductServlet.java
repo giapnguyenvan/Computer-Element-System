@@ -69,26 +69,77 @@ public class ProductServlet extends HttpServlet {
                     if (request.getMethod().equalsIgnoreCase("POST")) {
                         String name = request.getParameter("name");
                         String brand = request.getParameter("brand");
-                        int categoryID = Integer.parseInt(request.getParameter("category_id"));
-                        double price = Double.parseDouble(request.getParameter("price"));
-                        int stock = Integer.parseInt(request.getParameter("stock"));
+                        String categoryIdRaw = request.getParameter("category_id");
+                        String priceRaw = request.getParameter("price");
+                        String stockRaw = request.getParameter("stock");
                         String imageUrl = request.getParameter("image_url");
                         String description = request.getParameter("description");
                         String specDescription = request.getParameter("spec_description");
                         String status = request.getParameter("status");
 
-                        // Assuming your constructor matches the order and types of your new fields
+                        String errorMsg = "";
+
+                        // Validation
+                        if (name == null || name.trim().isEmpty() || name.length() > 255) {
+                            errorMsg += "Tên sản phẩm không hợp lệ.<br/>";
+                        }
+                        if (brand == null || brand.trim().isEmpty() || brand.length() > 255) {
+                            errorMsg += "Thương hiệu không hợp lệ.<br/>";
+                        }
+
+                        int categoryID = -1;
+                        try {
+                            categoryID = Integer.parseInt(categoryIdRaw);
+                        } catch (NumberFormatException e) {
+                            errorMsg += "Danh mục không hợp lệ.<br/>";
+                        }
+
+                        double price = -1;
+                        try {
+                            price = Double.parseDouble(priceRaw);
+                            if (price < 0) {
+                                throw new NumberFormatException();
+                            }
+                        } catch (NumberFormatException e) {
+                            errorMsg += "Giá không hợp lệ.<br/>";
+                        }
+
+                        int stock = -1;
+                        try {
+                            stock = Integer.parseInt(stockRaw);
+                            if (stock < 0) {
+                                throw new NumberFormatException();
+                            }
+                        } catch (NumberFormatException e) {
+                            errorMsg += "Số lượng tồn kho không hợp lệ.<br/>";
+                        }
+
+                        if (imageUrl == null || imageUrl.trim().isEmpty() || imageUrl.length() > 1000) {
+                            errorMsg += "URL ảnh không hợp lệ.<br/>";
+                        }
+
+                        if (description == null || description.trim().isEmpty() || description.length() > 1000) {
+                            errorMsg += "Mô tả không hợp lệ.<br/>";
+                        }
+
+                        if (status == null || (!status.equals("Active") && !status.equals("Inactive"))) {
+                            errorMsg += "Trạng thái sản phẩm không hợp lệ.<br/>";
+                        }
+
+                        if (!errorMsg.isEmpty()) {
+                            request.setAttribute("errorMsg", errorMsg);
+                            request.setAttribute("brand", brands);
+                            request.setAttribute("category", clist);
+                            request.setAttribute("product", dao.getAllProduct());
+                            request.getRequestDispatcher("viewProduct.jsp").forward(request, response);
+                            return;
+                        }
+
+                        // Insert nếu hợp lệ
                         Products newProduct = new Products(
-                                0, // id (auto-increment or generated elsewhere)
-                                name,
-                                brand,
-                                categoryID,
-                                price,
-                                stock,
-                                imageUrl,
-                                description,
-                                specDescription,
-                                status
+                                0, name.trim(), brand.trim(), categoryID, price, stock,
+                                imageUrl.trim(), description.trim(),
+                                specDescription != null ? specDescription.trim() : "", status
                         );
                         dao.insertProduct(newProduct);
                         response.sendRedirect("productservlet?service=viewProduct");
@@ -124,42 +175,6 @@ public class ProductServlet extends HttpServlet {
                         response.sendRedirect("productservlet?service=viewProduct");
                     }
                     break;
-                case "searchProduct":
-                    String keyword = request.getParameter("keyword");
-                    Vector<Products> result;
-                    Vector<Products> productList;
-                    if (keyword == null || keyword.trim().isEmpty()) {
-                        // Return all products if keyword is empty
-                        result = dao.getAllProduct();
-                    } else {
-                        // Otherwise, perform search
-                        result = dao.searchProduct(keyword.trim());
-                    }
-                    request.setAttribute("brand", brands);
-                    request.setAttribute("category", clist);
-                    request.setAttribute("product", result);
-                    request.getRequestDispatcher("viewProduct.jsp").forward(request, response);
-                    break;
-                /*case "filterByBrand":
-                    String brand = request.getParameter("brand");
-                    Vector<Products> blist = dao.getProductByBrand(brand);
-
-                    request.setAttribute("product", blist);            // Đặt danh sách sản phẩm
-                    request.setAttribute("brand", brands);             // Danh sách brand để đổ dropdown
-                    request.setAttribute("category", clist);
-                    request.getRequestDispatcher("viewProduct.jsp").forward(request, response);
-                    break;
-
-                case "filterByCategory":
-                    String categoryIdRaw = request.getParameter("category_id");
-                    int categoryId = Integer.parseInt(categoryIdRaw);
-                    Vector<Products> categoryList = dao.getProductByCategory(categoryId);
-
-                    request.setAttribute("product", categoryList);      // Đặt danh sách sản phẩm
-                    request.setAttribute("brand", brands);              // Danh sách brand để đổ dropdown
-                    request.setAttribute("category", clist);            // Danh sách category để đổ dropdown
-                    request.getRequestDispatcher("viewProduct.jsp").forward(request, response);
-                    break;*/
                 case "filterProducts":
                     String brand = request.getParameter("brand"); // can be null or empty
                     String categoryIdRaw = request.getParameter("category_id");

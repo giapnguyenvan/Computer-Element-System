@@ -164,6 +164,21 @@
                             <th>Action</th>
                         </tr>
                     </thead>
+                    <tfoot>
+                        <tr>
+                            <th>Product ID</th>
+                            <th>Name</th>
+                            <th>Brand</th>
+                            <th>Category ID</th>
+                            <th>Price</th>
+                            <th>Stock</th>
+                            <th>Image</th>
+                            <th>Description</th>
+                            <th>Spec_description</th>
+                            <th>Status</th>
+                            <th>Action</th>
+                        </tr>
+                    </tfoot>
                     <tbody>
                         <c:forEach items="${product}" var="product">
                             <tr>
@@ -385,15 +400,32 @@
                                             }
 
                                             $(document).ready(function () {
-                                                $('#myTable').DataTable({
-                                                    order: [[0, 'asc']], // Sort Product ID column (index 0) ascending initially
-                                                    searching: false,
-                                                    columnDefs: [
-                                                        {targets: [2, 3, 6, 7, 8, 10], orderable: false} // Disable sorting for Brand, Description, Spec, Action
-                                                    ]
+                                                var table = $('#myTable').DataTable();
+
+                                                table.columns().flatten().each(function (colIdx) {
+                                                    // Create the select list and search operation
+                                                    var select = $('<select />')
+                                                            .appendTo(table.column(colIdx).footer())
+                                                            .on('change', function () {
+                                                                table
+                                                                        .column(colIdx)
+                                                                        .search($(this).val())
+                                                                        .draw();
+                                                            });
+
+                                                    // Get the search data for the column and add to the select list
+                                                    table
+                                                            .column(colIdx)
+                                                            .cache('search')
+                                                            .sort()
+                                                            .unique()
+                                                            .each(function (d) {
+                                                                select.append($('<option value="' + d + '">' + d + '</option>'));
+                                                            });
                                                 });
-                                            }
-                                            );
+                                            });
+
+
         </script>
     </body>
 </html>
