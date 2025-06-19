@@ -9,8 +9,8 @@
         return;
     }
     
-    // Check if user is admin
-    if (!"admin".equals(user.getRole())) {
+    // Check if user is admin (không phân biệt hoa thường)
+    if (!"admin".equalsIgnoreCase(user.getRole())) {
         response.sendRedirect(request.getContextPath() + "/homepageservlet");
         return;
     }

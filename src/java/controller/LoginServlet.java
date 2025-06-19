@@ -126,7 +126,12 @@ public class LoginServlet extends HttpServlet {
                     response.addCookie(passwordCookie);
                 }
                 
-                response.sendRedirect(request.getContextPath() + "/homepageservlet");
+                // Nếu là admin thì chuyển hướng đến adminDashboard.jsp
+                if ("Admin".equalsIgnoreCase(user.getRole())) {
+                    response.sendRedirect(request.getContextPath() + "/adminDashboard.jsp");
+                } else {
+                    response.sendRedirect(request.getContextPath() + "/homepageservlet");
+                }
                 return;
             } else {
                 request.setAttribute("error", "Email hoặc mật khẩu không đúng");
