@@ -30,7 +30,10 @@
             .login-left::before {
                 content: '';
                 position: absolute;
-                top: 0; left: 0; right: 0; bottom: 0;
+                top: 0;
+                left: 0;
+                right: 0;
+                bottom: 0;
                 background: rgba(93,46,188,0.85); /* overlay tím */
                 z-index: 1;
             }
@@ -115,6 +118,10 @@
             }
             .login-form-box .btn-warning {
                 width: 100%;
+                min-height: 48px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
                 font-weight: 700;
                 font-size: 1.13rem;
                 margin: 20px 0 12px 0;
@@ -122,30 +129,50 @@
                 background: #ffc107;
                 border: none;
                 color: #222;
-                transition: background 0.2s;
+                box-shadow: none;
+                padding: 0;
+                transition: background 0.2s, color 0.2s;
             }
             .login-form-box .btn-warning:hover {
                 background: #e0a800;
+                color: #fff;
+            }
+            .login-form-box .btn-facebook,
+            .login-form-box .btn-google {
+                width: 48%;
+                min-height: 48px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                font-weight: 700;
+                font-size: 1.1rem;
+                border: none;
+                border-radius: 8px;
+                box-shadow: none;
+                margin: 0;
+                padding: 0;
+                transition: background 0.2s, color 0.2s;
+            }
+            .login-form-box .btn-facebook {
+                background: #3b5998;
+                color: #fff;
+            }
+            .login-form-box .btn-facebook:hover {
+                background: #2d4373;
+                color: #fff;
+            }
+            .login-form-box .btn-google {
+                background: #ea4335;
+                color: #fff;
+            }
+            .login-form-box .btn-google:hover {
+                background: #c23321;
                 color: #fff;
             }
             .login-form-box .social-login {
                 display: flex;
                 gap: 16px;
                 margin-top: 12px;
-            }
-            .login-form-box .btn-facebook {
-                background: #3b5998;
-                color: #fff;
-                flex: 1;
-                border-radius: 6px;
-                font-weight: 600;
-            }
-            .login-form-box .btn-google {
-                background: #ea4335;
-                color: #fff;
-                flex: 1;
-                border-radius: 6px;
-                font-weight: 600;
             }
             .login-form-box .form-check-label,
             .login-form-box .form-check-input {
@@ -209,49 +236,53 @@
     <body>
         <div class="login-main-row">
             <style>
-    .login-left {
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        height: 100vh; /* căn giữa theo chiều dọc */
-        background-color: #222; /* màu nền tối để dễ nhìn text trắng */
-    }
+                .login-left {
+                    display: flex;
+                    justify-content: center;
+                    align-items: center;
+                    height: 100vh; /* căn giữa theo chiều dọc */
+                    background-color: #222; /* màu nền tối để dễ nhìn text trắng */
+                }
 
-    .login-left-content {
-        text-align: center;
-        color: #fff;
-        text-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
-        max-width: 600px;
-        padding: 20px;
-    }
+                .login-left-content {
+                    text-align: center;
+                    color: #fff;
+                    text-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+                    max-width: 600px;
+                    padding: 20px;
+                }
 
-    .login-left-content h1 {
-        font-size: 3rem;
-        font-weight: bold;
-        margin-bottom: 1.5rem;
-    }
+                .login-left-content h1 {
+                    font-size: 3rem;
+                    font-weight: bold;
+                    margin-bottom: 1.5rem;
+                }
 
-    .login-left-content p {
-        font-size: 1.25rem;
-        margin-bottom: 1.5rem;
-        text-shadow: 0 1px 4px rgba(0, 0, 0, 0.15);
-    }
+                .login-left-content p {
+                    font-size: 1.25rem;
+                    margin-bottom: 1.5rem;
+                    text-shadow: 0 1px 4px rgba(0, 0, 0, 0.15);
+                }
 
-    .login-left-content a {
-        font-size: 1.25rem;
-    }
-</style>
+                .login-left-content a {
+                    font-size: 1.25rem;
+                }
+            </style>
 
-<div class="login-left">
-    <div class="login-left-content">
-        <h1>Build Your Dream PC</h1>
-        <p>
-            Customize your perfect PC with our easy-to-use PC Builder tool.<br>
-            Select from our wide range of high-quality components.
-        </p>
-        <a href="PCBuilderServlet" class="btn btn-primary btn-lg">Build PC</a>
-    </div>
-</div>
+            <div class="login-left">
+                <div class="login-left-content">
+                    <a class="navbar-brand" href="${pageContext.request.contextPath}/homepageservlet" style="color: white;">
+                        <i class="fas fa-microchip me-2"></i>
+                        <span class="fw-bold">CES</span>
+                    </a>
+                    <h1>Build Your Dream PC</h1>
+                    <p>
+                        Customize your perfect PC with our easy-to-use PC Builder tool.<br>
+                        Select from our wide range of high-quality components.
+                    </p>
+                    <a href="PCBuilderServlet" class="btn btn-primary btn-lg" style="color: white">Build PC</a>
+                </div>
+            </div>
 
             <div class="login-right">
                 <div class="login-form-box">
