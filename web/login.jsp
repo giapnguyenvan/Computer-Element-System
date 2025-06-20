@@ -82,6 +82,7 @@
                 box-shadow: 0 12px 40px rgba(44, 62, 80, 0.18);
             }
             .login-form-box h2 {
+                font-family: 'Times New Roman', Times, serif;
                 font-size: 2.1rem;
                 font-weight: 800;
                 margin-bottom: 10px;

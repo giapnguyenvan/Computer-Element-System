@@ -11,6 +11,9 @@
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
     <style>
+        body, .register-form-box, .register-form-box * {
+            font-family: 'Times New Roman', Times, serif !important;
+        }
         body {
             font-family: Arial, sans-serif;
             margin: 0;
@@ -47,7 +50,7 @@
             color: #fff;
             text-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
             max-width: 600px;
-            padding: 20px;
+            padding: 10px;
             margin: auto;
         }
         .register-left-content .navbar-brand {
@@ -71,13 +74,13 @@
             text-decoration: underline;
         }
         .register-left-content h1 {
-            font-size: 2.3rem;
+            font-size: 1.3rem;
             font-weight: bold;
-            margin-bottom: 1.5rem;
+            margin-bottom: 0.7rem;
         }
         .register-left-content p {
-            font-size: 1.25rem;
-            margin-bottom: 1.5rem;
+            font-size: 1rem;
+            margin-bottom: 0.7rem;
             text-shadow: 0 1px 4px rgba(0, 0, 0, 0.15);
         }
         .register-left-content a.btn {
@@ -93,13 +96,12 @@
             min-height: 100vh;
         }
         .register-form-box {
-            width: 100%;
             max-width: 400px;
             background: #fff;
             border-radius: 20px;
             box-shadow: 0 8px 32px rgba(44, 62, 80, 0.12);
-            padding: 48px 36px 36px 36px;
-            margin: 32px 0;
+            padding: 24px 18px 18px 18px;
+            margin: 12px 0;
             display: flex;
             flex-direction: column;
             align-items: stretch;
@@ -109,9 +111,10 @@
             box-shadow: 0 12px 40px rgba(44, 62, 80, 0.18);
         }
         .register-form-box h2 {
-            font-size: 2.1rem;
+            font-family: 'Times New Roman', Times, serif;
+            font-size: 1.5rem;
             font-weight: 800;
-            margin-bottom: 10px;
+            margin-bottom: 8px;
             text-align: center;
             color: #222;
             letter-spacing: -1px;
@@ -123,19 +126,20 @@
         }
         .register-form-box .form-label {
             display: block;
-            margin-bottom: 6px;
+            margin-bottom: 3px;
             font-weight: 600;
             color: #333;
+            font-size: 1rem;
         }
         .register-form-box .form-control {
             width: 100%;
             box-sizing: border-box;
             border-radius: 10px;
-            min-height: 46px;
-            font-size: 1.08rem;
+            min-height: 36px;
+            font-size: 0.98rem;
             border: 1.5px solid #e0e3ea;
-            margin-bottom: 18px;
-            padding: 10px 16px;
+            margin-bottom: 10px;
+            padding: 7px 10px;
             background: #fff;
             transition: border-color 0.2s;
         }
@@ -145,13 +149,13 @@
         }
         .register-form-box .btn-register {
             width: 100%;
-            min-height: 48px;
+            min-height: 38px;
             display: flex;
             align-items: center;
             justify-content: center;
             font-weight: 700;
-            font-size: 1.13rem;
-            margin: 20px 0 12px 0;
+            font-size: 1rem;
+            margin: 12px 0 8px 0;
             border-radius: 8px;
             background: #0D6CF8;
             border: none;
@@ -171,7 +175,8 @@
         }
         .register-form-box .login-link {
             text-align: center;
-            margin-top: 15px;
+            margin-top: 8px;
+            font-size: 0.98rem;
         }
         .register-form-box .login-link a {
             color: #333;
@@ -179,6 +184,29 @@
         }
         .register-form-box .login-link a:hover {
             text-decoration: underline;
+        }
+        .register-form-box form {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 16px;
+        }
+        .register-form-box .form-col {
+            flex: 1 1 45%;
+            min-width: 0;
+            display: flex;
+            flex-direction: column;
+        }
+        .register-form-box .form-col-full {
+            flex: 1 1 100%;
+        }
+        @media (max-width: 700px) {
+            .register-form-box form {
+                flex-direction: column;
+                gap: 0;
+            }
+            .register-form-box .form-col, .register-form-box .form-col-full {
+                flex: 1 1 100%;
+            }
         }
         @media (max-width: 900px) {
             .register-main-row {
@@ -209,49 +237,49 @@
         </div>
         <div class="register-right">
             <div class="register-form-box">
-                <h2>Đăng ký tài khoản</h2>
+                <h2>Sign Up</h2>
                 <% String error = (String) request.getAttribute("error"); %>
                 <% if (error != null) { %>
                     <div class="error"><%= error %></div>
                 <% } %>
                 <form action="register" method="post">
-                    <div class="mb-3">
-                        <label class="form-label" for="fullname">Họ và tên:</label>
-                        <input type="text" class="form-control" id="fullname" name="fullname" required
+                    <div class="form-col">
+                        <label class="form-label" for="fullname">Full Name:</label>
+                        <input type="text" class="form-control" id="fullname" name="fullname" "
                                value="${param.fullname != null ? param.fullname : (not empty fullname ? fullname : '')}">
                     </div>
-                    <div class="mb-3">
+                    <div class="form-col">
                         <label class="form-label" for="email">Email:</label>
-                        <input type="email" class="form-control" id="email" name="email" required
+                        <input type="email" class="form-control" id="email" name="email" 
                                value="${param.email != null ? param.email : (not empty email ? email : '')}">
                     </div>
-                    <div class="mb-3">
-                        <label class="form-label" for="username">Tên đăng nhập:</label>
-                        <input type="text" class="form-control" id="username" name="username" required
+                    <div class="form-col">
+                        <label class="form-label" for="username">Username:</label>
+                        <input type="text" class="form-control" id="username" name="username" 
                                value="${param.username != null ? param.username : (not empty username ? username : '')}">
                     </div>
-                    <div class="mb-3">
-                        <label class="form-label" for="password">Mật khẩu:</label>
-                        <input type="password" class="form-control" id="password" name="password" required>
-                    </div>
-                    <div class="mb-3">
-                        <label class="form-label" for="confirmPassword">Xác nhận mật khẩu:</label>
-                        <input type="password" class="form-control" id="confirmPassword" name="confirmPassword" required>
-                    </div>
-                    <div class="mb-3">
-                        <label class="form-label" for="phone">Số điện thoại:</label>
-                        <input type="tel" class="form-control" id="phone" name="phone" required
+                    <div class="form-col">
+                        <label class="form-label" for="phone">Phone Number:</label>
+                        <input type="tel" class="form-control" id="phone" name="phone" 
                                value="${param.phone != null ? param.phone : (not empty phone ? phone : '')}">
                     </div>
-                    <div class="mb-3">
-                        <label class="form-label" for="address">Địa chỉ:</label>
-                        <input type="text" class="form-control" id="address" name="address" required
+                    <div class="form-col">
+                        <label class="form-label" for="password">Password:</label>
+                        <input type="password" class="form-control" id="password" name="password" >
+                    </div>
+                    <div class="form-col">
+                        <label class="form-label" for="confirmPassword">Confirm Password:</label>
+                        <input type="password" class="form-control" id="confirmPassword" name="confirmPassword" >
+                    </div>
+                    <div class="form-col-full">
+                        <label class="form-label" for="address">Address:</label>
+                        <input type="text" class="form-control" id="address" name="address" 
                                value="${param.address != null ? param.address : (not empty address ? address : '')}">
                     </div>
-                    <button type="submit" class="btn-register">Đăng ký</button>
+                    <button type="submit" class="btn-register">Sign Up</button>
                 </form>
                 <div class="login-link">
-                    <p>Đã có tài khoản? <a href="login.jsp">Đăng nhập ngay</a></p>
+                    <p>Already have an account? <a href="login.jsp">Login now</a></p>
                 </div>
             </div>
         </div>
