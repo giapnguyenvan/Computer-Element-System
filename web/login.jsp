@@ -59,57 +59,105 @@
                 display: flex;
                 align-items: center;
                 justify-content: center;
-                background: #fff;
+                background: #f4f6fb;
+                min-height: 100vh;
             }
             .login-form-box {
                 width: 100%;
                 max-width: 400px;
                 background: #fff;
-                border-radius: 12px;
-                box-shadow: 0 8px 24px rgba(0,0,0,0.08);
-                padding: 40px 32px 32px 32px;
+                border-radius: 20px;
+                box-shadow: 0 8px 32px rgba(44, 62, 80, 0.12);
+                padding: 48px 36px 36px 36px;
+                margin: 32px 0;
+                display: flex;
+                flex-direction: column;
+                align-items: stretch;
+                transition: box-shadow 0.2s;
+            }
+            .login-form-box:hover {
+                box-shadow: 0 12px 40px rgba(44, 62, 80, 0.18);
             }
             .login-form-box h2 {
-                font-size: 2rem;
-                font-weight: 700;
-                margin-bottom: 8px;
-            }
-            .login-form-box h2 span {
+                font-size: 2.1rem;
+                font-weight: 800;
+                margin-bottom: 10px;
+                text-align: center;
                 color: #222;
-                font-weight: 900;
-                border-left: 4px solid #ffc107;
-                padding-left: 10px;
+                letter-spacing: -1px;
             }
             .login-form-box p {
-                margin-bottom: 24px;
+                margin-bottom: 28px;
+                text-align: center;
+                color: #666;
             }
             .login-form-box .form-label {
-                font-weight: 500;
+                font-weight: 600;
+                color: #333;
             }
             .login-form-box .form-control {
-                border-radius: 8px;
-                min-height: 44px;
+                border-radius: 10px;
+                min-height: 46px;
+                font-size: 1.08rem;
+                border: 1.5px solid #e0e3ea;
+                margin-bottom: 18px;
+                transition: border-color 0.2s;
+            }
+            .login-form-box .form-control:focus {
+                border-color: #705FBC;
+                box-shadow: 0 0 0 2px rgba(112,95,188,0.08);
             }
             .login-form-box .btn-warning {
                 width: 100%;
-                font-weight: 600;
-                font-size: 1.1rem;
-                margin: 18px 0 10px 0;
+                font-weight: 700;
+                font-size: 1.13rem;
+                margin: 20px 0 12px 0;
+                border-radius: 8px;
+                background: #ffc107;
+                border: none;
+                color: #222;
+                transition: background 0.2s;
+            }
+            .login-form-box .btn-warning:hover {
+                background: #e0a800;
+                color: #fff;
             }
             .login-form-box .social-login {
                 display: flex;
                 gap: 16px;
-                margin-top: 10px;
+                margin-top: 12px;
             }
             .login-form-box .btn-facebook {
                 background: #3b5998;
                 color: #fff;
                 flex: 1;
+                border-radius: 6px;
+                font-weight: 600;
             }
             .login-form-box .btn-google {
                 background: #ea4335;
                 color: #fff;
                 flex: 1;
+                border-radius: 6px;
+                font-weight: 600;
+            }
+            .login-form-box .form-check-label,
+            .login-form-box .form-check-input {
+                cursor: pointer;
+            }
+            .login-form-box .alert {
+                width: 100%;
+                text-align: center;
+                margin-bottom: 1rem;
+                border-radius: 8px;
+            }
+            .login-form-box a {
+                color: #705FBC;
+                text-decoration: none;
+                font-weight: 500;
+            }
+            .login-form-box a:hover {
+                text-decoration: underline;
             }
             @media (max-width: 900px) {
                 .login-main-row {
@@ -154,18 +202,51 @@
     </head>
     <body>
         <div class="login-main-row">
-            <div class="login-left">
-                <div class="login-left-content text-center">
-                    <h1 class="display-4 mb-4 fw-bold" style="color: #fff; text-shadow: 0 2px 8px rgba(0,0,0,0.2);">
-                        Build Your Dream PC
-                    </h1>
-                    <p class="lead mb-4" style="color: #fff; text-shadow: 0 1px 4px rgba(0,0,0,0.15);">
-                        Customize your perfect PC with our easy-to-use PC Builder tool.<br>
-                        Select from our wide range of high-quality components.
-                    </p>
-                    <a href="PCBuilderServlet" class="btn btn-primary btn-lg">Build PC</a>
-                </div>
-            </div>
+            <style>
+    .login-left {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100vh; /* căn giữa theo chiều dọc */
+        background-color: #222; /* màu nền tối để dễ nhìn text trắng */
+    }
+
+    .login-left-content {
+        text-align: center;
+        color: #fff;
+        text-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+        max-width: 600px;
+        padding: 20px;
+    }
+
+    .login-left-content h1 {
+        font-size: 3rem;
+        font-weight: bold;
+        margin-bottom: 1.5rem;
+    }
+
+    .login-left-content p {
+        font-size: 1.25rem;
+        margin-bottom: 1.5rem;
+        text-shadow: 0 1px 4px rgba(0, 0, 0, 0.15);
+    }
+
+    .login-left-content a {
+        font-size: 1.25rem;
+    }
+</style>
+
+<div class="login-left">
+    <div class="login-left-content">
+        <h1>Build Your Dream PC</h1>
+        <p>
+            Customize your perfect PC with our easy-to-use PC Builder tool.<br>
+            Select from our wide range of high-quality components.
+        </p>
+        <a href="PCBuilderServlet" class="btn btn-primary btn-lg">Build PC</a>
+    </div>
+</div>
+
             <div class="login-right">
                 <div class="login-form-box">
                     <h2><span>Login to your</span> Account</h2>
