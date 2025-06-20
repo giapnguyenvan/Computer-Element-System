@@ -92,15 +92,21 @@
                 color: #666;
             }
             .login-form-box .form-label {
+                display: block;
+                margin-bottom: 6px;
                 font-weight: 600;
                 color: #333;
             }
             .login-form-box .form-control {
+                width: 100%;
+                box-sizing: border-box;
                 border-radius: 10px;
                 min-height: 46px;
                 font-size: 1.08rem;
                 border: 1.5px solid #e0e3ea;
                 margin-bottom: 18px;
+                padding: 10px 16px;
+                background: #fff;
                 transition: border-color 0.2s;
             }
             .login-form-box .form-control:focus {
