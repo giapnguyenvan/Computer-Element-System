@@ -18,32 +18,25 @@
                 display: flex;
             }
             .login-left {
-                background: url('assets/images/homepage-bg.jpg') center center/cover no-repeat;
+                position: relative;
+                background: url('https://images.unsplash.com/photo-1518770660439-4636190af475?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80') center center/cover no-repeat;
                 color: #fff;
                 flex: 1;
                 display: flex;
-                flex-direction: column;
-                justify-content: center;
-                align-items: center;
-                position: relative;
+                align-items: stretch;
                 min-width: 400px;
+                overflow: hidden;
             }
             .login-left::before {
                 content: '';
                 position: absolute;
-                top: 0;
-                left: 0;
-                right: 0;
-                bottom: 0;
+                top: 0; left: 0; right: 0; bottom: 0;
                 background: rgba(93,46,188,0.85); /* overlay tím */
                 z-index: 1;
             }
-            .login-left-content {
+            .login-left > * {
                 position: relative;
                 z-index: 2;
-                display: flex;
-                flex-direction: column;
-                align-items: center;
             }
             .login-left .logo {
                 margin-bottom: 30px;
@@ -125,6 +118,37 @@
                 .login-left, .login-right {
                     min-width: 100vw;
                 }
+            }
+            .login-left section.hero-section {
+                height: 100vh;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                width: 100%;
+            }
+            .login-left .hero-section .container {
+                height: 100%;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+            }
+            .login-left .hero-section .row {
+                width: 100%;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+            }
+            .login-left .hero-section .col-md-12, .login-left .hero-section .col-md-6 {
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                justify-content: center;
+                text-align: center;
+            }
+            .login-left .hero-section h1,
+            .login-left .hero-section p,
+            .login-left .hero-section a {
+                text-align: center;
             }
         </style>
     </head>
