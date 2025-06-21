@@ -295,7 +295,7 @@
                     <% } %>
                     <form action="login" method="post">
                         <div class="mb-3">
-                            <label class="form-label" for="email">Your Name</label>
+                            <label class="form-label" for="email">User Name</label>
                             <input type="text" class="form-control" id="email" name="email"
                                    value="<c:out value='${param.email != null ? param.email : (not empty email ? email : "")}'/>" required>
                         </div>
