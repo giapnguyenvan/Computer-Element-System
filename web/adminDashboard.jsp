@@ -33,22 +33,8 @@
             flex-direction: column;
         }
 
-        .top-bar {
-            background-color: #343a40;
-            color: white;
-            padding: 10px 0;
-            font-size: 0.9rem;
-        }
-
-        .navbar {
-            padding: 15px 0;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-            position: relative !important;
-            top: 0 !important;
-        }
-
         .sidebar {
-            min-height: calc(100vh - 110px);
+            min-height: 100vh;
             background-color: #343a40;
             padding-top: 20px;
         }
@@ -123,7 +109,7 @@
 
         #mainFrame {
             width: 100%;
-            height: calc(100vh - 110px);
+            height: 100vh;
             border: none;
         }
 
@@ -141,7 +127,7 @@
 <body>
     <!-- Include Header -->
     <jsp:include page="header.jsp" />
-
+    
     <div class="container-fluid">
         <div class="row">
             <!-- Sidebar -->
