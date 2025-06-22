@@ -33,6 +33,7 @@ public class UserDAO {
             try (ResultSet rs = stmt.executeQuery()) {
                 if (rs.next()) {
                     return new User(
+                        rs.getInt("user_id"),
                         rs.getString("username"),
                         rs.getString("password"),
                         rs.getString("role"),
@@ -92,6 +93,7 @@ public class UserDAO {
             try (ResultSet rs = stmt.executeQuery()) {
                 if (rs.next()) {
                     return new User(
+                        rs.getInt("user_id"),
                         rs.getString("username"),
                         rs.getString("password"),
                         rs.getString("role"),
@@ -104,7 +106,7 @@ public class UserDAO {
     }
 
     public User getUserById(int userId) throws SQLException {
-        String sql = "SELECT * FROM User WHERE id = ?";
+        String sql = "SELECT * FROM User WHERE user_id = ?";
         try (Connection conn = dbContext.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
             
@@ -113,6 +115,7 @@ public class UserDAO {
             try (ResultSet rs = stmt.executeQuery()) {
                 if (rs.next()) {
                     return new User(
+                        rs.getInt("user_id"),
                         rs.getString("username"),
                         rs.getString("password"),
                         rs.getString("role"),
@@ -126,7 +129,7 @@ public class UserDAO {
 
     public Vector<User> getAllUsers() throws SQLException {
         Vector<User> users = new Vector<>();
-        String sql = "SELECT * FROM User ORDER BY name";
+        String sql = "SELECT * FROM User ORDER BY username";
         
         try (Connection conn = dbContext.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql);
@@ -134,12 +137,12 @@ public class UserDAO {
             
             while (rs.next()) {
                 User user = new User(
+                    rs.getInt("user_id"),
                     rs.getString("username"),
                     rs.getString("password"),
                     rs.getString("role"),
                     rs.getString("email")
                 );
-                user.setId(rs.getInt("id")); // You'll need to add setId() to User class
                 users.add(user);
             }
         }
@@ -147,7 +150,7 @@ public class UserDAO {
     }
 
     public User getUserByUsername(String username) throws SQLException {
-        String sql = "SELECT * FROM User WHERE name = ?";
+        String sql = "SELECT * FROM User WHERE username = ?";
         try (Connection conn = dbContext.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
             
@@ -156,12 +159,12 @@ public class UserDAO {
             try (ResultSet rs = stmt.executeQuery()) {
                 if (rs.next()) {
                     User user = new User(
+                        rs.getInt("user_id"),
                         rs.getString("username"),
                         rs.getString("password"),
                         rs.getString("role"),
                         rs.getString("email")
                     );
-                    user.setId(rs.getInt("id")); // You'll need to add setId() to User class
                     return user;
                 }
             }
@@ -181,6 +184,32 @@ public class UserDAO {
             );
             register(adminUser);
         }
+    }
+
+    public String getFullname(int userId, String role) throws SQLException {
+        String tableName = "";
+        if ("Admin".equalsIgnoreCase(role)) {
+            tableName = "admin";
+        } else if ("Staff".equalsIgnoreCase(role)) {
+            tableName = "staff";
+        } else {
+            return null; // Không phải vai trò có tên đầy đủ
+        }
+
+        String sql = String.format("SELECT name FROM %s WHERE user_id = ?", tableName);
+        
+        try (Connection conn = dbContext.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+            
+            stmt.setInt(1, userId);
+            
+            try (ResultSet rs = stmt.executeQuery()) {
+                if (rs.next()) {
+                    return rs.getString("name");
+                }
+            }
+        }
+        return null;
     }
 
 }

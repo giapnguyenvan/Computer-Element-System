@@ -6,7 +6,18 @@
     List<Category> list = (List<Category>) request.getAttribute("categories");
     String ctx = request.getContextPath();
     String sortOrder = (String) request.getAttribute("sortOrder");
-    String currentSort = sortOrder != null ? sortOrder : "asc";
+    String currentSort = sortOrder != null ? sortOrder : "default";
+
+    // Pagination variables
+    Integer totalPages = (Integer) request.getAttribute("totalPages");
+    Integer currentPage = (Integer) request.getAttribute("currentPage");
+    String search = (String) request.getAttribute("search");
+    String searchParam = search != null ? "&search=" + java.net.URLEncoder.encode(search, "UTF-8") : "";
+    String sortParam = "&sort=" + currentSort;
+
+    String defaultUrl = ctx + "/category?sort=default" + searchParam;
+    String ascUrl = ctx + "/category?sort=asc" + searchParam;
+    String descUrl = ctx + "/category?sort=desc" + searchParam;
 %>
 
 <!DOCTYPE html>
@@ -14,116 +25,154 @@
     <head>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>Category List</title>
+        <title>Category Management</title>
         <!-- Bootstrap CSS -->
         <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
         <!-- Font Awesome -->
         <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+        <style>
+            body {
+                background-color: #f0f2f5;
+            }
+            .management-header {
+                background-color: white;
+                padding: 1.5rem;
+                border-radius: .5rem;
+                box-shadow: 0 2px 4px rgba(0,0,0,.1);
+                margin-bottom: 2rem;
+            }
+            .table-wrapper {
+                background-color: white;
+                padding: 1.5rem;
+                border-radius: .5rem;
+                box-shadow: 0 2px 4px rgba(0,0,0,.1);
+            }
+            .btn-action {
+                background: none;
+                border: none;
+                padding: 0;
+                margin: 0 8px;
+                color: #6c757d;
+                font-size: 1.1rem;
+            }
+            .btn-action:hover {
+                color: #0d6efd;
+            }
+            .text-danger:hover {
+                color: #dc3545 !important;
+            }
+            .page-info {
+                display: inline-block;
+                padding: 0.375rem 0.75rem;
+                background-color: #0d6efd;
+                color: white;
+                border-radius: 0.25rem;
+                margin: 0 5px;
+                font-weight: 500;
+            }
+            .table thead th {
+                font-weight: 600;
+                color: #343a40;
+            }
+        </style>
     </head>
     <body class="bg-light">
-        <div class="container mt-4">
-            <div class="card">
-                <div class="card-header d-flex justify-content-between align-items-center">
-                    <h2 class="mb-0">Category List</h2>
-                    <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addCategoryModal">
-                        <i class="fas fa-plus"></i> Add New Category
-                    </button>
-                </div>
-                <div class="card-body">
-                    <!-- Form tìm kiếm và sắp xếp -->
-                    <div class="row mb-4">
-                        <div class="col-md-8">
-                            <form action="<%= ctx %>/category" method="get" class="d-flex">
-                                <div class="input-group">
-                                    <input type="text" name="search" class="form-control" placeholder="Search by name..." 
-                                           value="<%= request.getAttribute("search") != null ? request.getAttribute("search") : "" %>"/>
-                                    <button type="submit" class="btn btn-outline-secondary">
-                                        <i class="fas fa-search"></i> Search
-                                    </button>
-                                </div>
-                            </form>
-                        </div>
-                        <div class="col-md-4 text-end">
-                            <div class="btn-group">
-                                <a href="<%= ctx %>/category?sort=default" class="btn btn-outline-primary <%= currentSort.equals("default") ? "active" : "" %>">
-                                    <i class="fas fa-sort"></i> Default
-                                </a>
-                                <a href="<%= ctx %>/category?sort=asc" class="btn btn-outline-primary <%= currentSort.equals("asc") ? "active" : "" %>">
-                                    <i class="fas fa-sort-alpha-down"></i> A-Z
-                                </a>
-                                <a href="<%= ctx %>/category?sort=desc" class="btn btn-outline-primary <%= currentSort.equals("desc") ? "active" : "" %>">
-                                    <i class="fas fa-sort-alpha-up"></i> Z-A
-                                </a>
-                            </div>
-                        </div>
+        <div class="container my-5">
+            <!-- Management Header -->
+            <div class="management-header">
+                <h4 class="mb-4">Category Management</h4>
+                <div class="row g-3 align-items-center">
+                    <div class="col-md-3">
+                        <select class="form-select" id="sortControl" onchange="window.location.href = this.value;">
+                            <option value="<%= defaultUrl %>" <%= "default".equals(currentSort) ? "selected" : "" %>>Sort by ID</option>
+                            <option value="<%= ascUrl %>" <%= "asc".equals(currentSort) ? "selected" : "" %>>Name A-Z</option>
+                            <option value="<%= descUrl %>" <%= "desc".equals(currentSort) ? "selected" : "" %>>Name Z-A</option>
+                        </select>
                     </div>
-
-                    <!-- Danh sách category -->
-                    <div class="table-responsive">
-                        <table class="table table-striped table-hover">
-                            <thead class="table-dark">
-                                <tr>
-                                    <th>ID</th>
-                                    <th>Name <i class="fas fa-sort"></i></th>
-                                    <th>Description</th>
-                                    <th>Actions</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <% if (list != null && !list.isEmpty()) {
-                                for (Category c : list) { %>
-                                <tr>
-                                    <td><%= c.getId() %></td>
-                                    <td><%= c.getName() %></td>
-                                    <td><%= c.getDescription() %></td>
-                                    <td>
-                                        <button class="btn btn-warning btn-sm" 
-                                                onclick="editCategory(<%= c.getId() %>, '<%= c.getName() %>', '<%= c.getDescription() %>')"
-                                                data-bs-toggle="modal" data-bs-target="#editCategoryModal">
-                                            <i class="fas fa-edit"></i>
-                                        </button>
-                                        <a href="<%= ctx %>/category?action=delete&id=<%= c.getId() %>"
-                                           class="btn btn-danger btn-sm"
-                                           onclick="return confirm('Bạn có chắc chắn muốn xóa danh mục này?');">
-                                            <i class="fas fa-trash"></i>
-                                        </a>
-                                    </td>
-                                </tr>
-                                <%  }
-                            } else { %>
-                                <tr><td colspan="4" class="text-center">No categories found.</td></tr>
+                    <div class="col-md-6">
+                        <form action="<%= ctx %>/category" method="get">
+                            <div class="input-group">
+                                <input type="text" name="search" class="form-control" placeholder="Search by name or description..." 
+                                       value="<%= search != null ? search : "" %>"/>
+                                <% if (sortOrder != null) { %>
+                                <input type="hidden" name="sort" value="<%= sortOrder %>"/>
                                 <% } %>
-                            </tbody>
-                        </table>
+                                <button type="submit" class="btn btn-primary">
+                                    <i class="fas fa-search"></i>
+                                </button>
+                            </div>
+                        </form>
                     </div>
-
-                    <!-- Phân trang -->
-                    <% if (request.getAttribute("totalPages") != null && (Integer)request.getAttribute("totalPages") > 1) { %>
-                    <nav aria-label="Page navigation" class="mt-4">
-                        <ul class="pagination justify-content-center">
-                            <% for (int i = 1; i <= (Integer)request.getAttribute("totalPages"); i++) {
-                                String link = ctx + "/category?page=" + i;
-                                if (request.getAttribute("search") != null) {
-                                    link += "&search=" + request.getAttribute("search");
-                                }
-                                if (currentSort != null) {
-                                    link += "&sort=" + currentSort;
-                                }
-                            %>
-                            <li class="page-item <%= (i == (Integer)request.getAttribute("currentPage")) ? "active" : "" %>">
-                                <a class="page-link" href="<%= link %>"><%= i %></a>
-                            </li>
-                            <% } %>
-                        </ul>
-                    </nav>
-                    <% } %>
+                    <div class="col-md-3 text-end">
+                        <button type="button" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#addCategoryModal">
+                            <i class="fas fa-plus"></i> Add Category
+                        </button>
+                    </div>
                 </div>
+            </div>
+
+            <!-- Category List Table -->
+            <div class="table-wrapper">
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                    <h4 class="mb-0">User Accounts</h4>
+                    <span class="text-muted">Total Categories: <%= request.getAttribute("totalCategories") != null ? request.getAttribute("totalCategories") : "N/A" %></span>
+                </div>
+                <div class="table-responsive">
+                    <table class="table table-hover align-middle">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Name</th>
+                                <th>Description</th>
+                                <th class="text-center">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <% if (list != null && !list.isEmpty()) {
+                            for (Category c : list) { %>
+                            <tr>
+                                <td><strong><%= c.getId() %></strong></td>
+                                <td><%= c.getName() %></td>
+                                <td><%= c.getDescription() %></td>
+                                <td class="text-center">
+                                    <button class="btn-action" 
+                                            onclick="editCategory(<%= c.getId() %>, '<%= c.getName().replace("'", "\\'") %>', '<%= c.getDescription().replace("'", "\\'") %>')"
+                                            data-bs-toggle="modal" data-bs-target="#editCategoryModal" title="Edit">
+                                        <i class="fas fa-edit"></i>
+                                    </button>
+                                    <a href="<%= ctx %>/category?action=delete&id=<%= c.getId() %>"
+                                       class="btn-action text-danger"
+                                       onclick="return confirm('Are you sure you want to delete this category?');" title="Delete">
+                                        <i class="fas fa-trash-alt"></i>
+                                    </a>
+                                </td>
+                            </tr>
+                            <%  }
+                        } else { %>
+                            <tr><td colspan="4" class="text-center py-5">No categories found.</td></tr>
+                            <% } %>
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- Pagination -->
+                <% if (totalPages != null && totalPages > 1) { %>
+                <nav aria-label="Page navigation" class="mt-4 d-flex justify-content-end align-items-center">
+                    <% String prevLink = ctx + "/category?page=" + (currentPage - 1) + searchParam + sortParam; %>
+                    <a href="<%= currentPage > 1 ? prevLink : "#" %>" class="btn btn-outline-primary <%= currentPage <= 1 ? "disabled" : "" %>">Previous</a>
+
+                    <span class="page-info"><%= currentPage %> / <%= totalPages %></span>
+
+                    <% String nextLink = ctx + "/category?page=" + (currentPage + 1) + searchParam + sortParam; %>
+                    <a href="<%= currentPage < totalPages ? nextLink : "#" %>" class="btn btn-outline-primary <%= currentPage >= totalPages ? "disabled" : "" %>">Next</a>
+                </nav>
+                <% } %>
             </div>
         </div>
 
         <!-- Add Category Modal -->
         <div class="modal fade" id="addCategoryModal" tabindex="-1">
-            <div class="modal-dialog">
+            <div class="modal-dialog modal-dialog-centered">
                 <div class="modal-content">
                     <div class="modal-header">
                         <h5 class="modal-title">Add New Category</h5>
@@ -152,7 +201,7 @@
 
         <!-- Edit Category Modal -->
         <div class="modal fade" id="editCategoryModal" tabindex="-1">
-            <div class="modal-dialog">
+            <div class="modal-dialog modal-dialog-centered">
                 <div class="modal-content">
                     <div class="modal-header">
                         <h5 class="modal-title">Edit Category</h5>

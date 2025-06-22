@@ -96,10 +96,14 @@ public class LoginServlet extends HttpServlet {
             User user = dal.UserDAO.getInstance().login(email, password);
             if (user != null) {
                 HttpSession session = request.getSession();
+                
+                // Lấy tên đầy đủ từ DAO
+                String fullname = dal.UserDAO.getInstance().getFullname(user.getId(), user.getRole());
+
                 session.setAttribute("userAuth", user);
                 session.setAttribute("session_login", email);
                 session.setAttribute("user_role", user.getRole());
-                session.setAttribute("user_name", user.getFullname());
+                session.setAttribute("user_name", fullname != null ? fullname : user.getUsername()); // Dùng fullname, nếu không có thì dùng username
                 
                 // Handle remember me cookie
                 if (remember != null) {

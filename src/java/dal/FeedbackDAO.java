@@ -197,7 +197,7 @@ public class FeedbackDAO {
     }
 
     // Get all feedback with user information for a specific product
-    public Vector<Feedback> getFeedbackWithUsersByProduct(int productId) {
+        public Vector<Feedback> getFeedbackWithUsersByProduct(int productId) {
         DBContext db = DBContext.getInstance();
         Vector<Feedback> listFeedback = new Vector<>();
         String sql = "SELECT f.*, u.name as user_name FROM feedback f " +
