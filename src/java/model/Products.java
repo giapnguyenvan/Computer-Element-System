@@ -1,143 +1,215 @@
 package model;
 
+import java.math.BigDecimal;
+import java.sql.Timestamp;
+
 public class Products {
 
-    private int id;
+    private int product_id;
     private String name;
-    private String brand;
-    private int category_id;
-    private double price;
+    private int component_type_id;
+    private int brand_id;
+    private BigDecimal price;
+    private BigDecimal import_price;
     private int stock;
-    private String image_url;
     private String description;
-    private String spec_description;
     private String status;
-    private String categoryName;
+    private Timestamp created_at;
+    private String image_url; // From productimage table
+    private String brandName; // From brand table
+    private String componentTypeName; // from componenttype table
+    private String categoryName; // To be compatible with old code
 
-    public Products(){
-        
+
+    public Products() {
     }
-    
-    public Products(int id, String name, String brand, int category_id, double price,
+
+    // A constructor that matches the new database schema
+    public Products(int product_id, String name, int component_type_id, int brand_id, BigDecimal price, BigDecimal import_price, int stock, String description, String status, Timestamp created_at, String image_url, String brandName, String componentTypeName) {
+        this.product_id = product_id;
+        this.name = name;
+        this.component_type_id = component_type_id;
+        this.brand_id = brand_id;
+        this.price = price;
+        this.import_price = import_price;
+        this.stock = stock;
+        this.description = description;
+        this.status = status;
+        this.created_at = created_at;
+        this.image_url = image_url;
+        this.brandName = brandName;
+        this.componentTypeName = componentTypeName;
+    }
+
+    // Keep old constructor signatures for compatibility if needed, but adapt them.
+    // This old constructor is likely used in many places.
+     public Products(int id, String name, String brand, int category_id, double price,
                 int stock, String image_url,
                 String description, String spec_description, String status) {
-        this.id = id;
+        this.product_id = id;
         this.name = name;
-        this.brand = brand;
-        this.category_id = category_id;
-        this.price = price;
+        this.brandName = brand;
+        this.component_type_id = category_id;
+        this.price = new BigDecimal(price);
         this.stock = stock;
         this.image_url = image_url;
         this.description = description;
-        this.spec_description = spec_description;
         this.status = status;
     }
 
     public Products(int id, String name, String brand, int category_id, double price, int stock, String image_url, String description, String spec_description, String status, String categoryName) {
-        this.id = id;
-        this.name = name;
-        this.brand = brand;
-        this.category_id = category_id;
-        this.price = price;
-        this.stock = stock;
-        this.image_url = image_url;
-        this.description = description;
-        this.spec_description = spec_description;
-        this.status = status;
+        this(id, name, brand, category_id, price, stock, image_url, description, spec_description, status);
         this.categoryName = categoryName;
     }
 
-    public void setCategoryName(String categoryName) {
-        this.categoryName = categoryName;
-    }
 
-    public String getCategoryName() {
-        return categoryName;
-    }
+    // Getters and Setters
 
+    // Getter for id to maintain compatibility with JSP files (e.g., ${product.id})
     public int getId() {
-        return id;
+        return product_id;
+    }
+
+    public void setId(int id) {
+        this.product_id = id;
+    }
+
+    public int getProduct_id() {
+        return product_id;
+    }
+
+    public void setProduct_id(int product_id) {
+        this.product_id = product_id;
     }
 
     public String getName() {
         return name;
     }
 
-    public String getBrand() {
-        return brand;
+    public void setName(String name) {
+        this.name = name;
     }
 
-    public int getCategory_id() {
-        return category_id;
+    // Getter for brand to maintain compatibility
+    public String getBrand() {
+        return brandName;
+    }
+
+    // Setter for brand
+    public void setBrand(String brand) {
+        this.brandName = brand;
+    }
+    
+    public int getComponent_type_id() {
+        return component_type_id;
+    }
+
+    public void setComponent_type_id(int component_type_id) {
+        this.component_type_id = component_type_id;
+    }
+
+    public int getBrand_id() {
+        return brand_id;
+    }
+
+    public void setBrand_id(int brand_id) {
+        this.brand_id = brand_id;
     }
 
     public double getPrice() {
+        return price.doubleValue();
+    }
+
+    public void setPrice(double price) {
+        this.price = new BigDecimal(price);
+    }
+    
+    public BigDecimal getPrice_BigDecimal() {
         return price;
+    }
+
+    public void setPrice_BigDecimal(BigDecimal price) {
+        this.price = price;
+    }
+
+    public BigDecimal getImport_price() {
+        return import_price;
+    }
+
+    public void setImport_price(BigDecimal import_price) {
+        this.import_price = import_price;
     }
 
     public int getStock() {
         return stock;
     }
 
-    public String getStatus() {
-        return status;
-    }
-
-    public String getImage_url() {
-        return image_url;
+    public void setStock(int stock) {
+        this.stock = stock;
     }
 
     public String getDescription() {
         return description;
     }
 
-    public String getSpec_description() {
-        return spec_description;
+    public void setDescription(String description) {
+        this.description = description;
     }
 
-    public void setId(int id) {
-        this.id = id;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public void setBrand(String brand) {
-        this.brand = brand;
-    }
-
-    public void setCategory_id(int category_id) {
-        this.category_id = category_id;
-    }
-
-    public void setPrice(double price) {
-        this.price = price;
-    }
-
-    public void setStock(int stock) {
-        this.stock = stock;
+    public String getStatus() {
+        return status;
     }
 
     public void setStatus(String status) {
         this.status = status;
     }
 
+    public Timestamp getCreated_at() {
+        return created_at;
+    }
+
+    public void setCreated_at(Timestamp created_at) {
+        this.created_at = created_at;
+    }
+
+    public String getImage_url() {
+        return image_url;
+    }
+
     public void setImage_url(String image_url) {
         this.image_url = image_url;
     }
 
-    public void setDescription(String description) {
-        this.description = description;
+    public String getBrandName() {
+        return brandName;
     }
 
-    public void setSpec_description(String spec_description) {
-        this.spec_description = spec_description;
+    public void setBrandName(String brandName) {
+        this.brandName = brandName;
     }
 
-    @Override
-    public String toString() {
-        return "Products{" + "id=" + id + ", name=" + name + ", brand=" + brand + ", category_id=" + category_id + ", price=" + price + ", stock=" + stock + ", status=" + status + ", image_url=" + image_url + ", description=" + description + ", spec_description=" + spec_description + '}';
+    public String getComponentTypeName() {
+        return componentTypeName;
     }
 
+    public void setComponentTypeName(String componentTypeName) {
+        this.componentTypeName = componentTypeName;
+    }
+    
+    // Kept for backward compatibility
+    public String getSpec_description() {
+        return "";
+    }
+    
+    public int getCategory_id() {
+        return component_type_id;
+    }
+    
+    public String getCategoryName() {
+        return componentTypeName;
+    }
+
+    public void setCategoryName(String categoryName) {
+        this.componentTypeName = categoryName;
+    }
 }

@@ -1,25 +1,30 @@
 package model;
 
 public class Category {
-    private int id;
+    private int type_id; // Corresponds to type_id in componenttype table
     private String name;
-    private String description;
+    private String description; // Kept for form compatibility, but not in DB table
     
     public Category() {
     }
     
-    public Category(int id, String name, String description) {
-        this.id = id;
+    public Category(int type_id, String name, String description) {
+        this.type_id = type_id;
         this.name = name;
         this.description = description;
     }
     
+    // Getter for JSP compatibility: ${category.id}
     public int getId() {
-        return id;
+        return type_id;
     }
     
-    public void setId(int id) {
-        this.id = id;
+    public int getType_id() {
+        return type_id;
+    }
+    
+    public void setType_id(int type_id) {
+        this.type_id = type_id;
     }
     
     public String getName() {
@@ -40,6 +45,6 @@ public class Category {
     
     @Override
     public String toString() {
-        return "Category{" + "id=" + id + ", name=" + name + ", description=" + description + '}';
+        return "Category{" + "type_id=" + type_id + ", name=" + name + ", description=" + description + '}';
     }
 } 

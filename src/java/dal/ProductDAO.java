@@ -3,9 +3,9 @@ package dal;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Vector;
+import java.util.List;
+import java.util.ArrayList;
 import model.*;
 
 //Them "connection" trong DBContext
@@ -15,58 +15,47 @@ public class ProductDAO {
     public Vector<Products> getAllProduct() {
         DBContext db = DBContext.getInstance();
         Vector<Products> listProduct = new Vector<>();
-        String sql = "SELECT * FROM products";
+        // This query is updated to match the new database schema
+        String sql = "SELECT "
+                + "    p.product_id, "
+                + "    p.name, "
+                + "    p.description, "
+                + "    p.price, "
+                + "    p.stock, "
+                + "    p.status, "
+                + "    p.import_price, "
+                + "    p.created_at, "
+                + "    p.component_type_id, "
+                + "    p.brand_id, "
+                + "    b.name as brand_name, "
+                + "    ct.name as component_type_name, "
+                + "    (SELECT image_url FROM productimage pi WHERE pi.product_id = p.product_id LIMIT 1) as image_url "
+                + "FROM "
+                + "    product p "
+                + "JOIN "
+                + "    brand b ON p.brand_id = b.brand_id "
+                + "JOIN "
+                + "    componenttype ct ON p.component_type_id = ct.type_id";
+
         try {
             PreparedStatement ptm = db.getConnection().prepareStatement(sql);
             ResultSet rs = ptm.executeQuery();
             while (rs.next()) {
-                String jsonSpec = rs.getString("spec_description");
-
+                // Using the new constructor for Products
                 Products p = new Products(
-                        rs.getInt("id"),
+                        rs.getInt("product_id"),
                         rs.getString("name"),
-                        rs.getString("brand"),
-                        rs.getInt("category_id"),
-                        rs.getDouble("price"),
+                        rs.getInt("component_type_id"),
+                        rs.getInt("brand_id"),
+                        rs.getBigDecimal("price"),
+                        rs.getBigDecimal("import_price"),
                         rs.getInt("stock"),
-                        rs.getString("image_url"),
                         rs.getString("description"),
-                        jsonSpec,
-                        rs.getString("status")
-                );
-                listProduct.add(p);
-            }
-        } catch (SQLException ex) {
-            ex.printStackTrace();
-        }
-        return listProduct;
-    }
-
-    public Vector<Products> getAllProductWithCategoryName() {
-        DBContext db = DBContext.getInstance();
-        Vector<Products> listProduct = new Vector<>();
-        String sql = "SELECT p.*, c.name AS category_name "
-                + "FROM products p "
-                + "JOIN categories c ON p.category_id = c.id"
-                + "ORDER BY p.id ASC";
-        try {
-            PreparedStatement ptm = db.getConnection().prepareStatement(sql);
-            ResultSet rs = ptm.executeQuery();
-            while (rs.next()) {
-                String jsonSpec = rs.getString("spec_description");
-
-                Products p = new Products(
-                        rs.getInt("id"),
-                        rs.getString("name"),
-                        rs.getString("brand"),
-                        rs.getInt("category_id"),
-                        rs.getDouble("price"),
-                        rs.getInt("stock"),
-                        rs.getString("image_url"),
-                        rs.getString("description"),
-                        jsonSpec,
                         rs.getString("status"),
-                        rs.getString("category_name") // categoryName from JOIN
+                        rs.getTimestamp("created_at"),
+                        rs.getString("image_url"),
+                        rs.getString("brand_name"),
+                        rs.getString("component_type_name")
                 );
                 listProduct.add(p);
             }
@@ -75,202 +64,163 @@ public class ProductDAO {
         }
         return listProduct;
     }
-//----------------------------------Search product
 
-    public Vector<Products> searchProduct(String productName) {
+    public int getTotalCPUProducts() {
         DBContext db = DBContext.getInstance();
-        Vector<Products> list = new Vector<>();
-        String sql = "SELECT * FROM products WHERE name LIKE ?";
+        String sql = "SELECT COUNT(*) FROM product WHERE component_type_id = 1"; // CPU type_id = 1
         try {
             PreparedStatement ptm = db.getConnection().prepareStatement(sql);
-            ptm.setString(1, "%" + productName + "%");
             ResultSet rs = ptm.executeQuery();
-            while (rs.next()) {
-                String jsonSpec = rs.getString("spec_description");
-                Products p = new Products(
-                        rs.getInt("id"),
-                        rs.getString("name"),
-                        rs.getString("brand"),
-                        rs.getInt("category_id"),
-                        rs.getDouble("price"),
-                        rs.getInt("stock"),
-                        rs.getString("image_url"),
-                        rs.getString("description"),
-                        jsonSpec,
-                        rs.getString("status")
-                );
-                list.add(p);
-            }
-        } catch (SQLException ex) {
-            ex.printStackTrace();
-        }
-        return list;
-    }
-
-//-----------------------------Insert product
-    public void insertProduct(Products p) {
-        DBContext db = DBContext.getInstance();
-        String sql = "INSERT INTO products "
-                + "(name, brand, category_id, price, "
-                + "stock, image_url, description, spec_description, status) "
-                + "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
-        try {
-            PreparedStatement ptm = db.getConnection().prepareStatement(sql);
-            ptm.setString(1, p.getName());
-            ptm.setString(2, p.getBrand());
-            ptm.setInt(3, p.getCategory_id());
-            ptm.setDouble(4, p.getPrice());
-            ptm.setInt(5, p.getStock());
-            ptm.setString(6, p.getImage_url());
-            ptm.setString(7, p.getDescription());
-            ptm.setString(8, p.getSpec_description());
-            ptm.setString(9, p.getStatus());
-            ptm.executeUpdate();
-        } catch (SQLException ex) {
-            ex.printStackTrace();
-        }
-    }
-
-//--------------------------Update product
-    public void updateProduct(Products p) {
-        DBContext db = DBContext.getInstance();
-        String sql = "UPDATE products SET name = ?, brand = ?, category_id = ?, price = ?, "
-                + "stock = ?, "
-                + "image_url = ?, description = ?, spec_description = ?, status = ? WHERE id = ?";
-        try {
-            PreparedStatement ptm = db.getConnection().prepareStatement(sql);
-            ptm.setString(1, p.getName());
-            ptm.setString(2, p.getBrand());
-            ptm.setInt(3, p.getCategory_id());
-            ptm.setDouble(4, p.getPrice());
-            ptm.setInt(5, p.getStock());
-            ptm.setString(6, p.getImage_url());
-            ptm.setString(7, p.getDescription());
-            ptm.setString(8, p.getSpec_description());
-            ptm.setString(9, p.getStatus());
-            ptm.setInt(10, p.getId());
-            ptm.executeUpdate();
-        } catch (SQLException ex) {
-            ex.printStackTrace();
-        }
-    }
-
-//---------------------Delete/Deactivate
-    public void deactivateProduct(int id) {
-        DBContext db = DBContext.getInstance();
-        String sql = "UPDATE products SET status = 'inactive' WHERE id = ?";
-        try {
-            PreparedStatement ptm = db.getConnection().prepareStatement(sql);
-            ptm.setInt(1, id);
-            ptm.executeUpdate();
-        } catch (SQLException ex) {
-            ex.printStackTrace();
-        }
-    }
-
-//--------------------Filter by category
-    public Vector<Products> filterByCategory(int categoryId) {
-        DBContext db = DBContext.getInstance();
-        Vector<Products> list = new Vector<>();
-        String sql = "SELECT * FROM products WHERE category_id = ?";
-        try {
-            PreparedStatement ptm = db.getConnection().prepareStatement(sql);
-            ptm.setInt(1, categoryId);
-            ResultSet rs = ptm.executeQuery();
-            while (rs.next()) {
-                String jsonSpec = rs.getString("spec_description");
-                Products p = new Products(
-                        rs.getInt("id"),
-                        rs.getString("name"),
-                        rs.getString("brand"),
-                        rs.getInt("category_id"),
-                        rs.getDouble("price"),
-                        rs.getInt("stock"),
-                        rs.getString("image_url"),
-                        rs.getString("description"),
-                        jsonSpec,
-                        rs.getString("status")
-                );
-                list.add(p);
-            }
-        } catch (SQLException ex) {
-            ex.printStackTrace();
-        }
-        return list;
-    }
-
-//---------------View product detail
-    public Products getProductById(int productId) {
-        DBContext db = DBContext.getInstance();
-        Products p = null;
-        String sql = "SELECT id, name, brand, category_id, price, stock, image_url, description, spec_description, status "
-                + "FROM products WHERE id=?";
-        try {
-            PreparedStatement ps = db.getConnection().prepareStatement(sql);
-            ps.setInt(1, productId);
-            ResultSet rs = ps.executeQuery();
             if (rs.next()) {
-                String jsonSpec = rs.getString("spec_description");
-                p = new Products(
-                        rs.getInt("id"),
-                        rs.getString("name"),
-                        rs.getString("brand"),
-                        rs.getInt("category_id"),
-                        rs.getDouble("price"),
-                        rs.getInt("stock"),
-                        rs.getString("image_url"),
-                        rs.getString("description"),
-                        jsonSpec,
-                        rs.getString("status")
-                );
+                return rs.getInt(1);
             }
-        } catch (SQLException e) {
-            e.printStackTrace();
+        } catch (SQLException ex) {
+            ex.printStackTrace();
         }
-        return p;
+        return 0;
     }
 
-    public Vector<Products> getSortedProduct(String sortBy, String order) {
+    public List<Products> getCPUProductsWithPaging(int page, int productsPerPage) {
         DBContext db = DBContext.getInstance();
-        Vector<Products> list = new Vector<>();
-
-        if (sortBy == null || order == null) {
-            sortBy = "id";
-            order = "asc";
+        List<Products> list = new ArrayList<>();
+        String sql = "SELECT p.*, b.name as brand_name, ct.name as component_type_name, "
+                + "(SELECT image_url FROM productimage pi WHERE pi.product_id = p.product_id LIMIT 1) as image_url "
+                + "FROM product p "
+                + "JOIN brand b ON p.brand_id = b.brand_id "
+                + "JOIN componenttype ct ON p.component_type_id = ct.type_id "
+                + "WHERE p.component_type_id = 1 " // CPU type_id = 1
+                + "ORDER BY p.product_id "
+                + "LIMIT ? OFFSET ?";
+        try {
+            PreparedStatement ptm = db.getConnection().prepareStatement(sql);
+            ptm.setInt(1, productsPerPage);
+            ptm.setInt(2, (page - 1) * productsPerPage);
+            ResultSet rs = ptm.executeQuery();
+            while (rs.next()) {
+                Products p = new Products(
+                        rs.getInt("product_id"),
+                        rs.getString("name"),
+                        rs.getInt("component_type_id"),
+                        rs.getInt("brand_id"),
+                        rs.getBigDecimal("price"),
+                        rs.getBigDecimal("import_price"),
+                        rs.getInt("stock"),
+                        rs.getString("description"),
+                        rs.getString("status"),
+                        rs.getTimestamp("created_at"),
+                        rs.getString("image_url"),
+                        rs.getString("brand_name"),
+                        rs.getString("component_type_name")
+                );
+                list.add(p);
+            }
+        } catch (SQLException ex) {
+            ex.printStackTrace();
         }
+        return list;
+    }
 
-        String validSortBy;
-        switch (sortBy) {
-            case "id", "category_id", "price", "stock":
-                validSortBy = sortBy;
-                break;
-            default:
-                validSortBy = "id";
-        }
-        String sortOrder = "asc".equalsIgnoreCase(order) ? "ASC" : "DESC";
-
-        String sql = "SELECT p.*, c.name AS category_name "
-                + "FROM products p "
-                + "JOIN categories c ON p.category_id = c.id "
-                + "ORDER BY p." + validSortBy + " " + sortOrder;
-
+    public int getTotalGPUProducts() {
+        DBContext db = DBContext.getInstance();
+        String sql = "SELECT COUNT(*) FROM product WHERE component_type_id = 2"; // GPU type_id = 2
         try {
             PreparedStatement ptm = db.getConnection().prepareStatement(sql);
             ResultSet rs = ptm.executeQuery();
+            if (rs.next()) {
+                return rs.getInt(1);
+            }
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+        }
+        return 0;
+    }
+
+    public List<Products> getGPUProductsWithPaging(int page, int productsPerPage) {
+        DBContext db = DBContext.getInstance();
+        List<Products> list = new ArrayList<>();
+        String sql = "SELECT p.*, b.name as brand_name, ct.name as component_type_name, "
+                + "(SELECT image_url FROM productimage pi WHERE pi.product_id = p.product_id LIMIT 1) as image_url "
+                + "FROM product p "
+                + "JOIN brand b ON p.brand_id = b.brand_id "
+                + "JOIN componenttype ct ON p.component_type_id = ct.type_id "
+                + "WHERE p.component_type_id = 2 " // GPU type_id = 2
+                + "ORDER BY p.product_id "
+                + "LIMIT ? OFFSET ?";
+        try {
+            PreparedStatement ptm = db.getConnection().prepareStatement(sql);
+            ptm.setInt(1, productsPerPage);
+            ptm.setInt(2, (page - 1) * productsPerPage);
+            ResultSet rs = ptm.executeQuery();
             while (rs.next()) {
-                String jsonSpec = rs.getString("spec_description");
                 Products p = new Products(
-                        rs.getInt("id"),
+                        rs.getInt("product_id"),
                         rs.getString("name"),
-                        rs.getString("brand"),
-                        rs.getInt("category_id"),
-                        rs.getDouble("price"),
+                        rs.getInt("component_type_id"),
+                        rs.getInt("brand_id"),
+                        rs.getBigDecimal("price"),
+                        rs.getBigDecimal("import_price"),
                         rs.getInt("stock"),
-                        rs.getString("image_url"),
                         rs.getString("description"),
-                        jsonSpec,
                         rs.getString("status"),
-                        rs.getString("category_name") // <- Make sure your constructor includes this
+                        rs.getTimestamp("created_at"),
+                        rs.getString("image_url"),
+                        rs.getString("brand_name"),
+                        rs.getString("component_type_name")
+                );
+                list.add(p);
+            }
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+        }
+        return list;
+    }
+
+    public int getTotalRAMProducts() {
+        DBContext db = DBContext.getInstance();
+        String sql = "SELECT COUNT(*) FROM product WHERE component_type_id = 4"; // RAM type_id = 4
+        try {
+            PreparedStatement ptm = db.getConnection().prepareStatement(sql);
+            ResultSet rs = ptm.executeQuery();
+            if (rs.next()) {
+                return rs.getInt(1);
+            }
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+        }
+        return 0;
+    }
+
+    public List<Products> getRAMProductsWithPaging(int page, int productsPerPage) {
+        DBContext db = DBContext.getInstance();
+        List<Products> list = new ArrayList<>();
+        String sql = "SELECT p.*, b.name as brand_name, ct.name as component_type_name, "
+                + "(SELECT image_url FROM productimage pi WHERE pi.product_id = p.product_id LIMIT 1) as image_url "
+                + "FROM product p "
+                + "JOIN brand b ON p.brand_id = b.brand_id "
+                + "JOIN componenttype ct ON p.component_type_id = ct.type_id "
+                + "WHERE p.component_type_id = 4 " // RAM type_id = 4
+                + "ORDER BY p.product_id "
+                + "LIMIT ? OFFSET ?";
+        try {
+            PreparedStatement ptm = db.getConnection().prepareStatement(sql);
+            ptm.setInt(1, productsPerPage);
+            ptm.setInt(2, (page - 1) * productsPerPage);
+            ResultSet rs = ptm.executeQuery();
+            while (rs.next()) {
+                Products p = new Products(
+                        rs.getInt("product_id"),
+                        rs.getString("name"),
+                        rs.getInt("component_type_id"),
+                        rs.getInt("brand_id"),
+                        rs.getBigDecimal("price"),
+                        rs.getBigDecimal("import_price"),
+                        rs.getInt("stock"),
+                        rs.getString("description"),
+                        rs.getString("status"),
+                        rs.getTimestamp("created_at"),
+                        rs.getString("image_url"),
+                        rs.getString("brand_name"),
+                        rs.getString("component_type_name")
                 );
                 list.add(p);
             }
@@ -304,8 +254,8 @@ public class ProductDAO {
                 );
                 list.add(p);
             }
-        } catch (SQLException e) {
-            e.printStackTrace();
+        } catch (SQLException ex) {
+            ex.printStackTrace();
         }
         return list;
     }
@@ -334,188 +284,33 @@ public class ProductDAO {
                 );
                 list.add(p);
             }
-        } catch (SQLException e) {
-            e.printStackTrace();
+        } catch (SQLException ex) {
+            ex.printStackTrace();
         }
         return list;
     }
 
     public static Vector<String> getAllBrands() {
         DBContext db = DBContext.getInstance();
-        Vector<String> listBrands = new Vector<>();
+        Vector<String> brands = new Vector<>();
         String sql = "SELECT DISTINCT brand FROM products";
-
-        try {
-            PreparedStatement statement = db.getConnection().prepareStatement(sql);
-            ResultSet rs = statement.executeQuery();
-            while (rs.next()) {
-                String brand = rs.getString("brand");
-                listBrands.add(brand);
-            }
-        } catch (SQLException ex) {
-            ex.printStackTrace();
-        }
-        return listBrands;
-    }
-
-    //---------------Get total CPU products count
-    public int getTotalCPUProducts() {
-        DBContext db = DBContext.getInstance();
-        String sql = "SELECT COUNT(*) FROM products WHERE category_id = 1 AND status = 'active'";
         try {
             PreparedStatement ptm = db.getConnection().prepareStatement(sql);
-            ResultSet rs = ptm.executeQuery();
-            if (rs.next()) {
-                return rs.getInt(1);
-            }
-        } catch (SQLException ex) {
-            ex.printStackTrace();
-        }
-        return 0;
-    }
-
-    //---------------Get CPU products with pagination
-    public Vector<Products> getCPUProductsWithPaging(int page, int productsPerPage) {
-        DBContext db = DBContext.getInstance();
-        Vector<Products> list = new Vector<>();
-        String sql = "SELECT * FROM products WHERE category_id = 1 AND status = 'active' "
-                + "ORDER BY id "
-                + "LIMIT ? OFFSET ?";
-        try {
-            PreparedStatement ptm = db.getConnection().prepareStatement(sql);
-            ptm.setInt(1, productsPerPage);
-            ptm.setInt(2, (page - 1) * productsPerPage);
             ResultSet rs = ptm.executeQuery();
             while (rs.next()) {
-                String jsonSpec = rs.getString("spec_description");
-                Products p = new Products(
-                        rs.getInt("id"),
-                        rs.getString("name"),
-                        rs.getString("brand"),
-                        rs.getInt("category_id"),
-                        rs.getDouble("price"),
-                        rs.getInt("stock"),
-                        rs.getString("image_url"),
-                        rs.getString("description"),
-                        jsonSpec,
-                        rs.getString("status")
-                );
-                list.add(p);
+                brands.add(rs.getString("brand"));
             }
         } catch (SQLException ex) {
             ex.printStackTrace();
         }
-        return list;
-    }
-
-    //---------------Get total GPU products count
-    public int getTotalGPUProducts() {
-        DBContext db = DBContext.getInstance();
-        String sql = "SELECT COUNT(*) FROM products WHERE category_id = 2 AND status = 'active'";
-        try {
-            PreparedStatement ptm = db.getConnection().prepareStatement(sql);
-            ResultSet rs = ptm.executeQuery();
-            if (rs.next()) {
-                return rs.getInt(1);
-            }
-        } catch (SQLException ex) {
-            ex.printStackTrace();
-        }
-        return 0;
-    }
-
-    //---------------Get GPU products with pagination
-    public List<Products> getGPUProductsWithPaging(int page, int productsPerPage) {
-        DBContext db = DBContext.getInstance();
-        List<Products> list = new ArrayList<>();
-        String sql = "SELECT * FROM products WHERE category_id = 2 AND status = 'active' "
-                + "ORDER BY id "
-                + "LIMIT ? OFFSET ?";
-        try {
-            PreparedStatement ptm = db.getConnection().prepareStatement(sql);
-            ptm.setInt(1, productsPerPage);
-            ptm.setInt(2, (page - 1) * productsPerPage);
-            ResultSet rs = ptm.executeQuery();
-            while (rs.next()) {
-                String jsonSpec = rs.getString("spec_description");
-                Products p = new Products(
-                        rs.getInt("id"),
-                        rs.getString("name"),
-                        rs.getString("brand"),
-                        rs.getInt("category_id"),
-                        rs.getDouble("price"),
-                        rs.getInt("stock"),
-                        rs.getString("image_url"),
-                        rs.getString("description"),
-                        jsonSpec,
-                        rs.getString("status")
-                );
-                list.add(p);
-            }
-        } catch (SQLException ex) {
-            ex.printStackTrace();
-        }
-        return list;
-    }
-
-    //---------------Get total RAM products count
-    public int getTotalRAMProducts() {
-        DBContext db = DBContext.getInstance();
-        String sql = "SELECT COUNT(*) FROM products WHERE category_id = 3 AND status = 'active'";
-        try {
-            PreparedStatement ptm = db.getConnection().prepareStatement(sql);
-            ResultSet rs = ptm.executeQuery();
-            if (rs.next()) {
-                return rs.getInt(1);
-            }
-        } catch (SQLException ex) {
-            ex.printStackTrace();
-        }
-        return 0;
-    }
-
-    //---------------Get RAM products with pagination
-    public List<Products> getRAMProductsWithPaging(int page, int productsPerPage) {
-        DBContext db = DBContext.getInstance();
-        List<Products> list = new ArrayList<>();
-        String sql = "SELECT * FROM products WHERE category_id = 3 AND status = 'active' "
-                + "ORDER BY id "
-                + "LIMIT ? OFFSET ?";
-        try {
-            PreparedStatement ptm = db.getConnection().prepareStatement(sql);
-            ptm.setInt(1, productsPerPage);
-            ptm.setInt(2, (page - 1) * productsPerPage);
-            ResultSet rs = ptm.executeQuery();
-            while (rs.next()) {
-                String jsonSpec = rs.getString("spec_description");
-                Products p = new Products(
-                        rs.getInt("id"),
-                        rs.getString("name"),
-                        rs.getString("brand"),
-                        rs.getInt("category_id"),
-                        rs.getDouble("price"),
-                        rs.getInt("stock"),
-                        rs.getString("image_url"),
-                        rs.getString("description"),
-                        jsonSpec,
-                        rs.getString("status")
-                );
-                list.add(p);
-            }
-        } catch (SQLException ex) {
-            ex.printStackTrace();
-        }
-        return list;
+        return brands;
     }
 
     public static void main(String[] args) {
         ProductDAO dao = new ProductDAO();
-        Vector<Products> products = dao.getAllProduct();
-
-        System.out.println("Total products: " + products.size());
-        for (Products p : products) {
+        Vector<Products> list = dao.getAllProduct();
+        for (Products p : list) {
             System.out.println(p);
         }
     }
-
 }

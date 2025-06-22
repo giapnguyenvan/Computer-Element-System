@@ -3,7 +3,7 @@
 <%@taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 <%@ page import="dal.ProductDAO" %>
 <%@ page import="model.Products" %>
-<%@ page import="java.util.Vector" %>
+<%@ page import="java.util.List" %>
 
 <!DOCTYPE html>
 <html>
@@ -52,7 +52,7 @@
             int totalPages = (int) Math.ceil((double) totalProducts / productsPerPage);
 
             // Lấy danh sách sản phẩm cho trang hiện tại
-            Vector<Products> cpuProducts = productDAO.getCPUProductsWithPaging(currentPage, productsPerPage);
+            List<Products> cpuProducts = productDAO.getCPUProductsWithPaging(currentPage, productsPerPage);
 
             // Set attributes để sử dụng trong JSP
             request.setAttribute("cpuProducts", cpuProducts);

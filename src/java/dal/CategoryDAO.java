@@ -8,141 +8,95 @@ import java.util.ArrayList;
 
 public class CategoryDAO {
 
-    // Lấy tất cả categories
+    // Get all component types
     public static ArrayList<Category> getAllCategories() {
         DBContext db = DBContext.getInstance();
         ArrayList<Category> listCategory = new ArrayList<>();
-        String sql = """
-                    SELECT * 
-                    FROM categories
-                    """;
+        String sql = "SELECT * FROM componenttype";
         try {
             PreparedStatement statement = db.getConnection().prepareStatement(sql);
             ResultSet rs = statement.executeQuery();
             while (rs.next()) {
                 Category category = new Category(
-                        rs.getInt("id"),
+                        rs.getInt("type_id"),
                         rs.getString("name"),
-                        rs.getString("description")
+                        "" // No description in componenttype table
                 );
                 listCategory.add(category);
             }
         } catch (SQLException ex) {
-            return listCategory;
+            ex.printStackTrace();
         }
         return listCategory;
     }
 
-    // Tìm category theo tên
+    // Search component types by name
     public static ArrayList<Category> searchCategory(String categoryName) {
         DBContext db = DBContext.getInstance();
         ArrayList<Category> list = new ArrayList<>();
-        String sql = """
-                    SELECT * 
-                    FROM categories 
-                    WHERE name LIKE ?
-                    """;
+        String sql = "SELECT * FROM componenttype WHERE name LIKE ?";
         try {
             PreparedStatement statement = db.getConnection().prepareStatement(sql);
             statement.setString(1, "%" + categoryName + "%");
             ResultSet rs = statement.executeQuery();
             while (rs.next()) {
                 Category category = new Category(
-                        rs.getInt("id"),
+                        rs.getInt("type_id"),
                         rs.getString("name"),
-                        rs.getString("description")
+                        "" // No description
                 );
                 list.add(category);
             }
         } catch (SQLException ex) {
-            return list;
+            ex.printStackTrace();
         }
         return list;
     }
 
-    // Thêm category mới
-    public static Category addCategory(Category category) {
+    // Add new component type
+    public static void addCategory(Category category) {
         DBContext db = DBContext.getInstance();
-        int rs = 0;
+        String sql = "INSERT INTO componenttype(name) VALUES (?)";
         try {
-            String sql = """
-                        INSERT INTO categories(name, description)
-                        VALUES (?, ?)
-                        """;
             PreparedStatement statement = db.getConnection().prepareStatement(sql);
             statement.setString(1, category.getName());
-            statement.setString(2, category.getDescription());
-            rs = statement.executeUpdate();
+            statement.executeUpdate();
         } catch (SQLException e) {
-            return null;
-        }
-        if (rs == 0) {
-            return null;
-        } else {
-            return category;
+            e.printStackTrace();
         }
     }
 
-    // Cập nhật category
-    public static Category updateCategory(Category category) {
+    // Update component type
+    public static void updateCategory(Category category) {
         DBContext db = DBContext.getInstance();
-        int rs = 0;
+        String sql = "UPDATE componenttype SET name = ? WHERE type_id = ?";
         try {
-            String sql = """
-                        UPDATE categories 
-                        SET name = ?, description = ? 
-                        WHERE id = ?
-                        """;
             PreparedStatement statement = db.getConnection().prepareStatement(sql);
             statement.setString(1, category.getName());
-            statement.setString(2, category.getDescription());
-            statement.setInt(3, category.getId());
-            rs = statement.executeUpdate();
+            statement.setInt(2, category.getType_id());
+            statement.executeUpdate();
         } catch (SQLException e) {
-            return null;
-        }
-        if (rs == 0) {
-            return null;
-        } else {
-            return category;
+            e.printStackTrace();
         }
     }
 
-    // Xóa category
-    public static Category deleteCategory(int id) {
+    // Delete component type
+    public static void deleteCategory(int id) {
         DBContext db = DBContext.getInstance();
-        Category category = getCategoryById(id);
-        if (category == null) {
-            return null;
-        }
-
-        int rs = 0;
+        String sql = "DELETE FROM componenttype WHERE type_id = ?";
         try {
-            String sql = """
-                        DELETE FROM categories 
-                        WHERE id = ?
-                        """;
             PreparedStatement statement = db.getConnection().prepareStatement(sql);
             statement.setInt(1, id);
-            rs = statement.executeUpdate();
+            statement.executeUpdate();
         } catch (SQLException e) {
-            return null;
-        }
-        if (rs == 0) {
-            return null;
-        } else {
-            return category;
+            e.printStackTrace();
         }
     }
 
-    // Lấy category theo ID
+    // Get component type by ID
     public static Category getCategoryById(int categoryId) {
         DBContext db = DBContext.getInstance();
-        String sql = """
-                    SELECT * 
-                    FROM categories 
-                    WHERE id = ?
-                    """;
+        String sql = "SELECT * FROM componenttype WHERE type_id = ?";
         Category category = null;
         try {
             PreparedStatement statement = db.getConnection().prepareStatement(sql);
@@ -151,26 +105,23 @@ public class CategoryDAO {
 
             if (rs.next()) {
                 category = new Category(
-                        rs.getInt("id"),
+                        rs.getInt("type_id"),
                         rs.getString("name"),
-                        rs.getString("description")
+                        "" // No description
                 );
             }
         } catch (SQLException e) {
-            return null;
+            e.printStackTrace();
         }
         return category;
     }
 
-    //Them phan trang
+    // Get component types by page
     public static ArrayList<Category> getCategoriesByPage(int page, int size) {
         DBContext db = DBContext.getInstance();
         ArrayList<Category> list = new ArrayList<>();
         int offset = (page - 1) * size;
-        String sql = """
-                SELECT * FROM categories
-                LIMIT ? OFFSET ?
-                """;
+        String sql = "SELECT * FROM componenttype LIMIT ? OFFSET ?";
         try {
             PreparedStatement statement = db.getConnection().prepareStatement(sql);
             statement.setInt(1, size);
@@ -178,23 +129,22 @@ public class CategoryDAO {
             ResultSet rs = statement.executeQuery();
             while (rs.next()) {
                 Category category = new Category(
-                        rs.getInt("id"),
+                        rs.getInt("type_id"),
                         rs.getString("name"),
-                        rs.getString("description")
+                        "" // No description
                 );
                 list.add(category);
             }
         } catch (SQLException e) {
-            return list;
+            e.printStackTrace();
         }
         return list;
     }
 
-    //Phuong thuc dem tong so ban ghi.
-    //Dung de biet co bao nhieu trang.
+    // Get total number of component types
     public static int getTotalCategories() {
         DBContext db = DBContext.getInstance();
-        String sql = "SELECT COUNT(*) AS total FROM categories";
+        String sql = "SELECT COUNT(*) AS total FROM componenttype";
         try {
             PreparedStatement statement = db.getConnection().prepareStatement(sql);
             ResultSet rs = statement.executeQuery();
@@ -202,26 +152,22 @@ public class CategoryDAO {
                 return rs.getInt("total");
             }
         } catch (SQLException e) {
-            return 0;
+            e.printStackTrace();
         }
         return 0;
     }
 
-    // Lấy danh sách có sắp xếp theo tên
+    // Get component types by page with sorting
     public static ArrayList<Category> getCategoriesByPageAndSort(int page, int size, String sortOrder) {
         DBContext db = DBContext.getInstance();
         ArrayList<Category> list = new ArrayList<>();
         int offset = (page - 1) * size;
-        String sql;
-        
-        if (sortOrder == null || sortOrder.equals("default")) {
-            sql = "SELECT * FROM categories LIMIT ? OFFSET ?";
-        } else {
-            sql = "SELECT * FROM categories ORDER BY name " + 
-                  (sortOrder.equals("desc") ? "DESC" : "ASC") + 
-                  " LIMIT ? OFFSET ?";
+        String orderBy = "ORDER BY name " + ("desc".equalsIgnoreCase(sortOrder) ? "DESC" : "ASC");
+        if ("default".equalsIgnoreCase(sortOrder)) {
+            orderBy = "ORDER BY type_id ASC";
         }
         
+        String sql = "SELECT * FROM componenttype " + orderBy + " LIMIT ? OFFSET ?";
         try {
             PreparedStatement statement = db.getConnection().prepareStatement(sql);
             statement.setInt(1, size);
@@ -229,30 +175,24 @@ public class CategoryDAO {
             ResultSet rs = statement.executeQuery();
             while (rs.next()) {
                 Category category = new Category(
-                        rs.getInt("id"),
+                        rs.getInt("type_id"),
                         rs.getString("name"),
-                        rs.getString("description")
+                        "" // No description
                 );
                 list.add(category);
             }
         } catch (SQLException e) {
-            System.out.println("Error in getCategoriesByPageAndSort: " + e.getMessage());
-            return list;
+            e.printStackTrace();
         }
         return list;
     }
 
-    // Tìm category theo tên có phân trang
+    // Search component types with pagination
     public static ArrayList<Category> searchCategoryWithPaging(String categoryName, int page, int size) {
         DBContext db = DBContext.getInstance();
         ArrayList<Category> list = new ArrayList<>();
         int offset = (page - 1) * size;
-        String sql = """
-                    SELECT * 
-                    FROM categories 
-                    WHERE name LIKE ? 
-                    LIMIT ? OFFSET ?
-                    """;
+        String sql = "SELECT * FROM componenttype WHERE name LIKE ? LIMIT ? OFFSET ?";
         try {
             PreparedStatement statement = db.getConnection().prepareStatement(sql);
             statement.setString(1, "%" + categoryName + "%");
@@ -261,27 +201,22 @@ public class CategoryDAO {
             ResultSet rs = statement.executeQuery();
             while (rs.next()) {
                 Category category = new Category(
-                        rs.getInt("id"),
+                        rs.getInt("type_id"),
                         rs.getString("name"),
-                        rs.getString("description")
+                        "" // No description
                 );
                 list.add(category);
             }
-        } catch (SQLException ex) {
-            System.out.println("Error in searchCategoryWithPaging: " + ex.getMessage());
-            return list;
+        } catch (SQLException e) {
+            e.printStackTrace();
         }
         return list;
     }
 
-    // Đếm tổng số kết quả search
+    // Get total search results count
     public static int getTotalSearchResults(String categoryName) {
         DBContext db = DBContext.getInstance();
-        String sql = """
-                    SELECT COUNT(*) as total 
-                    FROM categories 
-                    WHERE name LIKE ?
-                    """;
+        String sql = "SELECT COUNT(*) AS total FROM componenttype WHERE name LIKE ?";
         try {
             PreparedStatement statement = db.getConnection().prepareStatement(sql);
             statement.setString(1, "%" + categoryName + "%");
@@ -290,10 +225,8 @@ public class CategoryDAO {
                 return rs.getInt("total");
             }
         } catch (SQLException e) {
-            System.out.println("Error in getTotalSearchResults: " + e.getMessage());
-            return 0;
+            e.printStackTrace();
         }
         return 0;
     }
-
 }
