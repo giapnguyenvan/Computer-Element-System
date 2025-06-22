@@ -20,7 +20,7 @@ public class CategoryDAO {
                 Category category = new Category(
                         rs.getInt("type_id"),
                         rs.getString("name"),
-                        "" // No description in componenttype table
+                        rs.getString("description")
                 );
                 listCategory.add(category);
             }
@@ -43,7 +43,7 @@ public class CategoryDAO {
                 Category category = new Category(
                         rs.getInt("type_id"),
                         rs.getString("name"),
-                        "" // No description
+                        rs.getString("description")
                 );
                 list.add(category);
             }
@@ -56,10 +56,11 @@ public class CategoryDAO {
     // Add new component type
     public static void addCategory(Category category) {
         DBContext db = DBContext.getInstance();
-        String sql = "INSERT INTO componenttype(name) VALUES (?)";
+        String sql = "INSERT INTO componenttype(name, description) VALUES (?, ?)";
         try {
             PreparedStatement statement = db.getConnection().prepareStatement(sql);
             statement.setString(1, category.getName());
+            statement.setString(2, category.getDescription());
             statement.executeUpdate();
         } catch (SQLException e) {
             e.printStackTrace();
@@ -69,11 +70,12 @@ public class CategoryDAO {
     // Update component type
     public static void updateCategory(Category category) {
         DBContext db = DBContext.getInstance();
-        String sql = "UPDATE componenttype SET name = ? WHERE type_id = ?";
+        String sql = "UPDATE componenttype SET name = ?, description = ? WHERE type_id = ?";
         try {
             PreparedStatement statement = db.getConnection().prepareStatement(sql);
             statement.setString(1, category.getName());
-            statement.setInt(2, category.getType_id());
+            statement.setString(2, category.getDescription());
+            statement.setInt(3, category.getId());
             statement.executeUpdate();
         } catch (SQLException e) {
             e.printStackTrace();
@@ -107,7 +109,7 @@ public class CategoryDAO {
                 category = new Category(
                         rs.getInt("type_id"),
                         rs.getString("name"),
-                        "" // No description
+                        rs.getString("description")
                 );
             }
         } catch (SQLException e) {
@@ -131,7 +133,7 @@ public class CategoryDAO {
                 Category category = new Category(
                         rs.getInt("type_id"),
                         rs.getString("name"),
-                        "" // No description
+                        rs.getString("description")
                 );
                 list.add(category);
             }
@@ -177,7 +179,7 @@ public class CategoryDAO {
                 Category category = new Category(
                         rs.getInt("type_id"),
                         rs.getString("name"),
-                        "" // No description
+                        rs.getString("description")
                 );
                 list.add(category);
             }
@@ -203,7 +205,7 @@ public class CategoryDAO {
                 Category category = new Category(
                         rs.getInt("type_id"),
                         rs.getString("name"),
-                        "" // No description
+                        rs.getString("description")
                 );
                 list.add(category);
             }

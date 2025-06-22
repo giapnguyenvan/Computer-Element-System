@@ -4,7 +4,7 @@
  */
 package controller;
 
-import java.util.Vector;
+import java.util.List;
 import model.Products;
 import dal.ProductDAO;
 import model.Category;
@@ -44,9 +44,9 @@ public class ProductServlet extends HttpServlet {
         String order = request.getParameter("order");
         ProductDAO dao = new ProductDAO();
         CategoryDAO cdao = new CategoryDAO();
-        Vector<Products> plist;
-        ArrayList<Category> clist = cdao.getAllCategories();
-        Vector<String> brands = dao.getAllBrands();
+        List<Products> plist;
+        List<Category> clist = cdao.getAllCategories();
+        List<String> brands = dao.getAllBrands();
 
         if (service != null) {
             switch (service) {
@@ -58,7 +58,7 @@ public class ProductServlet extends HttpServlet {
                     if (order == null || order.equals("none")) {
                         order = "asc"; // default order is ascending
                     }
-                    plist = dao.getSortedProduct(sortBy, order);
+                    plist = dao.getSortedProducts(sortBy, order);
 
                     request.setAttribute("product", plist);
                     request.setAttribute("brand", brands);
@@ -182,7 +182,7 @@ public class ProductServlet extends HttpServlet {
                     CategoryDAO categoryDAO = new CategoryDAO();
                     ProductDAO productDAO = new ProductDAO();
 
-                    Vector<Products> productl = null; // final product list
+                    List<Products> productl = null; // final product list
                     Category category = null;
 
                     if (categoryIdRaw != null && !categoryIdRaw.isEmpty()) {
@@ -191,12 +191,12 @@ public class ProductServlet extends HttpServlet {
                         productl = productDAO.getProductByCategory(categoryId);
                     } else {
                         // No category filter, get all products initially
-                        productl = productDAO.getSortedProduct(sortBy, order);
+                        productl = productDAO.getSortedProducts(sortBy, order);
                     }
 
                     // Apply brand filter if specified and productList is not null
                     if (brand != null && !brand.isEmpty() && productl != null) {
-                        Vector<Products> filteredByBrand = new Vector<>();
+                        List<Products> filteredByBrand = new ArrayList<>();
                         for (Products p : productl) {
                             if (brand.equals(p.getBrand())) {
                                 filteredByBrand.add(p);
@@ -227,11 +227,11 @@ public class ProductServlet extends HttpServlet {
 
                     ProductDAO ppdao = new ProductDAO();
                     Products product = ppdao.getProductById(productID);
-                    Vector<Products> relatedProducts = ppdao.getProductByCategory(product.getCategory_id());
+                    List<Products> relatedProducts = ppdao.getProductByCategory(product.getCategory_id());
 
                     // Get feedback data
                     FeedbackDAO feedbackDAO = new FeedbackDAO();
-                    Vector<Feedback> allFeedback = feedbackDAO.getFeedbackWithUsersByProduct(productID);
+                    List<Feedback> allFeedback = feedbackDAO.getFeedbackWithUsersByProduct(productID);
 
                     // Calculate total pages
                     int totalFeedback = allFeedback.size();
@@ -240,7 +240,7 @@ public class ProductServlet extends HttpServlet {
                     // Get paginated feedback
                     int startIdx = (page - 1) * ITEMS_PER_PAGE;
                     int endIdx = Math.min(startIdx + ITEMS_PER_PAGE, totalFeedback);
-                    Vector<Feedback> paginatedFeedback = new Vector<>();
+                    List<Feedback> paginatedFeedback = new ArrayList<>();
 
                     for (int i = startIdx; i < endIdx; i++) {
                         paginatedFeedback.add(allFeedback.get(i));
@@ -248,23 +248,21 @@ public class ProductServlet extends HttpServlet {
 
                     // Calculate average rating
                     double averageRating = 0;
-                    if (!allFeedback.isEmpty()) {
-                        double totalRating = 0;
+                    if (totalFeedback > 0) {
+                        double sum = 0;
                         for (Feedback f : allFeedback) {
-                            totalRating += f.getRating();
+                            sum += f.getRating();
                         }
-                        averageRating = totalRating / allFeedback.size();
+                        averageRating = sum / totalFeedback;
                     }
 
-                    // Set attributes for JSP
                     request.setAttribute("product", product);
                     request.setAttribute("relatedProducts", relatedProducts);
                     request.setAttribute("feedbackList", paginatedFeedback);
-                    request.setAttribute("totalFeedback", totalFeedback);
-                    request.setAttribute("currentPage", page);
                     request.setAttribute("totalPages", totalPages);
-                    request.setAttribute("averageRating", averageRating);
-
+                    request.setAttribute("currentPage", page);
+                    request.setAttribute("averageRating", String.format("%.1f", averageRating));
+                    request.setAttribute("totalFeedback", totalFeedback);
                     request.getRequestDispatcher("productDetail.jsp").forward(request, response);
                     break;
                 default:

@@ -306,6 +306,160 @@ public class ProductDAO {
         return brands;
     }
 
+    public List<Products> getSortedProducts(String sortBy, String order) {
+        DBContext db = DBContext.getInstance();
+        List<Products> list = new ArrayList<>();
+        
+        // Basic validation to prevent SQL injection
+        String sortColumn;
+        switch (sortBy.toLowerCase()) {
+            case "name":
+                sortColumn = "p.name";
+                break;
+            case "price":
+                sortColumn = "p.price";
+                break;
+            case "id":
+            default:
+                sortColumn = "p.product_id";
+                break;
+        }
+
+        String sortOrder = "asc".equalsIgnoreCase(order) ? "ASC" : "DESC";
+
+        String sql = "SELECT "
+                + "    p.product_id, p.name, p.description, p.price, p.stock, p.status, "
+                + "    p.import_price, p.created_at, p.component_type_id, p.brand_id, "
+                + "    b.name as brand_name, ct.name as component_type_name, "
+                + "    (SELECT image_url FROM productimage pi WHERE pi.product_id = p.product_id LIMIT 1) as image_url "
+                + "FROM product p "
+                + "JOIN brand b ON p.brand_id = b.brand_id "
+                + "JOIN componenttype ct ON p.component_type_id = ct.type_id "
+                + "ORDER BY " + sortColumn + " " + sortOrder;
+
+        try {
+            PreparedStatement ptm = db.getConnection().prepareStatement(sql);
+            ResultSet rs = ptm.executeQuery();
+            while (rs.next()) {
+                Products p = new Products(
+                        rs.getInt("product_id"),
+                        rs.getString("name"),
+                        rs.getInt("component_type_id"),
+                        rs.getInt("brand_id"),
+                        rs.getBigDecimal("price"),
+                        rs.getBigDecimal("import_price"),
+                        rs.getInt("stock"),
+                        rs.getString("description"),
+                        rs.getString("status"),
+                        rs.getTimestamp("created_at"),
+                        rs.getString("image_url"),
+                        rs.getString("brand_name"),
+                        rs.getString("component_type_name")
+                );
+                list.add(p);
+            }
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+        }
+        return list;
+    }
+
+    public Products getProductById(int productId) {
+        DBContext db = DBContext.getInstance();
+        Products product = null;
+        String sql = "SELECT "
+                + "    p.product_id, p.name, p.description, p.price, p.stock, p.status, "
+                + "    p.import_price, p.created_at, p.component_type_id, p.brand_id, "
+                + "    b.name as brand_name, ct.name as component_type_name, "
+                + "    (SELECT image_url FROM productimage pi WHERE pi.product_id = p.product_id LIMIT 1) as image_url "
+                + "FROM product p "
+                + "JOIN brand b ON p.brand_id = b.brand_id "
+                + "JOIN componenttype ct ON p.component_type_id = ct.type_id "
+                + "WHERE p.product_id = ?";
+
+        try {
+            PreparedStatement ptm = db.getConnection().prepareStatement(sql);
+            ptm.setInt(1, productId);
+            ResultSet rs = ptm.executeQuery();
+            if (rs.next()) {
+                product = new Products(
+                        rs.getInt("product_id"),
+                        rs.getString("name"),
+                        rs.getInt("component_type_id"),
+                        rs.getInt("brand_id"),
+                        rs.getBigDecimal("price"),
+                        rs.getBigDecimal("import_price"),
+                        rs.getInt("stock"),
+                        rs.getString("description"),
+                        rs.getString("status"),
+                        rs.getTimestamp("created_at"),
+                        rs.getString("image_url"),
+                        rs.getString("brand_name"),
+                        rs.getString("component_type_name")
+                );
+            }
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+        }
+        return product;
+    }
+
+    public void insertProduct(Products p) {
+        DBContext db = DBContext.getInstance();
+        String sql = "INSERT INTO product (name, component_type_id, brand_id, price, import_price, stock, description, status) "
+                   + "VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
+        try {
+            PreparedStatement ptm = db.getConnection().prepareStatement(sql);
+            ptm.setString(1, p.getName());
+            ptm.setInt(2, p.getComponent_type_id());
+            ptm.setInt(3, p.getBrand_id());
+            ptm.setBigDecimal(4, p.getPrice_BigDecimal());
+            ptm.setBigDecimal(5, p.getImport_price());
+            ptm.setInt(6, p.getStock());
+            ptm.setString(7, p.getDescription());
+            ptm.setString(8, p.getStatus());
+            ptm.executeUpdate();
+
+            // Note: Inserting into productimage would be a separate operation
+            // For now, we assume image_url is handled elsewhere or not stored directly in this method
+
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+        }
+    }
+
+    public void updateProduct(Products p) {
+        DBContext db = DBContext.getInstance();
+        String sql = "UPDATE product SET "
+                   + "name = ?, "
+                   + "component_type_id = ?, "
+                   + "brand_id = ?, "
+                   + "price = ?, "
+                   + "import_price = ?, "
+                   + "stock = ?, "
+                   + "description = ?, "
+                   + "status = ? "
+                   + "WHERE product_id = ?";
+        try {
+            PreparedStatement ptm = db.getConnection().prepareStatement(sql);
+            ptm.setString(1, p.getName());
+            ptm.setInt(2, p.getComponent_type_id());
+            ptm.setInt(3, p.getBrand_id());
+            ptm.setBigDecimal(4, p.getPrice_BigDecimal());
+            ptm.setBigDecimal(5, p.getImport_price());
+            ptm.setInt(6, p.getStock());
+            ptm.setString(7, p.getDescription());
+            ptm.setString(8, p.getStatus());
+            ptm.setInt(9, p.getProduct_id());
+            ptm.executeUpdate();
+            
+            // Note: Updating productimage would be a separate operation
+
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+        }
+    }
+
     public static void main(String[] args) {
         ProductDAO dao = new ProductDAO();
         Vector<Products> list = dao.getAllProduct();

@@ -2,7 +2,7 @@ package controller;
 
 import dal.ProductDAO;
 import java.io.IOException;
-import java.util.Vector;
+import java.util.List;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
@@ -39,7 +39,7 @@ public class CPUCategoryServlet extends HttpServlet {
             }
 
             // Get products for current page
-            Vector<Products> cpuProducts = productDAO.getCPUProductsWithPaging(currentPage, productsPerPage);
+            List<Products> cpuProducts = productDAO.getCPUProductsWithPaging(currentPage, productsPerPage);
 
             // Set attributes
             request.setAttribute("cpuProducts", cpuProducts);
