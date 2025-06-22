@@ -16,26 +16,28 @@ public class ProductDAO {
         DBContext db = DBContext.getInstance();
         Vector<Products> listProduct = new Vector<>();
         // This query is updated to match the new database schema
-        String sql = "SELECT "
-                + "    p.product_id, "
-                + "    p.name, "
-                + "    p.description, "
-                + "    p.price, "
-                + "    p.stock, "
-                + "    p.status, "
-                + "    p.import_price, "
-                + "    p.created_at, "
-                + "    p.component_type_id, "
-                + "    p.brand_id, "
-                + "    b.name as brand_name, "
-                + "    ct.name as component_type_name, "
-                + "    (SELECT image_url FROM productimage pi WHERE pi.product_id = p.product_id LIMIT 1) as image_url "
-                + "FROM "
-                + "    product p "
-                + "JOIN "
-                + "    brand b ON p.brand_id = b.brand_id "
-                + "JOIN "
-                + "    componenttype ct ON p.component_type_id = ct.type_id";
+        String sql = """
+                     SELECT
+                         p.product_id,
+                         p.name,
+                         p.description,
+                         p.price,
+                         p.stock,
+                         p.status,
+                         p.import_price,
+                         p.created_at,
+                         p.component_type_id,
+                         p.brand_id,
+                         b.name as brand_name,
+                         ct.name as component_type_name,
+                         (SELECT image_url FROM productimage pi WHERE pi.product_id = p.product_id LIMIT 1) as image_url
+                     FROM
+                         product p
+                     JOIN
+                         brand b ON p.brand_id = b.brand_id
+                     JOIN
+                         componenttype ct ON p.component_type_id = ct.type_id
+                     """;
 
         try {
             PreparedStatement ptm = db.getConnection().prepareStatement(sql);
@@ -83,14 +85,16 @@ public class ProductDAO {
     public List<Products> getCPUProductsWithPaging(int page, int productsPerPage) {
         DBContext db = DBContext.getInstance();
         List<Products> list = new ArrayList<>();
-        String sql = "SELECT p.*, b.name as brand_name, ct.name as component_type_name, "
-                + "(SELECT image_url FROM productimage pi WHERE pi.product_id = p.product_id LIMIT 1) as image_url "
-                + "FROM product p "
-                + "JOIN brand b ON p.brand_id = b.brand_id "
-                + "JOIN componenttype ct ON p.component_type_id = ct.type_id "
-                + "WHERE p.component_type_id = 1 " // CPU type_id = 1
-                + "ORDER BY p.product_id "
-                + "LIMIT ? OFFSET ?";
+        String sql = """
+                     SELECT p.*, b.name as brand_name, ct.name as component_type_name,
+                            (SELECT image_url FROM productimage pi WHERE pi.product_id = p.product_id LIMIT 1) as image_url
+                     FROM product p
+                     JOIN brand b ON p.brand_id = b.brand_id
+                     JOIN componenttype ct ON p.component_type_id = ct.type_id
+                     WHERE p.component_type_id = 1
+                     ORDER BY p.product_id
+                     LIMIT ? OFFSET ?
+                     """;
         try {
             PreparedStatement ptm = db.getConnection().prepareStatement(sql);
             ptm.setInt(1, productsPerPage);
@@ -138,14 +142,16 @@ public class ProductDAO {
     public List<Products> getGPUProductsWithPaging(int page, int productsPerPage) {
         DBContext db = DBContext.getInstance();
         List<Products> list = new ArrayList<>();
-        String sql = "SELECT p.*, b.name as brand_name, ct.name as component_type_name, "
-                + "(SELECT image_url FROM productimage pi WHERE pi.product_id = p.product_id LIMIT 1) as image_url "
-                + "FROM product p "
-                + "JOIN brand b ON p.brand_id = b.brand_id "
-                + "JOIN componenttype ct ON p.component_type_id = ct.type_id "
-                + "WHERE p.component_type_id = 2 " // GPU type_id = 2
-                + "ORDER BY p.product_id "
-                + "LIMIT ? OFFSET ?";
+        String sql = """
+                     SELECT p.*, b.name as brand_name, ct.name as component_type_name,
+                            (SELECT image_url FROM productimage pi WHERE pi.product_id = p.product_id LIMIT 1) as image_url
+                     FROM product p
+                     JOIN brand b ON p.brand_id = b.brand_id
+                     JOIN componenttype ct ON p.component_type_id = ct.type_id
+                     WHERE p.component_type_id = 2
+                     ORDER BY p.product_id
+                     LIMIT ? OFFSET ?
+                     """;
         try {
             PreparedStatement ptm = db.getConnection().prepareStatement(sql);
             ptm.setInt(1, productsPerPage);
@@ -193,14 +199,16 @@ public class ProductDAO {
     public List<Products> getRAMProductsWithPaging(int page, int productsPerPage) {
         DBContext db = DBContext.getInstance();
         List<Products> list = new ArrayList<>();
-        String sql = "SELECT p.*, b.name as brand_name, ct.name as component_type_name, "
-                + "(SELECT image_url FROM productimage pi WHERE pi.product_id = p.product_id LIMIT 1) as image_url "
-                + "FROM product p "
-                + "JOIN brand b ON p.brand_id = b.brand_id "
-                + "JOIN componenttype ct ON p.component_type_id = ct.type_id "
-                + "WHERE p.component_type_id = 4 " // RAM type_id = 4
-                + "ORDER BY p.product_id "
-                + "LIMIT ? OFFSET ?";
+        String sql = """
+                     SELECT p.*, b.name as brand_name, ct.name as component_type_name,
+                            (SELECT image_url FROM productimage pi WHERE pi.product_id = p.product_id LIMIT 1) as image_url
+                     FROM product p
+                     JOIN brand b ON p.brand_id = b.brand_id
+                     JOIN componenttype ct ON p.component_type_id = ct.type_id
+                     WHERE p.component_type_id = 4
+                     ORDER BY p.product_id
+                     LIMIT ? OFFSET ?
+                     """;
         try {
             PreparedStatement ptm = db.getConnection().prepareStatement(sql);
             ptm.setInt(1, productsPerPage);
@@ -327,15 +335,17 @@ public class ProductDAO {
 
         String sortOrder = "asc".equalsIgnoreCase(order) ? "ASC" : "DESC";
 
-        String sql = "SELECT "
-                + "    p.product_id, p.name, p.description, p.price, p.stock, p.status, "
-                + "    p.import_price, p.created_at, p.component_type_id, p.brand_id, "
-                + "    b.name as brand_name, ct.name as component_type_name, "
-                + "    (SELECT image_url FROM productimage pi WHERE pi.product_id = p.product_id LIMIT 1) as image_url "
-                + "FROM product p "
-                + "JOIN brand b ON p.brand_id = b.brand_id "
-                + "JOIN componenttype ct ON p.component_type_id = ct.type_id "
-                + "ORDER BY " + sortColumn + " " + sortOrder;
+        String sql = String.format("""
+            SELECT
+                p.product_id, p.name, p.description, p.price, p.stock, p.status,
+                p.import_price, p.created_at, p.component_type_id, p.brand_id,
+                b.name as brand_name, ct.name as component_type_name,
+                (SELECT image_url FROM productimage pi WHERE pi.product_id = p.product_id LIMIT 1) as image_url
+            FROM product p
+            JOIN brand b ON p.brand_id = b.brand_id
+            JOIN componenttype ct ON p.component_type_id = ct.type_id
+            ORDER BY %s %s
+            """, sortColumn, sortOrder);
 
         try {
             PreparedStatement ptm = db.getConnection().prepareStatement(sql);
@@ -367,15 +377,17 @@ public class ProductDAO {
     public Products getProductById(int productId) {
         DBContext db = DBContext.getInstance();
         Products product = null;
-        String sql = "SELECT "
-                + "    p.product_id, p.name, p.description, p.price, p.stock, p.status, "
-                + "    p.import_price, p.created_at, p.component_type_id, p.brand_id, "
-                + "    b.name as brand_name, ct.name as component_type_name, "
-                + "    (SELECT image_url FROM productimage pi WHERE pi.product_id = p.product_id LIMIT 1) as image_url "
-                + "FROM product p "
-                + "JOIN brand b ON p.brand_id = b.brand_id "
-                + "JOIN componenttype ct ON p.component_type_id = ct.type_id "
-                + "WHERE p.product_id = ?";
+        String sql = """
+                     SELECT
+                         p.product_id, p.name, p.description, p.price, p.stock, p.status,
+                         p.import_price, p.created_at, p.component_type_id, p.brand_id,
+                         b.name as brand_name, ct.name as component_type_name,
+                         (SELECT image_url FROM productimage pi WHERE pi.product_id = p.product_id LIMIT 1) as image_url
+                     FROM product p
+                     JOIN brand b ON p.brand_id = b.brand_id
+                     JOIN componenttype ct ON p.component_type_id = ct.type_id
+                     WHERE p.product_id = ?
+                     """;
 
         try {
             PreparedStatement ptm = db.getConnection().prepareStatement(sql);
@@ -406,8 +418,10 @@ public class ProductDAO {
 
     public void insertProduct(Products p) {
         DBContext db = DBContext.getInstance();
-        String sql = "INSERT INTO product (name, component_type_id, brand_id, price, import_price, stock, description, status) "
-                   + "VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
+        String sql = """
+                     INSERT INTO product (name, component_type_id, brand_id, price, import_price, stock, description, status)
+                     VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+                     """;
         try {
             PreparedStatement ptm = db.getConnection().prepareStatement(sql);
             ptm.setString(1, p.getName());
@@ -430,16 +444,18 @@ public class ProductDAO {
 
     public void updateProduct(Products p) {
         DBContext db = DBContext.getInstance();
-        String sql = "UPDATE product SET "
-                   + "name = ?, "
-                   + "component_type_id = ?, "
-                   + "brand_id = ?, "
-                   + "price = ?, "
-                   + "import_price = ?, "
-                   + "stock = ?, "
-                   + "description = ?, "
-                   + "status = ? "
-                   + "WHERE product_id = ?";
+        String sql = """
+                     UPDATE product SET
+                         name = ?,
+                         component_type_id = ?,
+                         brand_id = ?,
+                         price = ?,
+                         import_price = ?,
+                         stock = ?,
+                         description = ?,
+                         status = ?
+                     WHERE product_id = ?
+                     """;
         try {
             PreparedStatement ptm = db.getConnection().prepareStatement(sql);
             ptm.setString(1, p.getName());
