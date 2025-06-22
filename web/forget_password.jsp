@@ -187,13 +187,14 @@
         <div class="login-form-box">
             <h2>Forgot Password</h2>
             <p>Enter your details to reset your password</p>
+            <div id="clientError" class="alert alert-danger" style="display:none;" role="alert"></div>
             <c:if test="${not empty error}">
                 <div class="alert alert-danger" role="alert">${error}</div>
             </c:if>
             <c:if test="${not empty success}">
                 <div class="alert alert-success" role="alert">${success}</div>
             </c:if>
-            <form action="forget-password" method="post">
+            <form action="forget-password" method="post" id="forgetPasswordForm">
                 <div class="mb-3">
                     <label class="form-label" for="username">Username</label>
                     <input type="text" class="form-control" id="username" name="username" required
@@ -212,5 +213,37 @@
         </div>
     </div>
 </div>
+<script>
+    function validateEmail(email) {
+        const re = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+        return re.test(email);
+    }
+
+    const forgetPasswordForm = document.getElementById('forgetPasswordForm');
+    if (forgetPasswordForm) {
+        forgetPasswordForm.addEventListener('submit', function (event) {
+            const email = document.getElementById('email').value;
+            const username = document.getElementById('username').value;
+            const errorDiv = document.getElementById('clientError');
+            let errors = [];
+
+            if (username.trim() === '') {
+                errors.push("Username is required.");
+            }
+
+            if (!validateEmail(email)) {
+                errors.push("Invalid email format.");
+            }
+
+            if (errors.length > 0) {
+                event.preventDefault();
+                errorDiv.innerHTML = errors.join('<br>');
+                errorDiv.style.display = 'block';
+            } else {
+                errorDiv.style.display = 'none';
+            }
+        });
+    }
+</script>
 </body>
 </html>

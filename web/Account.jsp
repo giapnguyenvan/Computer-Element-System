@@ -493,8 +493,9 @@
                     <h5 class="modal-title">Add New Account</h5>
                     <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
                 </div>
-                <form action="Account_control" method="POST">
+                <form action="Account_control" method="POST" id="addAccountForm">
                     <div class="modal-body">
+                        <div id="addAccountError" class="alert alert-danger d-none" role="alert"></div>
                         <input type="hidden" name="action" value="add">
                         <div class="mb-3">
                             <label class="form-label">Username</label>
@@ -533,8 +534,9 @@
                     <h5 class="modal-title">Edit Account</h5>
                     <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
                 </div>
-                <form action="Account_control" method="POST">
+                <form action="Account_control" method="POST" id="editAccountForm">
                     <div class="modal-body">
+                        <div id="editAccountError" class="alert alert-danger d-none" role="alert"></div>
                         <input type="hidden" name="action" value="update">
                         <input type="hidden" name="account_id" id="edit_account_id">
                         <div class="mb-3">
@@ -570,8 +572,9 @@
                     <h5 class="modal-title">Reset Password</h5>
                     <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
                 </div>
-                <form action="Account_control" method="POST">
+                <form action="Account_control" method="POST" id="resetPasswordForm">
                     <div class="modal-body">
+                        <div id="resetPasswordError" class="alert alert-danger d-none" role="alert"></div>
                         <input type="hidden" name="action" value="updatePassword">
                         <input type="hidden" name="account_id" id="reset_account_id">
                         
@@ -627,8 +630,9 @@
                     <h5 class="modal-title">Edit Customer</h5>
                     <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
                 </div>
-                <form action="Customer_control" method="POST">
+                <form action="Customer_control" method="POST" id="editCustomerForm">
                     <div class="modal-body">
+                        <div id="editCustomerError" class="alert alert-danger d-none" role="alert"></div>
                         <input type="hidden" name="action" value="update">
                         <input type="hidden" name="customer_id" id="edit_customer_id">
                         <div class="mb-3">
@@ -665,8 +669,9 @@
                     <h5 class="modal-title">Reset Customer Password</h5>
                     <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
                 </div>
-                <form action="Customer_control" method="POST">
+                <form action="Customer_control" method="POST" id="resetCustomerPasswordForm">
                     <div class="modal-body">
+                        <div id="resetCustomerPasswordError" class="alert alert-danger d-none" role="alert"></div>
                         <input type="hidden" name="action" value="updatePassword">
                         <input type="hidden" name="customer_id" id="reset_customer_id">
                         <div class="mb-3">
@@ -763,6 +768,142 @@
                 const button = event.relatedTarget;
                 document.getElementById('delete_customer_id').value = button.getAttribute('data-id');
                 document.getElementById('delete_customer_name').textContent = button.getAttribute('data-name');
+            });
+        }
+
+        // --- Validation ---
+        function validateEmail(email) {
+            const re = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+            return re.test(email);
+        }
+
+        function validatePassword(password) {
+            const re = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
+            return re.test(password);
+        }
+
+        // Add Account Form
+        const addAccountForm = document.getElementById('addAccountForm');
+        if(addAccountForm) {
+            addAccountForm.addEventListener('submit', function (event) {
+                const email = this.querySelector('input[name="email"]').value;
+                const password = this.querySelector('input[name="password"]').value;
+                const errorDiv = document.getElementById('addAccountError');
+                let errors = [];
+
+                if (!validateEmail(email)) {
+                    errors.push("Email không hợp lệ. Vui lòng nhập lại.");
+                }
+
+                if (!validatePassword(password)) {
+                    errors.push("Mật khẩu phải có ít nhất 8 ký tự, gồm chữ hoa, chữ thường, số và ký tự đặc biệt.");
+                }
+
+                if (errors.length > 0) {
+                    event.preventDefault();
+                    errorDiv.innerHTML = errors.join('<br>');
+                    errorDiv.classList.remove('d-none');
+                } else {
+                    errorDiv.classList.add('d-none');
+                }
+            });
+        }
+
+        // Edit Account Form
+        const editAccountForm = document.getElementById('editAccountForm');
+        if(editAccountForm) {
+            editAccountForm.addEventListener('submit', function (event) {
+                const email = this.querySelector('input[name="email"]').value;
+                const errorDiv = document.getElementById('editAccountError');
+                let errors = [];
+
+                if (!validateEmail(email)) {
+                    errors.push("Email không hợp lệ. Vui lòng nhập lại.");
+                }
+
+                if (errors.length > 0) {
+                    event.preventDefault();
+                    errorDiv.innerHTML = errors.join('<br>');
+                    errorDiv.classList.remove('d-none');
+                } else {
+                    errorDiv.classList.add('d-none');
+                }
+            });
+        }
+
+        // Reset Password Form
+        const resetPasswordForm = document.getElementById('resetPasswordForm');
+        if(resetPasswordForm) {
+            resetPasswordForm.addEventListener('submit', function (event) {
+                const newPassword = this.querySelector('input[name="new_password"]').value;
+                const confirmPassword = this.querySelector('input[name="confirm_password"]').value;
+                const errorDiv = document.getElementById('resetPasswordError');
+                let errors = [];
+
+                if (!validatePassword(newPassword)) {
+                    errors.push("Mật khẩu phải có ít nhất 8 ký tự, gồm chữ hoa, chữ thường, số và ký tự đặc biệt.");
+                }
+                
+                if (newPassword !== confirmPassword) {
+                    errors.push("Mật khẩu xác nhận không khớp.");
+                }
+
+                if (errors.length > 0) {
+                    event.preventDefault();
+                    errorDiv.innerHTML = errors.join('<br>');
+                    errorDiv.classList.remove('d-none');
+                } else {
+                    errorDiv.classList.add('d-none');
+                }
+            });
+        }
+
+        // Edit Customer Form
+        const editCustomerForm = document.getElementById('editCustomerForm');
+        if(editCustomerForm) {
+            editCustomerForm.addEventListener('submit', function (event) {
+                const email = this.querySelector('input[name="email"]').value;
+                const errorDiv = document.getElementById('editCustomerError');
+                let errors = [];
+
+                if (!validateEmail(email)) {
+                    errors.push("Email không hợp lệ. Vui lòng nhập lại.");
+                }
+
+                if (errors.length > 0) {
+                    event.preventDefault();
+                    errorDiv.innerHTML = errors.join('<br>');
+                    errorDiv.classList.remove('d-none');
+                } else {
+                    errorDiv.classList.add('d-none');
+                }
+            });
+        }
+
+        // Reset Customer Password Form
+        const resetCustomerPasswordForm = document.getElementById('resetCustomerPasswordForm');
+        if(resetCustomerPasswordForm) {
+            resetCustomerPasswordForm.addEventListener('submit', function (event) {
+                const newPassword = this.querySelector('input[name="new_password"]').value;
+                const confirmPassword = this.querySelector('input[name="confirm_password"]').value;
+                const errorDiv = document.getElementById('resetCustomerPasswordError');
+                let errors = [];
+
+                if (!validatePassword(newPassword)) {
+                    errors.push("Mật khẩu phải có ít nhất 8 ký tự, gồm chữ hoa, chữ thường, số và ký tự đặc biệt.");
+                }
+                
+                if (newPassword !== confirmPassword) {
+                    errors.push("Mật khẩu xác nhận không khớp.");
+                }
+
+                if (errors.length > 0) {
+                    event.preventDefault();
+                    errorDiv.innerHTML = errors.join('<br>');
+                    errorDiv.classList.remove('d-none');
+                } else {
+                    errorDiv.classList.add('d-none');
+                }
             });
         }
     </script>

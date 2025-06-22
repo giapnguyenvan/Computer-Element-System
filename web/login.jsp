@@ -293,7 +293,8 @@
                     <% if (error != null) { %>
                     <div class="alert alert-danger" role="alert"><%= error %></div>
                     <% } %>
-                    <form action="login" method="post">
+                    <div id="clientError" class="alert alert-danger" style="display:none;" role="alert"></div>
+                    <form action="login" method="post" id="loginForm">
                         <div class="mb-3">
                             <label class="form-label" for="email">User Name</label>
                             <input type="text" class="form-control" id="email" name="email"
@@ -322,5 +323,32 @@
                 </div>
             </div>
         </div>
+        <script>
+            const loginForm = document.getElementById('loginForm');
+            if (loginForm) {
+                loginForm.addEventListener('submit', function (event) {
+                    const email = document.getElementById('email').value;
+                    const password = document.getElementById('password').value;
+                    const errorDiv = document.getElementById('clientError');
+                    let errors = [];
+
+                    if (email.trim() === '') {
+                        errors.push("Username is required.");
+                    }
+
+                    if (password.trim() === '') {
+                        errors.push("Password is required.");
+                    }
+
+                    if (errors.length > 0) {
+                        event.preventDefault();
+                        errorDiv.innerHTML = errors.join('<br>');
+                        errorDiv.style.display = 'block';
+                    } else {
+                        errorDiv.style.display = 'none';
+                    }
+                });
+            }
+        </script>
     </body>
 </html>

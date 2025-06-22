@@ -242,38 +242,39 @@
                 <% if (error != null) { %>
                     <div class="error"><%= error %></div>
                 <% } %>
-                <form action="register" method="post">
+                <div id="clientError" class="alert alert-danger" style="display:none;" role="alert"></div>
+                <form action="register" method="post" id="registerForm">
                     <div class="form-col">
                         <label class="form-label" for="fullname">Full Name:</label>
-                        <input type="text" class="form-control" id="fullname" name="fullname" "
+                        <input type="text" class="form-control" id="fullname" name="fullname" required
                                value="${param.fullname != null ? param.fullname : (not empty fullname ? fullname : '')}">
                     </div>
                     <div class="form-col">
                         <label class="form-label" for="email">Email:</label>
-                        <input type="email" class="form-control" id="email" name="email" 
+                        <input type="email" class="form-control" id="email" name="email" required
                                value="${param.email != null ? param.email : (not empty email ? email : '')}">
                     </div>
                     <div class="form-col">
                         <label class="form-label" for="username">Username:</label>
-                        <input type="text" class="form-control" id="username" name="username" 
+                        <input type="text" class="form-control" id="username" name="username" required
                                value="${param.username != null ? param.username : (not empty username ? username : '')}">
                     </div>
                     <div class="form-col">
                         <label class="form-label" for="phone">Phone Number:</label>
-                        <input type="tel" class="form-control" id="phone" name="phone" 
+                        <input type="tel" class="form-control" id="phone" name="phone" required
                                value="${param.phone != null ? param.phone : (not empty phone ? phone : '')}">
                     </div>
                     <div class="form-col">
                         <label class="form-label" for="password">Password:</label>
-                        <input type="password" class="form-control" id="password" name="password" >
+                        <input type="password" class="form-control" id="password" name="password" required>
                     </div>
                     <div class="form-col">
                         <label class="form-label" for="confirmPassword">Confirm Password:</label>
-                        <input type="password" class="form-control" id="confirmPassword" name="confirmPassword" >
+                        <input type="password" class="form-control" id="confirmPassword" name="confirmPassword" required>
                     </div>
                     <div class="form-col-full">
                         <label class="form-label" for="address">Address:</label>
-                        <input type="text" class="form-control" id="address" name="address" 
+                        <input type="text" class="form-control" id="address" name="address" required
                                value="${param.address != null ? param.address : (not empty address ? address : '')}">
                     </div>
                     <button type="submit" class="btn-register">Sign Up</button>
@@ -284,6 +285,47 @@
             </div>
         </div>
     </div>
+    <script>
+        function validateEmail(email) {
+            const re = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+            return re.test(email);
+        }
 
+        function validatePassword(password) {
+            const re = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
+            return re.test(password);
+        }
+
+        const registerForm = document.getElementById('registerForm');
+        if (registerForm) {
+            registerForm.addEventListener('submit', function (event) {
+                const email = document.getElementById('email').value;
+                const password = document.getElementById('password').value;
+                const confirmPassword = document.getElementById('confirmPassword').value;
+                const errorDiv = document.getElementById('clientError');
+                let errors = [];
+
+                if (!validateEmail(email)) {
+                    errors.push("Email không hợp lệ. Vui lòng nhập lại.");
+                }
+
+                if (!validatePassword(password)) {
+                    errors.push("Mật khẩu phải có ít nhất 8 ký tự, gồm chữ hoa, chữ thường, số và ký tự đặc biệt.");
+                }
+
+                if (password !== confirmPassword) {
+                    errors.push("Mật khẩu xác nhận không khớp.");
+                }
+
+                if (errors.length > 0) {
+                    event.preventDefault();
+                    errorDiv.innerHTML = errors.join('<br>');
+                    errorDiv.style.display = 'block';
+                } else {
+                    errorDiv.style.display = 'none';
+                }
+            });
+        }
+    </script>
 </body>
 </html>
