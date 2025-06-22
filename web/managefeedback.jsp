@@ -100,7 +100,6 @@
 </head>
 <body>
     <div class="container mt-5">
-        <h1 class="text-center mb-4">Manage Feedback</h1>
         
         <!-- Success/Error Messages -->
         <c:if test="${not empty success}">
@@ -116,13 +115,6 @@
             </div>
         </c:if>
         
-        <!-- Add New Feedback Button -->
-        <div class="text-end mb-4">
-            <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addFeedbackModal">
-                Add New Feedback
-            </button>
-        </div>
-
         <!-- Stats Section -->
         <div class="row mb-4">
             <div class="col-md-12">
@@ -198,7 +190,7 @@
                                 </div>
                             </td>
                             <td>${feedback.productName}</td>
-                            <td>${feedback.userName}</td>
+                            <td>${feedback.customerName}</td>
                             <td>${feedback.created_at}</td>
                             <td>
                                 <div class="action-buttons">
@@ -208,21 +200,11 @@
                                             data-content="${fn:escapeXml(feedback.content)}"
                                             data-created="${feedback.created_at}"
                                             data-product-name="${feedback.productName}"
-                                            data-user-name="${feedback.userName}">
+                                            data-user-name="${feedback.customerName}">
                                         View
                                     </button>
-                                    <button type="button" class="btn btn-sm btn-primary" 
-                                            onclick="editFeedback(this)"
-                                            data-id="${feedback.id}"
-                                            data-rating="${feedback.rating}"
-                                            data-content="${fn:escapeXml(feedback.content)}"
-                                            data-user-name="${feedback.userName}"
-                                            data-bs-toggle="modal" 
-                                            data-bs-target="#editFeedbackModal">
-                                        Edit
-                                    </button>
                                     <button type="button" class="btn btn-sm btn-danger" 
-                                            onclick="deleteFeedback('${feedback.id}', '${feedback.userName}')"
+                                            onclick="deleteFeedback('${feedback.feedback_id}', '${feedback.customerEmail}')"
                                             data-bs-toggle="modal" 
                                             data-bs-target="#deleteFeedbackModal">
                                         Delete
@@ -292,7 +274,7 @@
                         
                         <div class="mb-3">
                             <label class="form-label">User ID:</label>
-                            <input type="number" class="form-control" name="user_id" required>
+                            <input type="number" class="form-control" name="customer_id" required>
                         </div>
                         
                         <div class="mb-3">
@@ -325,50 +307,6 @@
         </div>
     </div>
 
-    <!-- Edit Feedback Modal -->
-    <div class="modal fade" id="editFeedbackModal" tabindex="-1">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title">Edit Feedback</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-                </div>
-                <form action="managefeedback" method="POST">
-                    <div class="modal-body">
-                        <input type="hidden" name="action" value="update">
-                        <input type="hidden" name="feedback_id" id="edit_feedback_id">
-                        <input type="hidden" name="user_name" id="edit_user_name">
-                        
-                        <div class="mb-3">
-                            <label class="form-label">Rating:</label>
-                            <div class="rating-input">
-                                <input type="radio" id="edit_star5" name="rating" value="5">
-                                <label for="edit_star5">★</label>
-                                <input type="radio" id="edit_star4" name="rating" value="4">
-                                <label for="edit_star4">★</label>
-                                <input type="radio" id="edit_star3" name="rating" value="3">
-                                <label for="edit_star3">★</label>
-                                <input type="radio" id="edit_star2" name="rating" value="2">
-                                <label for="edit_star2">★</label>
-                                <input type="radio" id="edit_star1" name="rating" value="1">
-                                <label for="edit_star1">★</label>
-                            </div>
-                        </div>
-                        
-                        <div class="mb-3">
-                            <label class="form-label">Content:</label>
-                            <textarea class="form-control" name="content" id="edit_content" rows="3" required></textarea>
-                        </div>
-                    </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                        <button type="submit" class="btn btn-primary">Update Feedback</button>
-                    </div>
-                </form>
-            </div>
-        </div>
-    </div>
-
     <!-- Delete Feedback Modal -->
     <div class="modal fade" id="deleteFeedbackModal" tabindex="-1">
         <div class="modal-dialog">
@@ -381,7 +319,7 @@
                     <div class="modal-body">
                         <input type="hidden" name="action" value="delete">
                         <input type="hidden" name="feedback_id" id="delete_feedback_id">
-                        <input type="hidden" name="user_name" id="delete_user_name">
+                        <input type="hidden" name="customer_email" id="delete_customer_email">
                         <p>Are you sure you want to delete this feedback? This action cannot be undone.</p>
                     </div>
                     <div class="modal-footer">
@@ -443,21 +381,9 @@
             new bootstrap.Modal(document.getElementById('feedbackContentModal')).show();
         }
         
-        function editFeedback(element) {
-            const id = element.getAttribute('data-id');
-            const rating = element.getAttribute('data-rating');
-            const content = element.getAttribute('data-content');
-            const userName = element.getAttribute('data-user-name');
-            
-            document.getElementById('edit_feedback_id').value = id;
-            document.getElementById('edit_user_name').value = userName;
-            document.getElementById('edit_content').value = content;
-            document.querySelector(`#editFeedbackModal input[value="${rating}"]`).checked = true;
-        }
-        
-        function deleteFeedback(id, userName) {
+        function deleteFeedback(id, customerEmail) {
             document.getElementById('delete_feedback_id').value = id;
-            document.getElementById('delete_user_name').value = userName;
+            document.getElementById('delete_customer_email').value = customerEmail;
         }
     </script>
 </body>

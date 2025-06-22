@@ -45,17 +45,19 @@ public class FeedbackControl extends HttpServlet {
             String redirectUrl = "viewfeedback";
 
             switch (action) {
-                case "add" -> handleAddFeedback(request, feedbackDAO);
-                    
-                case "update" -> handleUpdateFeedback(request, feedbackDAO);
-                    
-                case "delete" -> handleDeleteFeedback(request, feedbackDAO);
-                    
-                default -> {
+                case "add":
+                    handleAddFeedback(request, feedbackDAO);
+                    break;
+                case "update":
+                    handleUpdateFeedback(request, feedbackDAO);
+                    break;
+                case "delete":
+                    handleDeleteFeedback(request, feedbackDAO);
+                    break;
+                default:
                     request.setAttribute("error", "Invalid action specified");
                     request.getRequestDispatcher("error.jsp").forward(request, response);
                     return;
-                }
             }
 
             // Preserve the current page and filters in the redirect
@@ -80,14 +82,14 @@ public class FeedbackControl extends HttpServlet {
 
     private void handleAddFeedback(HttpServletRequest request, FeedbackDAO feedbackDAO) throws Exception {
         int productId = Integer.parseInt(request.getParameter("product_id"));
-        int userId = Integer.parseInt(request.getParameter("user_id"));
+        int customerId = Integer.parseInt(request.getParameter("customer_id"));
         int rating = Integer.parseInt(request.getParameter("rating"));
         String content = request.getParameter("content");
 
         Feedback newFeedback = new Feedback(
             0, // ID will be auto-generated
+            customerId,
             productId,
-            userId,
             rating,
             content,
             LocalDateTime.now().toString()
@@ -98,7 +100,7 @@ public class FeedbackControl extends HttpServlet {
 
     private void handleUpdateFeedback(HttpServletRequest request, FeedbackDAO feedbackDAO) throws Exception {
         int feedbackId = Integer.parseInt(request.getParameter("feedback_id"));
-        int userId = Integer.parseInt(request.getParameter("user_id"));
+        int customerId = Integer.parseInt(request.getParameter("customer_id"));
         int rating = Integer.parseInt(request.getParameter("rating"));
         String content = request.getParameter("content");
 
@@ -108,8 +110,8 @@ public class FeedbackControl extends HttpServlet {
             throw new Exception("Feedback not found");
         }
 
-        // Verify user owns this feedback
-        if (existingFeedback.getUser_id() != userId) {
+        // Verify customer owns this feedback
+        if (existingFeedback.getCustomer_id() != customerId) {
             throw new Exception("Unauthorized to update this feedback");
         }
 
@@ -129,7 +131,7 @@ public class FeedbackControl extends HttpServlet {
         }
 
         // Delete the feedback
-        feedbackDAO.deleteFeedback(feedbackId, existingFeedback.getUser_id());
+        feedbackDAO.deleteFeedback(feedbackId, existingFeedback.getCustomer_id());
     }
 
     // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
@@ -177,8 +179,8 @@ public class FeedbackControl extends HttpServlet {
             System.out.println("Test Case 1: Adding new feedback");
             Feedback newFeedback = new Feedback(
                 0,  // ID will be auto-generated
+                1,  // customer_id
                 1,  // product_id
-                2,  // user_id
                 5,  // rating
                 "This is a test feedback for product 1",
                 LocalDateTime.now().toString()
@@ -194,11 +196,11 @@ public class FeedbackControl extends HttpServlet {
                 System.out.println(f.toString());
             }
             
-            // Test Case 3: Get feedback by user
-            System.out.println("\nTest Case 3: Getting feedback for user 2");
-            Vector<Feedback> userFeedbacks = feedbackDAO.getFeedbackByUser(2);
-            System.out.println("Feedback count for user 2: " + userFeedbacks.size());
-            for (Feedback f : userFeedbacks) {
+            // Test Case 3: Get feedback by customer
+            System.out.println("\nTest Case 3: Getting feedback for customer 1");
+            Vector<Feedback> customerFeedbacks = feedbackDAO.getFeedbackByCustomer(1);
+            System.out.println("Feedback count for customer 1: " + customerFeedbacks.size());
+            for (Feedback f : customerFeedbacks) {
                 System.out.println(f.toString());
             }
             
@@ -212,7 +214,7 @@ public class FeedbackControl extends HttpServlet {
                 System.out.println("Updated feedback successfully");
                 
                 // Verify update
-                Feedback updatedFeedback = feedbackDAO.getFeedbackById(feedbackToUpdate.getId());
+                Feedback updatedFeedback = feedbackDAO.getFeedbackById(feedbackToUpdate.getFeedback_id());
                 System.out.println("Updated feedback: " + updatedFeedback.toString());
             }
             

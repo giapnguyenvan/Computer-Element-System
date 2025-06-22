@@ -51,16 +51,16 @@
                                         <p class="card-text">${feedback.content}</p>
                                         <div class="d-flex justify-content-between align-items-center">
                                             <small class="text-muted">
-                                                By ${not empty feedback.userName ? feedback.userName : 'Anonymous User'}
+                                                By ${not empty feedback.customerName ? feedback.customerName : 'Anonymous User'}
                                             </small>
-                                            <c:if test="${sessionScope.user.id == feedback.user_id}">
+                                            <c:if test="${not empty sessionScope.customer && sessionScope.customer.customer_id == feedback.customer_id}">
                                                 <div class="btn-group">
                                                     <button type="button" class="btn btn-sm btn-outline-primary" 
-                                                            onclick="editFeedback(${feedback.id}, '${fn:escapeXml(feedback.content)}', ${feedback.rating})">
+                                                            onclick="editFeedback('${feedback.feedback_id}', '${fn:escapeXml(feedback.content)}', '${feedback.rating}')">
                                                         Edit
                                                     </button>
                                                     <button type="button" class="btn btn-sm btn-outline-danger" 
-                                                            onclick="deleteFeedback(${feedback.id})">
+                                                            onclick="deleteFeedback('${feedback.feedback_id}')">
                                                         Delete
                                                     </button>
                                                 </div>

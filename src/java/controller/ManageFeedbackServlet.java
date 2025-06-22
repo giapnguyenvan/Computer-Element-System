@@ -1,6 +1,7 @@
 package controller;
 
 import dal.FeedbackDAO;
+import dal.CustomerDAO;
 import java.io.IOException;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
@@ -9,19 +10,20 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.util.Vector;
 import model.Feedback;
+import model.Customer;
 import java.util.Collections;
 import java.time.LocalDateTime;
-import dal.UserDAO;
-import model.User;
 
 @WebServlet(name = "ManageFeedbackServlet", urlPatterns = {"/managefeedback"})
 public class ManageFeedbackServlet extends HttpServlet {
 
     private static final int PAGE_SIZE = 10; // Number of feedback items per page
     private final FeedbackDAO feedbackDAO;
+    private final CustomerDAO customerDAO;
 
     public ManageFeedbackServlet() {
         feedbackDAO = new FeedbackDAO();
+        customerDAO = new CustomerDAO();
     }
 
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
@@ -151,12 +153,12 @@ public class ManageFeedbackServlet extends HttpServlet {
             throws ServletException, IOException {
         try {
             int productId = Integer.parseInt(request.getParameter("product_id"));
-            int userId = Integer.parseInt(request.getParameter("user_id"));
+            int customerId = Integer.parseInt(request.getParameter("customer_id"));
             int rating = Integer.parseInt(request.getParameter("rating"));
             String content = request.getParameter("content");
 
             // Create new feedback object
-            Feedback feedback = new Feedback(0, productId, userId, rating, content, LocalDateTime.now().toString());
+            Feedback feedback = new Feedback(0, customerId, productId, rating, content, LocalDateTime.now().toString());
             
             // Save feedback
             feedbackDAO.insertFeedback(feedback);
@@ -176,22 +178,21 @@ public class ManageFeedbackServlet extends HttpServlet {
             throws ServletException, IOException {
         try {
             int feedbackId = Integer.parseInt(request.getParameter("feedback_id"));
-            String userName = request.getParameter("user_name");
+            String customerEmail = request.getParameter("customer_email");
             int rating = Integer.parseInt(request.getParameter("rating"));
             String content = request.getParameter("content");
 
-            // Get user ID from username
-            UserDAO userDAO = new UserDAO();
-            User user = userDAO.getUserByUsername(userName);
-            if (user == null) {
-                throw new Exception("User not found");
+            // Get customer by email
+            Customer customer = customerDAO.getCustomerByEmail(customerEmail);
+            if (customer == null) {
+                throw new Exception("Customer not found");
             }
 
             // Get existing feedback
             Feedback feedback = feedbackDAO.getFeedbackById(feedbackId);
             if (feedback != null) {
-                // Verify user owns this feedback
-                if (feedback.getUser_id() != user.getId()) {
+                // Verify customer owns this feedback
+                if (feedback.getCustomer_id() != customer.getCustomer_id()) {
                     throw new Exception("Unauthorized to update this feedback");
                 }
                 
@@ -217,25 +218,24 @@ public class ManageFeedbackServlet extends HttpServlet {
             throws ServletException, IOException {
         try {
             int feedbackId = Integer.parseInt(request.getParameter("feedback_id"));
-            String userName = request.getParameter("user_name");
+            String customerEmail = request.getParameter("customer_email");
             
-            // Get user ID from username
-            UserDAO userDAO = new UserDAO();
-            User user = userDAO.getUserByUsername(userName);
-            if (user == null) {
-                throw new Exception("User not found");
+            // Get customer by email
+            Customer customer = customerDAO.getCustomerByEmail(customerEmail);
+            if (customer == null) {
+                throw new Exception("Customer not found");
             }
             
             // Get existing feedback to verify ownership
             Feedback feedback = feedbackDAO.getFeedbackById(feedbackId);
             if (feedback != null) {
-                // Verify user owns this feedback
-                if (feedback.getUser_id() != user.getId()) {
+                // Verify customer owns this feedback
+                if (feedback.getCustomer_id() != customer.getCustomer_id()) {
                     throw new Exception("Unauthorized to delete this feedback");
                 }
                 
                 // Delete feedback
-                feedbackDAO.deleteFeedback(feedbackId, user.getId());
+                feedbackDAO.deleteFeedback(feedbackId, customer.getCustomer_id());
                 request.getSession().setAttribute("success", "Feedback deleted successfully");
             } else {
                 request.getSession().setAttribute("error", "Feedback not found");

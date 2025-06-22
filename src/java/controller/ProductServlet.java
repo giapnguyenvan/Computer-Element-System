@@ -229,9 +229,12 @@ public class ProductServlet extends HttpServlet {
                     Products product = ppdao.getProductById(productID);
                     List<Products> relatedProducts = ppdao.getProductByCategory(product.getCategory_id());
 
-                    // Get feedback data
+                    // Get feedback data and ensure lists are not null
                     FeedbackDAO feedbackDAO = new FeedbackDAO();
-                    List<Feedback> allFeedback = feedbackDAO.getFeedbackWithUsersByProduct(productID);
+                    List<Feedback> allFeedback = feedbackDAO.getFeedbackWithCustomersByProduct(productID);
+                    if (allFeedback == null) {
+                        allFeedback = new ArrayList<>();
+                    }
 
                     // Calculate total pages
                     int totalFeedback = allFeedback.size();
@@ -242,8 +245,10 @@ public class ProductServlet extends HttpServlet {
                     int endIdx = Math.min(startIdx + ITEMS_PER_PAGE, totalFeedback);
                     List<Feedback> paginatedFeedback = new ArrayList<>();
 
-                    for (int i = startIdx; i < endIdx; i++) {
-                        paginatedFeedback.add(allFeedback.get(i));
+                    if (!allFeedback.isEmpty()) {
+                        for (int i = startIdx; i < endIdx; i++) {
+                            paginatedFeedback.add(allFeedback.get(i));
+                        }
                     }
 
                     // Calculate average rating

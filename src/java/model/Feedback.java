@@ -1,35 +1,36 @@
 package model;
 
 public class Feedback {
-    private int id;
+    private int feedback_id;
+    private int customer_id;
     private int product_id;
-    private int user_id;
     private int rating;
     private String content;
     private String created_at;
-    private String userName;
+    private String customerName;
+    private String customerEmail;
     private String productName;
 
-    public Feedback(int id, int product_id, int user_id, int rating, String content, String created_at) {
-        this.id = id;
+    public Feedback(int feedback_id, int customer_id, int product_id, int rating, String content, String created_at) {
+        this.feedback_id = feedback_id;
+        this.customer_id = customer_id;
         this.product_id = product_id;
-        this.user_id = user_id;
         this.rating = rating;
         this.content = content;
         this.created_at = created_at;
     }
 
     // Getters
-    public int getId() {
-        return id;
+    public int getFeedback_id() {
+        return feedback_id;
+    }
+
+    public int getCustomer_id() {
+        return customer_id;
     }
 
     public int getProduct_id() {
         return product_id;
-    }
-
-    public int getUser_id() {
-        return user_id;
     }
 
     public int getRating() {
@@ -44,8 +45,12 @@ public class Feedback {
         return created_at;
     }
 
-    public String getUserName() {
-        return userName;
+    public String getCustomerName() {
+        return customerName;
+    }
+
+    public String getCustomerEmail() {
+        return customerEmail;
     }
 
     public String getProductName() {
@@ -53,16 +58,16 @@ public class Feedback {
     }
 
     // Setters
-    public void setId(int id) {
-        this.id = id;
+    public void setFeedback_id(int feedback_id) {
+        this.feedback_id = feedback_id;
+    }
+
+    public void setCustomer_id(int customer_id) {
+        this.customer_id = customer_id;
     }
 
     public void setProduct_id(int product_id) {
         this.product_id = product_id;
-    }
-
-    public void setUser_id(int user_id) {
-        this.user_id = user_id;
     }
 
     public void setRating(int rating) {
@@ -77,8 +82,12 @@ public class Feedback {
         this.created_at = created_at;
     }
 
-    public void setUserName(String userName) {
-        this.userName = userName;
+    public void setCustomerName(String customerName) {
+        this.customerName = customerName;
+    }
+
+    public void setCustomerEmail(String customerEmail) {
+        this.customerEmail = customerEmail;
     }
 
     public void setProductName(String productName) {
@@ -87,7 +96,8 @@ public class Feedback {
 
     @Override
     public String toString() {
-        return "Feedback{" + "id=" + id + ", product_id=" + product_id + ", user_id=" + user_id + 
-               ", rating=" + rating + ", content=" + content + ", created_at=" + created_at + '}';
+        return "Feedback{" + "feedback_id=" + feedback_id + ", customer_id=" + customer_id + 
+               ", product_id=" + product_id + ", rating=" + rating + ", content=" + content + 
+               ", created_at=" + created_at + '}';
     }
 } 

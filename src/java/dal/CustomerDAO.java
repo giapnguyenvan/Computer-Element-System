@@ -45,6 +45,29 @@ public class CustomerDAO {
         return null;
     }
 
+    public Customer getCustomerByEmail(String email) throws SQLException {
+        String sql = "SELECT * FROM Customer WHERE email = ?";
+        try (Connection conn = dbContext.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+            stmt.setString(1, email);
+            try (java.sql.ResultSet rs = stmt.executeQuery()) {
+                if (rs.next()) {
+                    Customer customer = new Customer(
+                        rs.getInt("customer_id"),
+                        0, // user_id không còn dùng
+                        rs.getString("name"),
+                        rs.getString("phone"),
+                        rs.getString("shipping_address")
+                    );
+                    customer.setEmail(rs.getString("email"));
+                    customer.setPassword(rs.getString("password"));
+                    return customer;
+                }
+            }
+        }
+        return null;
+    }
+
     public boolean isEmailExists(String email) throws SQLException {
         String sql = "SELECT email FROM Customer WHERE email = ?";
         try (Connection conn = dbContext.getConnection();
