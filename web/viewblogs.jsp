@@ -103,24 +103,22 @@
                             <h5 class="card-title">${blog.title}</h5>
                             <div class="blog-meta mb-2">
                                 <small>
-                                    Created: ${blog.created_at}<br>
-                                    Updated: ${blog.updated_at}
+                                    Created: ${blog.created_at}
                                 </small>
                             </div>
                             <div class="blog-content">
                                 <p class="card-text">${fn:substring(blog.content, 0, 200)}${fn:length(blog.content) > 200 ? '...' : ''}</p>
                             </div>
                             <div class="blog-meta">
-                                <small>Author: ${userNames[blog.user_id]}</small>
+                                <small>Author: ${customerNames[blog.customer_id]}</small>
                             </div>
                             <div class="mt-3">
                                 <button type="button" class="btn btn-sm btn-info" 
                                         onclick="showBlogContent(this)" 
                                         data-title="${fn:escapeXml(blog.title)}"
                                         data-content="${fn:escapeXml(blog.content)}"
-                                        data-author="${fn:escapeXml(userNames[blog.user_id])}"
-                                        data-created="${blog.created_at}"
-                                        data-updated="${blog.updated_at}">
+                                        data-author="${fn:escapeXml(customerNames[blog.customer_id])}"
+                                        data-created="${blog.created_at}">
                                     View Details
                                 </button>
                             </div>
@@ -178,8 +176,7 @@
                     <div class="blog-meta mb-3">
                         <small>
                             Author: <span id="modalBlogAuthor"></span><br>
-                            Created: <span id="modalBlogCreated"></span><br>
-                            Updated: <span id="modalBlogUpdated"></span>
+                            Created: <span id="modalBlogCreated"></span>
                         </small>
                     </div>
                     <div id="modalBlogContent" style="white-space: pre-wrap;"></div>
@@ -198,13 +195,11 @@
             const content = element.getAttribute('data-content');
             const author = element.getAttribute('data-author');
             const created = element.getAttribute('data-created');
-            const updated = element.getAttribute('data-updated');
             
             document.getElementById('modalBlogTitle').textContent = title;
             document.getElementById('modalBlogContent').textContent = content;
             document.getElementById('modalBlogAuthor').textContent = author;
             document.getElementById('modalBlogCreated').textContent = created;
-            document.getElementById('modalBlogUpdated').textContent = updated;
             
             new bootstrap.Modal(document.getElementById('blogContentModal')).show();
         }

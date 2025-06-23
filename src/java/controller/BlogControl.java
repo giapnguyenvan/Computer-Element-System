@@ -189,13 +189,13 @@ public class BlogControl extends HttpServlet {
     throws ServletException, IOException {
         String title = request.getParameter("title");
         String content = request.getParameter("content");
-        String userIdStr = request.getParameter("user_id");
+        String customerIdStr = request.getParameter("customer_id");
         
         // Validate input
         StringBuilder errors = new StringBuilder();
         if (title == null || title.trim().isEmpty()) errors.append("Title is required. ");
         if (content == null || content.trim().isEmpty()) errors.append("Content is required. ");
-        if (userIdStr == null || userIdStr.trim().isEmpty()) errors.append("User ID is required. ");
+        if (customerIdStr == null || customerIdStr.trim().isEmpty()) errors.append("Customer ID is required. ");
         
         if (errors.length() > 0) {
             request.getSession().setAttribute("error", errors.toString());
@@ -204,14 +204,14 @@ public class BlogControl extends HttpServlet {
         }
         
         try {
-            int userId = Integer.parseInt(userIdStr);
-            Blog blog = new Blog(0, title.trim(), content.trim(), userId, null, null);
+            int customerId = Integer.parseInt(customerIdStr);
+            Blog blog = new Blog(0, title.trim(), content.trim(), customerId, null);
             blogDAO.insertBlog(blog);
             
             request.getSession().setAttribute("success", "Blog created successfully!");
             response.sendRedirect(request.getContextPath() + "/viewblogs");
         } catch (NumberFormatException e) {
-            request.getSession().setAttribute("error", "Invalid user ID format.");
+            request.getSession().setAttribute("error", "Invalid customer ID format.");
             response.sendRedirect(request.getContextPath() + "/viewblogs");
         }
     }
@@ -221,14 +221,14 @@ public class BlogControl extends HttpServlet {
         String idStr = request.getParameter("id");
         String title = request.getParameter("title");
         String content = request.getParameter("content");
-        String userIdStr = request.getParameter("user_id");
+        String customerIdStr = request.getParameter("customer_id");
         
         // Validate input
         StringBuilder errors = new StringBuilder();
         if (idStr == null || idStr.trim().isEmpty()) errors.append("Blog ID is required. ");
         if (title == null || title.trim().isEmpty()) errors.append("Title is required. ");
         if (content == null || content.trim().isEmpty()) errors.append("Content is required. ");
-        if (userIdStr == null || userIdStr.trim().isEmpty()) errors.append("User ID is required. ");
+        if (customerIdStr == null || customerIdStr.trim().isEmpty()) errors.append("Customer ID is required. ");
         
         if (errors.length() > 0) {
             request.getSession().setAttribute("error", errors.toString());
@@ -238,8 +238,8 @@ public class BlogControl extends HttpServlet {
         
         try {
             int id = Integer.parseInt(idStr);
-            int userId = Integer.parseInt(userIdStr);
-            Blog blog = new Blog(id, title.trim(), content.trim(), userId, null, null);
+            int customerId = Integer.parseInt(customerIdStr);
+            Blog blog = new Blog(id, title.trim(), content.trim(), customerId, null);
             blogDAO.updateBlog(blog);
             
             request.getSession().setAttribute("success", "Blog updated successfully!");
@@ -254,9 +254,9 @@ public class BlogControl extends HttpServlet {
     throws ServletException, IOException {
         try {
             int id = Integer.parseInt(request.getParameter("id"));
-            int userId = Integer.parseInt(request.getParameter("user_id"));
+            int customerId = Integer.parseInt(request.getParameter("customer_id"));
             
-            blogDAO.deleteBlog(id, userId);
+            blogDAO.deleteBlog(id, customerId);
             request.getSession().setAttribute("success", "Blog deleted successfully!");
             response.sendRedirect(request.getContextPath() + "/viewblogs");
         } catch (NumberFormatException e) {

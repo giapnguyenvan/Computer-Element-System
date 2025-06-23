@@ -1,25 +1,25 @@
 package model;
 
+import java.sql.Timestamp;
+
 public class Blog {
-    private int id;
+    private int blog_id;
     private String title;
     private String content;
-    private int user_id;
-    private String created_at;
-    private String updated_at;
+    private int customer_id;
+    private Timestamp created_at;
 
-    public Blog(int id, String title, String content, int user_id, String created_at, String updated_at) {
-        this.id = id;
+    public Blog(int blog_id, String title, String content, int customer_id, Timestamp created_at) {
+        this.blog_id = blog_id;
         this.title = title;
         this.content = content;
-        this.user_id = user_id;
+        this.customer_id = customer_id;
         this.created_at = created_at;
-        this.updated_at = updated_at;
     }
 
     // Getters
-    public int getId() {
-        return id;
+    public int getBlog_id() {
+        return blog_id;
     }
 
     public String getTitle() {
@@ -30,21 +30,17 @@ public class Blog {
         return content;
     }
 
-    public int getUser_id() {
-        return user_id;
+    public int getCustomer_id() {
+        return customer_id;
     }
 
-    public String getCreated_at() {
+    public Timestamp getCreated_at() {
         return created_at;
     }
 
-    public String getUpdated_at() {
-        return updated_at;
-    }
-
     // Setters
-    public void setId(int id) {
-        this.id = id;
+    public void setBlog_id(int blog_id) {
+        this.blog_id = blog_id;
     }
 
     public void setTitle(String title) {
@@ -55,21 +51,17 @@ public class Blog {
         this.content = content;
     }
 
-    public void setUser_id(int user_id) {
-        this.user_id = user_id;
+    public void setCustomer_id(int customer_id) {
+        this.customer_id = customer_id;
     }
 
-    public void setCreated_at(String created_at) {
+    public void setCreated_at(Timestamp created_at) {
         this.created_at = created_at;
-    }
-
-    public void setUpdated_at(String updated_at) {
-        this.updated_at = updated_at;
     }
 
     @Override
     public String toString() {
-        return "Blog{" + "id=" + id + ", title=" + title + ", content=" + content + 
-               ", user_id=" + user_id + ", created_at=" + created_at + ", updated_at=" + updated_at + '}';
+        return "Blog{" + "blog_id=" + blog_id + ", title=" + title + ", content=" + content + 
+               ", customer_id=" + customer_id + ", created_at=" + created_at + '}';
     }
 } 

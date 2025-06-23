@@ -6,7 +6,7 @@
 package controller;
 
 import dal.BlogDAO;
-import dal.UserDAO;
+import dal.CustomerDAO;
 import java.io.IOException;
 import java.io.PrintWriter;
 import jakarta.servlet.ServletException;
@@ -15,8 +15,9 @@ import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.util.Vector;
+import java.util.List;
 import model.Blog;
-import model.User;
+import model.Customer;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
@@ -30,11 +31,11 @@ public class ViewBlogServlet extends HttpServlet {
    
     private static final int PAGE_SIZE = 10; // Number of blogs per page
     private final BlogDAO blogDAO;
-    private final UserDAO userDAO;
+    private final CustomerDAO customerDAO;
 
     public ViewBlogServlet() {
         blogDAO = new BlogDAO();
-        userDAO = UserDAO.getInstance();
+        customerDAO = new CustomerDAO();
     }
 
     /** 
@@ -52,27 +53,33 @@ public class ViewBlogServlet extends HttpServlet {
             // Get all blogs first (we'll filter and sort them in memory)
             Vector<Blog> allBlogs = blogDAO.getAllBlogs(1, Integer.MAX_VALUE);
             
-            // Create a map to store user information
-            Map<Integer, String> userNames = new HashMap<>();
+            // Create a map to store customer information
+            Map<Integer, String> customerNames = new HashMap<>();
             
-            // Fetch user information for each blog
+            // Get all customers for lookup
+            List<Customer> customerList = customerDAO.getAllCustomers();
+            
+            // Fetch customer information for each blog
             for (Blog blog : allBlogs) {
                 try {
-                    int userId = blog.getUser_id();
-                    // Get user by ID and store their name
-                    User user = userDAO.getUserById(userId);
-                    if (user != null) {
-                        userNames.put(userId, user.getFullname());
+                    int customerId = blog.getCustomer_id();
+                    // Get customer by ID and store their name
+                    Customer customer = customerList.stream()
+                        .filter(c -> c.getCustomer_id() == customerId)
+                        .findFirst()
+                        .orElse(null);
+                    if (customer != null) {
+                        customerNames.put(customerId, customer.getName());
                     } else {
-                        userNames.put(userId, "Unknown User");
+                        customerNames.put(customerId, "Unknown Customer");
                     }
                 } catch (Exception e) {
-                    userNames.put(blog.getUser_id(), "Unknown User");
+                    customerNames.put(blog.getCustomer_id(), "Unknown Customer");
                 }
             }
             
-            // Store the user names map in request
-            request.setAttribute("userNames", userNames);
+            // Store the customer names map in request
+            request.setAttribute("customerNames", customerNames);
             
             // Apply search filter if specified
             String search = request.getParameter("search");
@@ -80,10 +87,10 @@ public class ViewBlogServlet extends HttpServlet {
                 Vector<Blog> searchedList = new Vector<>();
                 search = search.toLowerCase();
                 for (Blog b : allBlogs) {
-                    String userName = userNames.get(b.getUser_id());
+                    String customerName = customerNames.get(b.getCustomer_id());
                     if (b.getTitle().toLowerCase().contains(search) || 
                         b.getContent().toLowerCase().contains(search) ||
-                        (userName != null && userName.toLowerCase().contains(search))) {
+                        (customerName != null && customerName.toLowerCase().contains(search))) {
                         searchedList.add(b);
                     }
                 }
@@ -112,8 +119,8 @@ public class ViewBlogServlet extends HttpServlet {
                         break;
                     case "author":
                         Collections.sort(allBlogs, (b1, b2) -> {
-                            String name1 = userNames.get(b1.getUser_id());
-                            String name2 = userNames.get(b2.getUser_id());
+                            String name1 = customerNames.get(b1.getCustomer_id());
+                            String name2 = customerNames.get(b2.getCustomer_id());
                             return name1.compareToIgnoreCase(name2);
                         });
                         break;
@@ -202,27 +209,7 @@ public class ViewBlogServlet extends HttpServlet {
     @Override
     public void doPost(HttpServletRequest request, HttpServletResponse response)
     throws ServletException, IOException {
-        String action = request.getParameter("action");
-        
-        try {
-            switch (action) {
-                case "add":
-                    addBlog(request, response);
-                    break;
-                case "update":
-                    updateBlog(request, response);
-                    break;
-                case "delete":
-                    deleteBlog(request, response);
-                    break;
-                default:
-                    response.sendRedirect("viewblogs");
-                    break;
-            }
-        } catch (Exception ex) {
-            request.setAttribute("error", "Error: " + ex.getMessage());
-            request.getRequestDispatcher("viewblogs.jsp").forward(request, response);
-        }
+        processRequest(request, response);
     }
 
     /** 
@@ -231,7 +218,7 @@ public class ViewBlogServlet extends HttpServlet {
      */
     @Override
     public String getServletInfo() {
-        return "ViewBlog Servlet handles displaying and managing blogs";
+        return "ViewBlog Servlet";
     }// </editor-fold>
 
     private void listBlogs(HttpServletRequest request, HttpServletResponse response)
@@ -246,12 +233,16 @@ public class ViewBlogServlet extends HttpServlet {
             Blog blog = blogDAO.getBlogById(blogId);
             
             if (blog != null) {
-                // Get user information
-                User user = userDAO.getUserById(blog.getUser_id());
+                // Get customer information
+                List<Customer> customers = customerDAO.getAllCustomers();
+                Customer customer = customers.stream()
+                    .filter(c -> c.getCustomer_id() == blog.getCustomer_id())
+                    .findFirst()
+                    .orElse(null);
                 request.setAttribute("blog", blog);
-                request.setAttribute("author", user != null ? user.getFullname() : "Unknown User");
+                request.setAttribute("author", customer != null ? customer.getName() : "Unknown Customer");
                 
-                // Forward to the view blogs page with the modal open
+                // Forward to the view blog page
                 request.getRequestDispatcher("viewblogs.jsp").forward(request, response);
             } else {
                 request.getSession().setAttribute("error", "Blog not found");
@@ -265,19 +256,19 @@ public class ViewBlogServlet extends HttpServlet {
 
     private void addBlog(HttpServletRequest request, HttpServletResponse response)
     throws ServletException, IOException {
-        // Implementation not needed for view servlet
-        response.sendRedirect(request.getContextPath() + "/viewblogs");
+        // This method is not used in view mode
+        response.sendRedirect("viewblogs");
     }
 
     private void updateBlog(HttpServletRequest request, HttpServletResponse response)
     throws ServletException, IOException {
-        // Implementation not needed for view servlet
-        response.sendRedirect(request.getContextPath() + "/viewblogs");
+        // This method is not used in view mode
+        response.sendRedirect("viewblogs");
     }
 
     private void deleteBlog(HttpServletRequest request, HttpServletResponse response)
     throws ServletException, IOException {
-        // Implementation not needed for view servlet
-        response.sendRedirect(request.getContextPath() + "/viewblogs");
+        // This method is not used in view mode
+        response.sendRedirect("viewblogs");
     }
 }

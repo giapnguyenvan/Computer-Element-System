@@ -116,38 +116,36 @@
                             <h5 class="card-title">${blog.title}</h5>
                             <div class="blog-meta mb-2">
                                 <small>
-                                    Created: ${blog.created_at}<br>
-                                    Updated: ${blog.updated_at}
+                                    Created: ${blog.created_at}
                                 </small>
                             </div>
                             <div class="blog-content">
                                 <p class="card-text">${fn:substring(blog.content, 0, 200)}${fn:length(blog.content) > 200 ? '...' : ''}</p>
                             </div>
                             <div class="blog-meta">
-                                <small>Author: ${userNames[blog.user_id]}</small>
+                                <small>Author: ${customerNames[blog.customer_id]}</small>
                             </div>
                             <div class="mt-3">
                                 <button type="button" class="btn btn-sm btn-info" 
                                         onclick="showBlogContent(this)" 
                                         data-title="${fn:escapeXml(blog.title)}"
                                         data-content="${fn:escapeXml(blog.content)}"
-                                        data-author="${fn:escapeXml(userNames[blog.user_id])}"
-                                        data-created="${blog.created_at}"
-                                        data-updated="${blog.updated_at}">
+                                        data-author="${fn:escapeXml(customerNames[blog.customer_id])}"
+                                        data-created="${blog.created_at}">
                                     View Details
                                 </button>
                                 <button type="button" class="btn btn-sm btn-primary" 
                                         onclick="editBlog(this)"
-                                        data-id="${blog.id}"
+                                        data-id="${blog.blog_id}"
                                         data-title="${fn:escapeXml(blog.title)}"
                                         data-content="${fn:escapeXml(blog.content)}"
-                                        data-user-id="${blog.user_id}"
+                                        data-customer-id="${blog.customer_id}"
                                         data-bs-toggle="modal" 
                                         data-bs-target="#editBlogModal">
                                     Edit
                                 </button>
                                 <button type="button" class="btn btn-sm btn-danger" 
-                                        onclick="confirmDelete('${blog.id}', '${blog.user_id}')">
+                                        onclick="confirmDelete('${blog.blog_id}', '${blog.customer_id}')">
                                     Delete
                                 </button>
                             </div>
@@ -211,9 +209,9 @@
                         
                         <div class="mb-3">
                             <label class="form-label">Author:</label>
-                            <select class="form-select" name="username" required>
-                                <c:forEach items="${userList}" var="user">
-                                    <option value="${user.username}">${user.fullname}</option>
+                            <select class="form-select" name="customer_email" required>
+                                <c:forEach items="${customerList}" var="customer">
+                                    <option value="${customer.email}">${customer.name}</option>
                                 </c:forEach>
                             </select>
                         </div>
@@ -239,7 +237,7 @@
                     <div class="modal-body">
                         <input type="hidden" name="action" value="update">
                         <input type="hidden" name="id" id="edit_blog_id">
-                        <input type="hidden" name="user_id" id="edit_user_id">
+                        <input type="hidden" name="customer_id" id="edit_customer_id">
                         
                         <div class="mb-3">
                             <label class="form-label">Title:</label>
@@ -272,8 +270,7 @@
                     <div class="blog-meta mb-3">
                         <small>
                             Author: <span id="modalBlogAuthor"></span><br>
-                            Created: <span id="modalBlogCreated"></span><br>
-                            Updated: <span id="modalBlogUpdated"></span>
+                            Created: <span id="modalBlogCreated"></span>
                         </small>
                     </div>
                     <div id="modalBlogContent" style="white-space: pre-wrap;"></div>
@@ -292,13 +289,11 @@
             const content = element.getAttribute('data-content');
             const author = element.getAttribute('data-author');
             const created = element.getAttribute('data-created');
-            const updated = element.getAttribute('data-updated');
             
             document.getElementById('modalBlogTitle').textContent = title;
             document.getElementById('modalBlogContent').textContent = content;
             document.getElementById('modalBlogAuthor').textContent = author;
             document.getElementById('modalBlogCreated').textContent = created;
-            document.getElementById('modalBlogUpdated').textContent = updated;
             
             new bootstrap.Modal(document.getElementById('blogContentModal')).show();
         }
@@ -307,15 +302,15 @@
             const id = element.getAttribute('data-id');
             const title = element.getAttribute('data-title');
             const content = element.getAttribute('data-content');
-            const userId = element.getAttribute('data-user-id');
+            const customerId = element.getAttribute('data-customer-id');
             
             document.getElementById('edit_blog_id').value = id;
             document.getElementById('edit_title').value = title;
             document.getElementById('edit_content').value = content;
-            document.getElementById('edit_user_id').value = userId;
+            document.getElementById('edit_customer_id').value = customerId;
         }
         
-        function confirmDelete(blogId, userId) {
+        function confirmDelete(blogId, customerId) {
             if (confirm('Are you sure you want to delete this blog?')) {
                 const form = document.createElement('form');
                 form.method = 'POST';
@@ -331,14 +326,14 @@
                 idInput.name = 'id';
                 idInput.value = blogId;
                 
-                const userIdInput = document.createElement('input');
-                userIdInput.type = 'hidden';
-                userIdInput.name = 'user_id';
-                userIdInput.value = userId;
+                const customerIdInput = document.createElement('input');
+                customerIdInput.type = 'hidden';
+                customerIdInput.name = 'customer_id';
+                customerIdInput.value = customerId;
                 
                 form.appendChild(actionInput);
                 form.appendChild(idInput);
-                form.appendChild(userIdInput);
+                form.appendChild(customerIdInput);
                 document.body.appendChild(form);
                 form.submit();
             }
