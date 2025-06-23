@@ -12,7 +12,7 @@ import shop.anotation.*;
  *
  * @author admin
  */
-@Table(name = "orders")
+@Table(name = "Order")
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
@@ -21,27 +21,31 @@ import shop.anotation.*;
 @Setter
 public class Order {
     @Id
-    @Column(name = "id")
+    @Column(name = "order_id")
     Integer id;
     
-    @Column(name = "user_id")
-    Integer userId;
+    @Column(name = "customer_id")
+    Integer customerId;
     
     @Column(name = "order_date")
     Date orderDate;
     
-    @Column(name = "total_price")
-    BigDecimal totalPrice;
+    @Column(name = "total_amount")
+    BigDecimal totalAmount;
     
-    @Column(name = "payment_method_id")
-    Integer paymentMethodId;
+    @Column(name = "shipping_address")
+    String shippingAddress;
+    
+    @Column(name = "shipping_fee")
+    String shippingFee;
     
     @Column(name = "status")
     @Enumerated
     String status; // 'pending', 'shipping', 'completed', 'cancelled'
     
-    @Column(name = "address")
-    String address;
+    
+    @Column(name = "payment_method_id")
+    Integer paymentMethodId;
     
     List<OrderDetail> orderDetails;
     

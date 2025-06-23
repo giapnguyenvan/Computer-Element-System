@@ -13,7 +13,7 @@ import shop.anotation.*;
  *
  * @author admin
  */
-@Table(name = "cart_items")
+@Table(name = "CartItem")
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
@@ -23,11 +23,11 @@ import shop.anotation.*;
 public class CartItem {
 
     @Id
-    @Column(name = "id")
+    @Column(name = "cart_item_id")
     Integer id;
 
-    @Column(name = "user_id")
-    Integer userId;
+    @Column(name = "customer_id")
+    Integer customerId;
 
     @Column(name = "product_id")
     Integer productId;
