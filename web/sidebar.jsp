@@ -30,7 +30,7 @@
         <a href="${pageContext.request.contextPath}/productservlet" target="mainFrame" class="<%= request.getRequestURI().contains("productservlet") ? "active" : "" %>">
             <i class="fas fa-box me-2"></i> Products
         </a>
-        <a href="${pageContext.request.contextPath}/viewblogs" target="mainFrame" class="<%= request.getRequestURI().contains("viewblogs") ? "active" : "" %>">
+        <a href="${pageContext.request.contextPath}/manageblogs" target="mainFrame" class="<%= request.getRequestURI().contains("viewblogs") ? "active" : "" %>">
             <i class="fas fa-blog me-2"></i> Blogs
         </a>
         <a href="${pageContext.request.contextPath}/managefeedback" target="mainFrame" class="<%= request.getRequestURI().contains("managefeedback") ? "active" : "" %>">

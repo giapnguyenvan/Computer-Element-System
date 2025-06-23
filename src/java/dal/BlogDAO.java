@@ -12,7 +12,7 @@ public class BlogDAO {
     public Vector<Blog> getAllBlogs(int page, int pageSize) {
         DBContext db = DBContext.getInstance();
         Vector<Blog> listBlogs = new Vector<>();
-        String sql = "SELECT * FROM blogs ORDER BY created_at DESC LIMIT ? OFFSET ?";
+        String sql = "SELECT * FROM blog ORDER BY created_at DESC LIMIT ? OFFSET ?";
         try {
             PreparedStatement ptm = db.getConnection().prepareStatement(sql);
             ptm.setInt(1, pageSize);
@@ -20,12 +20,11 @@ public class BlogDAO {
             ResultSet rs = ptm.executeQuery();
             while (rs.next()) {
                 Blog b = new Blog(
-                    rs.getInt("id"),
+                    rs.getInt("blog_id"),
                     rs.getString("title"),
                     rs.getString("content"),
-                    rs.getInt("user_id"),
-                    rs.getString("created_at"),
-                    rs.getString("updated_at")
+                    rs.getInt("customer_id"),
+                    rs.getTimestamp("created_at")
                 );
                 listBlogs.add(b);
             }
@@ -38,19 +37,18 @@ public class BlogDAO {
     // Get blog by ID
     public Blog getBlogById(int blogId) {
         DBContext db = DBContext.getInstance();
-        String sql = "SELECT * FROM blogs WHERE id = ?";
+        String sql = "SELECT * FROM blog WHERE blog_id = ?";
         try {
             PreparedStatement ptm = db.getConnection().prepareStatement(sql);
             ptm.setInt(1, blogId);
             ResultSet rs = ptm.executeQuery();
             if (rs.next()) {
                 return new Blog(
-                    rs.getInt("id"),
+                    rs.getInt("blog_id"),
                     rs.getString("title"),
                     rs.getString("content"),
-                    rs.getInt("user_id"),
-                    rs.getString("created_at"),
-                    rs.getString("updated_at")
+                    rs.getInt("customer_id"),
+                    rs.getTimestamp("created_at")
                 );
             }
         } catch (SQLException ex) {
@@ -59,23 +57,22 @@ public class BlogDAO {
         return null;
     }
 
-    // Get blogs by user ID
-    public Vector<Blog> getBlogsByUser(int userId) {
+    // Get blogs by customer ID
+    public Vector<Blog> getBlogsByCustomer(int customerId) {
         DBContext db = DBContext.getInstance();
         Vector<Blog> listBlogs = new Vector<>();
-        String sql = "SELECT * FROM blogs WHERE user_id = ? ORDER BY created_at DESC";
+        String sql = "SELECT * FROM blog WHERE customer_id = ? ORDER BY created_at DESC";
         try {
             PreparedStatement ptm = db.getConnection().prepareStatement(sql);
-            ptm.setInt(1, userId);
+            ptm.setInt(1, customerId);
             ResultSet rs = ptm.executeQuery();
             while (rs.next()) {
                 Blog b = new Blog(
-                    rs.getInt("id"),
+                    rs.getInt("blog_id"),
                     rs.getString("title"),
                     rs.getString("content"),
-                    rs.getInt("user_id"),
-                    rs.getString("created_at"),
-                    rs.getString("updated_at")
+                    rs.getInt("customer_id"),
+                    rs.getTimestamp("created_at")
                 );
                 listBlogs.add(b);
             }
@@ -88,12 +85,12 @@ public class BlogDAO {
     // Insert new blog
     public void insertBlog(Blog b) {
         DBContext db = DBContext.getInstance();
-        String sql = "INSERT INTO blogs (title, content, user_id) VALUES (?, ?, ?)";
+        String sql = "INSERT INTO blog (title, content, customer_id) VALUES (?, ?, ?)";
         try {
             PreparedStatement ptm = db.getConnection().prepareStatement(sql);
             ptm.setString(1, b.getTitle());
             ptm.setString(2, b.getContent());
-            ptm.setInt(3, b.getUser_id());
+            ptm.setInt(3, b.getCustomer_id());
             ptm.executeUpdate();
         } catch (SQLException ex) {
             ex.printStackTrace();
@@ -103,13 +100,13 @@ public class BlogDAO {
     // Update existing blog
     public void updateBlog(Blog b) {
         DBContext db = DBContext.getInstance();
-        String sql = "UPDATE blogs SET title = ?, content = ?, updated_at = CURRENT_TIMESTAMP WHERE id = ? AND user_id = ?";
+        String sql = "UPDATE blog SET title = ?, content = ? WHERE blog_id = ? AND customer_id = ?";
         try {
             PreparedStatement ptm = db.getConnection().prepareStatement(sql);
             ptm.setString(1, b.getTitle());
             ptm.setString(2, b.getContent());
-            ptm.setInt(3, b.getId());
-            ptm.setInt(4, b.getUser_id());
+            ptm.setInt(3, b.getBlog_id());
+            ptm.setInt(4, b.getCustomer_id());
             ptm.executeUpdate();
         } catch (SQLException ex) {
             ex.printStackTrace();
@@ -117,13 +114,13 @@ public class BlogDAO {
     }
 
     // Delete blog
-    public void deleteBlog(int blogId, int userId) {
+    public void deleteBlog(int blogId, int customerId) {
         DBContext db = DBContext.getInstance();
-        String sql = "DELETE FROM blogs WHERE id = ? AND user_id = ?";
+        String sql = "DELETE FROM blog WHERE blog_id = ? AND customer_id = ?";
         try {
             PreparedStatement ptm = db.getConnection().prepareStatement(sql);
             ptm.setInt(1, blogId);
-            ptm.setInt(2, userId);
+            ptm.setInt(2, customerId);
             ptm.executeUpdate();
         } catch (SQLException ex) {
             ex.printStackTrace();
@@ -133,7 +130,7 @@ public class BlogDAO {
     // Get total count of blogs
     public int getTotalBlogCount() {
         DBContext db = DBContext.getInstance();
-        String sql = "SELECT COUNT(*) as total FROM blogs";
+        String sql = "SELECT COUNT(*) as total FROM blog";
         try {
             PreparedStatement ptm = db.getConnection().prepareStatement(sql);
             ResultSet rs = ptm.executeQuery();
@@ -150,7 +147,7 @@ public class BlogDAO {
     public Vector<Blog> searchBlogsByTitle(String searchTerm, int page, int pageSize) {
         DBContext db = DBContext.getInstance();
         Vector<Blog> listBlogs = new Vector<>();
-        String sql = "SELECT * FROM blogs WHERE title LIKE ? ORDER BY created_at DESC LIMIT ? OFFSET ?";
+        String sql = "SELECT * FROM blog WHERE title LIKE ? ORDER BY created_at DESC LIMIT ? OFFSET ?";
         try {
             PreparedStatement ptm = db.getConnection().prepareStatement(sql);
             ptm.setString(1, "%" + searchTerm + "%");
@@ -159,12 +156,11 @@ public class BlogDAO {
             ResultSet rs = ptm.executeQuery();
             while (rs.next()) {
                 Blog b = new Blog(
-                    rs.getInt("id"),
+                    rs.getInt("blog_id"),
                     rs.getString("title"),
                     rs.getString("content"),
-                    rs.getInt("user_id"),
-                    rs.getString("created_at"),
-                    rs.getString("updated_at")
+                    rs.getInt("customer_id"),
+                    rs.getTimestamp("created_at")
                 );
                 listBlogs.add(b);
             }
@@ -181,7 +177,7 @@ public class BlogDAO {
         
         // Test 1: Insert a new blog
         System.out.println("Test 1: Inserting a new blog");
-        Blog newBlog = new Blog(0, "Test Blog Title", "This is a test blog content", 1, null, null);
+        Blog newBlog = new Blog(0, "Test Blog Title", "This is a test blog content", 1, null);
         dao.insertBlog(newBlog);
         System.out.println("Blog inserted successfully\n");
         
@@ -191,14 +187,14 @@ public class BlogDAO {
         System.out.println("Total blogs in database: " + dao.getTotalBlogCount());
         System.out.println("Blogs on first page:");
         for (Blog b : blogs) {
-            System.out.println("- " + b.getTitle() + " (ID: " + b.getId() + ")");
+            System.out.println("- " + b.getTitle() + " (ID: " + b.getBlog_id() + ")");
         }
         System.out.println();
         
         // Test 3: Get blog by ID (using first blog from previous test)
         if (!blogs.isEmpty()) {
             System.out.println("Test 3: Getting blog by ID");
-            int testBlogId = blogs.get(0).getId();
+            int testBlogId = blogs.get(0).getBlog_id();
             Blog foundBlog = dao.getBlogById(testBlogId);
             if (foundBlog != null) {
                 System.out.println("Found blog: " + foundBlog.getTitle());
@@ -216,11 +212,11 @@ public class BlogDAO {
             System.out.println();
         }
         
-        // Test 5: Get blogs by user
-        System.out.println("Test 5: Getting blogs by user (user_id = 1)");
-        Vector<Blog> userBlogs = dao.getBlogsByUser(1);
-        System.out.println("Found " + userBlogs.size() + " blogs for user 1");
-        for (Blog b : userBlogs) {
+        // Test 5: Get blogs by customer
+        System.out.println("Test 5: Getting blogs by customer (customer_id = 1)");
+        Vector<Blog> customerBlogs = dao.getBlogsByCustomer(1);
+        System.out.println("Found " + customerBlogs.size() + " blogs for customer 1");
+        for (Blog b : customerBlogs) {
             System.out.println("- " + b.getTitle());
         }
         System.out.println();
@@ -238,10 +234,10 @@ public class BlogDAO {
         if (!searchResults.isEmpty()) {
             System.out.println("Test 7: Deleting a blog");
             Blog blogToDelete = searchResults.get(0);
-            dao.deleteBlog(blogToDelete.getId(), blogToDelete.getUser_id());
+            dao.deleteBlog(blogToDelete.getBlog_id(), blogToDelete.getCustomer_id());
             
             // Verify deletion
-            Blog deletedBlog = dao.getBlogById(blogToDelete.getId());
+            Blog deletedBlog = dao.getBlogById(blogToDelete.getBlog_id());
             if (deletedBlog == null) {
                 System.out.println("Blog successfully deleted");
             } else {
@@ -250,9 +246,5 @@ public class BlogDAO {
         }
         
         System.out.println("\n=== Test Cases Completed ===");
-    }
-
-    private Object getConnection() {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
 } 
