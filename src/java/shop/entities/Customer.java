@@ -11,27 +11,30 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.experimental.FieldDefaults;
-import shop.anotation.*;
+import shop.anotation.Column;
+import shop.anotation.Id;
+import shop.anotation.Table;
 
 /**
  *
  * @author admin
  */
+
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
 @FieldDefaults(level = AccessLevel.PRIVATE)
 @Getter
 @Setter
-@Table(name = "users")
-public class User {
+@Table(name = "Customer")
+public class Customer {
 
     @Id
-    @Column(name = "user_id")
+    @Column(name = "customer_id")
     Integer id;
 
     @Column(name = "name")
-    String username;
+    String name;
 
     @Column(name = "email")
     String email;
@@ -39,7 +42,9 @@ public class User {
     @Column(name = "password")
     String password;
 
-    @Column(name = "role")
-    @Enumerated
-    String role;
+    @Column(name = "phone")
+    String phone;
+
+    @Column(name = "shipping_address")
+    String shippingAddress;
 }

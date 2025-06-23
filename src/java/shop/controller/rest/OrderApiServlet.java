@@ -14,6 +14,7 @@ import shop.DAO.CartItemDAO;
 import shop.DAO.OrderDAO;
 import shop.DAO.OrderDetailDAO;
 import shop.DAO.ProductDAO;
+import shop.entities.Customer;
 import shop.entities.Order;
 import shop.entities.OrderDetail;
 import shop.entities.Product;
@@ -44,12 +45,13 @@ public class OrderApiServlet extends HttpServlet {
             throws ServletException, IOException {
         Integer genId = null;
         try {
-            User userAuth = (User) request.getSession().getAttribute("userAuth2");
+            Customer customer = (Customer) request.getSession().getAttribute("customer");
+            int customerId = customer.getId();
             String pathInfo = request.getPathInfo();
             if (pathInfo == null || pathInfo.equals("/")) {
                 String requestBody = ResponseUtils.getRequestBody(request);
                 Order order = gson.fromJson(requestBody, Order.class);
-                order.setUserId(userAuth.getId());
+                order.setCustomerId(customerId);
                 order.setOrderDate(new Date());
 
                 // Check stock for all items before processing
@@ -76,12 +78,13 @@ public class OrderApiServlet extends HttpServlet {
                     product.setStock(product.getStock() - orderDetail.getQuantity());
                     productDAO.update(product);
                 }
-                
+
                 // Clear cart after successful order
-                cartItemDAO.deleteByUserId(userAuth.getId());
+                cartItemDAO.deleteByUserId(customerId);
 
                 JsonObject responseObj = new JsonObject();
                 responseObj.addProperty("success", true);
+                responseObj.addProperty("orderId", genId);
                 responseObj.addProperty("message", "Order placed successfully");
                 responseObj.add("data", null);
                 ResponseUtils.sendJsonResponse(response, responseObj);

@@ -9,53 +9,48 @@ import java.util.Date;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
+import lombok.Data;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.experimental.FieldDefaults;
-import shop.anotation.*;
+import shop.anotation.Column;
+import shop.anotation.Id;
+import shop.anotation.Table;
 
 /**
  *
  * @author admin
  */
-@Table(name = "Product")
+@Table(name = "Transactions")
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
 @FieldDefaults(level = AccessLevel.PRIVATE)
 @Getter
 @Setter
-public class Product {
+public class Transaction {
+    
     @Id
-    @Column(name = "product_id")
+    @Column(name = "transaction_id")
     Integer id;
     
-    @Column(name = "name")
-    String name;
+    @Column(name = "transaction_code")
+    String transactionCode;
     
-    @Column(name = "component_type_id")
-    Integer componentTypeId;
+    @Column(name = "order_id")
+    Integer orderId;
     
-    @Column(name = "brand_id")
-    Integer brandId;
+    @Column(name = "payment_method_id")
+    Integer paymentMethodId;
     
-    @Column(name = "price")
-    BigDecimal price;
-    
-    @Column(name = "import_price")
-    BigDecimal importPrice;
-    
-    @Column(name = "stock")
-    Integer stock;
-    
-    @Column(name = "description")
-    String description;
-    
-    @Column(name = "status")
-    @Enumerated
-    String status; // 'active', 'inactive'
+    @Column(name = "total_amount")
+    BigDecimal totalAmount;
     
     @Column(name = "created_at")
     Date createdAt;
+    
+    @Column(name = "paid")
+    boolean paid;
 }
+
