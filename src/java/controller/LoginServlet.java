@@ -82,8 +82,8 @@ public class LoginServlet extends HttpServlet {
         try {
             // Thử đăng nhập với Customer
             Customer customer = new dal.CustomerDAO().login(email, password);
-            shop.entities.Customer cus = new shop.DAO.CustomerDAO().getById(customer.getCustomer_id());
             if (customer != null) {
+                shop.entities.Customer cus = new shop.DAO.CustomerDAO().getById(customer.getCustomer_id());
                 HttpSession session = request.getSession();
                 session.setAttribute("customerAuth", customer);
                 session.setAttribute("customer", cus);
