@@ -387,5 +387,17 @@
                 }
             });
         </script>
+
+        <c:if test="${empty product}">
+            <div class="alert alert-danger mt-5">Không tìm thấy sản phẩm hoặc có lỗi xảy ra! Vui lòng thử lại.</div>
+            <c:remove var="product" scope="request"/>
+            <c:remove var="relatedProducts" scope="request"/>
+            <c:remove var="feedbackList" scope="request"/>
+            <c:remove var="totalPages" scope="request"/>
+            <c:remove var="currentPage" scope="request"/>
+            <c:remove var="averageRating" scope="request"/>
+            <c:remove var="totalFeedback" scope="request"/>
+            <jsp:include page="footer.jsp"/>
+        </c:if>
     </body>
 </html>

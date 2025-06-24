@@ -213,6 +213,7 @@ public class ProductServlet extends HttpServlet {
                     break;
                 case "productDetail":
                     int productID = Integer.parseInt(request.getParameter("id"));
+                    System.out.println("[DEBUG] ProductServlet - productDetail - productID: " + productID);
                     int page = 1;
                     final int ITEMS_PER_PAGE = 3;
 
@@ -227,7 +228,15 @@ public class ProductServlet extends HttpServlet {
 
                     ProductDAO ppdao = new ProductDAO();
                     Products product = ppdao.getProductById(productID);
+                    System.out.println("[DEBUG] ProductServlet - productDetail - product: " + product);
+                    if (product == null) {
+                        System.out.println("[DEBUG] ProductServlet - productDetail - product is null, redirecting to viewProduct.jsp");
+                        request.setAttribute("errorMsg", "Không tìm thấy sản phẩm hoặc sản phẩm đã bị xóa!");
+                        request.getRequestDispatcher("viewProduct.jsp").forward(request, response);
+                        break;
+                    }
                     List<Products> relatedProducts = ppdao.getProductByCategory(product.getCategory_id());
+                    System.out.println("[DEBUG] ProductServlet - productDetail - relatedProducts size: " + (relatedProducts != null ? relatedProducts.size() : 0));
 
                     // Get feedback data and ensure lists are not null
                     FeedbackDAO feedbackDAO = new FeedbackDAO();

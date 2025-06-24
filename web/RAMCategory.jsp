@@ -69,9 +69,11 @@
                 <div class="products-grid" id="ramProductsContainer">
                     <c:forEach var="product" items="${ramProducts}">
                         <div class="product-card">
-                            <img src="${product.image_url}" class="product-image" alt="${product.name}">
-                            <h5 class="product-title">${product.name}</h5>
-                            <p class="product-description">${product.description}</p>
+                            <a href="${pageContext.request.contextPath}/productservlet?service=productDetail&id=${product.id}" style="text-decoration: none; color: inherit;">
+                                <img src="${product.image_url}" class="product-image" alt="${product.name}">
+                                <h5 class="product-title">${product.name}</h5>
+                                <p class="product-description">${product.description}</p>
+                            </a>
                             <div class="product-price">
                                 <fmt:formatNumber value="${product.price}" type="number" pattern="###,###"/> VNĐ
                             </div>
