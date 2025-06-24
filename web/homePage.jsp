@@ -300,7 +300,7 @@
         <script>
                                             // Global variables
                                             let cartCount = 0;
-                                            const currentUserId = ${sessionScope.customer.id}; // Thay đổi theo user đang đăng nhập
+                                            const currentUserId = ${sessionScope.customerAuth.customer_id}; // Thay đổi theo user đang đăng nhập
 
                                             // Function to change quantity
                                             function changeQuantity(productId, change) {
