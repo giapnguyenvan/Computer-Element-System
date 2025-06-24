@@ -73,7 +73,7 @@
                             <h5 class="product-title">${product.name}</h5>
                             <p class="product-description">${product.description}</p>
                             <div class="product-price">
-                                <fmt:formatNumber value="${product.price}" type="number" pattern="###,###"/>đ
+                                <fmt:formatNumber value="${product.price}" type="number" pattern="###,###"/> VNĐ
                             </div>
 
                             <!-- Add to Cart Button -->
