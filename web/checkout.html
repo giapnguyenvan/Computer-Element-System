@@ -305,7 +305,6 @@
                                 <option value="">Chọn phương thức thanh toán</option>
                                 <option value="1">Thanh toán khi nhận hàng (COD)</option>
                                 <option value="2">Chuyển khoản ngân hàng</option>
-                                <option value="3">Ví điện tử</option>
                             </select>
                         </div>
 
@@ -348,7 +347,7 @@
                         </div>
                     </div>
 
-                    <button type="submit" form="checkoutForm" class="checkout-btn" id="checkoutButton">
+                    <button type="button" onclick="processCheckout()" form="checkoutForm" class="checkout-btn" id="checkoutButton">
                         Thanh toán
                     </button>
                 </div>
@@ -443,8 +442,7 @@
                         <div class="cart-item" data-item-id="${item.id}">
                             <img src="${item.product.imageUrl || '/CES/images/default-product.jpg'}" 
                                  alt="${item.product.name}" 
-                                 class="item-image"
-                                 onerror="this.src='/CES/images/default-product.jpg'">
+                                 class="item-image">
                             <div class="item-info">
                                 <h4>${item.product.name}</h4>
                                 <div class="quantity">Số lượng: ${item.quantity}</div>
@@ -514,16 +512,17 @@
                 }
 
                 try {
-                    const checkoutBtn = document.getElementById('checkoutBtn');
+                    const checkoutBtn = document.getElementById('checkoutButton');
                     checkoutBtn.disabled = true;
                     checkoutBtn.textContent = 'Đang xử lý...';
 
                     // Prepare order data
                     const formData = new FormData(form);
+                    let totalAmount = 0;
                     const orderData = {
-                        totalPrice: subtotalAmount + shippingFee,
+                        totalAmount: 0,
                         paymentMethodId: parseInt(formData.get('paymentMethod')),
-                        address: formData.get('address'),
+                        shippingAddress: formData.get('address'),
                         status: 'pending',
                         orderDetails: cartItems.map(item => {
                             let price = 0;
@@ -534,15 +533,15 @@
                                     price = parseFloat(item.product.price) || 0;
                                 }
                             }
-
+                            totalAmount = item.quantity * price;
                             return {
                                 productId: item.productId,
                                 quantity: item.quantity || 0,
-                                itemPrice: price,
-                                totalPrice: price * (item.quantity || 0)
+                                price: price
                             };
                         })
                     };
+                    orderData.totalAmount = totalAmount;
 
                     // Send order to API
                     const response = await fetch('/CES/OrderApiServlet', {
@@ -561,13 +560,13 @@
                     const result = await response.json();
 
                     if (result.success) {
-                        showSuccess('Đặt hàng thành công! Cảm ơn bạn đã mua hàng.');
+                        showSuccess('Đặt hàng thành công! Vui lòng thanh toán.');
                         // Clear form
                         form.reset();
                         // Reload cart (should be empty now)
                         setTimeout(() => {
                             loadCartItems();
-                            window.location = "homepageservlet";
+                            window.location = "payment-servlet?orderId="+result.orderId;
                         }, 4000);
                     } else {
                         showError('Đặt hàng thất bại: ' + (result.message || 'Lỗi không xác định'));
@@ -576,7 +575,7 @@
                     console.error('Checkout error:', error);
                     showError('Có lỗi xảy ra khi đặt hàng: ' + error.message);
                 } finally {
-                    const checkoutBtn = document.getElementById('checkoutBtn');
+                    const checkoutBtn = document.getElementById('checkoutButton');
                     checkoutBtn.disabled = false;
                     checkoutBtn.textContent = 'Đặt hàng';
                 }

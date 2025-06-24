@@ -15,6 +15,8 @@ import java.lang.reflect.Method;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.sql.*;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -361,7 +363,6 @@ public abstract class GenericDAO<T, K> implements BaseDAO<T, K> {
                     field.setAccessible(true);
                     String columnName = field.getAnnotation(Column.class).name();
                     Object value = rs.getObject(columnName);
-
                     // Xử lý mapping đặc biệt cho MySQL
                     if (value != null) {
                         // Xử lý Boolean từ TINYINT(1)
@@ -369,9 +370,60 @@ public abstract class GenericDAO<T, K> implements BaseDAO<T, K> {
                             if (value instanceof Number) {
                                 value = ((Number) value).intValue() != 0;
                             }
-                        } // Xử lý Date/Timestamp
-                        else if (field.getType() == java.util.Date.class && value instanceof Timestamp) {
-                            value = new java.util.Date(((Timestamp) value).getTime());
+                        } // Xử lý các kiểu Date/Time
+                        else if (field.getType() == java.util.Date.class) {
+                            // Chuyển đổi tất cả về java.util.Date
+                            if (value instanceof Timestamp) {
+                                value = new java.util.Date(((Timestamp) value).getTime());
+                            } else if (value instanceof java.sql.Date) {
+                                value = new java.util.Date(((java.sql.Date) value).getTime());
+                            } else if (value instanceof java.time.LocalDateTime) {
+                                // Chuyển LocalDateTime về Date
+                                value = java.util.Date.from(((java.time.LocalDateTime) value)
+                                        .atZone(java.time.ZoneId.systemDefault()).toInstant());
+                            } else if (value instanceof java.time.LocalDate) {
+                                // Chuyển LocalDate về Date (start of day)
+                                value = java.util.Date.from(((java.time.LocalDate) value)
+                                        .atStartOfDay(java.time.ZoneId.systemDefault()).toInstant());
+                            } else if (value instanceof String) {
+                                try {
+                                    // Parse datetime string theo format MySQL standard: yyyy-MM-dd HH:mm:ss
+                                    SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+                                    value = sdf.parse((String) value);
+                                } catch (ParseException e) {
+                                    // Thử parse với format date only
+                                    try {
+                                        SimpleDateFormat sdf2 = new SimpleDateFormat("yyyy-MM-dd");
+                                        value = sdf2.parse((String) value);
+                                    } catch (ParseException e2) {
+                                        throw new SQLException("Cannot parse datetime string: " + value, e2);
+                                    }
+                                }
+                            }
+                        } // Xử lý LocalDateTime cho Java 8+
+                        else if (field.getType() == java.time.LocalDateTime.class) {
+                            if (value instanceof Timestamp) {
+                                value = ((Timestamp) value).toLocalDateTime();
+                            } else if (value instanceof java.util.Date) {
+                                value = java.time.LocalDateTime.ofInstant(
+                                        ((java.util.Date) value).toInstant(), java.time.ZoneId.systemDefault());
+                            } else if (value instanceof String) {
+                                value = java.time.LocalDateTime.parse((String) value,
+                                        java.time.format.DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
+                            }
+                        } // Xử lý LocalDate cho Java 8+
+                        else if (field.getType() == java.time.LocalDate.class) {
+                            if (value instanceof java.sql.Date) {
+                                value = ((java.sql.Date) value).toLocalDate();
+                            } else if (value instanceof Timestamp) {
+                                value = ((Timestamp) value).toLocalDateTime().toLocalDate();
+                            } else if (value instanceof java.util.Date) {
+                                value = java.time.LocalDate.ofInstant(
+                                        ((java.util.Date) value).toInstant(), java.time.ZoneId.systemDefault());
+                            } else if (value instanceof String) {
+                                value = java.time.LocalDate.parse((String) value,
+                                        java.time.format.DateTimeFormatter.ofPattern("yyyy-MM-dd"));
+                            }
                         } // Xử lý ENUM - MySQL ENUM được trả về dưới dạng String
                         else if (field.getType() == String.class && isEnumField(field)) {
                             // MySQL ENUM đã được trả về dưới dạng String, không cần xử lý thêm
@@ -381,7 +433,6 @@ public abstract class GenericDAO<T, K> implements BaseDAO<T, K> {
                             value = value.toString();
                         }
                     }
-
                     field.set(obj, value);
                 }
             }

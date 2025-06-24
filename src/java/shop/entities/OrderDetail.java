@@ -7,13 +7,14 @@ package shop.entities;
 import java.math.BigDecimal;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
+import shop.DAO.ProductDAO;
 import shop.anotation.*;
 
 /**
  *
  * @author admin
  */
-@Table(name = "order_details")
+@Table(name = "OrderDetail")
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
@@ -21,22 +22,30 @@ import shop.anotation.*;
 @Getter
 @Setter
 public class OrderDetail {
+
     @Id
-    @Column(name = "id")
-    Integer id;
-    
+    @Column(name = "order_detail_id")
+    Integer orderDetailId;
+
     @Column(name = "order_id")
     Integer orderId;
-    
+
     @Column(name = "product_id")
     Integer productId;
-    
+
     @Column(name = "quantity")
     Integer quantity;
-    
-    @Column(name = "item_price")
-    BigDecimal itemPrice;
-    
-    @Column(name = "total_price")
-    BigDecimal totalPrice;
+
+    @Column(name = "price")
+    BigDecimal price;
+
+    Product product;
+
+    public void setProductFunc() {
+        try {
+            product = new ProductDAO().getById(productId);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
 }

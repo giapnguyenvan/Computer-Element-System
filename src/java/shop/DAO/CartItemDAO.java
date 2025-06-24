@@ -20,20 +20,20 @@ public class CartItemDAO extends GenericDAO<CartItem, Integer>{
     public CartItemDAO() {
         super(CartItem.class);
     }
-    @FindBy(columns = {"user_id"})
-    public List<CartItem> getAllByUserId(Integer userId) throws SQLException{
-        return findByAnd(userId);
+    @FindBy(columns = {"customer_id"})
+    public List<CartItem> getAllByCustomerId(Integer customer_id) throws SQLException{
+        return findByAnd(customer_id);
     }
-    @FindBy(columns = {"user_id","product_id"})
-    public CartItem getByUserIdAndProductId(Integer userId, Integer productId) throws SQLException {
-        List<CartItem> obs = findByAnd(userId, productId);
+    @FindBy(columns = {"customer_id","product_id"})
+    public CartItem getByUserIdAndProductId(Integer customerId, Integer productId) throws SQLException {
+        List<CartItem> obs = findByAnd(customerId, productId);
         return !obs.isEmpty() ? obs.get(0) : null;
     }
     
     @Query(sql = """
-                 delete from cart_items where user_id = ?
+                 delete from CartItem where customer_id = ?
                  """)
-    public boolean deleteByUserId(Integer userId) throws SQLException {
-        return executeQueryUpdateOrCheck(userId);
+    public boolean deleteByUserId(Integer customer_id) throws SQLException {
+        return executeQueryUpdateOrCheck(customer_id);
     }
 }

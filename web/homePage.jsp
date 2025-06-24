@@ -300,7 +300,7 @@
         <script>
                                             // Global variables
                                             let cartCount = 0;
-                                            const currentUserId = ${sessionScope.userAuth2.id}; // Thay đổi theo user đang đăng nhập
+                                            const currentUserId = ${sessionScope.customerAuth.customer_id}; // Thay đổi theo user đang đăng nhập
 
                                             // Function to change quantity
                                             function changeQuantity(productId, change) {
@@ -328,17 +328,17 @@
 
                                                 try {
                                                     console.log(JSON.stringify({
-                                                        userId: currentUserId,
+                                                        customerId: currentUserId,
                                                         productId: productId,
                                                         quantity: quantity
                                                     }));
-                                                    const response = await fetch('http://localhost:8080/CES/CartApiServlet', {
+                                                    const response = await fetch('/CES/CartApiServlet', {
                                                         method: 'POST',
                                                         headers: {
                                                             'Content-Type': 'application/json'
                                                         },
                                                         body: JSON.stringify({
-                                                            userId: currentUserId,
+                                                            customerId: currentUserId,
                                                             productId: productId,
                                                             quantity: quantity
                                                         })

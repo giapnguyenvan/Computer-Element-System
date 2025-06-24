@@ -12,9 +12,9 @@ import jakarta.servlet.http.HttpServletResponse;
 import java.util.List;
 import shop.DAO.CartItemDAO;
 import shop.entities.CartItem;
-import shop.entities.User;
 import shop.utils.ResponseUtils;
 import shop.DAO.ProductDAO;
+import shop.entities.Customer;
 import shop.entities.Product;
 
 @WebServlet(name = "CartApiServlet", urlPatterns = {"/CartApiServlet"})
@@ -95,9 +95,9 @@ public class CartApiServlet extends HttpServlet {
     private void handleGetCartItems(HttpServletRequest request, HttpServletResponse response)
             throws IOException, Exception {
 
-        User userAuth = (User) request.getSession().getAttribute("userAuth2");
-        int userId = userAuth.getId();
-        List<CartItem> cartItems = cartItemDAO.getAllByUserId(userId);
+        Customer customer = (Customer)request.getSession().getAttribute("customer");
+        int customerId = customer.getId();
+        List<CartItem> cartItems = cartItemDAO.getAllByCustomerId(customerId);
 
         // Set product data for each cart item
         for (CartItem item : cartItems) {
@@ -118,7 +118,7 @@ public class CartApiServlet extends HttpServlet {
         String requestBody = ResponseUtils.getRequestBody(request);
         CartItemRequest cartRequest = gson.fromJson(requestBody, CartItemRequest.class);
 
-        if (cartRequest.userId == null || cartRequest.productId == null || cartRequest.quantity == null) {
+        if (cartRequest.customerId == null || cartRequest.productId == null || cartRequest.quantity == null) {
             ResponseUtils.sendErrorResponse(response, 400, "userId, productId, and quantity are required");
             return;
         }
@@ -138,7 +138,7 @@ public class CartApiServlet extends HttpServlet {
         }
 
         // Check if item already exists in cart
-        CartItem existingItem = cartItemDAO.getByUserIdAndProductId(cartRequest.userId, cartRequest.productId);
+        CartItem existingItem = cartItemDAO.getByUserIdAndProductId(cartRequest.customerId, cartRequest.productId);
 
         if (existingItem != null) {
             // Check if total quantity (existing + new) exceeds stock
@@ -154,7 +154,7 @@ public class CartApiServlet extends HttpServlet {
         } else {
             // Create new cart item
             CartItem newItem = CartItem.builder()
-                    .userId(cartRequest.userId)
+                    .customerId(cartRequest.customerId)
                     .productId(cartRequest.productId)
                     .quantity(cartRequest.quantity)
                     .build();
@@ -241,13 +241,12 @@ public class CartApiServlet extends HttpServlet {
 // Request DTOs
     private static class CartItemRequest {
 
-        Integer userId;
+        Integer customerId;
         Integer productId;
         Integer quantity;
     }
 
     private static class UpdateQuantityRequest {
-
         Integer id;
         Integer quantity;
     }

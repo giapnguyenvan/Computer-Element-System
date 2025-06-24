@@ -72,7 +72,7 @@
             </form>
             <div class="d-flex align-items-center">
                 <c:choose>
-                    <c:when test="${not empty sessionScope.userAuth}">
+                    <c:when test="${not empty sessionScope.userAuth or not empty sessionScope.customerAuth}">
                         <!-- User Dropdown -->
                         <div class="dropdown me-3">
                             <c:choose>
@@ -105,7 +105,7 @@
                                     </a>
                                     <ul class="dropdown-menu dropdown-menu-end shadow" aria-labelledby="userDropdown">
                                         <li>
-                                            <a class="dropdown-item" href="${pageContext.request.contextPath}/profile">
+                                            <a class="dropdown-item" href="${pageContext.request.contextPath}/userprofile">
                                                 <i class="fas fa-user-circle me-2"></i>Profile
                                             </a>
                                         </li>

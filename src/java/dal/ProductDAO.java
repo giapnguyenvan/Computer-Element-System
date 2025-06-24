@@ -30,13 +30,13 @@ public class ProductDAO {
                          p.brand_id,
                          b.name as brand_name,
                          ct.name as component_type_name,
-                         (SELECT image_url FROM productimage pi WHERE pi.product_id = p.product_id LIMIT 1) as image_url
+                         (SELECT image_url FROM ProductImage pi WHERE pi.product_id = p.product_id LIMIT 1) as image_url
                      FROM
-                         product p
+                         Product p
                      JOIN
-                         brand b ON p.brand_id = b.brand_id
+                         Brand b ON p.brand_id = b.brand_id
                      JOIN
-                         componenttype ct ON p.component_type_id = ct.type_id
+                         ComponentType ct ON p.component_type_id = ct.type_id
                      """;
 
         try {
@@ -69,7 +69,7 @@ public class ProductDAO {
 
     public int getTotalCPUProducts() {
         DBContext db = DBContext.getInstance();
-        String sql = "SELECT COUNT(*) FROM product WHERE component_type_id = 1"; // CPU type_id = 1
+        String sql = "SELECT COUNT(*) FROM Product WHERE component_type_id = 1"; // CPU type_id = 1
         try {
             PreparedStatement ptm = db.getConnection().prepareStatement(sql);
             ResultSet rs = ptm.executeQuery();
@@ -87,10 +87,10 @@ public class ProductDAO {
         List<Products> list = new ArrayList<>();
         String sql = """
                      SELECT p.*, b.name as brand_name, ct.name as component_type_name,
-                            (SELECT image_url FROM productimage pi WHERE pi.product_id = p.product_id LIMIT 1) as image_url
-                     FROM product p
-                     JOIN brand b ON p.brand_id = b.brand_id
-                     JOIN componenttype ct ON p.component_type_id = ct.type_id
+                            (SELECT image_url FROM ProductImage pi WHERE pi.product_id = p.product_id LIMIT 1) as image_url
+                     FROM Product p
+                     JOIN Brand b ON p.brand_id = b.brand_id
+                     JOIN ComponentType ct ON p.component_type_id = ct.type_id
                      WHERE p.component_type_id = 1
                      ORDER BY p.product_id
                      LIMIT ? OFFSET ?
@@ -126,7 +126,7 @@ public class ProductDAO {
 
     public int getTotalGPUProducts() {
         DBContext db = DBContext.getInstance();
-        String sql = "SELECT COUNT(*) FROM product WHERE component_type_id = 2"; // GPU type_id = 2
+        String sql = "SELECT COUNT(*) FROM Product WHERE component_type_id = 2"; // GPU type_id = 2
         try {
             PreparedStatement ptm = db.getConnection().prepareStatement(sql);
             ResultSet rs = ptm.executeQuery();
@@ -144,10 +144,10 @@ public class ProductDAO {
         List<Products> list = new ArrayList<>();
         String sql = """
                      SELECT p.*, b.name as brand_name, ct.name as component_type_name,
-                            (SELECT image_url FROM productimage pi WHERE pi.product_id = p.product_id LIMIT 1) as image_url
-                     FROM product p
-                     JOIN brand b ON p.brand_id = b.brand_id
-                     JOIN componenttype ct ON p.component_type_id = ct.type_id
+                            (SELECT image_url FROM ProductImage pi WHERE pi.product_id = p.product_id LIMIT 1) as image_url
+                     FROM Product p
+                     JOIN Brand b ON p.brand_id = b.brand_id
+                     JOIN ComponentType ct ON p.component_type_id = ct.type_id
                      WHERE p.component_type_id = 2
                      ORDER BY p.product_id
                      LIMIT ? OFFSET ?
@@ -183,7 +183,7 @@ public class ProductDAO {
 
     public int getTotalRAMProducts() {
         DBContext db = DBContext.getInstance();
-        String sql = "SELECT COUNT(*) FROM product WHERE component_type_id = 4"; // RAM type_id = 4
+        String sql = "SELECT COUNT(*) FROM Product WHERE component_type_id = 4"; // RAM type_id = 4
         try {
             PreparedStatement ptm = db.getConnection().prepareStatement(sql);
             ResultSet rs = ptm.executeQuery();
@@ -201,10 +201,10 @@ public class ProductDAO {
         List<Products> list = new ArrayList<>();
         String sql = """
                      SELECT p.*, b.name as brand_name, ct.name as component_type_name,
-                            (SELECT image_url FROM productimage pi WHERE pi.product_id = p.product_id LIMIT 1) as image_url
-                     FROM product p
-                     JOIN brand b ON p.brand_id = b.brand_id
-                     JOIN componenttype ct ON p.component_type_id = ct.type_id
+                            (SELECT image_url FROM ProductImage pi WHERE pi.product_id = p.product_id LIMIT 1) as image_url
+                     FROM Product p
+                     JOIN Brand b ON p.Brand_id = b.brand_id
+                     JOIN ComponentType ct ON p.component_type_id = ct.type_id
                      WHERE p.component_type_id = 4
                      ORDER BY p.product_id
                      LIMIT ? OFFSET ?
