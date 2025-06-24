@@ -4,6 +4,8 @@
  */
 package shop.controller;
 
+import com.google.gson.Gson;
+import com.google.gson.JsonObject;
 import jakarta.servlet.ServletConfig;
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -16,9 +18,11 @@ import java.math.BigDecimal;
 import java.util.Date;
 import shop.DAO.OrderDAO;
 import shop.DAO.TransactionDAO;
+import shop.controller.rest.CartApiServlet;
 import shop.entities.Order;
 import shop.entities.OrderDetail;
 import shop.entities.Transaction;
+import shop.utils.ResponseUtils;
 
 /**
  *
@@ -31,36 +35,12 @@ public class PaymentServlet extends HttpServlet {
 
     private final TransactionDAO transactionDAO = new TransactionDAO();
 
+    private final Gson gson = new Gson();
+
     @Override
     public void init(ServletConfig config) throws ServletException {
         super.init(config);
         config.getServletContext().setAttribute("/payment-servlet", this);
-    }
-
-    /**
-     * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
-     * methods.
-     *
-     * @param request servlet request
-     * @param response servlet response
-     * @throws ServletException if a servlet-specific error occurs
-     * @throws IOException if an I/O error occurs
-     */
-    public void processRequest(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
-        response.setContentType("text/html;charset=UTF-8");
-        try (PrintWriter out = response.getWriter()) {
-            /* TODO output your page here. You may use following sample code. */
-            out.println("<!DOCTYPE html>");
-            out.println("<html>");
-            out.println("<head>");
-            out.println("<title>Servlet PaymentServlet</title>");
-            out.println("</head>");
-            out.println("<body>");
-            out.println("<h1>Servlet PaymentServlet at " + request.getContextPath() + "</h1>");
-            out.println("</body>");
-            out.println("</html>");
-        }
     }
 
     // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
@@ -86,19 +66,29 @@ public class PaymentServlet extends HttpServlet {
                 return;
             }
             Date now = new Date();
-            Transaction transaction = Transaction.builder()
-                    .transactionCode("TS" + now.getTime())
-                    .orderId(orderId)
-                    .paymentMethodId(order.getPaymentMethodId())
-                    .totalAmount(order.getTotalAmount())
-                    .createdAt(now)
-                    .paid(false)
-                    .build();
+            Transaction transaction = transactionDAO.getByOrderId(orderId);
 
-            Integer key = transactionDAO.insertGetKey(transaction);
+            if (transaction == null) {
+                transaction = Transaction.builder()
+                        .transactionCode("TS" + now.getTime())
+                        .orderId(orderId)
+                        .paymentMethodId(order.getPaymentMethodId())
+                        .totalAmount(order.getTotalAmount())
+                        .createdAt(now)
+                        .paid(false)
+                        .build();
+                Integer key = transactionDAO.insertGetKey(transaction);
 
-            transaction = transactionDAO.getById(key);
-            
+                transaction = transactionDAO.getById(key);
+            } else {
+                if (transaction.isPaid()) {
+                    response.sendRedirect("homepageservlet");
+                    return;
+                }
+                transaction.setCreatedAt(now);
+                transaction.setTotalAmount(order.getTotalAmount());
+            }
+
             order.setorderDetailsFunc();
 
             for (OrderDetail orderDetail : order.getOrderDetails()) {
@@ -106,14 +96,11 @@ public class PaymentServlet extends HttpServlet {
             }
             request.setAttribute("order", order);
             request.setAttribute("transaction", transaction);
-
             request.getRequestDispatcher("payment.jsp").forward(request, response);
-            return;
 
         } catch (Exception e) {
             e.printStackTrace();
             response.sendRedirect("homepageservlet");
-            return;
         }
     }
 
@@ -128,7 +115,27 @@ public class PaymentServlet extends HttpServlet {
     @Override
     public void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        processRequest(request, response);
+        try {
+            String requestBody = ResponseUtils.getRequestBody(request);
+
+            CheckTrans checkTrans = gson.fromJson(requestBody, CheckTrans.class);
+
+            Transaction transaction = transactionDAO.getByCode(checkTrans.transactionCode);
+            if (transaction != null && checkTrans.amount.doubleValue() >= transaction.getTotalAmount().doubleValue() * 0.99) {
+                transaction.setPaid(true);
+                transactionDAO.update(transaction);
+                JsonObject responseObj = new JsonObject();
+                responseObj.addProperty("status", 200);
+                responseObj.addProperty("message", "Trans updated successfully");
+                ResponseUtils.sendJsonResponse(response, responseObj);
+                return;
+            }
+            ResponseUtils.sendErrorResponse(response, 404, "Bad request: Transaction not found");
+        } catch (Exception e) {
+            e.printStackTrace();
+            ResponseUtils.sendErrorResponse(response, 500, "Internal server error: " + e.getMessage());
+        }
+
     }
 
     /**
@@ -140,10 +147,11 @@ public class PaymentServlet extends HttpServlet {
     public String getServletInfo() {
         return "Short description";
     }// </editor-fold>
-    
-    private class CheckTrans {
-        public String transactionCode;
-        public BigDecimal amount; 
+
+    private static class CheckTrans {
+
+        String transactionCode;
+        BigDecimal amount;
     }
 
 }
