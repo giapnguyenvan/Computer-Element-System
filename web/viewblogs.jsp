@@ -50,9 +50,24 @@
             max-height: 90vh;
             overflow-y: auto;
         }
+        .add-blog-btn {
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            transition: all 0.3s ease;
+        }
+        .add-blog-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+        }
+        .form-control:focus, .form-select:focus {
+            border-color: #198754;
+            box-shadow: 0 0 0 0.2rem rgba(25, 135, 84, 0.25);
+        }
     </style>
 </head>
 <body>
+    <!-- Include Header -->
+    <jsp:include page="header.jsp" />
+    
     <div class="container mt-5">
         
         <!-- Success/Error Messages -->
@@ -92,6 +107,13 @@
                     </div>
                 </div>
             </form>
+        </div>
+
+        <!-- Add New Blog Button -->
+        <div class="d-flex justify-content-end mb-3">
+            <button type="button" class="btn btn-success add-blog-btn" data-bs-toggle="modal" data-bs-target="#addBlogModal">
+                <i class="fas fa-plus me-2"></i>Add New Blog
+            </button>
         </div>
 
         <!-- Blog Display -->
@@ -188,6 +210,52 @@
         </div>
     </div>
 
+    <!-- Add New Blog Modal -->
+    <div class="modal fade" id="addBlogModal" tabindex="-1">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Add New Blog</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <form id="addBlogForm" action="viewblogs" method="POST">
+                    <div class="modal-body">
+                        <div class="mb-3">
+                            <label for="blogTitle" class="form-label">Blog Title *</label>
+                            <input type="text" class="form-control" id="blogTitle" name="title" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="blogContent" class="form-label">Blog Content *</label>
+                            <textarea class="form-control" id="blogContent" name="content" rows="8" required 
+                                      oninput="updateCharCount()"></textarea>
+                            <div class="form-text">
+                                <span id="charCount">0</span> characters
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <label for="customerId" class="form-label">Author (Customer) *</label>
+                            <select class="form-select" id="customerId" name="customer_id" required>
+                                <option value="">Select a customer...</option>
+                                <c:forEach items="${customerList}" var="customer">
+                                    <option value="${customer.customer_id}" 
+                                            ${sessionScope.userAuth != null && sessionScope.user_id == customer.customer_id ? 'selected' : ''}>
+                                        ${customer.customer_id} - ${customer.name}
+                                    </option>
+                                </c:forEach>
+                            </select>
+                            <div class="form-text">Select the customer who will be the author of this blog</div>
+                        </div>
+                        <input type="hidden" name="action" value="add">
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                        <button type="submit" class="btn btn-success">Create Blog</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
     <script>
         function showBlogContent(element) {
@@ -202,6 +270,41 @@
             document.getElementById('modalBlogCreated').textContent = created;
             
             new bootstrap.Modal(document.getElementById('blogContentModal')).show();
+        }
+        
+        // Handle add blog form submission
+        document.getElementById('addBlogForm').addEventListener('submit', function(e) {
+            const title = document.getElementById('blogTitle').value.trim();
+            const content = document.getElementById('blogContent').value.trim();
+            const customerId = document.getElementById('customerId').value.trim();
+            
+            if (!title || !content || !customerId) {
+                e.preventDefault();
+                alert('Please fill in all required fields.');
+                return false;
+            }
+            
+            // Show loading state
+            const submitBtn = this.querySelector('button[type="submit"]');
+            const originalText = submitBtn.innerHTML;
+            submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Creating...';
+            submitBtn.disabled = true;
+        });
+        
+        // Clear form when modal is hidden
+        document.getElementById('addBlogModal').addEventListener('hidden.bs.modal', function() {
+            document.getElementById('addBlogForm').reset();
+            const submitBtn = document.querySelector('#addBlogForm button[type="submit"]');
+            submitBtn.innerHTML = 'Create Blog';
+            submitBtn.disabled = false;
+            document.getElementById('charCount').textContent = '0';
+        });
+        
+        // Update character count
+        function updateCharCount() {
+            const content = document.getElementById('blogContent').value;
+            const charCount = document.getElementById('charCount');
+            charCount.textContent = content.length;
         }
     </script>
 </body>

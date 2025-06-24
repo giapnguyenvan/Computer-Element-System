@@ -81,6 +81,9 @@ public class ViewBlogServlet extends HttpServlet {
             // Store the customer names map in request
             request.setAttribute("customerNames", customerNames);
             
+            // Store the full customer list for the add blog form
+            request.setAttribute("customerList", customerList);
+            
             // Apply search filter if specified
             String search = request.getParameter("search");
             if (search != null && !search.trim().isEmpty()) {
@@ -209,7 +212,18 @@ public class ViewBlogServlet extends HttpServlet {
     @Override
     public void doPost(HttpServletRequest request, HttpServletResponse response)
     throws ServletException, IOException {
-        processRequest(request, response);
+        String action = request.getParameter("action");
+        
+        try {
+            if ("add".equals(action)) {
+                addBlog(request, response);
+            } else {
+                processRequest(request, response);
+            }
+        } catch (Exception ex) {
+            request.getSession().setAttribute("error", "Error: " + ex.getMessage());
+            response.sendRedirect("viewblogs");
+        }
     }
 
     /** 
@@ -256,8 +270,36 @@ public class ViewBlogServlet extends HttpServlet {
 
     private void addBlog(HttpServletRequest request, HttpServletResponse response)
     throws ServletException, IOException {
-        // This method is not used in view mode
-        response.sendRedirect("viewblogs");
+        String title = request.getParameter("title");
+        String content = request.getParameter("content");
+        String customerIdStr = request.getParameter("customer_id");
+        
+        // Validate input
+        StringBuilder errors = new StringBuilder();
+        if (title == null || title.trim().isEmpty()) errors.append("Title is required. ");
+        if (content == null || content.trim().isEmpty()) errors.append("Content is required. ");
+        if (customerIdStr == null || customerIdStr.trim().isEmpty()) errors.append("Customer ID is required. ");
+        
+        if (errors.length() > 0) {
+            request.getSession().setAttribute("error", errors.toString());
+            response.sendRedirect("viewblogs");
+            return;
+        }
+        
+        try {
+            int customerId = Integer.parseInt(customerIdStr);
+            Blog blog = new Blog(0, title.trim(), content.trim(), customerId, null);
+            blogDAO.insertBlog(blog);
+            
+            request.getSession().setAttribute("success", "Blog created successfully!");
+            response.sendRedirect("viewblogs");
+        } catch (NumberFormatException e) {
+            request.getSession().setAttribute("error", "Invalid customer ID format.");
+            response.sendRedirect("viewblogs");
+        } catch (Exception e) {
+            request.getSession().setAttribute("error", "Error creating blog: " + e.getMessage());
+            response.sendRedirect("viewblogs");
+        }
     }
 
     private void updateBlog(HttpServletRequest request, HttpServletResponse response)
