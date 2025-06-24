@@ -4,6 +4,7 @@
  */
 package controller;
 
+import dal.CustomerDAO;
 import java.io.IOException;
 import java.io.PrintWriter;
 import jakarta.servlet.ServletException;
@@ -12,6 +13,10 @@ import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
+import java.sql.SQLException;
+import java.util.Vector;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import model.Customer;
 
 /**
@@ -49,15 +54,21 @@ public class UserProfileServlet extends HttpServlet {
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
 
-        HttpSession session = request.getSession(false); // false - không tạo session mới nếu chưa có
-
-        if (session != null && session.getAttribute("customerAuth") != null) {
-            Customer customer = (Customer) session.getAttribute("customerAuth");
-            // Sử dụng customer object ở đây
-            request.setAttribute("customer", customer);
-            request.getRequestDispatcher("/profile.jsp").forward(request, response);
-        } else {
-            response.sendRedirect("login.jsp");
+        try {
+            HttpSession session = request.getSession();
+            String email = (String) session.getAttribute("session_login");
+            
+            CustomerDAO dao = new CustomerDAO();
+            
+            Customer user = dao.getCustomerByEmail(email);
+            
+            // Set user in request scope
+            request.setAttribute("data", user);
+            
+            // Forward to account.jsp
+            request.getRequestDispatcher("userProfile.jsp").forward(request, response);
+        } catch (SQLException ex) {
+            Logger.getLogger(UserProfileServlet.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
 

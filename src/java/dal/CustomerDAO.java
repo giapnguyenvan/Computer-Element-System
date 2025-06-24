@@ -4,6 +4,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import model.Customer;
+import org.springframework.security.crypto.bcrypt.BCrypt;
 
 public class CustomerDAO {
     private final DBContext dbContext;
@@ -25,24 +26,28 @@ public class CustomerDAO {
     }
 
     public Customer login(String email, String password) throws SQLException {
-        String sql = "SELECT * FROM Customer WHERE email = ? AND password = ?";
+        String sql = "SELECT * FROM Customer WHERE email = ?";
         try (Connection conn = dbContext.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setString(1, email);
-            stmt.setString(2, password);
             try (java.sql.ResultSet rs = stmt.executeQuery()) {
                 if (rs.next()) {
-                    Customer customer = new Customer(
-                        rs.getInt("customer_id"),
-                        0, // user_id không còn dùng
-                        rs.getString("name"),
-                        rs.getString("phone"),
-                        rs.getString("shipping_address"),
-                        rs.getBoolean("is_verified")
-                    );
-                    customer.setEmail(rs.getString("email"));
-                    customer.setPassword(rs.getString("password"));
-                    return customer;
+                    String hashedPassword = rs.getString("password");
+                    if (BCrypt.checkpw(password, hashedPassword)) {
+                        Customer customer = new Customer(
+                            rs.getInt("customer_id"),
+                            0, // user_id không còn dùng
+                            rs.getString("name"),
+                            rs.getString("phone"),
+                            rs.getString("shipping_address"),
+                            rs.getBoolean("is_verified")
+                        );
+                        customer.setEmail(rs.getString("email"));
+                        customer.setPassword(hashedPassword);
+                        return customer;
+                    } else {
+                        return null; // Sai mật khẩu
+                    }
                 }
             }
         }

@@ -9,6 +9,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.sql.SQLException;
 import model.Customer;
+import org.springframework.security.crypto.bcrypt.BCrypt;
 
 @WebServlet(name = "RegisterServlet", urlPatterns = {"/register"})
 public class RegisterServlet extends HttpServlet {
@@ -49,14 +50,16 @@ public class RegisterServlet extends HttpServlet {
             // Tạo đối tượng Customer mới
             Customer newCustomer = new Customer(0, 0, fullname, phone, address);
             newCustomer.setEmail(email);
-            newCustomer.setPassword(password);
+            // Mã hóa mật khẩu trước khi lưu
+            String hashedPassword = BCrypt.hashpw(password, BCrypt.gensalt());
+            newCustomer.setPassword(hashedPassword);
             // Thực hiện đăng ký với is_verified = 0
             String sql = "INSERT INTO Customer (name, email, password, phone, shipping_address) VALUES (?, ?, ?, ?, ?)";
             try (java.sql.Connection conn = dal.DBContext.getInstance().getConnection();
                  java.sql.PreparedStatement stmt = conn.prepareStatement(sql)) {
                 stmt.setString(1, fullname);
                 stmt.setString(2, email);
-                stmt.setString(3, password);
+                stmt.setString(3, hashedPassword);
                 stmt.setString(4, phone);
                 stmt.setString(5, address);
                 if (stmt.executeUpdate() > 0) {
