@@ -83,6 +83,11 @@ public class LoginServlet extends HttpServlet {
             // Thử đăng nhập với Customer
             Customer customer = new dal.CustomerDAO().login(email, password);
             if (customer != null) {
+                if (!customer.isVerified()) {
+                    request.setAttribute("error", "Account is not existed");
+                    request.getRequestDispatcher("login.jsp").forward(request, response);
+                    return;
+                }
                 shop.entities.Customer cus = new shop.DAO.CustomerDAO().getById(customer.getCustomer_id());
                 HttpSession session = request.getSession();
                 session.setAttribute("customerAuth", customer);
@@ -97,6 +102,11 @@ public class LoginServlet extends HttpServlet {
             // Nếu không phải customer, thử với User (staff/admin)
             User user = dal.UserDAO.getInstance().login(email, password);
             if (user != null) {
+                if (!user.isVerified()) {
+                    request.setAttribute("error", "Email was not verified");
+                    request.getRequestDispatcher("login.jsp").forward(request, response);
+                    return;
+                }
                 HttpSession session = request.getSession();
                 
                 // Lấy tên đầy đủ từ DAO

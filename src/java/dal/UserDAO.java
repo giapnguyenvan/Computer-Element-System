@@ -37,7 +37,8 @@ public class UserDAO {
                         rs.getString("username"),
                         rs.getString("password"),
                         rs.getString("role"),
-                        rs.getString("email")
+                        rs.getString("email"),
+                        rs.getBoolean("is_verified")
                     );
                 }
             }
@@ -97,7 +98,8 @@ public class UserDAO {
                         rs.getString("username"),
                         rs.getString("password"),
                         rs.getString("role"),
-                        rs.getString("email")
+                        rs.getString("email"),
+                        rs.getBoolean("is_verified")
                     );
                 }
             }
@@ -119,7 +121,8 @@ public class UserDAO {
                         rs.getString("username"),
                         rs.getString("password"),
                         rs.getString("role"),
-                        rs.getString("email")
+                        rs.getString("email"),
+                        rs.getBoolean("is_verified")
                     );
                 }
             }
@@ -141,7 +144,8 @@ public class UserDAO {
                     rs.getString("username"),
                     rs.getString("password"),
                     rs.getString("role"),
-                    rs.getString("email")
+                    rs.getString("email"),
+                    rs.getBoolean("is_verified")
                 );
                 users.add(user);
             }
@@ -163,7 +167,8 @@ public class UserDAO {
                         rs.getString("username"),
                         rs.getString("password"),
                         rs.getString("role"),
-                        rs.getString("email")
+                        rs.getString("email"),
+                        rs.getBoolean("is_verified")
                     );
                     return user;
                 }
@@ -180,8 +185,9 @@ public class UserDAO {
                 "Peter Jones",  // username
                 "abc123123",    // password
                 "admin",        // role
-                "peterj_admin@example.com" // email
+                "peterj_admin@example.com"
             );
+            adminUser.setVerified(true);
             register(adminUser);
         }
     }
@@ -210,6 +216,17 @@ public class UserDAO {
             }
         }
         return null;
+    }
+
+    // Cập nhật trạng thái xác thực tài khoản
+    public boolean updateIsVerified(String email, boolean isVerified) throws SQLException {
+        String sql = "UPDATE User SET is_verified = ? WHERE email = ?";
+        try (Connection conn = dbContext.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+            stmt.setBoolean(1, isVerified);
+            stmt.setString(2, email);
+            return stmt.executeUpdate() > 0;
+        }
     }
 
 }

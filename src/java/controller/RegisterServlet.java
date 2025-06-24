@@ -50,7 +50,7 @@ public class RegisterServlet extends HttpServlet {
             Customer newCustomer = new Customer(0, 0, fullname, phone, address);
             newCustomer.setEmail(email);
             newCustomer.setPassword(password);
-            // Thực hiện đăng ký
+            // Thực hiện đăng ký với is_verified = 0
             String sql = "INSERT INTO Customer (name, email, password, phone, shipping_address) VALUES (?, ?, ?, ?, ?)";
             try (java.sql.Connection conn = dal.DBContext.getInstance().getConnection();
                  java.sql.PreparedStatement stmt = conn.prepareStatement(sql)) {
@@ -60,7 +60,19 @@ public class RegisterServlet extends HttpServlet {
                 stmt.setString(4, phone);
                 stmt.setString(5, address);
                 if (stmt.executeUpdate() > 0) {
-                    response.sendRedirect("login.jsp");
+                    // Gửi mã xác thực qua email
+                    String verificationCode = String.format("%06d", new java.util.Random().nextInt(1000000));
+                    try {
+                        shop.utils.EmailUtil.sendVerificationEmail(email, verificationCode);
+                        // Lưu mã xác thực vào session để kiểm tra sau
+                        request.getSession().setAttribute("verification_code", verificationCode);
+                        request.getSession().setAttribute("verification_email", email);
+                        request.setAttribute("showVerificationPopup", true);
+                        request.setAttribute("registerMessage", "Vui lòng kiểm tra email để xác thực tài khoản!");
+                    } catch (Exception ex) {
+                        request.setAttribute("error", "Không thể gửi email xác thực: " + ex.getMessage());
+                    }
+                    request.getRequestDispatcher("Register.jsp").forward(request, response);
                 } else {
                     request.setAttribute("error", "Đăng ký thất bại!");
                     request.getRequestDispatcher("Register.jsp").forward(request, response);

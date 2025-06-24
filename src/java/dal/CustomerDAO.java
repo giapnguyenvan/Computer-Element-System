@@ -37,7 +37,8 @@ public class CustomerDAO {
                         0, // user_id không còn dùng
                         rs.getString("name"),
                         rs.getString("phone"),
-                        rs.getString("shipping_address")
+                        rs.getString("shipping_address"),
+                        rs.getBoolean("is_verified")
                     );
                     customer.setEmail(rs.getString("email"));
                     customer.setPassword(rs.getString("password"));
@@ -102,6 +103,16 @@ public class CustomerDAO {
             }
         }
         return customers;
+    }
+
+    public boolean updateIsVerified(String email, boolean isVerified) throws SQLException {
+        String sql = "UPDATE Customer SET is_verified = ? WHERE email = ?";
+        try (Connection conn = dbContext.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+            stmt.setBoolean(1, isVerified);
+            stmt.setString(2, email);
+            return stmt.executeUpdate() > 0;
+        }
     }
 
     // You might want to add more methods here, e.g., getCustomerByUserId, updateCustomer, etc.
