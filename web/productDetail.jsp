@@ -224,7 +224,17 @@
         <script>
             // Global variables
             let cartCount = 0;
-            const currentUserId = ${sessionScope.userAuth2.id};
+            <c:choose>
+                <c:when test="${not empty sessionScope.userAuth}">
+                    const currentUserId = ${sessionScope.userAuth.id};
+                </c:when>
+                <c:when test="${not empty sessionScope.customerAuth}">
+                    const currentUserId = ${sessionScope.customerAuth.customer_id};
+                </c:when>
+                <c:otherwise>
+                    const currentUserId = 0;
+                </c:otherwise>
+            </c:choose>
 
             // Function to change quantity
             function changeQuantity(productId, change) {

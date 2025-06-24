@@ -52,7 +52,7 @@ public class AuthorizationFilter implements Filter {
                 List<String> requiredRoles = Arrays.asList(rolesAllowed.roles());
 
                 //Lấy roles của user từ session
-                User userAuth = (User) req.getSession().getAttribute("userAuth2");
+                User userAuth = (User) req.getSession().getAttribute("userAuth");
                 List<String> userRoles = new ArrayList<>();
                 if (userAuth != null) {
                     userRoles.add(userAuth.getRole());

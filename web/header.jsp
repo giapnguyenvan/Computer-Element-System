@@ -66,7 +66,7 @@
             </form>
             <div class="d-flex align-items-center">
                 <c:choose>
-                    <c:when test="${not empty sessionScope.userAuth}">
+                    <c:when test="${not empty sessionScope.userAuth or not empty sessionScope.customerAuth}">
                         <!-- User Dropdown -->
                         <div class="dropdown me-3">
                             <c:choose>
