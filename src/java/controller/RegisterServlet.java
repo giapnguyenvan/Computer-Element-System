@@ -46,8 +46,30 @@ public class RegisterServlet extends HttpServlet {
             if (customerDAO.isEmailExists(email)) {
                 // Kiểm tra xem email có tồn tại nhưng chưa xác thực không
                 if (customerDAO.isEmailExistsButNotVerified(email)) {
-                    request.setAttribute("error", "Please confirm your email address to activate your account");
-                    request.setAttribute("showVerificationPopup", true);
+                    // Cập nhật thông tin customer chưa xác thực thay vì tạo mới
+                    try {
+                        String hashedPassword = BCrypt.hashpw(password, BCrypt.gensalt());
+                        boolean updateSuccess = customerDAO.updateCustomerInfo(email, fullname, phone, address, hashedPassword);
+                        
+                        if (updateSuccess) {
+                            // Gửi mã xác thực qua email
+                            String verificationCode = String.format("%06d", new java.util.Random().nextInt(1000000));
+                            try {
+                                EmailUtil.sendVerificationEmail(email, verificationCode);
+                                // Lưu mã xác thực vào session để kiểm tra sau
+                                request.getSession().setAttribute("verification_code", verificationCode);
+                                request.getSession().setAttribute("verification_email", email);
+                                request.setAttribute("showVerificationPopup", true);
+                                request.setAttribute("registerMessage", "Thông tin đã được cập nhật. Vui lòng kiểm tra email để xác thực tài khoản!");
+                            } catch (Exception ex) {
+                                request.setAttribute("error", "Không thể gửi email xác thực: " + ex.getMessage());
+                            }
+                        } else {
+                            request.setAttribute("error", "Không thể cập nhật thông tin tài khoản. Vui lòng thử lại.");
+                        }
+                    } catch (SQLException e) {
+                        request.setAttribute("error", "Lỗi cập nhật thông tin: " + e.getMessage());
+                    }
                     request.getRequestDispatcher("Register.jsp").forward(request, response);
                     return;
                 } else {
@@ -80,7 +102,22 @@ public class RegisterServlet extends HttpServlet {
                 }
                 request.getRequestDispatcher("Register.jsp").forward(request, response);
             } catch (SQLException e) {
-                request.setAttribute("error", "Đăng ký thất bại: " + e.getMessage());
+                // Kiểm tra xem có phải lỗi duplicate key không
+                if (e.getMessage().contains("Duplicate entry") && e.getMessage().contains("customer.email")) {
+                    // Email đã tồn tại, kiểm tra lại trạng thái
+                    try {
+                        if (customerDAO.isEmailExistsButNotVerified(email)) {
+                            request.setAttribute("error", "Please confirm your email address to activate your account");
+                            request.setAttribute("showVerificationPopup", true);
+                        } else {
+                            request.setAttribute("error", "Email đã được sử dụng!");
+                        }
+                    } catch (SQLException checkEx) {
+                        request.setAttribute("error", "Email đã được sử dụng!");
+                    }
+                } else {
+                    request.setAttribute("error", "Đăng ký thất bại: " + e.getMessage());
+                }
                 request.getRequestDispatcher("Register.jsp").forward(request, response);
             }
             return;
