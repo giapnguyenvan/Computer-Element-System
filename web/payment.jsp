@@ -217,16 +217,23 @@
                 border-radius: 2rem;
                 font-size: 0.875rem;
                 font-weight: 500;
-                background: var(--warning-color);
-                color: white;
+                background: #ffc107; /* vàng mặc định cho pending/processing */
+                color: #212529;
             }
 
             .status-indicator.success {
-                background: var(--success-color);
+                background: #28a745; /* xanh cho thành công */
+                color: #fff;
             }
 
             .status-indicator.error {
-                background: var(--danger-color);
+                background: #dc3545; /* đỏ cho lỗi */
+                color: #fff;
+            }
+
+            .status-indicator.pending, .status-indicator.processing {
+                background: #ffc107; /* vàng cho chờ thanh toán và đang xử lý */
+                color: #212529;
             }
 
             /* Dark theme styles */
@@ -428,9 +435,8 @@
                                        function updatePaymentStatus(status, message) {
                                            const indicator = document.getElementById('statusIndicator');
                                            const qrCode = document.getElementById('qrCode');
-
+                                           // Đảm bảo className luôn có status-indicator và trạng thái
                                            indicator.className = `status-indicator ${status}`;
-
                                            switch (status) {
                                                case 'success':
                                                    indicator.innerHTML = '<i class="fas fa-check me-1"></i>' + message;
@@ -442,9 +448,14 @@
                                                    break;
                                                case 'processing':
                                                    indicator.innerHTML = '<i class="fas fa-spinner fa-spin me-1"></i>' + message;
+                                                   qrCode.classList.add('pulse');
+                                                   break;
+                                               case 'pending':
+                                                   indicator.innerHTML = '<i class="fas fa-clock me-1"></i>' + message;
+                                                   qrCode.classList.add('pulse');
                                                    break;
                                                default:
-                                                   indicator.innerHTML = '<i class="fas fa-clock me-1"></i>' + message;
+                                                   indicator.innerHTML = message;
                                                    qrCode.classList.add('pulse');
                                            }
                                        }
