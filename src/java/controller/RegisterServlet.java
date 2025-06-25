@@ -47,7 +47,8 @@ public class RegisterServlet extends HttpServlet {
                 // Kiểm tra xem email có tồn tại nhưng chưa xác thực không
                 if (customerDAO.isEmailExistsButNotVerified(email)) {
                     request.setAttribute("error", "Please confirm your email address to activate your account");
-                    request.getRequestDispatcher("verify.jsp").forward(request, response);
+                    request.setAttribute("showVerificationPopup", true);
+                    request.getRequestDispatcher("Register.jsp").forward(request, response);
                     return;
                 } else {
                     request.setAttribute("error", "Email đã được sử dụng!");
