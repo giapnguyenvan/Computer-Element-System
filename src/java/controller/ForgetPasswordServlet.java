@@ -71,7 +71,7 @@ public class ForgetPasswordServlet extends HttpServlet {
                     request.getSession().removeAttribute("reset_verification_email");
                     request.getSession().removeAttribute("reset_account_type");
                     request.setAttribute("success", "Your password has been reset successfully. Please login with your new password.");
-                    request.getRequestDispatcher("forget_password.jsp").forward(request, response);
+                    request.getRequestDispatcher("login.jsp").forward(request, response);
                 } else {
                     request.setAttribute("error", "Could not update password. Please try again.");
                     request.getRequestDispatcher("verify_reset.jsp").forward(request, response);
