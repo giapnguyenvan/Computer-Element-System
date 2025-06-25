@@ -306,7 +306,7 @@
                     <div id="clientError" class="alert alert-danger" style="display:none;" role="alert"></div>
                     <form action="login" method="post" id="loginForm">
                         <div class="mb-3">
-                            <label class="form-label" for="email">User Name</label>
+                            <label class="form-label" for="email">Email</label>
                             <input type="text" class="form-control" id="email" name="email"
                                    value="<c:out value='${param.email != null ? param.email : (not empty email ? email : "")}'/>" required>
                         </div>
