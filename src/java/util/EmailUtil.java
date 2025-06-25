@@ -1,4 +1,4 @@
-package shop.utils;
+package util;
 
 import jakarta.mail.*;
 import jakarta.mail.internet.*;

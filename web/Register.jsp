@@ -216,6 +216,127 @@
                 min-width: 100vw;
             }
         }
+        
+        /* Loading Modal Styles */
+        #loadingModal .modal-content {
+            border-radius: 15px;
+            border: none;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+        }
+        
+        #loadingModal .modal-body {
+            padding: 2rem;
+        }
+        
+        #loadingModal .spinner-border {
+            width: 3rem;
+            height: 3rem;
+        }
+        
+        #loadingModal .modal-title {
+            color: #333;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+        }
+        
+        #loadingModal .text-muted {
+            color: #6c757d !important;
+            font-size: 0.875rem;
+        }
+        
+        /* Verification Modal Styles */
+        .verification-modal-content {
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            background-color: #fff;
+            border: none;
+        }
+        
+        .verification-modal-header {
+            background-color: #6c5ce7;
+            color: white;
+            text-align: center;
+            font-size: 1.5rem;
+            padding: 15px 20px;
+            border-radius: 8px 8px 0 0;
+            border-bottom: none;
+        }
+        
+        .verification-modal-header .modal-title {
+            font-size: 1.5rem;
+            font-weight: 600;
+            margin: 0;
+        }
+        
+        .verification-modal-header .btn-close-white {
+            filter: invert(1) grayscale(100%) brightness(200%);
+        }
+        
+        .verification-modal-body {
+            padding: 30px;
+        }
+        
+        .verification-input {
+            border-radius: 8px;
+            margin-bottom: 15px;
+            border: 1.5px solid #e0e3ea;
+            padding: 12px 15px;
+            font-size: 1rem;
+        }
+        
+        .verification-input:focus {
+            border-color: #6c5ce7;
+            box-shadow: 0 0 0 2px rgba(108, 92, 231, 0.1);
+        }
+        
+        .verification-btn {
+            background-color: #6c5ce7;
+            border: none;
+            padding: 12px 20px;
+            width: 100%;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+        
+        .verification-btn:hover {
+            background-color: #5a4bcf;
+        }
+        
+        .verification-modal-body .alert {
+            margin-top: 20px;
+            padding: 15px;
+            font-size: 1rem;
+            border-radius: 8px;
+        }
+        
+        .verification-modal-body .alert-danger {
+            background-color: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+        
+        .verification-modal-body .alert-success {
+            background-color: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+        
+        .resend-code-btn {
+            color: #6c5ce7;
+            text-decoration: none;
+            font-size: 0.9rem;
+            border: none;
+            background: none;
+            padding: 0;
+        }
+        
+        .resend-code-btn:hover {
+            color: #5a4bcf;
+            text-decoration: underline;
+        }
     </style>
 </head>
 <body>
@@ -292,20 +413,66 @@
                   <div class="modal-dialog modal-dialog-centered">
                     <div class="modal-content">
                       <div class="modal-header">
-                        <h5 class="modal-title" id="verificationModalLabel">Nhập mã xác thực</h5>
+                        <h5 class="modal-title" id="verificationModalLabel">Enter verification code</h5>
                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                       </div>
                       <form action="check-verification" method="post">
                         <div class="modal-body">
                           <div class="mb-3">
-                            <label for="verificationCode" class="form-label">Mã xác thực đã gửi về email:</label>
+                            <label for="verificationCode" class="form-label">Verification code sent to your email:</label>
                             <input type="text" class="form-control" id="verificationCode" name="code" required maxlength="6">
                           </div>
                         </div>
                         <div class="modal-footer">
-                          <button type="submit" class="btn btn-primary">Xác thực</button>
+                          <button type="submit" class="btn btn-primary">Verify</button>
                         </div>
                       </form>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Verification Modal với thiết kế mới -->
+                <div class="modal fade" id="verificationModalNew" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="verificationModalNewLabel" aria-hidden="true">
+                  <div class="modal-dialog modal-dialog-centered">
+                    <div class="modal-content verification-modal-content">
+                      <div class="modal-header verification-modal-header">
+                        <h4 class="modal-title" id="verificationModalNewLabel">Enter the 6-digit code</h4>
+                        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                      </div>
+                      <div class="modal-body verification-modal-body">
+                        <form action="check-verification" method="post" id="verificationForm">
+                          <div class="mb-3">
+                            <input type="text" class="form-control verification-input" name="code" maxlength="6" pattern="\d{6}" required placeholder="Verification code" />
+                          </div>
+                          <button type="submit" class="btn btn-primary verification-btn">Verify</button>
+                        </form>
+                        <div class="text-center mt-3">
+                          <button type="button" class="btn btn-link resend-code-btn" onclick="resendVerificationCode()">Resend Code</button>
+                        </div>
+                        <!-- Display error message if exists -->
+                        <c:if test="${not empty error}">
+                          <div class="alert alert-danger mt-3">${error}</div>
+                        </c:if>
+                        <!-- Display success message if exists -->
+                        <c:if test="${not empty message}">
+                          <div class="alert alert-success mt-3">${message}</div>
+                        </c:if>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Loading Modal -->
+                <div class="modal fade" id="loadingModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="loadingModalLabel" aria-hidden="true">
+                  <div class="modal-dialog modal-dialog-centered modal-sm">
+                    <div class="modal-content">
+                      <div class="modal-body text-center">
+                        <div class="spinner-border text-primary mb-3" role="status">
+                          <span class="visually-hidden">Loading...</span>
+                        </div>
+                        <h6 class="modal-title" id="loadingModalLabel">Sending verification code...</h6>
+                        <p class="text-muted small">Please wait a moment</p>
+                      </div>
                     </div>
                   </div>
                 </div>
@@ -315,7 +482,7 @@
     <% if (request.getAttribute("showVerificationPopup") != null) { %>
     <script>
     document.addEventListener("DOMContentLoaded", function() {
-      var myModal = new bootstrap.Modal(document.getElementById('verificationModal'));
+      var myModal = new bootstrap.Modal(document.getElementById('verificationModalNew'));
       myModal.show();
     });
     </script>
@@ -341,15 +508,15 @@
                 let errors = [];
 
                 if (!validateEmail(email)) {
-                    errors.push("Email không hợp lệ. Vui lòng nhập lại.");
+                    errors.push("Invalid email. Please enter a valid email address.");
                 }
 
                 if (!validatePassword(password)) {
-                    errors.push("Mật khẩu phải có ít nhất 8 ký tự, gồm chữ hoa, chữ thường, số và ký tự đặc biệt.");
+                    errors.push("Password must be at least 8 characters long, including uppercase, lowercase, numbers and special characters.");
                 }
 
                 if (password !== confirmPassword) {
-                    errors.push("Mật khẩu xác nhận không khớp.");
+                    errors.push("Password confirmation does not match.");
                 }
 
                 if (errors.length > 0) {
@@ -358,9 +525,64 @@
                     errorDiv.style.display = 'block';
                 } else {
                     errorDiv.style.display = 'none';
+                    
+                    // Hiển thị loading modal
+                    const loadingModal = new bootstrap.Modal(document.getElementById('loadingModal'));
+                    loadingModal.show();
+                    
+                    // Gửi form sau khi hiển thị loading
+                    setTimeout(() => {
+                        registerForm.submit();
+                    }, 100);
                 }
             });
         }
+    </script>
+    
+    <script>
+        function resendVerificationCode() {
+            const resendBtn = document.querySelector('.resend-code-btn');
+            const email = document.getElementById('email').value;
+            
+            if (!email) {
+                alert('Please enter your email address first');
+                return;
+            }
+            
+            // Disable button and show loading
+            resendBtn.disabled = true;
+            resendBtn.textContent = 'Sending...';
+            
+            // Send AJAX request to resend verification code
+            fetch('send-verification', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                },
+                body: 'email=' + encodeURIComponent(email) + '&action=resend'
+            })
+            .then(response => response.text())
+            .then(data => {
+                alert('Verification code has been resent to your email');
+                resendBtn.textContent = 'Resend Code';
+                resendBtn.disabled = false;
+            })
+            .catch(error => {
+                alert('Failed to resend verification code. Please try again.');
+                resendBtn.textContent = 'Resend Code';
+                resendBtn.disabled = false;
+            });
+        }
+        
+        // Auto-focus on verification code input when modal opens
+        document.addEventListener('DOMContentLoaded', function() {
+            const verificationModal = document.getElementById('verificationModalNew');
+            if (verificationModal) {
+                verificationModal.addEventListener('shown.bs.modal', function () {
+                    document.querySelector('.verification-input').focus();
+                });
+            }
+        });
     </script>
 </body>
 </html>

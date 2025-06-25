@@ -25,6 +25,23 @@ public class CustomerDAO {
         }
     }
 
+    public void addCustomerWithEmail(Customer customer, String hashedPassword) throws SQLException {
+        if (isEmailExists(customer.getEmail())) {
+            throw new SQLException("Email already exists: " + customer.getEmail());
+        }
+        
+        String sql = "INSERT INTO Customer (name, email, password, phone, shipping_address) VALUES (?, ?, ?, ?, ?)";
+        try (Connection conn = dbContext.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+            stmt.setString(1, customer.getName());
+            stmt.setString(2, customer.getEmail());
+            stmt.setString(3, hashedPassword);
+            stmt.setString(4, customer.getPhone());
+            stmt.setString(5, customer.getShipping_address());
+            stmt.executeUpdate();
+        }
+    }
+
     public Customer login(String email, String password) throws SQLException {
         String sql = "SELECT * FROM Customer WHERE email = ?";
         try (Connection conn = dbContext.getConnection();
@@ -88,6 +105,17 @@ public class CustomerDAO {
         }
     }
 
+    public boolean isEmailExistsButNotVerified(String email) throws SQLException {
+        String sql = "SELECT email FROM Customer WHERE email = ? AND is_verified = 0";
+        try (Connection conn = dbContext.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+            stmt.setString(1, email);
+            try (java.sql.ResultSet rs = stmt.executeQuery()) {
+                return rs.next();
+            }
+        }
+    }
+
     public java.util.List<Customer> getAllCustomers() throws SQLException {
         java.util.List<Customer> customers = new java.util.ArrayList<>();
         String sql = "SELECT * FROM Customer";
@@ -116,6 +144,28 @@ public class CustomerDAO {
              PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setBoolean(1, isVerified);
             stmt.setString(2, email);
+            return stmt.executeUpdate() > 0;
+        }
+    }
+
+    public boolean deleteUnverifiedCustomer(String email) throws SQLException {
+        String sql = "DELETE FROM Customer WHERE email = ? AND is_verified = 0";
+        try (Connection conn = dbContext.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+            stmt.setString(1, email);
+            return stmt.executeUpdate() > 0;
+        }
+    }
+
+    public boolean updateCustomerInfo(String email, String name, String phone, String address, String hashedPassword) throws SQLException {
+        String sql = "UPDATE Customer SET name = ?, phone = ?, shipping_address = ?, password = ? WHERE email = ? AND is_verified = 0";
+        try (Connection conn = dbContext.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+            stmt.setString(1, name);
+            stmt.setString(2, phone);
+            stmt.setString(3, address);
+            stmt.setString(4, hashedPassword);
+            stmt.setString(5, email);
             return stmt.executeUpdate() > 0;
         }
     }
