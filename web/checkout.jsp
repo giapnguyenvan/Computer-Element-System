@@ -1,9 +1,20 @@
+<%-- 
+    Document   : checkout
+    Created on : Jun 25, 2025, 6:37:27 PM
+    Author     : admin
+--%>
+
+<%@page contentType="text/html" pageEncoding="UTF-8"%>
 <!DOCTYPE html>
 <html lang="vi">
     <head>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <title>Checkout - Thanh toán</title>
+        <!-- Bootstrap CSS -->
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+        <!-- Font Awesome -->
+        <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
         <style>
             * {
                 margin: 0;
@@ -20,59 +31,66 @@
 
             .container {
                 max-width: 1200px;
-                margin: 0 auto;
-                padding: 20px;
+                /*margin: 0 auto;*/
+                /*padding: 20px;*/
             }
 
             .checkout-header {
                 text-align: center;
-                margin-bottom: 40px;
+                margin-bottom: 20px;
             }
 
             .checkout-header h1 {
-                color: white;
-                font-size: 3rem;
+                color: #111;
+                font-size: 2.2rem;
                 text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
-                margin-bottom: 10px;
+                margin-top: 24px;
+                margin-bottom: 8px;
             }
 
             .checkout-header p {
-                color: rgba(255,255,255,0.9);
-                font-size: 1.2rem;
+                color: rgba(34,34,34,0.8);
+                font-size: 1rem;
+                margin-bottom: 0;
             }
 
             .checkout-content {
                 display: grid;
                 grid-template-columns: 1fr 400px;
                 gap: 30px;
+                align-items: flex-start;
             }
 
             .checkout-form {
                 background: white;
                 border-radius: 20px;
                 box-shadow: 0 20px 40px rgba(0,0,0,0.1);
-                overflow: hidden;
                 backdrop-filter: blur(10px);
-                padding: 30px;
+                padding: 18px 16px 18px 16px;
             }
 
             .order-summary {
                 background: white;
-                border-radius: 20px;
-                box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+                border-radius: 14px;
+                box-shadow: 0 10px 24px rgba(0,0,0,0.08);
                 overflow: hidden;
                 backdrop-filter: blur(10px);
-                padding: 30px;
+                padding: 14px 12px 16px 12px;
                 height: fit-content;
             }
 
+            .order-summary h2 {
+                font-size: 1.15rem;
+                margin-bottom: 10px;
+            }
+
             .form-group {
-                margin-bottom: 20px;
+                margin-bottom: 14px;
             }
 
             .form-group label {
                 display: block;
-                margin-bottom: 8px;
+                margin-bottom: 5px;
                 font-weight: 600;
                 color: #2d3436;
             }
@@ -81,10 +99,10 @@
             .form-group select,
             .form-group textarea {
                 width: 100%;
-                padding: 12px;
+                padding: 9px;
                 border: 2px solid #e1e5e9;
                 border-radius: 15px;
-                font-size: 14px;
+                font-size: 13px;
                 transition: all 0.3s ease;
                 background: linear-gradient(145deg, #ffffff, #f8f9fa);
             }
@@ -104,10 +122,10 @@
             .cart-item {
                 display: flex;
                 align-items: center;
-                padding: 25px;
+                padding: 12px 8px;
                 border: 2px solid #f8f9fa;
-                border-radius: 15px;
-                margin-bottom: 20px;
+                border-radius: 10px;
+                margin-bottom: 10px;
                 transition: all 0.3s ease;
                 background: linear-gradient(145deg, #ffffff, #f8f9fa);
             }
@@ -119,12 +137,12 @@
             }
 
             .item-image {
-                width: 100px;
-                height: 100px;
-                border-radius: 15px;
-                margin-right: 20px;
+                width: 50px;
+                height: 50px;
+                border-radius: 8px;
+                margin-right: 10px;
                 object-fit: cover;
-                box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+                box-shadow: 0 2px 6px rgba(0,0,0,0.12);
             }
 
             .item-info {
@@ -132,66 +150,67 @@
             }
 
             .item-info h4 {
-                font-size: 1.3rem;
+                font-size: 0.75rem;
                 font-weight: bold;
                 color: #2d3436;
-                margin-bottom: 8px;
+                margin-bottom: 4px;
             }
 
             .item-info .quantity {
                 color: #636e72;
-                font-size: 1.1rem;
-                margin-bottom: 8px;
+                font-size: 0.7rem;
+                margin-bottom: 4px;
             }
 
             .item-info .description {
                 color: #636e72;
-                margin-bottom: 15px;
-                line-height: 1.5;
+                margin-bottom: 6px;
+                line-height: 1.3;
+                font-size: 0.7rem;
             }
 
             .item-price {
-                font-size: 1.5rem;
+                font-size: 0.85rem;
                 font-weight: bold;
                 color: #e17055;
             }
 
             .order-total {
-                border-top: 3px solid #667eea;
-                padding-top: 20px;
-                margin-top: 20px;
+                border-top: 2px solid #667eea;
+                padding-top: 10px;
+                margin-top: 10px;
             }
 
             .total-row {
                 display: flex;
                 justify-content: space-between;
-                margin-bottom: 15px;
-                font-size: 1.1rem;
+                margin-bottom: 8px;
+                font-size: 0.98rem;
             }
 
             .total-row.final {
-                font-size: 1.5rem;
+                font-size: 1.15rem;
                 font-weight: bold;
                 color: #2d3436;
                 border-top: 2px solid #ddd;
-                padding-top: 15px;
-                margin-top: 20px;
+                padding-top: 10px;
+                margin-top: 10px;
             }
 
             .checkout-btn {
                 width: 100%;
-                padding: 18px 30px;
+                padding: 10px 0;
                 background: linear-gradient(45deg, #00b894, #00a085);
                 color: white;
                 border: none;
-                border-radius: 25px;
-                font-size: 1.1rem;
+                border-radius: 18px;
+                font-size: 1rem;
                 font-weight: bold;
                 cursor: pointer;
                 transition: all 0.3s ease;
                 text-transform: uppercase;
                 letter-spacing: 1px;
-                margin-top: 20px;
+                margin-top: 12px;
             }
 
             .checkout-btn:hover {
@@ -248,22 +267,19 @@
                 color: #ddd;
             }
 
-            @media (max-width: 768px) {
+            @media (max-width: 900px) {
                 .checkout-content {
                     grid-template-columns: 1fr;
                 }
-
-                .container {
-                    padding: 10px;
-                }
-
-                .checkout-header h1 {
-                    font-size: 2rem;
+                .checkout-form {
+                    max-height: none;
                 }
             }
         </style>
     </head>
     <body>
+        <!-- Include Header -->
+        <jsp:include page="header.jsp"/>
         <div class="container">
             <div class="checkout-header">
                 <h1>Thanh toán đơn hàng</h1>
@@ -318,7 +334,7 @@
 
                 <div class="order-summary">
                     <h2>Đơn hàng của bạn</h2>
-                    
+
                     <div id="loading-container" class="loading">
                         <p>Đang tải giỏ hàng...</p>
                     </div>
@@ -353,10 +369,13 @@
                 </div>
             </div>
         </div>
+        <!-- Footer -->
+        <jsp:include page="footer.jsp"/>
 
         <script>
             // Configuration
             const API_BASE_URL = '/CES/CartApiServlet';
+            const USER_INFO_API_URL = '/CES/UserInfoApiServlet';
             const userId = 1; // This should be dynamically set from session
 
             // Global variables
@@ -366,6 +385,7 @@
             // Initialize page
             document.addEventListener('DOMContentLoaded', function () {
                 loadCartItems();
+                loadUserInfo(); // Tự động điền thông tin user
             });
 
             // API Functions
@@ -438,19 +458,17 @@
                     const itemTotal = item.quantity * item.product.price;
                     total += itemTotal;
 
-                    html += `
-                        <div class="cart-item" data-item-id="${item.id}">
-                            <img src="${item.product.imageUrl || '/CES/images/default-product.jpg'}" 
-                                 alt="${item.product.name}" 
-                                 class="item-image">
-                            <div class="item-info">
-                                <h4>${item.product.name}</h4>
-                                <div class="quantity">Số lượng: ${item.quantity}</div>
-                                <div class="description">${item.product.description || 'Sản phẩm chất lượng cao'}</div>
-                                <div class="item-price">${formatPrice(itemTotal)}₫</div>
-                            </div>
-                        </div>
-                    `;
+                    html += '<div class="cart-item" data-item-id="' + item.id + '">' +
+                            '<img src="' + (item.product.imageUrl || '/CES/images/default-product.jpg') + '" ' +
+                            'alt="' + item.product.name + '" ' +
+                            'class="item-image">' +
+                            '<div class="item-info">' +
+                            '<h4>' + item.product.name + '</h4>' +
+                            '<div class="quantity">Số lượng: ' + item.quantity + '</div>' +
+                            '<div class="description">' + (item.product.description || 'Sản phẩm chất lượng cao') + '</div>' +
+                            '<div class="item-price">' + formatPrice(itemTotal) + '₫</div>' +
+                            '</div>' +
+                            '</div>';
                 });
 
                 container.innerHTML = html;
@@ -483,9 +501,9 @@
                 }
                 return true;
             }
-            function validateEmail(){
+            function validateEmail() {
                 const email = document.getElementById("email");
-                if(!isValidEmail(email.value)){
+                if (!isValidEmail(email.value)) {
                     return false;
                 }
                 return true;
@@ -496,11 +514,11 @@
                     showError('Giỏ hàng của bạn đang trống');
                     return;
                 }
-                if(!validatePhone()){
+                if (!validatePhone()) {
                     showError('Số điện thoại không hợp lệ!');
                     return;
                 }
-                if(!validateEmail()){
+                if (!validateEmail()) {
                     showError('Email không hợp lệ!');
                     return;
                 }
@@ -554,7 +572,7 @@
                     });
 
                     if (!response.ok) {
-                        throw new Error(`HTTP error! status: ${response.status}`);
+                        throw new Error('HTTP error! status: ' + response.status);
                     }
 
                     const result = await response.json();
@@ -566,7 +584,7 @@
                         // Reload cart (should be empty now)
                         setTimeout(() => {
                             loadCartItems();
-                            window.location = "payment-servlet?orderId="+result.orderId;
+                            window.location = "payment-servlet?orderId=" + result.orderId;
                         }, 4000);
                     } else {
                         showError('Đặt hàng thất bại: ' + (result.message || 'Lỗi không xác định'));
@@ -638,6 +656,22 @@
                     setTimeout(() => {
                         container.style.display = 'none';
                     }, timeout);
+                }
+            }
+
+            // Load user information and auto-fill form
+            async function loadUserInfo() {
+                try {
+                    const response = await apiCall(USER_INFO_API_URL);
+                    if (response.success && response.data) {
+                        const userInfo = response.data;
+                        document.getElementById('fullName').value = userInfo.fullName || '';
+                        document.getElementById('phone').value = userInfo.phone || '';
+                        document.getElementById('email').value = userInfo.email || '';
+                        document.getElementById('address').value = userInfo.address || '';
+                    }
+                } catch (error) {
+                    // Không hiển thị lỗi vì user có thể chưa đăng nhập
                 }
             }
         </script>

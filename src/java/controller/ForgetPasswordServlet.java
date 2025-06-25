@@ -1,6 +1,7 @@
 package controller;
 
 import dal.UserDAO;
+import dal.CustomerDAO;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
@@ -9,6 +10,8 @@ import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.sql.SQLException;
 import model.User;
+import model.Customer;
+import util.EmailUtil;
 
 @WebServlet(name = "ForgetPasswordServlet", urlPatterns = {"/forget-password"})
 public class ForgetPasswordServlet extends HttpServlet {
@@ -22,33 +25,125 @@ public class ForgetPasswordServlet extends HttpServlet {
     @Override
     public void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        String email = request.getParameter("email");
-        
-        try {
-            UserDAO userDAO = UserDAO.getInstance();
-            User user = userDAO.getUserByEmail(email);
+        String action = request.getParameter("action");
+        if ("verify".equals(action)) {
+            boolean isAjax = "XMLHttpRequest".equals(request.getHeader("X-Requested-With"));
+            response.setContentType(isAjax ? "application/json" : "text/html;charset=UTF-8");
+            java.io.PrintWriter out = response.getWriter();
+            // Xử lý xác minh mã và đặt lại mật khẩu
+            String inputCode = request.getParameter("code");
+            String newPassword = request.getParameter("newPassword");
+            String confirmPassword = request.getParameter("confirmPassword");
+            String sessionCode = (String) request.getSession().getAttribute("reset_verification_code");
+            String email = (String) request.getSession().getAttribute("reset_verification_email");
+            String accountType = (String) request.getSession().getAttribute("reset_account_type");
 
-            if (user != null) {
-                // Tạo mật khẩu mới ngẫu nhiên
-                String newPassword = generateRandomPassword();
-                
-                // Cập nhật mật khẩu mới vào database
-                if (userDAO.updatePassword(email, newPassword)) {
-                    // Gửi mật khẩu mới qua email (trong thực tế)
-                    // TODO: Implement email sending functionality
-                    
-                    // Hiển thị mật khẩu mới (chỉ để demo, không nên làm trong thực tế)
-                    request.setAttribute("success", "Mật khẩu mới của bạn là: " + newPassword);
-                    request.getRequestDispatcher("forget_password.jsp").forward(request, response);
+            if (inputCode == null || !inputCode.equals(sessionCode)) {
+                if (isAjax) {
+                    out.print("{\"success\":false,\"message\":'Verification code is incorrect!'}");
+                    return;
+                }
+                request.setAttribute("error", "Verification code is incorrect!");
+                request.setAttribute("showVerifyResetPopup", true);
+                request.getRequestDispatcher("forget_password.jsp").forward(request, response);
+                return;
+            }
+            if (newPassword == null || newPassword.length() < 8) {
+                if (isAjax) {
+                    out.print("{\"success\":false,\"message\":'Password must be at least 8 characters.'}");
+                    return;
+                }
+                request.setAttribute("error", "Password must be at least 8 characters.");
+                request.setAttribute("showVerifyResetPopup", true);
+                request.getRequestDispatcher("forget_password.jsp").forward(request, response);
+                return;
+            }
+            if (!newPassword.equals(confirmPassword)) {
+                if (isAjax) {
+                    out.print("{\"success\":false,\"message\":'Password confirmation does not match.'}");
+                    return;
+                }
+                request.setAttribute("error", "Password confirmation does not match.");
+                request.setAttribute("showVerifyResetPopup", true);
+                request.getRequestDispatcher("forget_password.jsp").forward(request, response);
+                return;
+            }
+            try {
+                boolean updated = false;
+                if ("user".equals(accountType)) {
+                    UserDAO userDAO = UserDAO.getInstance();
+                    User user = userDAO.getUserByEmail(email);
+                    if (user != null) {
+                        updated = userDAO.updatePassword(email, newPassword);
+                    }
+                } else if ("customer".equals(accountType)) {
+                    CustomerDAO customerDAO = new CustomerDAO();
+                    Customer customer = customerDAO.getCustomerByEmail(email);
+                    if (customer != null) {
+                        updated = customerDAO.updatePassword(email, newPassword);
+                    }
+                }
+                if (updated) {
+                    // Xóa session code sau khi thành công
+                    request.getSession().removeAttribute("reset_verification_code");
+                    request.getSession().removeAttribute("reset_verification_email");
+                    request.getSession().removeAttribute("reset_account_type");
+                    if (isAjax) {
+                        out.print("{\"success\":true,\"message\":'Your password has been reset successfully. Redirecting to login...'}");
+                        return;
+                    }
+                    request.setAttribute("success", "Your password has been reset successfully. Please login with your new password.");
+                    request.getRequestDispatcher("login.jsp").forward(request, response);
                 } else {
-                    request.setAttribute("error", "Không thể cập nhật mật khẩu!");
+                    if (isAjax) {
+                        out.print("{\"success\":false,\"message\":'Could not update password. Please try again.'}");
+                        return;
+                    }
+                    request.setAttribute("error", "Could not update password. Please try again.");
+                    request.setAttribute("showVerifyResetPopup", true);
                     request.getRequestDispatcher("forget_password.jsp").forward(request, response);
                 }
-            } else {
-                request.setAttribute("error", "Email không tồn tại trong hệ thống!");
+            } catch (Exception e) {
+                if (isAjax) {
+                    out.print("{\"success\":false,\"message\":'System error. Please try again.'}");
+                    return;
+                }
+                request.setAttribute("error", "System error: " + e.getMessage());
+                request.setAttribute("showVerifyResetPopup", true);
                 request.getRequestDispatcher("forget_password.jsp").forward(request, response);
             }
-        } catch (SQLException e) {
+            return;
+        }
+        String email = request.getParameter("email");
+        try {
+            UserDAO userDAO = UserDAO.getInstance();
+            CustomerDAO customerDAO = new CustomerDAO();
+            User user = null;
+            Customer customer = null;
+            boolean isUser = false, isCustomer = false;
+            try { user = userDAO.getUserByEmail(email); isUser = (user != null); } catch (Exception ignore) {}
+            try { customer = customerDAO.getCustomerByEmail(email); isCustomer = (customer != null); } catch (Exception ignore) {}
+
+            if (isUser || isCustomer) {
+                String verificationCode = String.format("%06d", new java.util.Random().nextInt(1000000));
+                try {
+                    EmailUtil.sendVerificationEmail(email, verificationCode);
+                    request.getSession().setAttribute("reset_verification_code", verificationCode);
+                    request.getSession().setAttribute("reset_verification_email", email);
+                    request.getSession().setAttribute("reset_account_type", isUser ? "user" : "customer");
+                    request.setAttribute("message", "A verification code has been sent to your email. Please enter the code to reset your password.");
+                    request.setAttribute("showVerifyResetPopup", true);
+                } catch (Exception ex) {
+                    request.setAttribute("error", "Cannot send verification email: " + ex.getMessage());
+                    request.getRequestDispatcher("forget_password.jsp").forward(request, response);
+                    return;
+                }
+                request.getRequestDispatcher("forget_password.jsp").forward(request, response);
+            } else {
+                request.setAttribute("error", "Email is incorrect or does not exist!");
+                request.getRequestDispatcher("forget_password.jsp").forward(request, response);
+            }
+        } catch (Exception e) {
             request.setAttribute("error", "Lỗi hệ thống: " + e.getMessage());
             request.getRequestDispatcher("forget_password.jsp").forward(request, response);
         }

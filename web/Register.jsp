@@ -96,12 +96,12 @@
             min-height: 100vh;
         }
         .register-form-box {
-            max-width: 400px;
+            max-width: 440px;
             background: #fff;
-            border-radius: 20px;
-            box-shadow: 0 8px 32px rgba(44, 62, 80, 0.12);
-            padding: 24px 18px 18px 18px;
-            margin: 12px 0;
+            border-radius: 16px;
+            box-shadow: 0 6px 24px rgba(44, 62, 80, 0.13);
+            padding: 18px 12px 12px 12px;
+            margin: 10px 0;
             display: flex;
             flex-direction: column;
             align-items: stretch;
@@ -148,24 +148,24 @@
             box-shadow: 0 0 0 2px rgba(112,95,188,0.08);
         }
         .register-form-box .btn-register {
-            width: 100%;
+            grid-column: 1 / -1;
+            margin: 8px 0 0 0;
+            border-radius: 8px;
+            background: #007bff;
+            color: #fff;
+            font-weight: 700;
+            font-size: 1rem;
             min-height: 38px;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-weight: 700;
-            font-size: 1rem;
-            margin: 12px 0 8px 0;
-            border-radius: 8px;
-            background: #0D6CF8;
             border: none;
-            color: #fff;
             box-shadow: none;
             padding: 0;
             transition: background 0.2s, color 0.2s;
         }
         .register-form-box .btn-register:hover {
-            background: #0b5ad3;
+            background: #0056b3;
             color: #fff;
         }
         .register-form-box .error {
@@ -186,26 +186,26 @@
             text-decoration: underline;
         }
         .register-form-box form {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 16px;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px 16px;
         }
-        .register-form-box .form-col {
-            flex: 1 1 45%;
-            min-width: 0;
+        .register-form-box .form-col,
+        .register-form-box .form-col-full {
             display: flex;
             flex-direction: column;
+            margin-bottom: 0;
         }
         .register-form-box .form-col-full {
-            flex: 1 1 100%;
+            grid-column: 1 / -1;
         }
         @media (max-width: 700px) {
             .register-form-box form {
-                flex-direction: column;
+                grid-template-columns: 1fr;
                 gap: 0;
             }
             .register-form-box .form-col, .register-form-box .form-col-full {
-                flex: 1 1 100%;
+                grid-column: 1 / -1;
             }
         }
         @media (max-width: 900px) {
@@ -337,6 +337,24 @@
             color: #5a4bcf;
             text-decoration: underline;
         }
+        
+        /* Validation Error Styles */
+        .form-control.is-invalid {
+            border-color: #dc3545;
+            box-shadow: 0 0 0 0.2rem rgba(220, 53, 69, 0.25);
+        }
+        
+        .invalid-feedback {
+            display: none;
+            width: 100%;
+            margin-top: 0.25rem;
+            font-size: 0.875em;
+            color: #dc3545;
+        }
+        
+        .form-control.is-invalid + .invalid-feedback {
+            display: block;
+        }
     </style>
 </head>
 <body>
@@ -381,27 +399,43 @@
                                value="${param.email != null ? param.email : (not empty email ? email : '')}">
                     </div>
                     <div class="form-col">
-                        <label class="form-label" for="username">Username:</label>
-                        <input type="text" class="form-control" id="username" name="username" required
-                               value="${param.username != null ? param.username : (not empty username ? username : '')}">
-                    </div>
-                    <div class="form-col">
                         <label class="form-label" for="phone">Phone Number:</label>
                         <input type="tel" class="form-control" id="phone" name="phone" required
                                value="${param.phone != null ? param.phone : (not empty phone ? phone : '')}">
+                        <div class="invalid-feedback" id="phoneError"></div>
                     </div>
                     <div class="form-col">
                         <label class="form-label" for="password">Password:</label>
                         <input type="password" class="form-control" id="password" name="password" required>
+                        <div class="invalid-feedback" id="passwordError"></div>
                     </div>
                     <div class="form-col">
                         <label class="form-label" for="confirmPassword">Confirm Password:</label>
                         <input type="password" class="form-control" id="confirmPassword" name="confirmPassword" required>
+                        <div class="invalid-feedback" id="confirmPasswordError"></div>
                     </div>
                     <div class="form-col-full">
-                        <label class="form-label" for="address">Address:</label>
-                        <input type="text" class="form-control" id="address" name="address" required
-                               value="${param.address != null ? param.address : (not empty address ? address : '')}">
+                        <label class="form-label">Shipping Address:</label>
+                        <div style="display: flex; gap: 8px;">
+                            <select id="province" name="province" class="form-control" required style="flex:1; min-width:0;">
+                                <option value="">-- Select province --</option>
+                            </select>
+                            <select id="district" name="district" class="form-control" required disabled style="flex:1; min-width:0;">
+                                <option value="">-- Select district --</option>
+                            </select>
+                            <select id="ward" name="ward" class="form-control" required disabled style="flex:1; min-width:0;">
+                                <option value="">-- Select ward --</option>
+                            </select>
+                        </div>
+                        <div class="invalid-feedback" id="provinceError"></div>
+                        <div class="invalid-feedback" id="districtError"></div>
+                        <div class="invalid-feedback" id="wardError"></div>
+                    </div>
+                    <div class="form-col-full">
+                        <label class="form-label" for="addressDetail">Address Detail:</label>
+                        <input type="text" class="form-control" id="addressDetail" name="addressDetail"
+                               value="${param.addressDetail != null ? param.addressDetail : (not empty addressDetail ? addressDetail : '')}">
+                        <div class="invalid-feedback" id="addressDetailError"></div>
                     </div>
                     <button type="submit" class="btn-register">Sign Up</button>
                 </form>
@@ -487,6 +521,103 @@
     });
     </script>
     <% } %>
+    <script src="vietnam-provinces.json" type="application/json" id="locationsData"></script>
+    <script>
+    let locationsData = [];
+    document.addEventListener('DOMContentLoaded', function() {
+      fetch('vietnam-provinces.json')
+        .then(response => response.json())
+        .then(data => {
+          locationsData = data;
+          populateProvinces();
+        });
+
+      const provinceSelect = document.getElementById('province');
+      const districtSelect = document.getElementById('district');
+      const wardSelect = document.getElementById('ward');
+
+      function populateProvinces() {
+        provinceSelect.innerHTML = '<option value="">-- Select province --</option>';
+        locationsData.forEach(province => {
+          const option = document.createElement('option');
+          option.value = province.name;
+          option.textContent = province.name;
+          provinceSelect.appendChild(option);
+        });
+        districtSelect.innerHTML = '<option value="">-- Select district --</option>';
+        districtSelect.disabled = true;
+        wardSelect.innerHTML = '<option value="">-- Select ward --</option>';
+        wardSelect.disabled = true;
+      }
+
+      provinceSelect.addEventListener('change', function() {
+        const selectedProvince = locationsData.find(p => p.name === this.value);
+        if (selectedProvince) {
+          districtSelect.innerHTML = '<option value="">-- Select district --</option>';
+          selectedProvince.districts.forEach(district => {
+            const option = document.createElement('option');
+            option.value = district.name;
+            option.textContent = district.name;
+            districtSelect.appendChild(option);
+          });
+          districtSelect.disabled = false;
+          wardSelect.innerHTML = '<option value="">-- Select ward --</option>';
+          wardSelect.disabled = true;
+        } else {
+          districtSelect.innerHTML = '<option value="">-- Select district --</option>';
+          districtSelect.disabled = true;
+          wardSelect.innerHTML = '<option value="">-- Select ward --</option>';
+          wardSelect.disabled = true;
+        }
+      });
+
+      districtSelect.addEventListener('change', function() {
+        const selectedProvince = locationsData.find(p => p.name === provinceSelect.value);
+        if (selectedProvince) {
+          const selectedDistrict = selectedProvince.districts.find(d => d.name === this.value);
+          if (selectedDistrict) {
+            wardSelect.innerHTML = '<option value="">-- Select ward --</option>';
+            selectedDistrict.wards.forEach(ward => {
+              const option = document.createElement('option');
+              option.value = ward.name;
+              option.textContent = ward.name;
+              wardSelect.appendChild(option);
+            });
+            wardSelect.disabled = false;
+          } else {
+            wardSelect.innerHTML = '<option value="">-- Select ward --</option>';
+            wardSelect.disabled = true;
+          }
+        }
+      });
+
+      // After locationsData is loaded and dropdowns are populated
+      const paramProvince = "${param.province != null ? param.province : (not empty province ? province : '')}";
+      const paramDistrict = "${param.district != null ? param.district : (not empty district ? district : '')}";
+      const paramWard = "${param.ward != null ? param.ward : (not empty ward ? ward : '')}";
+
+      function setSelectedAddress() {
+        if (paramProvince) {
+          provinceSelect.value = paramProvince;
+          provinceSelect.dispatchEvent(new Event('change'));
+          setTimeout(() => {
+            if (paramDistrict) {
+              districtSelect.value = paramDistrict;
+              districtSelect.dispatchEvent(new Event('change'));
+              setTimeout(() => {
+                if (paramWard) {
+                  wardSelect.value = paramWard;
+                }
+              }, 100);
+            }
+          }, 100);
+        }
+      }
+
+      // Call after dropdowns are populated
+      setTimeout(setSelectedAddress, 300);
+    });
+    </script>
     <script>
         function validateEmail(email) {
             const re = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
@@ -498,38 +629,133 @@
             return re.test(password);
         }
 
+        function validateVietnamesePhone(phone) {
+            // Vietnamese phone number format: 0xxxxxxxxx (10 digits starting with 0)
+            const re = /^0[0-9]{9}$/;
+            return re.test(phone);
+        }
+
+        function validateAddressField(fieldValue) {
+            if (!fieldValue || fieldValue.trim() === '') {
+                return "This field is required.";
+            }
+            
+            if (fieldValue.length < 2 || fieldValue.length > 100) {
+                return "Length must be between 2 and 100 characters.";
+            }
+            
+            // Check for dangerous characters
+            const dangerousChars = /[<>{}[\]\\$%]/;
+            if (dangerousChars.test(fieldValue)) {
+                return "Contains invalid characters (<, >, {, }, [, ], \\, $, %).";
+            }
+            
+            return null; // Valid
+        }
+
+        function showFieldError(fieldId, errorMessage) {
+            const field = document.getElementById(fieldId);
+            const errorDiv = document.getElementById(fieldId + 'Error');
+            
+            field.classList.add('is-invalid');
+            errorDiv.textContent = errorMessage;
+            errorDiv.style.display = 'block';
+        }
+
+        function clearFieldError(fieldId) {
+            const field = document.getElementById(fieldId);
+            const errorDiv = document.getElementById(fieldId + 'Error');
+            
+            field.classList.remove('is-invalid');
+            errorDiv.style.display = 'none';
+        }
+
         const registerForm = document.getElementById('registerForm');
         if (registerForm) {
             registerForm.addEventListener('submit', function (event) {
                 const email = document.getElementById('email').value;
                 const password = document.getElementById('password').value;
                 const confirmPassword = document.getElementById('confirmPassword').value;
+                const phone = document.getElementById('phone').value;
+                const addressDetail = document.getElementById('addressDetail').value;
+                const ward = document.getElementById('ward').value;
+                const district = document.getElementById('district').value;
+                const province = document.getElementById('province').value;
+                
                 const errorDiv = document.getElementById('clientError');
-                let errors = [];
+                let hasFieldErrors = false;
 
+                // Clear all field errors first
+                clearFieldError('email');
+                clearFieldError('password');
+                clearFieldError('confirmPassword');
+                clearFieldError('phone');
+                clearFieldError('addressDetail');
+                clearFieldError('ward');
+                clearFieldError('district');
+                clearFieldError('province');
+
+                // Validate email
                 if (!validateEmail(email)) {
-                    errors.push("Invalid email. Please enter a valid email address.");
+                    showFieldError('email', 'Invalid email. Please enter a valid email address.');
+                    hasFieldErrors = true;
                 }
 
+                // Validate password
                 if (!validatePassword(password)) {
-                    errors.push("Password must be at least 8 characters long, including uppercase, lowercase, numbers and special characters.");
+                    showFieldError('password', 'Password must be at least 8 characters long, including uppercase, lowercase, numbers and special characters.');
+                    hasFieldErrors = true;
                 }
 
+                // Validate password confirmation
                 if (password !== confirmPassword) {
-                    errors.push("Password confirmation does not match.");
+                    showFieldError('confirmPassword', 'Password confirmation does not match.');
+                    hasFieldErrors = true;
                 }
 
-                if (errors.length > 0) {
+                // Validate phone number
+                if (!validateVietnamesePhone(phone)) {
+                    showFieldError('phone', 'Please enter a valid Vietnamese phone number (10 digits starting with 0).');
+                    hasFieldErrors = true;
+                }
+
+                // Validate addressDetail (optional)
+                if (addressDetail && addressDetail.trim() !== '') {
+                    if (addressDetail.length < 2 || addressDetail.length > 100) {
+                        showFieldError('addressDetail', 'Length must be between 2 and 100 characters.');
+                        hasFieldErrors = true;
+                    } else {
+                        const dangerousChars = /[<>{}[\\]$%]/;
+                        if (dangerousChars.test(addressDetail)) {
+                            showFieldError('addressDetail', 'Contains invalid characters (<, >, {, }, [, ], \, $, %).');
+                            hasFieldErrors = true;
+                        }
+                    }
+                }
+
+                // Validate address dropdowns
+                if (!province) {
+                    showFieldError('province', 'Please select a province/city.');
+                    hasFieldErrors = true;
+                }
+                if (!district) {
+                    showFieldError('district', 'Please select a district.');
+                    hasFieldErrors = true;
+                }
+                if (!ward) {
+                    showFieldError('ward', 'Please select a ward/commune.');
+                    hasFieldErrors = true;
+                }
+
+                if (hasFieldErrors) {
                     event.preventDefault();
-                    errorDiv.innerHTML = errors.join('<br>');
+                    errorDiv.innerHTML = 'Please correct the errors above.';
                     errorDiv.style.display = 'block';
                 } else {
                     errorDiv.style.display = 'none';
-                    
                     // Hiển thị loading modal
                     const loadingModal = new bootstrap.Modal(document.getElementById('loadingModal'));
                     loadingModal.show();
-                    
                     // Gửi form sau khi hiển thị loading
                     setTimeout(() => {
                         registerForm.submit();

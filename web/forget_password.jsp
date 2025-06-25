@@ -165,6 +165,55 @@
                 min-width: 100vw;
             }
         }
+        /* Overlay for modal (custom, to ensure always on top) */
+        .custom-modal-overlay {
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            width: 100vw; height: 100vh;
+            background: rgba(44, 62, 80, 0.45);
+            z-index: 1050;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        /* Custom modal content for verify reset */
+        .custom-modal-content {
+            position: relative;
+            z-index: 1060;
+            background: #fff;
+            border-radius: 18px;
+            box-shadow: 0 12px 48px rgba(44,62,80,0.25), 0 1.5px 8px rgba(44,62,80,0.10);
+            padding: 32px 28px 24px 28px;
+            min-width: 340px;
+            max-width: 95vw;
+            max-height: 95vh;
+            margin: auto;
+            display: flex;
+            flex-direction: column;
+            align-items: stretch;
+        }
+        .custom-modal-content .modal-header {
+            background: #6c5ce7;
+            color: #fff;
+            border-radius: 16px 16px 0 0;
+            padding: 18px 24px 12px 24px;
+            text-align: center;
+            border-bottom: none;
+        }
+        .custom-modal-content .modal-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin: 0;
+        }
+        .custom-modal-content .modal-body {
+            padding: 18px 0 0 0;
+        }
+        @media (max-width: 600px) {
+            .custom-modal-content {
+                min-width: 90vw;
+                padding: 16px 6px 12px 6px;
+            }
+        }
     </style>
 </head>
 <body>
@@ -196,11 +245,6 @@
             </c:if>
             <form action="forget-password" method="post" id="forgetPasswordForm">
                 <div class="mb-3">
-                    <label class="form-label" for="username">Username</label>
-                    <input type="text" class="form-control" id="username" name="username" required
-                           value="${param.username != null ? param.username : (not empty username ? username : '')}">
-                </div>
-                <div class="mb-3">
                     <label class="form-label" for="email">Email</label>
                     <input type="email" class="form-control" id="email" name="email" required
                            value="${param.email != null ? param.email : (not empty email ? email : '')}">
@@ -213,6 +257,44 @@
         </div>
     </div>
 </div>
+
+<!-- Custom Overlay Modal for verification reset -->
+<c:if test="${not empty showVerifyResetPopup}">
+<div class="custom-modal-overlay" id="customVerifyResetOverlay">
+  <div class="custom-modal-content">
+    <div class="modal-header">
+      <h4 class="modal-title w-100 text-center" id="verifyResetModalLabel">Reset Your Password</h4>
+    </div>
+    <div class="modal-body">
+      <form id="verifyResetForm" action="forget-password" method="post">
+        <input type="hidden" name="action" value="verify" />
+        <div class="mb-3">
+          <input type="text" class="form-control" name="code" maxlength="6" pattern="\d{6}" required placeholder="Verification code" />
+        </div>
+        <div class="mb-3">
+          <input type="password" class="form-control" name="newPassword" minlength="8" required placeholder="New password (min 8 characters)" />
+        </div>
+        <div class="mb-3">
+          <input type="password" class="form-control" name="confirmPassword" minlength="8" required placeholder="Confirm new password" />
+        </div>
+        <button type="submit" class="btn btn-primary w-100">Reset Password</button>
+      </form>
+      <div id="verifyResetResult"></div>
+      <c:if test="${not empty error}">
+        <div class="alert alert-danger mt-3">${error}</div>
+      </c:if>
+      <c:if test="${not empty message}">
+        <div class="alert alert-success mt-3">${message}</div>
+      </c:if>
+    </div>
+  </div>
+</div>
+</c:if>
+<!-- End Custom Overlay Modal -->
+
+<div id="verifyResetModalContainer"></div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 <script>
     function validateEmail(email) {
         const re = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
@@ -223,13 +305,8 @@
     if (forgetPasswordForm) {
         forgetPasswordForm.addEventListener('submit', function (event) {
             const email = document.getElementById('email').value;
-            const username = document.getElementById('username').value;
             const errorDiv = document.getElementById('clientError');
             let errors = [];
-
-            if (username.trim() === '') {
-                errors.push("Username is required.");
-            }
 
             if (!validateEmail(email)) {
                 errors.push("Invalid email format.");
@@ -242,6 +319,65 @@
             } else {
                 errorDiv.style.display = 'none';
             }
+        });
+    }
+
+    // AJAX for verify reset form
+    const verifyForm = document.getElementById('verifyResetForm');
+    if (verifyForm) {
+        verifyForm.addEventListener('submit', function(e) {
+            e.preventDefault();
+            const formData = new FormData(verifyForm);
+            fetch('forget-password', {
+                method: 'POST',
+                body: formData,
+                headers: { 'X-Requested-With': 'XMLHttpRequest' }
+            })
+            .then(res => res.json())
+            .then(data => {
+                const resultDiv = document.getElementById('verifyResetResult');
+                if (data.success) {
+                    resultDiv.innerHTML = `<div class="alert alert-success">${data.message}</div>`;
+                    setTimeout(() => { window.location.href = 'login.jsp'; }, 2000);
+                } else {
+                    resultDiv.innerHTML = `<div class="alert alert-danger">${data.message}</div>`;
+                }
+            })
+            .catch(() => {
+                document.getElementById('verifyResetResult').innerHTML = '<div class="alert alert-danger">System error. Please try again.</div>';
+            });
+        });
+    }
+
+    // Prevent closing overlay by click outside or ESC
+    document.addEventListener("DOMContentLoaded", function() {
+      const overlay = document.getElementById('customVerifyResetOverlay');
+      if (overlay) {
+        document.body.style.overflow = 'hidden';
+        overlay.addEventListener('click', function(e) {
+          if (e.target === overlay) {
+            e.stopPropagation();
+          }
+        });
+        window.addEventListener('keydown', function(e) {
+          if (e.key === 'Escape') {
+            e.preventDefault();
+          }
+        });
+      }
+    });
+
+    // Hàm gọi khi gửi email thành công (ví dụ sau khi nhận response thành công từ server)
+    function showVerifyResetModal() {
+      fetch('verify_reset.jsp')
+        .then(res => res.text())
+        .then(html => {
+          document.getElementById('verifyResetModalContainer').innerHTML = html;
+          var modal = new bootstrap.Modal(document.getElementById('verifyResetModal'), {
+            backdrop: 'static',
+            keyboard: false
+          });
+          modal.show();
         });
     }
 </script>
