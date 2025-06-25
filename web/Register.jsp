@@ -413,18 +413,18 @@
                   <div class="modal-dialog modal-dialog-centered">
                     <div class="modal-content">
                       <div class="modal-header">
-                        <h5 class="modal-title" id="verificationModalLabel">Nhập mã xác thực</h5>
+                        <h5 class="modal-title" id="verificationModalLabel">Enter verification code</h5>
                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                       </div>
                       <form action="check-verification" method="post">
                         <div class="modal-body">
                           <div class="mb-3">
-                            <label for="verificationCode" class="form-label">Mã xác thực đã gửi về email:</label>
+                            <label for="verificationCode" class="form-label">Verification code sent to your email:</label>
                             <input type="text" class="form-control" id="verificationCode" name="code" required maxlength="6">
                           </div>
                         </div>
                         <div class="modal-footer">
-                          <button type="submit" class="btn btn-primary">Xác thực</button>
+                          <button type="submit" class="btn btn-primary">Verify</button>
                         </div>
                       </form>
                     </div>
@@ -470,8 +470,8 @@
                         <div class="spinner-border text-primary mb-3" role="status">
                           <span class="visually-hidden">Loading...</span>
                         </div>
-                        <h6 class="modal-title" id="loadingModalLabel">Đang gửi mã xác thực...</h6>
-                        <p class="text-muted small">Vui lòng đợi trong giây lát</p>
+                        <h6 class="modal-title" id="loadingModalLabel">Sending verification code...</h6>
+                        <p class="text-muted small">Please wait a moment</p>
                       </div>
                     </div>
                   </div>
@@ -508,15 +508,15 @@
                 let errors = [];
 
                 if (!validateEmail(email)) {
-                    errors.push("Email không hợp lệ. Vui lòng nhập lại.");
+                    errors.push("Invalid email. Please enter a valid email address.");
                 }
 
                 if (!validatePassword(password)) {
-                    errors.push("Mật khẩu phải có ít nhất 8 ký tự, gồm chữ hoa, chữ thường, số và ký tự đặc biệt.");
+                    errors.push("Password must be at least 8 characters long, including uppercase, lowercase, numbers and special characters.");
                 }
 
                 if (password !== confirmPassword) {
-                    errors.push("Mật khẩu xác nhận không khớp.");
+                    errors.push("Password confirmation does not match.");
                 }
 
                 if (errors.length > 0) {

@@ -24,21 +24,21 @@ public class DBContext {
 
                 Class.forName("com.mysql.cj.jdbc.Driver");
                 connection = DriverManager.getConnection(url, user, password);
-                System.out.println("Kết nối MySQL thành công!");
+                System.out.println("MySQL connection successful!");
             }
             
             // Kiểm tra connection có hoạt động không
             if (!connection.isValid(5)) {
-                System.out.println("Connection không hợp lệ, tạo lại connection...");
+                System.out.println("Connection is invalid, recreating connection...");
                 connection.close();
                 connection = null;
                 return getConnection();
             }
         } catch (ClassNotFoundException e) {
-            System.out.println("Lỗi Driver MySQL: " + e.getMessage());
-            throw new SQLException("Không thể tìm thấy MySQL Driver");
+            System.out.println("MySQL Driver error: " + e.getMessage());
+            throw new SQLException("Cannot find MySQL Driver");
         } catch (SQLException e) {
-            System.out.println("Lỗi kết nối MySQL: " + e.getMessage());
+            System.out.println("MySQL connection error: " + e.getMessage());
             // Reset connection nếu có lỗi
             connection = null;
             throw e;
@@ -54,20 +54,20 @@ public class DBContext {
         try {
             if (connection != null && !connection.isClosed()) {
                 connection.close();
-                System.out.println("Đã đóng kết nối MySQL!");
+                System.out.println("MySQL connection closed!");
             }
         } catch (SQLException e) {
-            System.out.println("Lỗi khi đóng kết nối: " + e.getMessage());
+            System.out.println("Error closing connection: " + e.getMessage());
         }
     }
 
     public static void testConnection() {
         try {
             Connection conn = DBContext.getInstance().getConnection();
-            System.out.println("Database đã kết nối thành công!");
+            System.out.println("Database connected successfully!");
             DBContext.getInstance().closeConnection();
         } catch (SQLException e) {
-            System.out.println("Không thể kết nối đến database: " + e.getMessage());
+            System.out.println("Cannot connect to database: " + e.getMessage());
         }
     }
 

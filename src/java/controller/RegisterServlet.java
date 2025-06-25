@@ -36,7 +36,7 @@ public class RegisterServlet extends HttpServlet {
 
             // Kiểm tra mật khẩu xác nhận
             if (!password.equals(confirmPassword)) {
-                request.setAttribute("error", "Mật khẩu xác nhận không khớp!");
+                request.setAttribute("error", "Password confirmation does not match!");
                 request.getRequestDispatcher("Register.jsp").forward(request, response);
                 return;
             }
@@ -60,20 +60,20 @@ public class RegisterServlet extends HttpServlet {
                                 request.getSession().setAttribute("verification_code", verificationCode);
                                 request.getSession().setAttribute("verification_email", email);
                                 request.setAttribute("showVerificationPopup", true);
-                                request.setAttribute("registerMessage", "Thông tin đã được cập nhật. Vui lòng kiểm tra email để xác thực tài khoản!");
+                                request.setAttribute("registerMessage", "Information has been updated. Please check your email to verify your account!");
                             } catch (Exception ex) {
-                                request.setAttribute("error", "Không thể gửi email xác thực: " + ex.getMessage());
+                                request.setAttribute("error", "Cannot send verification email: " + ex.getMessage());
                             }
                         } else {
-                            request.setAttribute("error", "Không thể cập nhật thông tin tài khoản. Vui lòng thử lại.");
+                            request.setAttribute("error", "Cannot update account information. Please try again.");
                         }
                     } catch (SQLException e) {
-                        request.setAttribute("error", "Lỗi cập nhật thông tin: " + e.getMessage());
+                        request.setAttribute("error", "Error updating information: " + e.getMessage());
                     }
                     request.getRequestDispatcher("Register.jsp").forward(request, response);
                     return;
                 } else {
-                    request.setAttribute("error", "Email đã được sử dụng!");
+                    request.setAttribute("error", "Email is already in use!");
                     request.getRequestDispatcher("Register.jsp").forward(request, response);
                     return;
                 }
@@ -96,9 +96,9 @@ public class RegisterServlet extends HttpServlet {
                     request.getSession().setAttribute("verification_code", verificationCode);
                     request.getSession().setAttribute("verification_email", email);
                     request.setAttribute("showVerificationPopup", true);
-                    request.setAttribute("registerMessage", "Vui lòng kiểm tra email để xác thực tài khoản!");
+                    request.setAttribute("registerMessage", "Please check your email to verify your account!");
                 } catch (Exception ex) {
-                    request.setAttribute("error", "Không thể gửi email xác thực: " + ex.getMessage());
+                    request.setAttribute("error", "Cannot send verification email: " + ex.getMessage());
                 }
                 request.getRequestDispatcher("Register.jsp").forward(request, response);
             } catch (SQLException e) {
@@ -110,20 +110,20 @@ public class RegisterServlet extends HttpServlet {
                             request.setAttribute("error", "Please confirm your email address to activate your account");
                             request.setAttribute("showVerificationPopup", true);
                         } else {
-                            request.setAttribute("error", "Email đã được sử dụng!");
+                            request.setAttribute("error", "Email is already in use!");
                         }
                     } catch (SQLException checkEx) {
-                        request.setAttribute("error", "Email đã được sử dụng!");
+                        request.setAttribute("error", "Email is already in use!");
                     }
                 } else {
-                    request.setAttribute("error", "Đăng ký thất bại: " + e.getMessage());
+                    request.setAttribute("error", "Registration failed: " + e.getMessage());
                 }
                 request.getRequestDispatcher("Register.jsp").forward(request, response);
             }
             return;
             
         } catch (SQLException e) {
-            request.setAttribute("error", "Lỗi hệ thống: " + e.getMessage());
+            request.setAttribute("error", "System error: " + e.getMessage());
             request.getRequestDispatcher("Register.jsp").forward(request, response);
         }
     }

@@ -30,22 +30,22 @@ public class CheckVerificationServlet extends HttpServlet {
                 
                 if (updateSuccess) {
                     // Xác thực thành công, chuyển về trang login
-                    session.setAttribute("successMessage", "Tài khoản đã được xác thực thành công! Bạn có thể đăng nhập ngay bây giờ.");
+                    session.setAttribute("successMessage", "Account has been successfully verified! You can now login.");
                     response.sendRedirect("login.jsp");
                     return;
                 } else {
-                    request.setAttribute("error", "Không thể cập nhật trạng thái xác thực. Vui lòng thử lại.");
+                    request.setAttribute("error", "Cannot update verification status. Please try again.");
                     request.getRequestDispatcher("Register.jsp").forward(request, response);
                     return;
                 }
             } catch (SQLException e) {
-                request.setAttribute("error", "Lỗi xác thực tài khoản: " + e.getMessage());
+                request.setAttribute("error", "Account verification error: " + e.getMessage());
                 request.getRequestDispatcher("Register.jsp").forward(request, response);
                 return;
             }
         } else {
             // Mã xác thực không đúng
-            request.setAttribute("error", "Mã xác thực không đúng. Vui lòng kiểm tra lại.");
+            request.setAttribute("error", "Invalid verification code. Please check again.");
             request.setAttribute("showVerificationPopup", true);
             request.getRequestDispatcher("Register.jsp").forward(request, response);
         }
