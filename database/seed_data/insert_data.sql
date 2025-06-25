@@ -1,9 +1,5 @@
 USE project_g2;
 
--- Dữ liệu cho bảng admin
-INSERT INTO `admin` VALUES 
-    (1,2,'Trần Thị Quản Trị');
-
 -- Dữ liệu cho bảng brand
 INSERT INTO `brand` VALUES 
     (1,'Intel'),
@@ -11,18 +7,6 @@ INSERT INTO `brand` VALUES
     (3,'NVIDIA'),
     (4,'ASUS'),
     (5,'Corsair');
-
--- Dữ liệu cho bảng cartitem
-INSERT INTO `cartitem` VALUES 
-    (1,2,2,1),
-    (2,2,5,1),
-    (3,2,3,1),
-    (4,2,18,1),
-    (5,2,19,1),
-    (6,2,20,1),
-    (7,2,17,1),
-    (8,2,8,1),
-    (9,2,9,1);
 
 -- Dữ liệu cho bảng componenttype
 INSERT INTO `componenttype` VALUES 
@@ -35,11 +19,30 @@ INSERT INTO `componenttype` VALUES
     (8,'rửeqqwfcdsa','fdsaf'),
     (9,'dsaaaaaaaaaaaaaaaaaaaaaaaaaaadsadsadsadsadsadddd','ewqqqqqqqqqwfdsffffffffffffffdsadasdasdsadsadsacdsadsadsadsadsadsadddsaewqqqqqqqqqwfdsffffffffffffffdsadasdasdsadsadsacdsadsadsadsadsadsadddsaewqqqqqqqqqwfdsffffffffffffffdsadasdasdsadsadsacdsadsadsadsadsadsadddsaewqqqqqqqqqwfdsffffffffffffffdsadasdasdsad');
 
+-- Dữ liệu cho bảng paymentmethod
+INSERT INTO paymentmethod(method_name, description)
+VALUES
+    ('Cash','Tiền mặt'),
+    ('Transfer','Chuyển khoản');
+
+-- Dữ liệu cho bảng user
+INSERT INTO `user` VALUES 
+    (1,'staff01','hashedpassword1','staff01@example.com','Staff','Active',1,NULL),
+    (2,'admin01','hashedpassword2','admin01@example.com','Admin','Active',1,NULL);
+
 -- Dữ liệu cho bảng customer
 INSERT INTO `customer` VALUES 
     (1,'Lê Thị Khách Hàng','customer01@example.com','hashedpassword3','0909988776','123 Đường ABC, Quận 1, TP.HCM',0,NULL),
     (2,'NguyenVanGiap','giapThieuNang@gmail.com','cesvg2810A!','0994885738','KhongBietHoiLamVL',0,NULL),
     (3,'Phạm Đức Trọng','trongpdhe181640@fpt.edu.vn','$2a$10$iC2jTTQm8GSE5ni9iURIouVE.c/qVXK8PKSshKj7HjAb/Ie5r5Tea','0559868660','ChauPhong-LienHa-DongAnh-HaNoi',1,NULL);
+
+-- Dữ liệu cho bảng staff
+INSERT INTO `staff` VALUES 
+    (1,1,'Nguyễn Văn Nhân viên','0901123456','2024-01-01',NULL);
+
+-- Dữ liệu cho bảng admin
+INSERT INTO `admin` VALUES 
+    (1,2,'Trần Thị Quản Trị');
 
 -- Dữ liệu cho bảng product
 INSERT INTO `product` VALUES 
@@ -64,17 +67,14 @@ INSERT INTO `product` VALUES
     (19,'Kingston Fury Beast 8GB DDR4',4,5,42.00,32.00,90,'8GB DDR4 3200MHz','Active','2025-06-20 09:18:08'),
     (20,'Corsair Dominator Platinum 32GB',4,5,180.00,150.00,40,'32GB DDR5 5200MHz','Active','2025-06-20 09:18:08');
 
--- Dữ liệu cho bảng staff
-INSERT INTO `staff` VALUES 
-    (1,1,'Nguyễn Văn Nhân viên','0901123456','2024-01-01',NULL);
-
--- Dữ liệu cho bảng user
-INSERT INTO `user` VALUES 
-    (1,'staff01','hashedpassword1','staff01@example.com','Staff','Active',1,NULL),
-    (2,'admin01','hashedpassword2','admin01@example.com','Admin','Active',1,NULL);
-
--- Dữ liệu cho bảng paymentmethod
-INSERT INTO paymentmethod(method_name, description)
-VALUES
-    ('Cash','Tiền mặt'),
-    ('Transfer','Chuyển khoản'); 
+-- Dữ liệu cho bảng cartitem
+INSERT INTO `cartitem` VALUES 
+    (1,2,2,1),
+    (2,2,5,1),
+    (3,2,3,1),
+    (4,2,18,1),
+    (5,2,19,1),
+    (6,2,20,1),
+    (7,2,17,1),
+    (8,2,8,1),
+    (9,2,9,1); 
