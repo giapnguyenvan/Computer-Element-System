@@ -225,11 +225,11 @@
             // Global variables
             let cartCount = 0;
             <c:choose>
-                <c:when test="${not empty sessionScope.userAuth}">
-                    const currentUserId = ${sessionScope.userAuth.id};
-                </c:when>
                 <c:when test="${not empty sessionScope.customerAuth}">
                     const currentUserId = ${sessionScope.customerAuth.customer_id};
+                </c:when>
+                <c:when test="${not empty sessionScope.userAuth}">
+                    const currentUserId = ${sessionScope.userAuth.id};
                 </c:when>
                 <c:otherwise>
                     const currentUserId = 0;
@@ -387,5 +387,17 @@
                 }
             });
         </script>
+
+        <c:if test="${empty product}">
+            <div class="alert alert-danger mt-5">Không tìm thấy sản phẩm hoặc có lỗi xảy ra! Vui lòng thử lại.</div>
+            <c:remove var="product" scope="request"/>
+            <c:remove var="relatedProducts" scope="request"/>
+            <c:remove var="feedbackList" scope="request"/>
+            <c:remove var="totalPages" scope="request"/>
+            <c:remove var="currentPage" scope="request"/>
+            <c:remove var="averageRating" scope="request"/>
+            <c:remove var="totalFeedback" scope="request"/>
+            <jsp:include page="footer.jsp"/>
+        </c:if>
     </body>
 </html>

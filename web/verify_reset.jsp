@@ -1,103 +1,118 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
-<!DOCTYPE html>
-<html lang="vi">
-<head>
-    <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Reset Password Verification</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
-    <style>
-        body {
-            font-family: 'Arial', sans-serif;
-            background-color: #f4f7fc;
-            margin: 0;
-            padding: 0;
-        }
-        .container {
-            max-width: 500px;
-            margin-top: 100px;
-        }
-        .card {
-            border-radius: 8px;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-            background-color: #fff;
-            padding: 30px;
-        }
-        .card-header {
-            background-color: #6c5ce7;
-            color: white;
-            text-align: center;
-            font-size: 1.5rem;
-            padding: 10px 0;
-            border-radius: 8px 8px 0 0;
-        }
-        .form-control {
-            border-radius: 8px;
-            margin-bottom: 15px;
-        }
-        .btn-primary {
-            background-color: #6c5ce7;
-            border: none;
-            padding: 10px 20px;
-            width: 100%;
-            border-radius: 8px;
-            font-size: 1rem;
-            cursor: pointer;
-        }
-        .btn-primary:hover {
-            background-color: #5a4bcf;
-        }
-        .alert {
-            margin-top: 20px;
-            padding: 15px;
-            font-size: 1rem;
-            border-radius: 8px;
-        }
-        .alert-danger {
-            background-color: #f8d7da;
-            color: #721c24;
-        }
-        .alert-success {
-            background-color: #d4edda;
-            color: #155724;
-        }
-    </style>
-</head>
-<body>
-
-<div class="container">
-    <div class="card">
-        <div class="card-header">
-            <h4>Reset Your Password</h4>
-        </div>
-        <div class="card-body">
-            <form action="forget-password" method="post">
-                <input type="hidden" name="action" value="verify" />
-                <div class="mb-3">
-                    <input type="text" class="form-control" name="code" maxlength="6" pattern="\d{6}" required placeholder="Verification code" />
-                </div>
-                <div class="mb-3">
-                    <input type="password" class="form-control" name="newPassword" minlength="8" required placeholder="New password (min 8 characters)" />
-                </div>
-                <div class="mb-3">
-                    <input type="password" class="form-control" name="confirmPassword" minlength="8" required placeholder="Confirm new password" />
-                </div>
-                <button type="submit" class="btn btn-primary">Reset Password</button>
-            </form>
-            <!-- Display error message if exists -->
-            <c:if test="${not empty error}">
-                <div class="alert alert-danger mt-3">${error}</div>
-            </c:if>
-            <!-- Display success message if exists -->
-            <c:if test="${not empty message}">
-                <div class="alert alert-success mt-3">${message}</div>
-            </c:if>
-        </div>
+<style>
+  #verifyResetModal .modal-content {
+    border-radius: 22px;
+    box-shadow: 0 8px 32px rgba(44, 62, 80, 0.18), 0 1.5px 8px rgba(44,62,80,0.10);
+    border: none;
+    padding: 0;
+    background: #fff;
+    max-width: 420px;
+    margin: auto;
+  }
+  #verifyResetModal .modal-header {
+    background: linear-gradient(90deg, #7b2ff2 0%, #f357a8 100%);
+    color: #fff;
+    border-radius: 22px 22px 0 0;
+    padding: 28px 32px 16px 32px;
+    border-bottom: none;
+    text-align: center;
+    justify-content: center;
+  }
+  #verifyResetModal .modal-title {
+    font-size: 1.7rem;
+    font-weight: 800;
+    margin: 0;
+    letter-spacing: -1px;
+    width: 100%;
+  }
+  #verifyResetModal .modal-body {
+    padding: 28px 32px 24px 32px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+  #verifyResetForm {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 14px;
+    margin-bottom: 10px;
+  }
+  #verifyResetForm .form-control {
+    border-radius: 10px;
+    min-height: 40px;
+    font-size: 1.05rem;
+    border: 1.5px solid #e0e3ea;
+    padding: 8px 12px;
+    margin-bottom: 0;
+    background: #f8f8fc;
+    transition: border-color 0.2s;
+  }
+  #verifyResetForm .form-control:focus {
+    border-color: #7b2ff2;
+    box-shadow: 0 0 0 2px rgba(123,47,242,0.08);
+    background: #fff;
+  }
+  #verifyResetForm button[type="submit"] {
+    border-radius: 10px;
+    background: linear-gradient(90deg, #7b2ff2 0%, #f357a8 100%);
+    color: #fff;
+    font-weight: 700;
+    font-size: 1.08rem;
+    min-height: 42px;
+    border: none;
+    box-shadow: none;
+    margin-top: 6px;
+    transition: background 0.2s, color 0.2s;
+  }
+  #verifyResetForm button[type="submit"]:hover {
+    background: linear-gradient(90deg, #f357a8 0%, #7b2ff2 100%);
+    color: #fff;
+  }
+  #verifyResetModal .alert {
+    width: 100%;
+    text-align: center;
+    margin-top: 12px;
+    border-radius: 10px;
+    font-size: 1rem;
+    padding: 12px 8px;
+  }
+  @media (max-width: 600px) {
+    #verifyResetModal .modal-content, #verifyResetModal .modal-body {
+      padding: 10px 4vw !important;
+      min-width: 90vw;
+    }
+    #verifyResetModal .modal-header {
+      padding: 18px 4vw 10px 4vw;
+    }
+  }
+</style>
+<!-- BEGIN: Verify Reset Modal Fragment -->
+<div class="modal fade" id="verifyResetModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="verifyResetModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 class="modal-title w-100 text-center" id="verifyResetModalLabel">Reset Your Password</h4>
+      </div>
+      <div class="modal-body">
+        <form id="verifyResetForm" action="forget-password" method="post">
+          <input type="hidden" name="action" value="verify" />
+          <input type="text" class="form-control" name="code" maxlength="6" pattern="\d{6}" required placeholder="Verification code" />
+          <input type="password" class="form-control" name="newPassword" minlength="8" required placeholder="New password (min 8 characters)" />
+          <input type="password" class="form-control" name="confirmPassword" minlength="8" required placeholder="Confirm new password" />
+          <button type="submit" class="btn btn-primary w-100">Reset Password</button>
+        </form>
+        <div id="verifyResetResult"></div>
+        <c:if test="${not empty error}">
+          <div class="alert alert-danger mt-3">${error}</div>
+        </c:if>
+        <c:if test="${not empty message}">
+          <div class="alert alert-success mt-3">${message}</div>
+        </c:if>
+      </div>
     </div>
+  </div>
 </div>
-
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
-</body>
-</html> 
+<!-- END: Verify Reset Modal Fragment --> 

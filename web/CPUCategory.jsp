@@ -69,13 +69,14 @@
                 <div class="products-grid" id="productsContainer">
                     <c:forEach var="product" items="${cpuProducts}">
                         <div class="product-card">
-                            <img src="${product.image_url}" class="product-image" alt="${product.name}">
-                            <h5 class="product-title">${product.name}</h5>
-                            <p class="product-description">${product.description}</p>
+                            <a href="${pageContext.request.contextPath}/productservlet?service=productDetail&id=${product.id}" style="text-decoration: none; color: inherit; display: block;">
+                                <img src="${product.image_url}" class="product-image" alt="${product.name}">
+                                <h5 class="product-title">${product.name}</h5>
+                                <p class="product-description">${product.description}</p>
+                            </a>
                             <div class="product-price">
-                                <fmt:formatNumber value="${product.price}" type="number" pattern="###,###"/>đ
+                                <fmt:formatNumber value="${product.price}" type="number" pattern="###,###"/> VNĐ
                             </div>
-
                             <!-- Add to Cart Button -->
                             <button class="btn btn-primary add-to-cart-btn" 
                                     onclick="addToCart('${product.id}', '${product.name}', '${product.price}')"

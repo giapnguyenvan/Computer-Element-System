@@ -12,9 +12,10 @@
             <div class="mb-4">
                 <div class="d-flex align-items-center">
                     <div class="star-rating me-2">
+                        <c:set var="avg" value="${averageRating + 0}" />
                         <c:forEach begin="1" end="5" var="i">
                             <span style="color: #ffd700; font-size: 24px;">
-                                ${i <= averageRating ? '★' : '☆'}
+                                ${i <= avg ? '★' : '☆'}
                             </span>
                         </c:forEach>
                     </div>

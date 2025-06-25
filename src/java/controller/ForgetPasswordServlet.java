@@ -27,6 +27,9 @@ public class ForgetPasswordServlet extends HttpServlet {
             throws ServletException, IOException {
         String action = request.getParameter("action");
         if ("verify".equals(action)) {
+            boolean isAjax = "XMLHttpRequest".equals(request.getHeader("X-Requested-With"));
+            response.setContentType(isAjax ? "application/json" : "text/html;charset=UTF-8");
+            java.io.PrintWriter out = response.getWriter();
             // Xử lý xác minh mã và đặt lại mật khẩu
             String inputCode = request.getParameter("code");
             String newPassword = request.getParameter("newPassword");
@@ -36,18 +39,33 @@ public class ForgetPasswordServlet extends HttpServlet {
             String accountType = (String) request.getSession().getAttribute("reset_account_type");
 
             if (inputCode == null || !inputCode.equals(sessionCode)) {
+                if (isAjax) {
+                    out.print("{\"success\":false,\"message\":'Verification code is incorrect!'}");
+                    return;
+                }
                 request.setAttribute("error", "Verification code is incorrect!");
-                request.getRequestDispatcher("verify_reset.jsp").forward(request, response);
+                request.setAttribute("showVerifyResetPopup", true);
+                request.getRequestDispatcher("forget_password.jsp").forward(request, response);
                 return;
             }
             if (newPassword == null || newPassword.length() < 8) {
+                if (isAjax) {
+                    out.print("{\"success\":false,\"message\":'Password must be at least 8 characters.'}");
+                    return;
+                }
                 request.setAttribute("error", "Password must be at least 8 characters.");
-                request.getRequestDispatcher("verify_reset.jsp").forward(request, response);
+                request.setAttribute("showVerifyResetPopup", true);
+                request.getRequestDispatcher("forget_password.jsp").forward(request, response);
                 return;
             }
             if (!newPassword.equals(confirmPassword)) {
+                if (isAjax) {
+                    out.print("{\"success\":false,\"message\":'Password confirmation does not match.'}");
+                    return;
+                }
                 request.setAttribute("error", "Password confirmation does not match.");
-                request.getRequestDispatcher("verify_reset.jsp").forward(request, response);
+                request.setAttribute("showVerifyResetPopup", true);
+                request.getRequestDispatcher("forget_password.jsp").forward(request, response);
                 return;
             }
             try {
@@ -70,15 +88,29 @@ public class ForgetPasswordServlet extends HttpServlet {
                     request.getSession().removeAttribute("reset_verification_code");
                     request.getSession().removeAttribute("reset_verification_email");
                     request.getSession().removeAttribute("reset_account_type");
+                    if (isAjax) {
+                        out.print("{\"success\":true,\"message\":'Your password has been reset successfully. Redirecting to login...'}");
+                        return;
+                    }
                     request.setAttribute("success", "Your password has been reset successfully. Please login with your new password.");
                     request.getRequestDispatcher("login.jsp").forward(request, response);
                 } else {
+                    if (isAjax) {
+                        out.print("{\"success\":false,\"message\":'Could not update password. Please try again.'}");
+                        return;
+                    }
                     request.setAttribute("error", "Could not update password. Please try again.");
-                    request.getRequestDispatcher("verify_reset.jsp").forward(request, response);
+                    request.setAttribute("showVerifyResetPopup", true);
+                    request.getRequestDispatcher("forget_password.jsp").forward(request, response);
                 }
             } catch (Exception e) {
+                if (isAjax) {
+                    out.print("{\"success\":false,\"message\":'System error. Please try again.'}");
+                    return;
+                }
                 request.setAttribute("error", "System error: " + e.getMessage());
-                request.getRequestDispatcher("verify_reset.jsp").forward(request, response);
+                request.setAttribute("showVerifyResetPopup", true);
+                request.getRequestDispatcher("forget_password.jsp").forward(request, response);
             }
             return;
         }
@@ -100,12 +132,13 @@ public class ForgetPasswordServlet extends HttpServlet {
                     request.getSession().setAttribute("reset_verification_email", email);
                     request.getSession().setAttribute("reset_account_type", isUser ? "user" : "customer");
                     request.setAttribute("message", "A verification code has been sent to your email. Please enter the code to reset your password.");
+                    request.setAttribute("showVerifyResetPopup", true);
                 } catch (Exception ex) {
                     request.setAttribute("error", "Cannot send verification email: " + ex.getMessage());
                     request.getRequestDispatcher("forget_password.jsp").forward(request, response);
                     return;
                 }
-                request.getRequestDispatcher("verify_reset.jsp").forward(request, response);
+                request.getRequestDispatcher("forget_password.jsp").forward(request, response);
             } else {
                 request.setAttribute("error", "Email is incorrect or does not exist!");
                 request.getRequestDispatcher("forget_password.jsp").forward(request, response);

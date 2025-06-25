@@ -390,6 +390,8 @@ public class ProductDAO {
                      """;
 
         try {
+            System.out.println("[DEBUG] ProductDAO - getProductById - SQL: " + sql);
+            System.out.println("[DEBUG] ProductDAO - getProductById - Param productId: " + productId);
             PreparedStatement ptm = db.getConnection().prepareStatement(sql);
             ptm.setInt(1, productId);
             ResultSet rs = ptm.executeQuery();
@@ -410,6 +412,7 @@ public class ProductDAO {
                         rs.getString("component_type_name")
                 );
             }
+            System.out.println("[DEBUG] ProductDAO - getProductById - Result: " + product);
         } catch (SQLException ex) {
             ex.printStackTrace();
         }
