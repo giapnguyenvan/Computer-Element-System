@@ -1,6 +1,6 @@
 package controller;
 
-import shop.utils.EmailUtil;
+import util.EmailUtil;
 import jakarta.mail.MessagingException;
 import jakarta.servlet.*;
 import jakarta.servlet.http.*;

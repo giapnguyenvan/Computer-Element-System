@@ -20,17 +20,27 @@ public class DBContext {
             if (connection == null || connection.isClosed()) {
                 String user = "root";
                 String password = "msqldt154A!";
-                String url = "jdbc:mysql://localhost:3306/project_g2?useSSL=false&serverTimezone=UTC";
+                String url = "jdbc:mysql://localhost:3306/project_g2?useSSL=false&serverTimezone=UTC&autoReconnect=true&failOverReadOnly=false&maxReconnects=10";
 
                 Class.forName("com.mysql.cj.jdbc.Driver");
                 connection = DriverManager.getConnection(url, user, password);
                 System.out.println("Kết nối MySQL thành công!");
+            }
+            
+            // Kiểm tra connection có hoạt động không
+            if (!connection.isValid(5)) {
+                System.out.println("Connection không hợp lệ, tạo lại connection...");
+                connection.close();
+                connection = null;
+                return getConnection();
             }
         } catch (ClassNotFoundException e) {
             System.out.println("Lỗi Driver MySQL: " + e.getMessage());
             throw new SQLException("Không thể tìm thấy MySQL Driver");
         } catch (SQLException e) {
             System.out.println("Lỗi kết nối MySQL: " + e.getMessage());
+            // Reset connection nếu có lỗi
+            connection = null;
             throw e;
         }
         return connection;

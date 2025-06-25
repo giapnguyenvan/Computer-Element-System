@@ -216,6 +216,33 @@
                 min-width: 100vw;
             }
         }
+        
+        /* Loading Modal Styles */
+        #loadingModal .modal-content {
+            border-radius: 15px;
+            border: none;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+        }
+        
+        #loadingModal .modal-body {
+            padding: 2rem;
+        }
+        
+        #loadingModal .spinner-border {
+            width: 3rem;
+            height: 3rem;
+        }
+        
+        #loadingModal .modal-title {
+            color: #333;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+        }
+        
+        #loadingModal .text-muted {
+            color: #6c757d !important;
+            font-size: 0.875rem;
+        }
     </style>
 </head>
 <body>
@@ -309,6 +336,21 @@
                     </div>
                   </div>
                 </div>
+
+                <!-- Loading Modal -->
+                <div class="modal fade" id="loadingModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="loadingModalLabel" aria-hidden="true">
+                  <div class="modal-dialog modal-dialog-centered modal-sm">
+                    <div class="modal-content">
+                      <div class="modal-body text-center">
+                        <div class="spinner-border text-primary mb-3" role="status">
+                          <span class="visually-hidden">Loading...</span>
+                        </div>
+                        <h6 class="modal-title" id="loadingModalLabel">Đang gửi mã xác thực...</h6>
+                        <p class="text-muted small">Vui lòng đợi trong giây lát</p>
+                      </div>
+                    </div>
+                  </div>
+                </div>
             </div>
         </div>
     </div>
@@ -358,6 +400,15 @@
                     errorDiv.style.display = 'block';
                 } else {
                     errorDiv.style.display = 'none';
+                    
+                    // Hiển thị loading modal
+                    const loadingModal = new bootstrap.Modal(document.getElementById('loadingModal'));
+                    loadingModal.show();
+                    
+                    // Gửi form sau khi hiển thị loading
+                    setTimeout(() => {
+                        registerForm.submit();
+                    }, 100);
                 }
             });
         }

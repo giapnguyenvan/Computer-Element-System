@@ -25,6 +25,19 @@ public class CustomerDAO {
         }
     }
 
+    public void addCustomerWithEmail(Customer customer, String hashedPassword) throws SQLException {
+        String sql = "INSERT INTO Customer (name, email, password, phone, shipping_address) VALUES (?, ?, ?, ?, ?)";
+        try (Connection conn = dbContext.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+            stmt.setString(1, customer.getName());
+            stmt.setString(2, customer.getEmail());
+            stmt.setString(3, hashedPassword);
+            stmt.setString(4, customer.getPhone());
+            stmt.setString(5, customer.getShipping_address());
+            stmt.executeUpdate();
+        }
+    }
+
     public Customer login(String email, String password) throws SQLException {
         String sql = "SELECT * FROM Customer WHERE email = ?";
         try (Connection conn = dbContext.getConnection();
@@ -79,6 +92,17 @@ public class CustomerDAO {
 
     public boolean isEmailExists(String email) throws SQLException {
         String sql = "SELECT email FROM Customer WHERE email = ?";
+        try (Connection conn = dbContext.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+            stmt.setString(1, email);
+            try (java.sql.ResultSet rs = stmt.executeQuery()) {
+                return rs.next();
+            }
+        }
+    }
+
+    public boolean isEmailExistsButNotVerified(String email) throws SQLException {
+        String sql = "SELECT email FROM Customer WHERE email = ? AND is_verified = 0";
         try (Connection conn = dbContext.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setString(1, email);
