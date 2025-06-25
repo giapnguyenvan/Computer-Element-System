@@ -62,7 +62,7 @@ public class ViewCart extends HttpServlet {
 //    @AccessRoles(roles = {"customer"})
     public void doGet(HttpServletRequest request, HttpServletResponse response)
     throws ServletException, IOException {
-        request.getRequestDispatcher("view-cart.html").forward(request, response);
+        request.getRequestDispatcher("view-cart.jsp").forward(request, response);
     } 
 
     /** 
