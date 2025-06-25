@@ -275,7 +275,7 @@ public class ProductServlet extends HttpServlet {
                     request.setAttribute("feedbackList", paginatedFeedback);
                     request.setAttribute("totalPages", totalPages);
                     request.setAttribute("currentPage", page);
-                    request.setAttribute("averageRating", String.format("%.1f", averageRating));
+                    request.setAttribute("averageRating", averageRating);
                     request.setAttribute("totalFeedback", totalFeedback);
                     request.getRequestDispatcher("productDetail.jsp").forward(request, response);
                     break;

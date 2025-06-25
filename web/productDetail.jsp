@@ -225,11 +225,11 @@
             // Global variables
             let cartCount = 0;
             <c:choose>
-                <c:when test="${not empty sessionScope.userAuth}">
-                    const currentUserId = ${sessionScope.userAuth.id};
-                </c:when>
                 <c:when test="${not empty sessionScope.customerAuth}">
                     const currentUserId = ${sessionScope.customerAuth.customer_id};
+                </c:when>
+                <c:when test="${not empty sessionScope.userAuth}">
+                    const currentUserId = ${sessionScope.userAuth.id};
                 </c:when>
                 <c:otherwise>
                     const currentUserId = 0;
