@@ -1,3 +1,4 @@
+DROP DATABASE IF EXISTS project_g2;
 CREATE DATABASE IF NOT EXISTS project_g2;
 USE project_g2;
 
@@ -159,12 +160,14 @@ CREATE TABLE `order` (
 CREATE TABLE `orderdetail` (
   `order_detail_id` int NOT NULL AUTO_INCREMENT,
   `order_id` int NOT NULL,
-  `product_name` varchar(255) DEFAULT NULL,
+  `product_id` int NOT NULL,
   `quantity` int NOT NULL,
   `price` decimal(18,2) NOT NULL,
   PRIMARY KEY (`order_detail_id`),
   KEY `order_id` (`order_id`),
-  CONSTRAINT `orderdetail_ibfk_1` FOREIGN KEY (`order_id`) REFERENCES `order` (`order_id`)
+  KEY `product_id` (`product_id`),
+  CONSTRAINT `orderdetail_ibfk_1` FOREIGN KEY (`order_id`) REFERENCES `order` (`order_id`),
+  CONSTRAINT `orderdetail_ibfk_2` FOREIGN KEY (`product_id`) REFERENCES `product` (`product_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 CREATE TABLE `productimage` (
@@ -224,6 +227,18 @@ CREATE TABLE `blog` (
   CONSTRAINT `blog_ibfk_1` FOREIGN KEY (`customer_id`) REFERENCES `customer` (`customer_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
+CREATE TABLE `transactions` (
+  `transaction_id` INT AUTO_INCREMENT PRIMARY KEY,
+  `transaction_code` varchar(50),
+  `order_id` INT NOT NULL,
+  `payment_method_id` INT,
+  `total_amount` DECIMAL(18,2),
+  `created_at` DATETIME DEFAULT CURRENT_TIMESTAMP,
+  `paid` BOOL DEFAULT FALSE,
+  FOREIGN KEY (`order_id`) REFERENCES `order`(`order_id`),
+  FOREIGN KEY (`payment_method_id`) REFERENCES `paymentmethod`(`payment_method_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
 -- ================================
 -- SELECT ALL DATA FROM TABLES
 -- ================================
@@ -244,4 +259,5 @@ SELECT * FROM `productimage`;
 SELECT * FROM `productspecification`;
 SELECT * FROM `series`;
 SELECT * FROM `staff`;
+SELECT * FROM `transactions`;
 SELECT * FROM `user`; 

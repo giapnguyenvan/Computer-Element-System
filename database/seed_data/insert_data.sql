@@ -71,4 +71,10 @@ INSERT INTO `staff` VALUES
 -- Dữ liệu cho bảng user
 INSERT INTO `user` VALUES 
     (1,'staff01','hashedpassword1','staff01@example.com','Staff','Active',1,NULL),
-    (2,'admin01','hashedpassword2','admin01@example.com','Admin','Active',1,NULL); 
+    (2,'admin01','hashedpassword2','admin01@example.com','Admin','Active',1,NULL);
+
+-- Dữ liệu cho bảng paymentmethod
+INSERT INTO paymentmethod(method_name, description)
+VALUES
+    ('Cash','Tiền mặt'),
+    ('Transfer','Chuyển khoản'); 
