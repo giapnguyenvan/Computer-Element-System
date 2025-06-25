@@ -8,6 +8,7 @@ public class Customer {
     private String shipping_address;
     private String email;
     private String password;
+    private boolean isVerified;
 
     public Customer() {
     }
@@ -26,6 +27,15 @@ public class Customer {
         this.name = name;
         this.phone = phone;
         this.shipping_address = shipping_address;
+    }
+
+    public Customer(int customer_id, int user_id, String name, String phone, String shipping_address, boolean isVerified) {
+        this.customer_id = customer_id;
+        this.user_id = user_id;
+        this.name = name;
+        this.phone = phone;
+        this.shipping_address = shipping_address;
+        this.isVerified = isVerified;
     }
 
     // Getters and Setters
@@ -83,6 +93,14 @@ public class Customer {
 
     public void setPassword(String password) {
         this.password = password;
+    }
+
+    public boolean isVerified() {
+        return isVerified;
+    }
+
+    public void setVerified(boolean isVerified) {
+        this.isVerified = isVerified;
     }
 
     @Override

@@ -23,34 +23,24 @@
                             <th>Thao tác</th>
                         </tr>
                     </thead>
-                    <tbody>
-                        <c:choose>
-                            <c:when test="${not empty data}">
-                                <c:forEach var="customer" items="${data}">
-                                    <tr>
-                                        <td>${customer.customer_id}</td>
-                                        <td>${customer.name}</td>
-                                        <td>${customer.email}</td>
-                                        <td>${customer.phone}</td>
-                                        <td>${customer.shipping_address}</td>
-                                        <td>
-                                            <a href="editCustomer?id=${customer.customer_id}" class="btn btn-sm btn-warning">
-                                                <i class="fas fa-edit"></i> Sửa
-                                            </a>
-                                            <a href="changePassword?id=${customer.customer_id}" class="btn btn-sm btn-info">
-                                                <i class="fas fa-key"></i> Đổi MK
-                                            </a>
-                                        </td>
-                                    </tr>
-                                </c:forEach>
-                            </c:when>
-                            <c:otherwise>
-                                <tr>
-                                    <td colspan="6" class="text-center text-muted">Không có dữ liệu khách hàng</td>
-                                </tr>
-                            </c:otherwise>
-                        </c:choose>
-                    </tbody>
+
+                    <c:if test="${not empty data}">
+                        <tr>
+                            <td>${data.customer_id}</td>
+                            <td>${data.name}</td>
+                            <td>${data.email}</td>
+                            <td>${data.phone}</td>
+                            <td>${data.shipping_address}</td>
+                            <td>
+                                <a href="editCustomer?id=${data.customer_id}" class="btn btn-sm btn-warning">
+                                    <i class="fas fa-edit"></i> Sửa
+                                </a>
+                                <a href="changePassword?id=${data.customer_id}" class="btn btn-sm btn-info">
+                                    <i class="fas fa-key"></i> Đổi MK
+                                </a>
+                            </td>
+                        </tr>
+                    </c:if>
                 </table>
             </div>
         </div>

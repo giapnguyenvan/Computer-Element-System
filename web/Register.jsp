@@ -242,7 +242,12 @@
                 <% if (error != null) { %>
                     <div class="error"><%= error %></div>
                 <% } %>
+                <% String registerMessage = (String) request.getAttribute("registerMessage"); %>
+                <% if (registerMessage != null) { %>
+                    <div class="alert alert-success" role="alert"><%= registerMessage %></div>
+                <% } %>
                 <div id="clientError" class="alert alert-danger" style="display:none;" role="alert"></div>
+
                 <form action="register" method="post" id="registerForm">
                     <div class="form-col">
                         <label class="form-label" for="fullname">Full Name:</label>
@@ -282,9 +287,39 @@
                 <div class="login-link">
                     <p>Already have an account? <a href="login.jsp">Login now</a></p>
                 </div>
+                <!-- Popup nhập mã xác thực -->
+                <div class="modal fade" id="verificationModal" tabindex="-1" aria-labelledby="verificationModalLabel" aria-hidden="true">
+                  <div class="modal-dialog modal-dialog-centered">
+                    <div class="modal-content">
+                      <div class="modal-header">
+                        <h5 class="modal-title" id="verificationModalLabel">Nhập mã xác thực</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                      </div>
+                      <form action="check-verification" method="post">
+                        <div class="modal-body">
+                          <div class="mb-3">
+                            <label for="verificationCode" class="form-label">Mã xác thực đã gửi về email:</label>
+                            <input type="text" class="form-control" id="verificationCode" name="code" required maxlength="6">
+                          </div>
+                        </div>
+                        <div class="modal-footer">
+                          <button type="submit" class="btn btn-primary">Xác thực</button>
+                        </div>
+                      </form>
+                    </div>
+                  </div>
+                </div>
             </div>
         </div>
     </div>
+    <% if (request.getAttribute("showVerificationPopup") != null) { %>
+    <script>
+    document.addEventListener("DOMContentLoaded", function() {
+      var myModal = new bootstrap.Modal(document.getElementById('verificationModal'));
+      myModal.show();
+    });
+    </script>
+    <% } %>
     <script>
         function validateEmail(email) {
             const re = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;

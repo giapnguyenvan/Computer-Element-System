@@ -9,16 +9,18 @@ public class User {
     private String email;
     private String phone;
     private String address;
+    private boolean isVerified;
 
     public User() {
     }
 
-    public User(int id, String username, String password, String role, String email) {
+    public User(int id, String username, String password, String role, String email, boolean isVerified) {
         this.id = id;
         this.username = username;
         this.password = password;
         this.role = role;
         this.email = email;
+        this.isVerified = isVerified;
     }
 
     public User(String username, String password, String role, String email) {
@@ -90,6 +92,14 @@ public class User {
 
     public void setRole(String role) {
         this.role = role;
+    }
+
+    public boolean isVerified() {
+        return isVerified;
+    }
+
+    public void setVerified(boolean isVerified) {
+        this.isVerified = isVerified;
     }
 
     @Override
