@@ -1,54 +1,33 @@
 CREATE DATABASE IF NOT EXISTS project_g2;
 USE project_g2;
 
--- Table structure for table `admin`
-DROP TABLE IF EXISTS `admin`;
-CREATE TABLE `admin` (
-  `admin_id` int NOT NULL AUTO_INCREMENT,
-  `user_id` int NOT NULL,
-  `name` varchar(100) DEFAULT NULL,
-  PRIMARY KEY (`admin_id`),
-  UNIQUE KEY `user_id` (`user_id`),
-  CONSTRAINT `admin_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `user` (`user_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
-
--- Table structure for table `blog`
+-- Xóa bảng theo thứ tự phụ thuộc (bảng con trước, bảng cha sau)
+DROP TABLE IF EXISTS `cartitem`;
+DROP TABLE IF EXISTS `orderdetail`;
+DROP TABLE IF EXISTS `order`;
+DROP TABLE IF EXISTS `productimage`;
+DROP TABLE IF EXISTS `productspecification`;
+DROP TABLE IF EXISTS `feedback`;
+DROP TABLE IF EXISTS `inventorylog`;
 DROP TABLE IF EXISTS `blog`;
-CREATE TABLE `blog` (
-  `blog_id` int NOT NULL AUTO_INCREMENT,
-  `title` varchar(200) NOT NULL,
-  `content` text NOT NULL,
-  `customer_id` int NOT NULL,
-  `created_at` datetime DEFAULT CURRENT_TIMESTAMP,
-  PRIMARY KEY (`blog_id`),
-  KEY `customer_id` (`customer_id`),
-  CONSTRAINT `blog_ibfk_1` FOREIGN KEY (`customer_id`) REFERENCES `customer` (`customer_id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
-
--- Table structure for table `brand`
+DROP TABLE IF EXISTS `product`;
+DROP TABLE IF EXISTS `admin`;
+DROP TABLE IF EXISTS `staff`;
+DROP TABLE IF EXISTS `customer`;
+DROP TABLE IF EXISTS `model`;
+DROP TABLE IF EXISTS `series`;
+DROP TABLE IF EXISTS `user`;
 DROP TABLE IF EXISTS `brand`;
+DROP TABLE IF EXISTS `componenttype`;
+DROP TABLE IF EXISTS `paymentmethod`;
+
+-- Tạo bảng cha trước
 CREATE TABLE `brand` (
   `brand_id` int NOT NULL AUTO_INCREMENT,
   `name` varchar(100) NOT NULL,
   PRIMARY KEY (`brand_id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
--- Table structure for table `cartitem`
-DROP TABLE IF EXISTS `cartitem`;
-CREATE TABLE `cartitem` (
-  `cart_item_id` int NOT NULL AUTO_INCREMENT,
-  `customer_id` int NOT NULL,
-  `product_id` int NOT NULL,
-  `quantity` int NOT NULL,
-  PRIMARY KEY (`cart_item_id`),
-  KEY `customer_id` (`customer_id`),
-  KEY `product_id` (`product_id`),
-  CONSTRAINT `cartitem_ibfk_1` FOREIGN KEY (`customer_id`) REFERENCES `customer` (`customer_id`),
-  CONSTRAINT `cartitem_ibfk_2` FOREIGN KEY (`product_id`) REFERENCES `product` (`product_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=10 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
-
--- Table structure for table `componenttype`
-DROP TABLE IF EXISTS `componenttype`;
 CREATE TABLE `componenttype` (
   `type_id` int NOT NULL AUTO_INCREMENT,
   `name` varchar(100) NOT NULL,
@@ -56,8 +35,46 @@ CREATE TABLE `componenttype` (
   PRIMARY KEY (`type_id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=10 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
--- Table structure for table `customer`
-DROP TABLE IF EXISTS `customer`;
+CREATE TABLE `paymentmethod` (
+  `payment_method_id` int NOT NULL AUTO_INCREMENT,
+  `method_name` varchar(100) NOT NULL,
+  `description` varchar(255) DEFAULT NULL,
+  `status` enum('Active','Inactive') NOT NULL DEFAULT 'Active',
+  PRIMARY KEY (`payment_method_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+CREATE TABLE `user` (
+  `user_id` int NOT NULL AUTO_INCREMENT,
+  `username` varchar(100) NOT NULL,
+  `password` varchar(255) NOT NULL,
+  `email` varchar(100) DEFAULT NULL,
+  `role` enum('Staff','Admin') NOT NULL,
+  `status` enum('Active','Inactive') NOT NULL DEFAULT 'Active',
+  `is_verified` tinyint(1) NOT NULL DEFAULT '0',
+  `verification_token` text,
+  PRIMARY KEY (`user_id`),
+  UNIQUE KEY `username` (`username`)
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+-- Bảng phụ thuộc nhiều bảng cha
+CREATE TABLE `series` (
+  `series_id` int NOT NULL AUTO_INCREMENT,
+  `brand_id` int NOT NULL,
+  `name` varchar(100) DEFAULT NULL,
+  PRIMARY KEY (`series_id`),
+  KEY `brand_id` (`brand_id`),
+  CONSTRAINT `series_ibfk_1` FOREIGN KEY (`brand_id`) REFERENCES `brand` (`brand_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+CREATE TABLE `model` (
+  `model_id` int NOT NULL AUTO_INCREMENT,
+  `series_id` int NOT NULL,
+  `name` varchar(100) DEFAULT NULL,
+  PRIMARY KEY (`model_id`),
+  KEY `series_id` (`series_id`),
+  CONSTRAINT `model_ibfk_1` FOREIGN KEY (`series_id`) REFERENCES `series` (`series_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
 CREATE TABLE `customer` (
   `customer_id` int NOT NULL AUTO_INCREMENT,
   `name` varchar(100) DEFAULT NULL,
@@ -71,91 +88,28 @@ CREATE TABLE `customer` (
   UNIQUE KEY `email` (`email`)
 ) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
--- Table structure for table `feedback`
-DROP TABLE IF EXISTS `feedback`;
-CREATE TABLE `feedback` (
-  `feedback_id` int NOT NULL AUTO_INCREMENT,
-  `customer_id` int DEFAULT NULL,
-  `product_id` int DEFAULT NULL,
-  `rating` int DEFAULT NULL,
-  `content` text,
-  `created_at` datetime DEFAULT CURRENT_TIMESTAMP,
-  PRIMARY KEY (`feedback_id`),
-  KEY `customer_id` (`customer_id`),
-  KEY `product_id` (`product_id`),
-  CONSTRAINT `feedback_ibfk_1` FOREIGN KEY (`customer_id`) REFERENCES `customer` (`customer_id`),
-  CONSTRAINT `feedback_ibfk_2` FOREIGN KEY (`product_id`) REFERENCES `product` (`product_id`),
-  CONSTRAINT `feedback_chk_1` CHECK ((`rating` between 1 and 5))
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
-
--- Table structure for table `inventorylog`
-DROP TABLE IF EXISTS `inventorylog`;
-CREATE TABLE `inventorylog` (
-  `log_id` int NOT NULL AUTO_INCREMENT,
-  `product_id` int NOT NULL,
-  `action` enum('Add','Remove','Adjust') NOT NULL,
-  `quantity` int NOT NULL,
-  `note` varchar(255) DEFAULT NULL,
-  `created_at` datetime DEFAULT CURRENT_TIMESTAMP,
-  PRIMARY KEY (`log_id`),
-  KEY `product_id` (`product_id`),
-  CONSTRAINT `inventorylog_ibfk_1` FOREIGN KEY (`product_id`) REFERENCES `product` (`product_id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
-
--- Table structure for table `model`
-DROP TABLE IF EXISTS `model`;
-CREATE TABLE `model` (
-  `model_id` int NOT NULL AUTO_INCREMENT,
-  `series_id` int NOT NULL,
+CREATE TABLE `staff` (
+  `staff_id` int NOT NULL AUTO_INCREMENT,
+  `user_id` int NOT NULL,
   `name` varchar(100) DEFAULT NULL,
-  PRIMARY KEY (`model_id`),
-  KEY `series_id` (`series_id`),
-  CONSTRAINT `model_ibfk_1` FOREIGN KEY (`series_id`) REFERENCES `series` (`series_id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+  `phone` varchar(20) DEFAULT NULL,
+  `enter_date` date DEFAULT NULL,
+  `leave_date` date DEFAULT NULL,
+  PRIMARY KEY (`staff_id`),
+  UNIQUE KEY `user_id` (`user_id`),
+  CONSTRAINT `staff_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `user` (`user_id`)
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
--- Table structure for table `order`
-DROP TABLE IF EXISTS `order`;
-CREATE TABLE `order` (
-  `order_id` int NOT NULL AUTO_INCREMENT,
-  `customer_id` int NOT NULL,
-  `order_date` datetime DEFAULT CURRENT_TIMESTAMP,
-  `total_amount` decimal(18,2) DEFAULT NULL,
-  `shipping_address` varchar(255) DEFAULT NULL,
-  `shipping_fee` decimal(10,2) DEFAULT '0.00',
-  `status` enum('Pending','Shipping','Completed','Cancel') NOT NULL DEFAULT 'Pending',
-  `payment_method_id` int DEFAULT NULL,
-  PRIMARY KEY (`order_id`),
-  KEY `customer_id` (`customer_id`),
-  KEY `payment_method_id` (`payment_method_id`),
-  CONSTRAINT `order_ibfk_1` FOREIGN KEY (`customer_id`) REFERENCES `customer` (`customer_id`),
-  CONSTRAINT `order_ibfk_2` FOREIGN KEY (`payment_method_id`) REFERENCES `paymentmethod` (`payment_method_id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+CREATE TABLE `admin` (
+  `admin_id` int NOT NULL AUTO_INCREMENT,
+  `user_id` int NOT NULL,
+  `name` varchar(100) DEFAULT NULL,
+  PRIMARY KEY (`admin_id`),
+  UNIQUE KEY `user_id` (`user_id`),
+  CONSTRAINT `admin_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `user` (`user_id`)
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
--- Table structure for table `orderdetail`
-DROP TABLE IF EXISTS `orderdetail`;
-CREATE TABLE `orderdetail` (
-  `order_detail_id` int NOT NULL AUTO_INCREMENT,
-  `order_id` int NOT NULL,
-  `product_name` varchar(255) DEFAULT NULL,
-  `quantity` int NOT NULL,
-  `price` decimal(18,2) NOT NULL,
-  PRIMARY KEY (`order_detail_id`),
-  KEY `order_id` (`order_id`),
-  CONSTRAINT `orderdetail_ibfk_1` FOREIGN KEY (`order_id`) REFERENCES `order` (`order_id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
-
--- Table structure for table `paymentmethod`
-DROP TABLE IF EXISTS `paymentmethod`;
-CREATE TABLE `paymentmethod` (
-  `payment_method_id` int NOT NULL AUTO_INCREMENT,
-  `method_name` varchar(100) NOT NULL,
-  `description` varchar(255) DEFAULT NULL,
-  `status` enum('Active','Inactive') NOT NULL DEFAULT 'Active',
-  PRIMARY KEY (`payment_method_id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
-
--- Table structure for table `product`
-DROP TABLE IF EXISTS `product`;
+-- Bảng phụ thuộc nhiều bảng cha
 CREATE TABLE `product` (
   `product_id` int NOT NULL AUTO_INCREMENT,
   `name` varchar(255) DEFAULT NULL,
@@ -174,8 +128,45 @@ CREATE TABLE `product` (
   CONSTRAINT `product_ibfk_2` FOREIGN KEY (`brand_id`) REFERENCES `brand` (`brand_id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=21 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
--- Table structure for table `productimage`
-DROP TABLE IF EXISTS `productimage`;
+CREATE TABLE `cartitem` (
+  `cart_item_id` int NOT NULL AUTO_INCREMENT,
+  `customer_id` int NOT NULL,
+  `product_id` int NOT NULL,
+  `quantity` int NOT NULL,
+  PRIMARY KEY (`cart_item_id`),
+  KEY `customer_id` (`customer_id`),
+  KEY `product_id` (`product_id`),
+  CONSTRAINT `cartitem_ibfk_1` FOREIGN KEY (`customer_id`) REFERENCES `customer` (`customer_id`),
+  CONSTRAINT `cartitem_ibfk_2` FOREIGN KEY (`product_id`) REFERENCES `product` (`product_id`)
+) ENGINE=InnoDB AUTO_INCREMENT=10 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+CREATE TABLE `order` (
+  `order_id` int NOT NULL AUTO_INCREMENT,
+  `customer_id` int NOT NULL,
+  `order_date` datetime DEFAULT CURRENT_TIMESTAMP,
+  `total_amount` decimal(18,2) DEFAULT NULL,
+  `shipping_address` varchar(255) DEFAULT NULL,
+  `shipping_fee` decimal(10,2) DEFAULT '0.00',
+  `status` enum('Pending','Shipping','Completed','Cancel') NOT NULL DEFAULT 'Pending',
+  `payment_method_id` int DEFAULT NULL,
+  PRIMARY KEY (`order_id`),
+  KEY `customer_id` (`customer_id`),
+  KEY `payment_method_id` (`payment_method_id`),
+  CONSTRAINT `order_ibfk_1` FOREIGN KEY (`customer_id`) REFERENCES `customer` (`customer_id`),
+  CONSTRAINT `order_ibfk_2` FOREIGN KEY (`payment_method_id`) REFERENCES `paymentmethod` (`payment_method_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+CREATE TABLE `orderdetail` (
+  `order_detail_id` int NOT NULL AUTO_INCREMENT,
+  `order_id` int NOT NULL,
+  `product_name` varchar(255) DEFAULT NULL,
+  `quantity` int NOT NULL,
+  `price` decimal(18,2) NOT NULL,
+  PRIMARY KEY (`order_detail_id`),
+  KEY `order_id` (`order_id`),
+  CONSTRAINT `orderdetail_ibfk_1` FOREIGN KEY (`order_id`) REFERENCES `order` (`order_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
 CREATE TABLE `productimage` (
   `image_id` int NOT NULL AUTO_INCREMENT,
   `product_id` int NOT NULL,
@@ -185,8 +176,6 @@ CREATE TABLE `productimage` (
   CONSTRAINT `productimage_ibfk_1` FOREIGN KEY (`product_id`) REFERENCES `product` (`product_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
--- Table structure for table `productspecification`
-DROP TABLE IF EXISTS `productspecification`;
 CREATE TABLE `productspecification` (
   `spec_id` int NOT NULL AUTO_INCREMENT,
   `product_id` int NOT NULL,
@@ -197,45 +186,43 @@ CREATE TABLE `productspecification` (
   CONSTRAINT `productspecification_ibfk_1` FOREIGN KEY (`product_id`) REFERENCES `product` (`product_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
--- Table structure for table `series`
-DROP TABLE IF EXISTS `series`;
-CREATE TABLE `series` (
-  `series_id` int NOT NULL AUTO_INCREMENT,
-  `brand_id` int NOT NULL,
-  `name` varchar(100) DEFAULT NULL,
-  PRIMARY KEY (`series_id`),
-  KEY `brand_id` (`brand_id`),
-  CONSTRAINT `series_ibfk_1` FOREIGN KEY (`brand_id`) REFERENCES `brand` (`brand_id`)
+CREATE TABLE `feedback` (
+  `feedback_id` int NOT NULL AUTO_INCREMENT,
+  `customer_id` int DEFAULT NULL,
+  `product_id` int DEFAULT NULL,
+  `rating` int DEFAULT NULL,
+  `content` text,
+  `created_at` datetime DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (`feedback_id`),
+  KEY `customer_id` (`customer_id`),
+  KEY `product_id` (`product_id`),
+  CONSTRAINT `feedback_ibfk_1` FOREIGN KEY (`customer_id`) REFERENCES `customer` (`customer_id`),
+  CONSTRAINT `feedback_ibfk_2` FOREIGN KEY (`product_id`) REFERENCES `product` (`product_id`),
+  CONSTRAINT `feedback_chk_1` CHECK ((`rating` between 1 and 5))
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
--- Table structure for table `staff`
-DROP TABLE IF EXISTS `staff`;
-CREATE TABLE `staff` (
-  `staff_id` int NOT NULL AUTO_INCREMENT,
-  `user_id` int NOT NULL,
-  `name` varchar(100) DEFAULT NULL,
-  `phone` varchar(20) DEFAULT NULL,
-  `enter_date` date DEFAULT NULL,
-  `leave_date` date DEFAULT NULL,
-  PRIMARY KEY (`staff_id`),
-  UNIQUE KEY `user_id` (`user_id`),
-  CONSTRAINT `staff_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `user` (`user_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+CREATE TABLE `inventorylog` (
+  `log_id` int NOT NULL AUTO_INCREMENT,
+  `product_id` int NOT NULL,
+  `action` enum('Add','Remove','Adjust') NOT NULL,
+  `quantity` int NOT NULL,
+  `note` varchar(255) DEFAULT NULL,
+  `created_at` datetime DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (`log_id`),
+  KEY `product_id` (`product_id`),
+  CONSTRAINT `inventorylog_ibfk_1` FOREIGN KEY (`product_id`) REFERENCES `product` (`product_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
--- Table structure for table `user`
-DROP TABLE IF EXISTS `user`;
-CREATE TABLE `user` (
-  `user_id` int NOT NULL AUTO_INCREMENT,
-  `username` varchar(100) NOT NULL,
-  `password` varchar(255) NOT NULL,
-  `email` varchar(100) DEFAULT NULL,
-  `role` enum('Staff','Admin') NOT NULL,
-  `status` enum('Active','Inactive') NOT NULL DEFAULT 'Active',
-  `is_verified` tinyint(1) NOT NULL DEFAULT '0',
-  `verification_token` text,
-  PRIMARY KEY (`user_id`),
-  UNIQUE KEY `username` (`username`)
-) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+CREATE TABLE `blog` (
+  `blog_id` int NOT NULL AUTO_INCREMENT,
+  `title` varchar(200) NOT NULL,
+  `content` text NOT NULL,
+  `customer_id` int NOT NULL,
+  `created_at` datetime DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (`blog_id`),
+  KEY `customer_id` (`customer_id`),
+  CONSTRAINT `blog_ibfk_1` FOREIGN KEY (`customer_id`) REFERENCES `customer` (`customer_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 -- ================================
 -- SELECT ALL DATA FROM TABLES
