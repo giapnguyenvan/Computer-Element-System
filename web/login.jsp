@@ -289,6 +289,16 @@
                 <div class="login-form-box">
                     <h2><span>Login to your</span> Account</h2>
                     <p>Don't have an account? <a href="Register.jsp">Create one here</a></p>
+                    
+                    <!-- Hiển thị thông báo thành công từ session -->
+                    <% String successMessage = (String) session.getAttribute("successMessage"); %>
+                    <% if (successMessage != null) { %>
+                        <div class="alert alert-success" role="alert">
+                            <i class="fa fa-check-circle me-2"></i><%= successMessage %>
+                        </div>
+                        <% session.removeAttribute("successMessage"); %>
+                    <% } %>
+                    
                     <% String error = (String) request.getAttribute("error"); %>
                     <% if (error != null) { %>
                     <div class="alert alert-danger" role="alert"><%= error %></div>

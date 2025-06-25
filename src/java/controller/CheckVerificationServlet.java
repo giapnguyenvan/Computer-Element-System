@@ -4,7 +4,8 @@ import jakarta.servlet.*;
 import jakarta.servlet.http.*;
 import jakarta.servlet.annotation.*;
 import java.io.IOException;
-import dal.UserDAO;
+import dal.CustomerDAO;
+import java.sql.SQLException;
 
 @WebServlet("/check-verification")
 public class CheckVerificationServlet extends HttpServlet {
@@ -15,30 +16,38 @@ public class CheckVerificationServlet extends HttpServlet {
         HttpSession session = request.getSession();
         String sessionCode = (String) session.getAttribute("verification_code");
         String email = (String) session.getAttribute("verification_email");
-        String action = (String) session.getAttribute("verification_action");
 
         if (sessionCode != null && sessionCode.equals(inputCode)) {
             // Xác thực thành công
             session.removeAttribute("verification_code");
+            session.removeAttribute("verification_email");
             session.setAttribute("email_verified", true);
 
             // Cập nhật is_verified = 1 cho customer
             try {
-                dal.CustomerDAO customerDAO = new dal.CustomerDAO();
-                customerDAO.updateIsVerified(email, true);
-            } catch (Exception e) {
+                CustomerDAO customerDAO = new CustomerDAO();
+                boolean updateSuccess = customerDAO.updateIsVerified(email, true);
+                
+                if (updateSuccess) {
+                    // Xác thực thành công, chuyển về trang login
+                    session.setAttribute("successMessage", "Tài khoản đã được xác thực thành công! Bạn có thể đăng nhập ngay bây giờ.");
+                    response.sendRedirect("login.jsp");
+                    return;
+                } else {
+                    request.setAttribute("error", "Không thể cập nhật trạng thái xác thực. Vui lòng thử lại.");
+                    request.getRequestDispatcher("Register.jsp").forward(request, response);
+                    return;
+                }
+            } catch (SQLException e) {
                 request.setAttribute("error", "Lỗi xác thực tài khoản: " + e.getMessage());
-                request.getRequestDispatcher("verify.jsp").forward(request, response);
+                request.getRequestDispatcher("Register.jsp").forward(request, response);
                 return;
             }
-
-            // Sau khi xác thực thành công, chuyển về trang login
-            request.setAttribute("message", "Tài khoản đã được xác thực. Bạn có thể đăng nhập.");
-            request.getRequestDispatcher("login.jsp").forward(request, response);
-            return;
         } else {
-            request.setAttribute("error", "Invalid verification code. Please try again.");
-            request.getRequestDispatcher("verify.jsp").forward(request, response);
+            // Mã xác thực không đúng
+            request.setAttribute("error", "Mã xác thực không đúng. Vui lòng kiểm tra lại.");
+            request.setAttribute("showVerificationPopup", true);
+            request.getRequestDispatcher("Register.jsp").forward(request, response);
         }
     }
 }
