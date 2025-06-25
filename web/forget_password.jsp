@@ -196,11 +196,6 @@
             </c:if>
             <form action="forget-password" method="post" id="forgetPasswordForm">
                 <div class="mb-3">
-                    <label class="form-label" for="username">Username</label>
-                    <input type="text" class="form-control" id="username" name="username" required
-                           value="${param.username != null ? param.username : (not empty username ? username : '')}">
-                </div>
-                <div class="mb-3">
                     <label class="form-label" for="email">Email</label>
                     <input type="email" class="form-control" id="email" name="email" required
                            value="${param.email != null ? param.email : (not empty email ? email : '')}">
@@ -223,13 +218,8 @@
     if (forgetPasswordForm) {
         forgetPasswordForm.addEventListener('submit', function (event) {
             const email = document.getElementById('email').value;
-            const username = document.getElementById('username').value;
             const errorDiv = document.getElementById('clientError');
             let errors = [];
-
-            if (username.trim() === '') {
-                errors.push("Username is required.");
-            }
 
             if (!validateEmail(email)) {
                 errors.push("Invalid email format.");
