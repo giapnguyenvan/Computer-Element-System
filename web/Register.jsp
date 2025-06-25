@@ -590,6 +590,32 @@
           }
         }
       });
+
+      // After locationsData is loaded and dropdowns are populated
+      const paramProvince = "${param.province != null ? param.province : (not empty province ? province : '')}";
+      const paramDistrict = "${param.district != null ? param.district : (not empty district ? district : '')}";
+      const paramWard = "${param.ward != null ? param.ward : (not empty ward ? ward : '')}";
+
+      function setSelectedAddress() {
+        if (paramProvince) {
+          provinceSelect.value = paramProvince;
+          provinceSelect.dispatchEvent(new Event('change'));
+          setTimeout(() => {
+            if (paramDistrict) {
+              districtSelect.value = paramDistrict;
+              districtSelect.dispatchEvent(new Event('change'));
+              setTimeout(() => {
+                if (paramWard) {
+                  wardSelect.value = paramWard;
+                }
+              }, 100);
+            }
+          }, 100);
+        }
+      }
+
+      // Call after dropdowns are populated
+      setTimeout(setSelectedAddress, 300);
     });
     </script>
     <script>

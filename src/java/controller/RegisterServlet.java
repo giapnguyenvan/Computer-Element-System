@@ -37,7 +37,7 @@ public class RegisterServlet extends HttpServlet {
         }
         
         // Check for dangerous characters
-        Pattern dangerousChars = Pattern.compile("[<>{}[\\]\\\\$%]");
+        Pattern dangerousChars = Pattern.compile("[<>{}\\[\\]\\\\$%]");
         if (dangerousChars.matcher(fieldValue).find()) {
             return "Contains invalid characters (<, >, {, }, [, ], \\, $, %).";
         }
@@ -90,14 +90,10 @@ public class RegisterServlet extends HttpServlet {
             String email = request.getParameter("email");
             String phone = request.getParameter("phone");
             
-            // Address fields
-            String houseNumber = request.getParameter("houseNumber");
-            String street = request.getParameter("street");
+            // Address fields (updated)
+            String addressDetail = request.getParameter("addressDetail");
             String ward = request.getParameter("ward");
             String district = request.getParameter("district");
-            String city = request.getParameter("city");
-
-            // Address dropdown fields
             String province = request.getParameter("province");
 
             // Validate phone number
@@ -107,40 +103,14 @@ public class RegisterServlet extends HttpServlet {
                 return;
             }
 
-            // Validate address fields
-            String addressValidationError = isValidAddressField(houseNumber);
-            if (addressValidationError != null) {
-                request.setAttribute("error", "House Number: " + addressValidationError);
-                request.getRequestDispatcher("Register.jsp").forward(request, response);
-                return;
-            }
-
-            addressValidationError = isValidAddressField(street);
-            if (addressValidationError != null) {
-                request.setAttribute("error", "Street: " + addressValidationError);
-                request.getRequestDispatcher("Register.jsp").forward(request, response);
-                return;
-            }
-
-            addressValidationError = isValidAddressField(ward);
-            if (addressValidationError != null) {
-                request.setAttribute("error", "Ward: " + addressValidationError);
-                request.getRequestDispatcher("Register.jsp").forward(request, response);
-                return;
-            }
-
-            addressValidationError = isValidAddressField(district);
-            if (addressValidationError != null) {
-                request.setAttribute("error", "District: " + addressValidationError);
-                request.getRequestDispatcher("Register.jsp").forward(request, response);
-                return;
-            }
-
-            addressValidationError = isValidAddressField(city);
-            if (addressValidationError != null) {
-                request.setAttribute("error", "City: " + addressValidationError);
-                request.getRequestDispatcher("Register.jsp").forward(request, response);
-                return;
+            // Validate address detail (optional)
+            if (addressDetail != null && !addressDetail.trim().isEmpty()) {
+                String addressValidationError = isValidAddressField(addressDetail);
+                if (addressValidationError != null) {
+                    request.setAttribute("error", "Address Detail: " + addressValidationError);
+                    request.getRequestDispatcher("Register.jsp").forward(request, response);
+                    return;
+                }
             }
 
             // Validate address dropdowns
@@ -161,7 +131,10 @@ public class RegisterServlet extends HttpServlet {
             }
 
             // Build shipping address
-            String shippingAddress = String.format("%s, %s, %s", ward, district, province);
+            String shippingAddress = String.format("%s, %s, %s, %s",
+                (addressDetail != null && !addressDetail.trim().isEmpty()) ? addressDetail.trim() : "",
+                ward, district, province
+            );
 
             // Kiểm tra mật khẩu xác nhận
             if (!password.equals(confirmPassword)) {
