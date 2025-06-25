@@ -170,17 +170,5 @@ public class CustomerDAO {
         }
     }
 
-    public boolean updatePassword(String email, String newPassword) throws SQLException {
-        // Hash the password using BCrypt
-        String hashedPassword = org.springframework.security.crypto.bcrypt.BCrypt.hashpw(newPassword, org.springframework.security.crypto.bcrypt.BCrypt.gensalt());
-        String sql = "UPDATE Customer SET password = ? WHERE email = ?";
-        try (Connection conn = dbContext.getConnection();
-             PreparedStatement stmt = conn.prepareStatement(sql)) {
-            stmt.setString(1, hashedPassword);
-            stmt.setString(2, email);
-            return stmt.executeUpdate() > 0;
-        }
-    }
-
     // You might want to add more methods here, e.g., getCustomerByUserId, updateCustomer, etc.
 } 

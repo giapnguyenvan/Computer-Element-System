@@ -170,6 +170,22 @@ public class BlogDAO {
         return listBlogs;
     }
 
+    // Xóa blog theo blogId và customerId
+    public boolean deleteBlogById(int blogId, int customerId) {
+        DBContext db = DBContext.getInstance();
+        String sql = "DELETE FROM blog WHERE blog_id = ? AND customer_id = ?";
+        try {
+            PreparedStatement ptm = db.getConnection().prepareStatement(sql);
+            ptm.setInt(1, blogId);
+            ptm.setInt(2, customerId);
+            int affected = ptm.executeUpdate();
+            return affected > 0;
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+            return false;
+        }
+    }
+
     public static void main(String[] args) {
         BlogDAO dao = new BlogDAO();
         

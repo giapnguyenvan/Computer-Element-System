@@ -1,6 +1,7 @@
 <%@ page contentType="text/html" pageEncoding="UTF-8"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
+<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 <!DOCTYPE html>
 <html>
 <head>
@@ -111,9 +112,19 @@
 
         <!-- Add New Blog Button -->
         <div class="d-flex justify-content-end mb-3">
-            <button type="button" class="btn btn-success add-blog-btn" data-bs-toggle="modal" data-bs-target="#addBlogModal">
-                <i class="fas fa-plus me-2"></i>Add New Blog
-            </button>
+            <c:choose>
+                <c:when test="${not empty sessionScope.customerAuth}">
+                    <button type="button" class="btn btn-success add-blog-btn" data-bs-toggle="modal" data-bs-target="#addBlogModal">
+                        <i class="fas fa-plus me-2"></i>Add New Blog
+                    </button>
+                </c:when>
+                <c:otherwise>
+                    <button type="button" class="btn btn-success add-blog-btn" disabled>
+                        <i class="fas fa-plus me-2"></i>Add New Blog
+                    </button>
+                    <span class="ms-3 align-self-center text-danger">Please log in to add a new blog.</span>
+                </c:otherwise>
+            </c:choose>
         </div>
 
         <!-- Blog Display -->
@@ -125,11 +136,11 @@
                             <h5 class="card-title">${blog.title}</h5>
                             <div class="blog-meta mb-2">
                                 <small>
-                                    Created: ${blog.created_at}
+                                    Created: <fmt:formatDate value="${blog.created_at}" pattern="dd/MM/yyyy HH:mm"/>
                                 </small>
                             </div>
                             <div class="blog-content">
-                                <p class="card-text">${fn:substring(blog.content, 0, 200)}${fn:length(blog.content) > 200 ? '...' : ''}</p>
+                                <p class="card-text">${fn:substring(blog.content, 0, 100)}${fn:length(blog.content) > 100 ? '...' : ''}</p>
                             </div>
                             <div class="blog-meta">
                                 <small>Author: ${customerNames[blog.customer_id]}</small>
@@ -140,7 +151,7 @@
                                         data-title="${fn:escapeXml(blog.title)}"
                                         data-content="${fn:escapeXml(blog.content)}"
                                         data-author="${fn:escapeXml(customerNames[blog.customer_id])}"
-                                        data-created="${blog.created_at}">
+                                        data-created="<fmt:formatDate value='${blog.created_at}' pattern='dd/MM/yyyy HH:mm'/>">
                                     View Details
                                 </button>
                             </div>
@@ -233,17 +244,26 @@
                             </div>
                         </div>
                         <div class="mb-3">
-                            <label for="customerId" class="form-label">Author (Customer) *</label>
-                            <select class="form-select" id="customerId" name="customer_id" required>
-                                <option value="">Select a customer...</option>
-                                <c:forEach items="${customerList}" var="customer">
-                                    <option value="${customer.customer_id}" 
-                                            ${sessionScope.userAuth != null && sessionScope.user_id == customer.customer_id ? 'selected' : ''}>
-                                        ${customer.customer_id} - ${customer.name}
-                                    </option>
-                                </c:forEach>
-                            </select>
-                            <div class="form-text">Select the customer who will be the author of this blog</div>
+                            <c:choose>
+                                <c:when test="${not empty sessionScope.customerAuth}">
+                                    <input type="hidden" id="customerId" name="customer_id" value="${sessionScope.customerAuth.customer_id}" />
+                                    <div class="form-text">
+                                        Author: <strong>${sessionScope.customerAuth.name}</strong>
+                                    </div>
+                                </c:when>
+                                <c:otherwise>
+                                    <label for="customerId" class="form-label">Author (Customer) *</label>
+                                    <select class="form-select" id="customerId" name="customer_id" required>
+                                        <option value="">Select a customer...</option>
+                                        <c:forEach items="${customerList}" var="customer">
+                                            <option value="${customer.customer_id}">
+                                                ${customer.customer_id} - ${customer.name}
+                                            </option>
+                                        </c:forEach>
+                                    </select>
+                                    <div class="form-text">Select the customer who will be the author of this blog</div>
+                                </c:otherwise>
+                            </c:choose>
                         </div>
                         <input type="hidden" name="action" value="add">
                     </div>
@@ -255,6 +275,84 @@
             </div>
         </div>
     </div>
+
+    <!-- Edit Blog Modal -->
+    <div class="modal fade" id="editBlogModal" tabindex="-1">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Edit Blog</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <form action="viewblogs" method="POST">
+                    <div class="modal-body">
+                        <input type="hidden" name="action" value="update">
+                        <input type="hidden" name="blog_id" id="edit_blog_id">
+                        <input type="hidden" name="customer_id" id="edit_customer_id">
+                        <div class="mb-3">
+                            <label class="form-label">Title:</label>
+                            <input type="text" class="form-control" name="title" id="edit_title" required>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Content:</label>
+                            <textarea class="form-control" name="content" id="edit_content" rows="10" required></textarea>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                        <button type="submit" class="btn btn-primary">Update Blog</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- My Blogs Section (cuối trang) -->
+    <c:if test="${not empty sessionScope.customerAuth}">
+        <div class="container mt-5">
+            <h4>My Blogs</h4>
+            <c:set var="myCustomerId" value="${sessionScope.customerAuth.customer_id}" />
+            <c:set var="myBlogCount" value="0" />
+            <c:forEach items="${blogList}" var="blog">
+                <c:if test="${blog.customer_id == myCustomerId}">
+                    <c:set var="myBlogCount" value="${myBlogCount + 1}" />
+                </c:if>
+            </c:forEach>
+            <c:if test="${myBlogCount == 0}">
+                <div class="alert alert-info">You have not written any blogs yet.</div>
+            </c:if>
+            <c:forEach items="${blogList}" var="blog">
+                <c:if test="${blog.customer_id == myCustomerId}">
+                    <div class="card mb-3">
+                        <div class="card-body">
+                            <h5 class="card-title">${blog.title}</h5>
+                            <p class="card-text">${fn:substring(blog.content, 0, 100)}${fn:length(blog.content) > 100 ? '...' : ''}</p>
+                            <div class="d-flex justify-content-between align-items-center">
+                                <small class="text-muted">Created: <fmt:formatDate value="${blog.created_at}" pattern="dd/MM/yyyy HH:mm"/></small>
+                                <div>
+                                    <button type="button" class="btn btn-sm btn-primary" 
+                                            onclick="editBlog(this)"
+                                            data-id="${blog.blog_id}"
+                                            data-title="${fn:escapeXml(blog.title)}"
+                                            data-content="${fn:escapeXml(blog.content)}"
+                                            data-customer-id="${blog.customer_id}"
+                                            data-bs-toggle="modal" 
+                                            data-bs-target="#editBlogModal">
+                                        Edit
+                                    </button>
+                                    <form action="viewblogs" method="post" style="display:inline;">
+                                        <input type="hidden" name="action" value="delete" />
+                                        <input type="hidden" name="blog_id" value="${blog.blog_id}" />
+                                        <button type="submit" class="btn btn-danger btn-sm" onclick="return confirm('Are you sure you want to delete this blog?');">Delete</button>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </c:if>
+            </c:forEach>
+        </div>
+    </c:if>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
     <script>
@@ -305,6 +403,17 @@
             const content = document.getElementById('blogContent').value;
             const charCount = document.getElementById('charCount');
             charCount.textContent = content.length;
+        }
+
+        function editBlog(element) {
+            const id = element.getAttribute('data-id');
+            const title = element.getAttribute('data-title');
+            const content = element.getAttribute('data-content');
+            const customerId = element.getAttribute('data-customer-id');
+            document.getElementById('edit_blog_id').value = id;
+            document.getElementById('edit_title').value = title;
+            document.getElementById('edit_content').value = content;
+            document.getElementById('edit_customer_id').value = customerId;
         }
     </script>
 </body>

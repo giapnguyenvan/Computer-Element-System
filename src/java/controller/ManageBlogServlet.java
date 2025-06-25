@@ -211,7 +211,6 @@ public class ManageBlogServlet extends HttpServlet {
     public void doPost(HttpServletRequest request, HttpServletResponse response)
     throws ServletException, IOException {
         String action = request.getParameter("action");
-        
         try {
             switch (action) {
                 case "add":
@@ -221,7 +220,22 @@ public class ManageBlogServlet extends HttpServlet {
                     updateBlog(request, response);
                     break;
                 case "delete":
-                    deleteBlog(request, response);
+                    // Xử lý xóa blog
+                    Object authObj = request.getSession().getAttribute("customerAuth");
+                    if (authObj == null) {
+                        request.getSession().setAttribute("error", "You must be logged in to delete a blog.");
+                        response.sendRedirect("manageblogs");
+                        return;
+                    }
+                    int blogId = Integer.parseInt(request.getParameter("blog_id"));
+                    int customerId = ((model.Customer)authObj).getCustomer_id();
+                    boolean deleted = blogDAO.deleteBlogById(blogId, customerId);
+                    if (deleted) {
+                        request.getSession().setAttribute("success", "Blog deleted successfully!");
+                    } else {
+                        request.getSession().setAttribute("error", "Failed to delete blog. You can only delete your own blogs.");
+                    }
+                    response.sendRedirect("manageblogs");
                     break;
                 default:
                     response.sendRedirect("manageblogs");
