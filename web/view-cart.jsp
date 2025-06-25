@@ -1,3 +1,10 @@
+<%-- 
+    Document   : view-cart
+    Created on : Jun 25, 2025, 6:34:07 PM
+    Author     : admin
+--%>
+
+<%@page contentType="text/html" pageEncoding="UTF-8"%>
 <!DOCTYPE html>
 <html lang="vi">
     <head>
@@ -5,12 +12,17 @@
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <title>Giỏ Hàng - ShopXinh</title>
         <!-- Thêm Bootstrap CSS -->
-        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+        <!--<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">-->
         <!-- Thêm Font Awesome -->
-        <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" rel="stylesheet">
+        <!--<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" rel="stylesheet">-->
+        
+        <!-- Bootstrap CSS -->
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+        <!-- Font Awesome -->
+        <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
         <style>
             * {
-                margin: 0;
+                /*margin: 0;*/
                 padding: 0;
                 box-sizing: border-box;
             }
@@ -23,9 +35,9 @@
             }
 
             .container {
-                max-width: 1200px;
-                margin: 0 auto;
-                padding: 20px;
+                /*max-width: 1200px;*/
+                /*margin: 0 auto;*/
+                /*padding: 20px;*/
             }
 
             .header {
@@ -124,7 +136,7 @@
                 margin: 0 20px;
             }
 
-            .quantity-btn {
+            .quantity-btn1 {
                 width: 40px;
                 height: 40px;
                 border: none;
@@ -136,12 +148,12 @@
                 transition: all 0.3s ease;
             }
 
-            .quantity-btn:hover {
+            .quantity-btn1:hover {
                 transform: scale(1.1);
                 box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
             }
 
-            .quantity-btn:disabled {
+            .quantity-btn1:disabled {
                 opacity: 0.5;
                 cursor: not-allowed;
             }
@@ -157,7 +169,7 @@
                 font-weight: bold;
             }
 
-            .remove-btn {
+            .remove-btn1 {
                 background: linear-gradient(45deg, #ff7675, #d63031);
                 color: white;
                 border: none;
@@ -168,12 +180,12 @@
                 transition: all 0.3s ease;
             }
 
-            .remove-btn:hover {
+            .remove-btn1:hover {
                 transform: scale(1.05);
                 box-shadow: 0 5px 15px rgba(214, 48, 49, 0.4);
             }
 
-            .remove-btn:disabled {
+            .remove-btn1:disabled {
                 opacity: 0.5;
                 cursor: not-allowed;
             }
@@ -206,7 +218,7 @@
                 margin-top: 30px;
             }
 
-            .btn {
+            .btn1 {
                 flex: 1;
                 padding: 18px 30px;
                 border: none;
@@ -219,22 +231,22 @@
                 letter-spacing: 1px;
             }
 
-            .btn-continue {
+            .btn1-continue {
                 background: linear-gradient(45deg, #74b9ff, #0984e3);
                 color: white;
             }
 
-            .btn-checkout {
+            .btn1-checkout {
                 background: linear-gradient(45deg, #00b894, #00a085);
                 color: white;
             }
 
-            .btn:hover {
+            .btn1:hover {
                 transform: translateY(-3px);
                 box-shadow: 0 10px 25px rgba(0,0,0,0.2);
             }
 
-            .btn:disabled {
+            .btn1:disabled {
                 opacity: 0.5;
                 cursor: not-allowed;
                 transform: none;
@@ -324,13 +336,14 @@
                 }
             }
         </style>
+        
     </head>
     <body>
+        <!-- Include Header -->
+        <jsp:include page="header.jsp"/>
+        <br>
+        <br>
         <div class="container">
-            <div class="header">
-                <h1>🛒 Giỏ Hàng Của Bạn</h1>
-                <p>Những sản phẩm tuyệt vời đang chờ bạn</p>
-            </div>
 
             <div class="cart-container">
                 <div class="cart-header">
@@ -353,7 +366,7 @@
                     <div style="font-size: 4rem; margin-bottom: 20px; color: #ddd;">🛒</div>
                     <h3>Giỏ hàng của bạn đang trống</h3>
                     <p>Hãy thêm một số sản phẩm vào giỏ hàng để tiếp tục mua sắm</p>
-                    <button class="btn btn-continue" style="margin-top: 20px;" onclick="window.location.href = '/CES/homepageservlet'">
+                    <button class="btn1 btn1-continue" style="margin-top: 20px;" onclick="window.location.href = '/CES/homepageservlet'">
                         🛍️ Tiếp Tục Mua Sắm
                     </button>
                 </div>
@@ -373,16 +386,18 @@
                     </div>
 
                     <div class="checkout-section">
-                        <button class="btn btn-continue" onclick="window.location.href = '/CES/homepageservlet'">
+                        <button class="btn1 btn1-continue" onclick="window.location.href = '/CES/homepageservlet'">
                             🛍️ Tiếp Tục Mua Sắm
                         </button>
-                        <button class="btn btn-checkout" onclick="proceedToCheckout()">
+                        <button class="btn1 btn1-checkout" onclick="proceedToCheckout()">
                             💳 Thanh Toán Ngay
                         </button>
                     </div>
                 </div>
             </div>
         </div>
+        <!-- Footer -->
+        <jsp:include page="footer.jsp"/>
 
         <script>
             // Configuration
@@ -430,7 +445,7 @@
             async function loadCartItems() {
                 try {
                     setLoading(true);
-                    const response = await apiCall(`${API_BASE_URL}?userId=${userId}`);
+                    const response = await apiCall(API_BASE_URL + '?userId=' + userId);
                     cartItems = response.data || [];
                     renderCartItems();
                 } catch (error) {
@@ -449,7 +464,7 @@
 
                 try {
                     disableButtons(true);
-                    await apiCall(`${API_BASE_URL}`, 'PUT', {
+                    await apiCall(API_BASE_URL, 'PUT', {
                         id: itemId,
                         quantity: newQuantity
                     });
@@ -478,7 +493,7 @@
 
                 try {
                     disableButtons(true);
-                    await apiCall(`${API_BASE_URL}?id=${itemId}`, 'DELETE');
+                    await apiCall(API_BASE_URL + '?id=' + itemId, 'DELETE');
 
                     // Remove from local data
                     cartItems = cartItems.filter(item => item.id !== itemId);
@@ -495,7 +510,7 @@
             // Add item to cart (for future use)
             async function addToCart(productId, quantity = 1) {
                 try {
-                    await apiCall(`${API_BASE_URL}/add`, 'POST', {
+                    await apiCall(API_BASE_URL + '/add', 'POST', {
                         userId: userId,
                         productId: productId,
                         quantity: quantity
@@ -526,26 +541,26 @@
                 container.style.display = 'block';
                 summary.style.display = 'block';
                 emptyCart.style.display = 'none';
-                countElement.textContent = `${cartItems.length} sản phẩm trong giỏ hàng`;
+                countElement.textContent = cartItems.length + ' sản phẩm trong giỏ hàng';
 
-                container.innerHTML = cartItems.map(item => `
-                    <div class="cart-item" data-item-id="${item.id}">
-                        <img src="${item.product.imageUrl || '/api/placeholder/100/100'}" 
-                             alt="${item.product.name}" class="item-image">
-                        <div class="item-details">
-                            <div class="item-name">${item.product.name}</div>
-                            <div class="item-description">${item.product.description || 'Sản phẩm chất lượng cao'}</div>
-                            <div class="item-price">${formatPrice(item.product.price)}₫</div>
-                        </div>
-                        <div class="quantity-controls">
-                            <button class="quantity-btn" onclick="updateQuantityUI(${item.id}, ${item.quantity - 1})">-</button>
-                            <input type="number" value="${item.quantity}" class="quantity-input" 
-                                   onchange="updateQuantityUI(${item.id}, this.value)" min="1" max="99">
-                            <button class="quantity-btn" onclick="updateQuantityUI(${item.id}, ${item.quantity + 1})">+</button>
-                        </div>
-                        <button class="remove-btn" onclick="removeItem(${item.id})">🗑️ Xóa</button>
-                    </div>
-                `).join('');
+                container.innerHTML = cartItems.map(item =>
+                    '<div class="cart-item" data-item-id="' + item.id + '">' +
+                            '<img src="' + (item.product.imageUrl || '/api/placeholder/100/100') + '" ' +
+                            'alt="' + item.product.name + '" class="item-image">' +
+                            '<div class="item-details">' +
+                            '<div class="item-name">' + item.product.name + '</div>' +
+                            '<div class="item-description">' + (item.product.description || 'Sản phẩm chất lượng cao') + '</div>' +
+                            '<div class="item-price">' + formatPrice(item.product.price) + '₫</div>' +
+                            '</div>' +
+                            '<div class="quantity-controls">' +
+                            '<button class="quantity-btn1" onclick="updateQuantityUI(' + item.id + ', ' + (item.quantity - 1) + ')">-</button>' +
+                            '<input type="number" value="' + item.quantity + '" class="quantity-input" ' +
+                            'onchange="updateQuantityUI(' + item.id + ', this.value)" min="1" max="99">' +
+                            '<button class="quantity-btn1" onclick="updateQuantityUI(' + item.id + ', ' + (item.quantity + 1) + ')">+</button>' +
+                            '</div>' +
+                            '<button class="remove-btn1" onclick="removeItem(' + item.id + ')">🗑️ Xóa</button>' +
+                            '</div>'
+                ).join('');
 
                 updateSummary();
             }
@@ -588,8 +603,8 @@
             }
 
             function disableButtons(disable) {
-                const buttons = document.querySelectorAll('.quantity-btn, .remove-btn, .btn');
-                buttons.forEach(btn => btn.disabled = disable);
+                const buttons = document.querySelectorAll('.quantity-btn1, .remove-btn1, .btn1');
+                buttons.forEach(btn1 => btn1.disabled = disable);
             }
 
             function showMessage(message, type = 'info', timeout = 5000) {
