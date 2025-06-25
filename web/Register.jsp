@@ -96,12 +96,12 @@
             min-height: 100vh;
         }
         .register-form-box {
-            max-width: 400px;
+            max-width: 440px;
             background: #fff;
-            border-radius: 20px;
-            box-shadow: 0 8px 32px rgba(44, 62, 80, 0.12);
-            padding: 24px 18px 18px 18px;
-            margin: 12px 0;
+            border-radius: 16px;
+            box-shadow: 0 6px 24px rgba(44, 62, 80, 0.13);
+            padding: 18px 12px 12px 12px;
+            margin: 10px 0;
             display: flex;
             flex-direction: column;
             align-items: stretch;
@@ -148,24 +148,24 @@
             box-shadow: 0 0 0 2px rgba(112,95,188,0.08);
         }
         .register-form-box .btn-register {
-            width: 100%;
+            grid-column: 1 / -1;
+            margin: 8px 0 0 0;
+            border-radius: 8px;
+            background: #007bff;
+            color: #fff;
+            font-weight: 700;
+            font-size: 1rem;
             min-height: 38px;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-weight: 700;
-            font-size: 1rem;
-            margin: 12px 0 8px 0;
-            border-radius: 8px;
-            background: #0D6CF8;
             border: none;
-            color: #fff;
             box-shadow: none;
             padding: 0;
             transition: background 0.2s, color 0.2s;
         }
         .register-form-box .btn-register:hover {
-            background: #0b5ad3;
+            background: #0056b3;
             color: #fff;
         }
         .register-form-box .error {
@@ -186,26 +186,26 @@
             text-decoration: underline;
         }
         .register-form-box form {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 16px;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px 16px;
         }
-        .register-form-box .form-col {
-            flex: 1 1 45%;
-            min-width: 0;
+        .register-form-box .form-col,
+        .register-form-box .form-col-full {
             display: flex;
             flex-direction: column;
+            margin-bottom: 0;
         }
         .register-form-box .form-col-full {
-            flex: 1 1 100%;
+            grid-column: 1 / -1;
         }
         @media (max-width: 700px) {
             .register-form-box form {
-                flex-direction: column;
+                grid-template-columns: 1fr;
                 gap: 0;
             }
             .register-form-box .form-col, .register-form-box .form-col-full {
-                flex: 1 1 100%;
+                grid-column: 1 / -1;
             }
         }
         @media (max-width: 900px) {
@@ -414,36 +414,28 @@
                         <input type="password" class="form-control" id="confirmPassword" name="confirmPassword" required>
                         <div class="invalid-feedback" id="confirmPasswordError"></div>
                     </div>
-                    <!-- Address Dropdowns -->
                     <div class="form-col-full">
                         <label class="form-label">Shipping Address:</label>
+                        <div style="display: flex; gap: 8px;">
+                            <select id="province" name="province" class="form-control" required style="flex:1; min-width:0;">
+                                <option value="">-- Select province --</option>
+                            </select>
+                            <select id="district" name="district" class="form-control" required disabled style="flex:1; min-width:0;">
+                                <option value="">-- Select district --</option>
+                            </select>
+                            <select id="ward" name="ward" class="form-control" required disabled style="flex:1; min-width:0;">
+                                <option value="">-- Select ward --</option>
+                            </select>
+                        </div>
+                        <div class="invalid-feedback" id="provinceError"></div>
+                        <div class="invalid-feedback" id="districtError"></div>
+                        <div class="invalid-feedback" id="wardError"></div>
                     </div>
                     <div class="form-col-full">
-                        <label class="form-label" for="addressDetail">Address Detail (optional):</label>
+                        <label class="form-label" for="addressDetail">Address Detail:</label>
                         <input type="text" class="form-control" id="addressDetail" name="addressDetail"
                                value="${param.addressDetail != null ? param.addressDetail : (not empty addressDetail ? addressDetail : '')}">
                         <div class="invalid-feedback" id="addressDetailError"></div>
-                    </div>
-                    <div class="form-col">
-                        <label class="form-label" for="province">Province/City</label>
-                        <select id="province" name="province" class="form-control" required>
-                            <option value="">-- Select province --</option>
-                        </select>
-                        <div class="invalid-feedback" id="provinceError"></div>
-                    </div>
-                    <div class="form-col">
-                        <label class="form-label" for="district">District</label>
-                        <select id="district" name="district" class="form-control" required disabled>
-                            <option value="">-- Select district --</option>
-                        </select>
-                        <div class="invalid-feedback" id="districtError"></div>
-                    </div>
-                    <div class="form-col">
-                        <label class="form-label" for="ward">Ward/Commune</label>
-                        <select id="ward" name="ward" class="form-control" required disabled>
-                            <option value="">-- Select ward --</option>
-                        </select>
-                        <div class="invalid-feedback" id="wardError"></div>
                     </div>
                     <button type="submit" class="btn-register">Sign Up</button>
                 </form>
