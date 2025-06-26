@@ -126,33 +126,71 @@
                     height: 100%;
                 }
             }
+            .sidebar-container {
+                width: 260px;
+                background: #f8f9fa;
+                border-radius: 10px;
+                padding: 18px 0 0 0;
+                box-shadow: 0 2px 12px rgba(0,0,0,0.08);
+                position: relative;
+            }
+            .sidebar-search {
+                padding: 0 18px 12px 18px;
+            }
+            .sidebar-search input {
+                width: 100%;
+                padding: 8px 12px;
+                border-radius: 6px;
+                border: 1px solid #ddd;
+                font-size: 1rem;
+            }
             .sidebar-menu {
                 list-style: none;
-                padding: 0;
                 margin: 0;
-                width: 250px;
-                background: #f8f9fa;
-                border-radius: 8px;
+                padding: 0;
             }
             .menu-item {
                 position: relative;
+                user-select: none;
             }
             .menu-item > a {
-                display: block;
+                display: flex;
+                align-items: center;
                 padding: 14px 18px;
                 color: #222;
                 text-decoration: none;
-                transition: background 0.2s;
+                font-weight: 500;
+                transition: background 0.2s, color 0.2s;
+                border-radius: 0 20px 20px 0;
+                justify-content: flex-start;
+                gap: 10px;
+                text-align: left;
             }
-            .menu-item > a:hover {
-                background: #e9ecef;
+            .menu-item > a i {
+                min-width: 22px;
+                text-align: center;
+            }
+            .menu-item > a:hover, .menu-item.active > a {
+                background: #0d6efd;
+                color: #fff;
+            }
+            .menu-item.has-submenu > a .submenu-arrow {
+                margin-left: 8px;
+                font-size: 1.2em;
+                color: #888;
+                transition: color 0.2s;
+            }
+            .menu-item.has-submenu > a:hover .submenu-arrow {
+                color: #fff;
             }
             .submenu {
                 display: none;
+                opacity: 0;
+                pointer-events: none;
                 position: absolute;
                 left: 100%;
                 top: 0;
-                min-width: 350px;
+                min-width: 340px;
                 background: #fff;
                 box-shadow: 0 2px 12px rgba(0,0,0,0.12);
                 border-radius: 8px;
@@ -161,9 +199,14 @@
                 white-space: nowrap;
                 flex-direction: row;
                 gap: 30px;
+                transition: opacity 0.25s;
             }
-            .menu-item.has-submenu:hover > .submenu {
+            .menu-item.has-submenu:hover > .submenu,
+            .menu-item.has-submenu:focus-within > .submenu,
+            .menu-item.show > .submenu {
                 display: flex;
+                opacity: 1;
+                pointer-events: auto;
             }
             .submenu-col {
                 margin-right: 30px;
@@ -182,13 +225,57 @@
                 text-decoration: none;
                 display: block;
                 padding: 4px 0;
+                border-radius: 4px;
+                transition: background 0.2s, color 0.2s;
             }
             .submenu-col ul li a:hover {
                 color: #0d6efd;
+                background: #f0f4ff;
             }
-            .btn-submit {
-                margin-top: 30px;
-                width: 100%;
+            @media (max-width: 767px) {
+                .sidebar-container {
+                    width: 100%;
+                    border-radius: 0;
+                    box-shadow: none;
+                    padding: 0;
+                }
+                .sidebar-menu {
+                    width: 100%;
+                }
+                .menu-item > a {
+                    border-radius: 0;
+                }
+                .submenu {
+                    position: static;
+                    min-width: 0;
+                    box-shadow: none;
+                    padding: 10px 18px;
+                    flex-direction: column;
+                    gap: 0;
+                    border-radius: 0;
+                    transition: max-height 0.3s, opacity 0.3s;
+                    max-height: 0;
+                    overflow: hidden;
+                    opacity: 0;
+                    display: block;
+                }
+                .menu-item.show > .submenu {
+                    max-height: 1000px;
+                    opacity: 1;
+                    pointer-events: auto;
+                }
+            }
+            .breadcrumb-nav {
+                margin: 18px 0 0 0;
+                font-size: 1rem;
+                color: #666;
+            }
+            .breadcrumb-nav a {
+                color: #0d6efd;
+                text-decoration: none;
+            }
+            .breadcrumb-sep {
+                margin: 0 6px;
             }
         </style>
     </head>
@@ -647,6 +734,68 @@
                     }
                 });
                 document.getElementById('totalPrice').textContent = total.toFixed(2);
+            }
+            // Tìm kiếm danh mục
+            if (document.getElementById('sidebarSearch')) {
+                document.getElementById('sidebarSearch').addEventListener('input', function() {
+                    const filter = this.value.toLowerCase();
+                    document.querySelectorAll('.sidebar-menu .menu-item').forEach(item => {
+                        const text = item.textContent.toLowerCase();
+                        item.style.display = text.includes(filter) ? '' : 'none';
+                    });
+                });
+            }
+            // Mobile: toggle submenu khi click
+            if (window.innerWidth < 768) {
+                document.querySelectorAll('.menu-item.has-submenu > a').forEach(link => {
+                    link.addEventListener('click', function(e) {
+                        e.preventDefault();
+                        const parent = this.parentElement;
+                        parent.classList.toggle('show');
+                        // Đóng các submenu khác
+                        document.querySelectorAll('.menu-item.has-submenu').forEach(item => {
+                            if (item !== parent) item.classList.remove('show');
+                        });
+                    });
+                });
+            }
+            // Desktop: giữ submenu khi di chuyển giữa cha và submenu
+            if (window.innerWidth >= 768) {
+                document.querySelectorAll('.menu-item.has-submenu').forEach(item => {
+                    let timer;
+                    item.addEventListener('mouseenter', function() {
+                        clearTimeout(timer);
+                        item.classList.add('show');
+                    });
+                    item.addEventListener('mouseleave', function() {
+                        timer = setTimeout(() => item.classList.remove('show'), 200);
+                    });
+                    // Đảm bảo submenu không bị ẩn khi di chuyển chuột giữa cha và submenu
+                    const submenu = item.querySelector('.submenu');
+                    if (submenu) {
+                        submenu.addEventListener('mouseenter', () => clearTimeout(timer));
+                        submenu.addEventListener('mouseleave', () => {
+                            timer = setTimeout(() => item.classList.remove('show'), 200);
+                        });
+                    }
+                });
+            }
+            // Breadcrumb: cập nhật khi click submenu
+            if (document.getElementById('breadcrumbNav')) {
+                document.querySelectorAll('.submenu-col ul li a').forEach(link => {
+                    link.addEventListener('click', function(e) {
+                        // Breadcrumb hiển thị: Trang chủ > Danh mục > Subcategory
+                        const category = this.closest('.menu-item').querySelector('a').textContent.trim();
+                        const sub = this.textContent.trim();
+                        document.getElementById('breadcrumbCategory').textContent = category;
+                        document.getElementById('breadcrumbSub').textContent = sub;
+                        document.getElementById('breadcrumbNav').style.display = '';
+                        document.getElementById('breadcrumbSubSep').style.display = '';
+                        // Nếu muốn chuyển trang thực sự, bỏ comment dòng dưới
+                        // window.location = this.href;
+                        // e.preventDefault();
+                    });
+                });
             }
         </script>
     </body>
