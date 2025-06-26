@@ -96,19 +96,21 @@ public class CartApiServlet extends HttpServlet {
             throws IOException, Exception {
 
         // Try to get customerId from request parameter first, then from session
-        String customerIdParam = request.getParameter("customerId");
-        int customerId;
-        
-        if (customerIdParam != null && !customerIdParam.isEmpty()) {
-            customerId = Integer.parseInt(customerIdParam);
-        } else {
             Customer customer = (Customer)request.getSession().getAttribute("customer");
-            if (customer == null) {
-                ResponseUtils.sendErrorResponse(response, 401, "User not authenticated");
-                return;
-            }
-            customerId = customer.getId();
-        }
+            int customerId = customer.getId();
+//        String customerIdParam = request.getParameter("customerId");
+//        int customerId;
+//        
+//        if (customerIdParam != null && !customerIdParam.isEmpty()) {
+//            customerId = Integer.parseInt(customerIdParam);
+//        } else {
+//            Customer customer = (Customer)request.getSession().getAttribute("customer");
+//            if (customer == null) {
+//                ResponseUtils.sendErrorResponse(response, 401, "User not authenticated");
+//                return;
+//            }
+//            customerId = customer.getId();
+//        }
         
         List<CartItem> cartItems = cartItemDAO.getAllByCustomerId(customerId);
 
