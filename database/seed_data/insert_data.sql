@@ -71,4 +71,15 @@ INSERT INTO `staff` VALUES
 -- Dữ liệu cho bảng user
 INSERT INTO `user` VALUES 
     (1,'staff01','hashedpassword1','staff01@example.com','Staff','Active',1,NULL),
-    (2,'admin01','hashedpassword2','admin01@example.com','Admin','Active',1,NULL); 
+    (2,'admin01','hashedpassword2','admin01@example.com','Admin','Active',1,NULL);
+
+-- Dữ liệu cho bảng voucher
+INSERT INTO `voucher` (`voucher_id`, `code`, `description`, `discount_type`, `discount_value`, `min_order_amount`, `max_uses`, `max_uses_per_user`, `start_date`, `end_date`, `status`) VALUES
+    (1, 'WELCOME10', '10% off for new users', 'percent', 10.00, 100.00, 100, 1, '2024-06-01 00:00:00', '2024-12-31 23:59:59', 'Active'),
+    (2, 'SUMMER50', '50,000 VND off orders over 500,000 VND', 'fixed', 50000.00, 500000.00, 50, 2, '2024-06-01 00:00:00', '2024-08-31 23:59:59', 'Active'),
+    (3, 'FREEMOUSE', 'Mua bất kỳ bộ PC nào trong tháng này, nhận ngay chuột gaming trị giá 500.000đ. Số lượng có hạn!', 'fixed', 500000, 0, 50, 1, '2024-06-01 00:00:00', '2024-06-30 23:59:59', 'Active');
+
+-- Dữ liệu cho bảng voucher_usage
+INSERT INTO `voucher_usage` (`usage_id`, `voucher_id`, `customer_id`, `order_id`, `used_at`) VALUES
+    (1, 1, 3, NULL, '2024-06-21 10:00:00'),
+    (2, 2, 2, NULL, '2024-06-22 11:00:00'); 
