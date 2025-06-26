@@ -258,6 +258,9 @@
                             showConfirmButton: false
                         });
 
+                        // Update cart count
+                        updateCartCount();
+
                         // Add visual feedback
                         addButton.classList.add('btn-success');
                         addButton.innerHTML = '<i class="fas fa-check me-2"></i>Added!';
@@ -284,6 +287,29 @@
                     }
                 }
             }
+
+            // Function to update cart count
+            async function updateCartCount() {
+                try {
+                    const response = await fetch('${pageContext.request.contextPath}/CartApiServlet?customerId=' + currentUserId);
+                    const result = await response.json();
+
+                    if (result.success && result.data) {
+                        const totalItems = result.data.reduce((sum, item) => sum + item.quantity, 0);
+                        const cartCountElement = document.getElementById('cartCount');
+                        if (cartCountElement) {
+                            cartCountElement.textContent = totalItems;
+                        }
+                    }
+                } catch (error) {
+                    console.error('Error updating cart count:', error);
+                }
+            }
+
+            // Initialize cart count on page load
+            document.addEventListener('DOMContentLoaded', function() {
+                updateCartCount();
+            });
         </script>
     </body>
 </html> 
