@@ -603,112 +603,19 @@
                     </div>
                     <!-- Content chọn linh kiện -->
                     <div class="col-md-9 content-col">
-                        <div class="row">
-                            <!-- CPU -->
-                            <div class="col-md-6">
-                                <div class="component-card">
-                                    <div class="component-header">
-                                        <i class="fas fa-microchip component-icon"></i>
-                                        <h5>CPU</h5>
-                                    </div>
-                                    <div class="component-body">
-                                        <select name="cpu" class="form-select" required>
-                                            <option value="">Select CPU</option>
-                                            <c:forEach items="${cpuList}" var="cpu">
-                                                <option value="${cpu.id}">${cpu.name} - $${cpu.price}</option>
-                                            </c:forEach>
-                                        </select>
-                                    </div>
-                                </div>
-                            </div>
-                            <!-- GPU -->
-                            <div class="col-md-6">
-                                <div class="component-card">
-                                    <div class="component-header">
-                                        <i class="fas fa-tv component-icon"></i>
-                                        <h5>Graphics Card</h5>
-                                    </div>
-                                    <div class="component-body">
-                                        <select name="gpu" class="form-select" required>
-                                            <option value="">Select GPU</option>
-                                            <c:forEach items="${gpuList}" var="gpu">
-                                                <option value="${gpu.id}">${gpu.name} - $${gpu.price}</option>
-                                            </c:forEach>
-                                        </select>
-                                    </div>
-                                </div>
-                            </div>
-                            <!-- RAM -->
-                            <div class="col-md-6">
-                                <div class="component-card">
-                                    <div class="component-header">
-                                        <i class="fas fa-memory component-icon"></i>
-                                        <h5>RAM</h5>
-                                    </div>
-                                    <div class="component-body">
-                                        <select name="ram" class="form-select" required>
-                                            <option value="">Select RAM</option>
-                                            <c:forEach items="${ramList}" var="ram">
-                                                <option value="${ram.id}">${ram.name} - $${ram.price}</option>
-                                            </c:forEach>
-                                        </select>
-                                    </div>
-                                </div>
-                            </div>
-                            <!-- Motherboard -->
-                            <div class="col-md-6">
-                                <div class="component-card">
-                                    <div class="component-header">
-                                        <i class="fas fa-server component-icon"></i>
-                                        <h5>Motherboard</h5>
-                                    </div>
-                                    <div class="component-body">
-                                        <select name="motherboard" class="form-select" required>
-                                            <option value="">Select Motherboard</option>
-                                            <c:forEach items="${motherboardList}" var="mb">
-                                                <option value="${mb.id}">${mb.name} - $${mb.price}</option>
-                                            </c:forEach>
-                                        </select>
-                                    </div>
-                                </div>
-                            </div>
-                            <!-- Storage -->
-                            <div class="col-md-6">
-                                <div class="component-card">
-                                    <div class="component-header">
-                                        <i class="fas fa-hdd component-icon"></i>
-                                        <h5>Storage</h5>
-                                    </div>
-                                    <div class="component-body">
-                                        <select name="storage" class="form-select" required>
-                                            <option value="">Select Storage</option>
-                                            <c:forEach items="${storageList}" var="storage">
-                                                <option value="${storage.id}">${storage.name} - $${storage.price}</option>
-                                            </c:forEach>
-                                        </select>
-                                    </div>
-                                </div>
-                            </div>
-                            <!-- Power Supply -->
-                            <div class="col-md-6">
-                                <div class="component-card">
-                                    <div class="component-header">
-                                        <i class="fas fa-plug component-icon"></i>
-                                        <h5>Power Supply</h5>
-                                    </div>
-                                    <div class="component-body">
-                                        <select name="psu" class="form-select" required>
-                                            <option value="">Select Power Supply</option>
-                                            <c:forEach items="${psuList}" var="psu">
-                                                <option value="${psu.id}">${psu.name} - $${psu.price}</option>
-                                            </c:forEach>
-                                        </select>
-                                    </div>
-                                </div>
+                        <div class="component-card text-center p-4 mb-4">
+                            <h2 class="mb-3">Chào mừng đến với PC Builder!</h2>
+                            <p class="lead">Hãy chọn các linh kiện phù hợp hoặc khám phá các chương trình khuyến mại hấp dẫn của chúng tôi.</p>
+                            <img src="https://cdn.pixabay.com/photo/2017/01/06/19/15/pc-1958934_1280.jpg" alt="PC Builder Welcome" class="img-fluid rounded shadow mb-3" style="max-width: 350px;">
+                        </div>
+                        <div class="component-card promotion-card d-flex flex-column flex-md-row align-items-center p-4 mb-4">
+                            <img src="https://theme.hstatic.net/200000722513/1001111696/14/slide_1_img.jpg" alt="Khuyến mại lớn" class="img-fluid rounded shadow mb-3 mb-md-0 me-md-4" style="max-width: 260px;">
+                            <div class="text-start">
+                                <h4 class="mb-2 text-danger">Chương trình khuyến mại: "Mua PC - Tặng Chuột Gaming!"</h4>
+                                <p class="mb-2">Khi mua bất kỳ bộ PC nào tại shop trong tháng này, bạn sẽ nhận ngay một chuột gaming cao cấp trị giá 500.000đ. Số lượng có hạn!</p>
+                                <a href="PromotionDetailServlet?id=1" class="btn btn-primary">Xem chi tiết khuyến mại</a>
                             </div>
                         </div>
-                        <!-- Nút submit -->
-                        <button type="submit" class="btn btn-primary btn-submit">Xem cấu hình</button>
                     </div>
                 </div>
             </form>
