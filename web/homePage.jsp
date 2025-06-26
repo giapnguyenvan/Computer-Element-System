@@ -241,7 +241,20 @@
         <script>
                                             // Global variables
                                             let cartCount = 0;
-                                            const currentUserId = ${sessionScope.customerAuth.customer_id}; // Thay đổi theo user đang đăng nhập
+                                            let currentUserId = 0;
+                                            
+                                            // Get current user ID from session
+                                            <c:choose>
+                                                <c:when test="${not empty sessionScope.customerAuth}">
+                                                    currentUserId = ${sessionScope.customerAuth.customer_id};
+                                                </c:when>
+                                                <c:when test="${not empty sessionScope.userAuth}">
+                                                    currentUserId = ${sessionScope.userAuth.id};
+                                                </c:when>
+                                                <c:otherwise>
+                                                    currentUserId = 0;
+                                                </c:otherwise>
+                                            </c:choose>
 
                                             // Function to change quantity
                                             function changeQuantity(productId, change) {
@@ -259,6 +272,16 @@
 
                                             // Function to add product to cart
                                             async function addToCart(productId, productName, productPrice) {
+                                                // Check if user is logged in
+                                                if (currentUserId === 0) {
+                                                    Swal.fire({
+                                                        icon: 'warning',
+                                                        title: 'Please Login',
+                                                        text: 'You need to login to add products to cart'
+                                                    });
+                                                    return;
+                                                }
+
                                                 const quantityInput = document.getElementById('quantity_' + productId);
                                                 const quantity = parseInt(quantityInput.value);
                                                 const addButton = document.getElementById('addBtn_' + productId);
@@ -273,7 +296,7 @@
                                                         productId: productId,
                                                         quantity: quantity
                                                     }));
-                                                    const response = await fetch('/CES/CartApiServlet', {
+                                                    const response = await fetch('${pageContext.request.contextPath}/CartApiServlet', {
                                                         method: 'POST',
                                                         headers: {
                                                             'Content-Type': 'application/json'
@@ -333,7 +356,7 @@
                                             // Function to update cart count
                                             async function updateCartCount() {
                                                 try {
-                                                    const response = await fetch('CartApiServlet?userId=' + currentUserId);
+                                                    const response = await fetch('${pageContext.request.contextPath}/CartApiServlet?customerId=' + currentUserId);
                                                     const result = await response.json();
 
                                                     if (result.success && result.data) {
