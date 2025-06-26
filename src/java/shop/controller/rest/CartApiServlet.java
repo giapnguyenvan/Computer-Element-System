@@ -95,8 +95,23 @@ public class CartApiServlet extends HttpServlet {
     private void handleGetCartItems(HttpServletRequest request, HttpServletResponse response)
             throws IOException, Exception {
 
-        Customer customer = (Customer)request.getSession().getAttribute("customer");
-        int customerId = customer.getId();
+        // Try to get customerId from request parameter first, then from session
+            Customer customer = (Customer)request.getSession().getAttribute("customer");
+            int customerId = customer.getId();
+//        String customerIdParam = request.getParameter("customerId");
+//        int customerId;
+//        
+//        if (customerIdParam != null && !customerIdParam.isEmpty()) {
+//            customerId = Integer.parseInt(customerIdParam);
+//        } else {
+//            Customer customer = (Customer)request.getSession().getAttribute("customer");
+//            if (customer == null) {
+//                ResponseUtils.sendErrorResponse(response, 401, "User not authenticated");
+//                return;
+//            }
+//            customerId = customer.getId();
+//        }
+        
         List<CartItem> cartItems = cartItemDAO.getAllByCustomerId(customerId);
 
         // Set product data for each cart item
@@ -119,7 +134,7 @@ public class CartApiServlet extends HttpServlet {
         CartItemRequest cartRequest = gson.fromJson(requestBody, CartItemRequest.class);
 
         if (cartRequest.customerId == null || cartRequest.productId == null || cartRequest.quantity == null) {
-            ResponseUtils.sendErrorResponse(response, 400, "userId, productId, and quantity are required");
+            ResponseUtils.sendErrorResponse(response, 400, "customerId, productId, and quantity are required");
             return;
         }
 

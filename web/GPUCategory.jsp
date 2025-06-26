@@ -200,7 +200,33 @@
             // Initialize event handlers on page load
             document.addEventListener('DOMContentLoaded', initializeGPUEventHandlers);
 
+            // Global variables
+            let currentUserId = 0;
+            
+            // Get current user ID from session
+            <c:choose>
+                <c:when test="${not empty sessionScope.customerAuth}">
+                    currentUserId = ${sessionScope.customerAuth.customer_id};
+                </c:when>
+                <c:when test="${not empty sessionScope.userAuth}">
+                    currentUserId = ${sessionScope.userAuth.id};
+                </c:when>
+                <c:otherwise>
+                    currentUserId = 0;
+                </c:otherwise>
+            </c:choose>
+
             async function addToCart(productId, productName, productPrice) {
+                // Check if user is logged in
+                if (currentUserId === 0) {
+                    Swal.fire({
+                        icon: 'warning',
+                        title: 'Please Login',
+                        text: 'You need to login to add products to cart'
+                    });
+                    return;
+                }
+
                 const addButton = document.getElementById('addBtn_' + productId);
 
                 // Disable button and show loading
@@ -214,7 +240,7 @@
                             'Content-Type': 'application/json'
                         },
                         body: JSON.stringify({
-                            userId: currentUserId,
+                            customerId: currentUserId,
                             productId: productId,
                             quantity: 1
                         })

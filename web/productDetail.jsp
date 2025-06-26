@@ -252,6 +252,16 @@
 
             // Function to add product to cart
             async function addToCart(productId, productName, productPrice) {
+                // Check if user is logged in
+                if (currentUserId === 0) {
+                    Swal.fire({
+                        icon: 'warning',
+                        title: 'Please Login',
+                        text: 'You need to login to add products to cart'
+                    });
+                    return;
+                }
+
                 const quantityInput = document.getElementById('quantity_' + productId);
                 const quantity = parseInt(quantityInput.value);
                 const addButton = document.getElementById('addBtn_' + productId);
@@ -283,7 +293,7 @@
                             'Content-Type': 'application/json'
                         },
                         body: JSON.stringify({
-                            userId: currentUserId,
+                            customerId: currentUserId,
                             productId: productId,
                             quantity: quantity
                         })
@@ -345,7 +355,7 @@
             // Function to update cart count
             async function updateCartCount() {
                 try {
-                    const response = await fetch('${pageContext.request.contextPath}/CartApiServlet?userId=' + currentUserId);
+                    const response = await fetch('${pageContext.request.contextPath}/CartApiServlet?customerId=' + currentUserId);
                     const result = await response.json();
 
                     if (result.success && result.data) {
