@@ -29,9 +29,12 @@
                 overflow: hidden;
             }
             .sidebar {
-                min-height: 100vh;
                 background: #f8f9fa;
+                border-radius: 12px;
                 padding-top: 30px;
+                padding-bottom: 30px;
+                min-height: 100%;
+                height: 100%;
             }
             .main-content {
                 padding-top: 30px;
@@ -114,49 +117,47 @@
                 margin-bottom: 10px;
                 color: #0d6efd;
             }
+            @media (min-width: 768px) {
+                .equal-height {
+                    display: flex;
+                    align-items: stretch;
+                }
+                .sidebar, .content-col {
+                    height: 100%;
+                }
+            }
         </style>
     </head>
     <body>
         <jsp:include page="header.jsp"/>
-        <div class="container-fluid">
-            <div class="row">
-                <!-- Sidebar -->
-                <div class="col-md-3 sidebar">
-                    <div class="list-group shadow-sm rounded-3">
-                        <a href="#" class="list-group-item list-group-item-action d-flex align-items-center"><i class="fas fa-laptop fa-fw me-2"></i> Laptop</a>
-                        <a href="#" class="list-group-item list-group-item-action d-flex align-items-center"><i class="fas fa-gamepad fa-fw me-2"></i> Laptop Gaming</a>
-                        <a href="#" class="list-group-item list-group-item-action d-flex align-items-center"><i class="fas fa-desktop fa-fw me-2"></i> PC GVN</a>
-                        <a href="#" class="list-group-item list-group-item-action d-flex align-items-center"><i class="fas fa-microchip fa-fw me-2"></i> Main, CPU, VGA</a>
-                        <a href="#" class="list-group-item list-group-item-action d-flex align-items-center"><i class="fas fa-server fa-fw me-2"></i> Case, Nguồn, Tản</a>
-                        <a href="#" class="list-group-item list-group-item-action d-flex align-items-center"><i class="fas fa-memory fa-fw me-2"></i> Ổ cứng, RAM, Thẻ nhớ</a>
-                        <a href="#" class="list-group-item list-group-item-action d-flex align-items-center"><i class="fas fa-volume-up fa-fw me-2"></i> Loa, Micro, Webcam</a>
-                        <a href="#" class="list-group-item list-group-item-action d-flex align-items-center"><i class="fas fa-tv fa-fw me-2"></i> Màn hình</a>
-                        <a href="#" class="list-group-item list-group-item-action d-flex align-items-center"><i class="fas fa-keyboard fa-fw me-2"></i> Bàn phím</a>
-                        <a href="#" class="list-group-item list-group-item-action d-flex align-items-center"><i class="fas fa-mouse fa-fw me-2"></i> Chuột + Lót chuột</a>
-                        <a href="#" class="list-group-item list-group-item-action d-flex align-items-center"><i class="fas fa-headphones fa-fw me-2"></i> Tai Nghe</a>
-                        <a href="#" class="list-group-item list-group-item-action d-flex align-items-center"><i class="fas fa-chair fa-fw me-2"></i> Ghế - Bàn</a>
-                        <a href="#" class="list-group-item list-group-item-action d-flex align-items-center"><i class="fas fa-network-wired fa-fw me-2"></i> Phần mềm, mạng</a>
-                        <a href="#" class="list-group-item list-group-item-action d-flex align-items-center"><i class="fas fa-gamepad fa-fw me-2"></i> Handheld, Console</a>
-                        <a href="#" class="list-group-item list-group-item-action d-flex align-items-center"><i class="fas fa-plug fa-fw me-2"></i> Phụ kiện (Hub, sạc, cáp...)</a>
-                        <a href="#" class="list-group-item list-group-item-action d-flex align-items-center"><i class="fas fa-info-circle fa-fw me-2"></i> Dịch vụ và thông tin khác</a>
-                    </div>
-                </div>
-                <!-- Main Content -->
-                <div class="col-md-9 main-content">
-                    <!-- Banner -->
-                    <div class="mb-4">
-                        <img src="https://file.hstatic.net/200000722513/file/gearvn-pc-builder-banner_2b7e2e2e7b2e4e7e8e8e8e8e8e8e8e8.jpg" class="img-fluid rounded-3 shadow" alt="Banner">
-                    </div>
-                    <!-- Page Header -->
-                    <section class="page-header">
-                        <div class="container">
-                            <h2>Build Your Dream PC</h2>
-                            <p>Select your components and create the perfect PC for your needs</p>
+        <div class="container-fluid py-4">
+            <form action="PCBuilderServlet" method="post">
+                <div class="row equal-height">
+                    <!-- Sidebar -->
+                    <div class="col-md-3 sidebar mb-4 mb-md-0">
+                        <div class="list-group shadow-sm rounded-3">
+                            <a href="#" class="list-group-item list-group-item-action d-flex align-items-center"><i class="fas fa-laptop fa-fw me-2"></i> Laptop</a>
+                            <a href="#" class="list-group-item list-group-item-action d-flex align-items-center"><i class="fas fa-gamepad fa-fw me-2"></i> Laptop Gaming</a>
+                            <a href="#" class="list-group-item list-group-item-action d-flex align-items-center"><i class="fas fa-desktop fa-fw me-2"></i> PC GVN</a>
+                            <a href="#" class="list-group-item list-group-item-action d-flex align-items-center"><i class="fas fa-microchip fa-fw me-2"></i> Main, CPU, VGA</a>
+                            <a href="#" class="list-group-item list-group-item-action d-flex align-items-center"><i class="fas fa-server fa-fw me-2"></i> Case, Nguồn, Tản</a>
+                            <a href="#" class="list-group-item list-group-item-action d-flex align-items-center"><i class="fas fa-memory fa-fw me-2"></i> Ổ cứng, RAM, Thẻ nhớ</a>
+                            <a href="#" class="list-group-item list-group-item-action d-flex align-items-center"><i class="fas fa-volume-up fa-fw me-2"></i> Loa, Micro, Webcam</a>
+                            <a href="#" class="list-group-item list-group-item-action d-flex align-items-center"><i class="fas fa-tv fa-fw me-2"></i> Màn hình</a>
+                            <a href="#" class="list-group-item list-group-item-action d-flex align-items-center"><i class="fas fa-keyboard fa-fw me-2"></i> Bàn phím</a>
+                            <a href="#" class="list-group-item list-group-item-action d-flex align-items-center"><i class="fas fa-mouse fa-fw me-2"></i> Chuột + Lót chuột</a>
+                            <a href="#" class="list-group-item list-group-item-action d-flex align-items-center"><i class="fas fa-headphones fa-fw me-2"></i> Tai Nghe</a>
+                            <a href="#" class="list-group-item list-group-item-action d-flex align-items-center"><i class="fas fa-chair fa-fw me-2"></i> Ghế - Bàn</a>
+                            <a href="#" class="list-group-item list-group-item-action d-flex align-items-center"><i class="fas fa-network-wired fa-fw me-2"></i> Phần mềm, mạng</a>
+                            <a href="#" class="list-group-item list-group-item-action d-flex align-items-center"><i class="fas fa-gamepad fa-fw me-2"></i> Handheld, Console</a>
+                            <a href="#" class="list-group-item list-group-item-action d-flex align-items-center"><i class="fas fa-plug fa-fw me-2"></i> Phụ kiện (Hub, sạc, cáp...)</a>
+                            <a href="#" class="list-group-item list-group-item-action d-flex align-items-center"><i class="fas fa-info-circle fa-fw me-2"></i> Dịch vụ và thông tin khác</a>
                         </div>
-                    </section>
-                    <form action="PCBuilderServlet" method="POST" class="pc-builder-form">
+                    </div>
+                    <!-- Content chọn linh kiện -->
+                    <div class="col-md-9 content-col">
                         <div class="row">
-                            <!-- CPU Selection -->
+                            <!-- CPU -->
                             <div class="col-md-6">
                                 <div class="component-card">
                                     <div class="component-header">
@@ -173,7 +174,7 @@
                                     </div>
                                 </div>
                             </div>
-                            <!-- GPU Selection -->
+                            <!-- GPU -->
                             <div class="col-md-6">
                                 <div class="component-card">
                                     <div class="component-header">
@@ -190,7 +191,7 @@
                                     </div>
                                 </div>
                             </div>
-                            <!-- RAM Selection -->
+                            <!-- RAM -->
                             <div class="col-md-6">
                                 <div class="component-card">
                                     <div class="component-header">
@@ -207,7 +208,7 @@
                                     </div>
                                 </div>
                             </div>
-                            <!-- Motherboard Selection -->
+                            <!-- Motherboard -->
                             <div class="col-md-6">
                                 <div class="component-card">
                                     <div class="component-header">
@@ -224,7 +225,7 @@
                                     </div>
                                 </div>
                             </div>
-                            <!-- Storage Selection -->
+                            <!-- Storage -->
                             <div class="col-md-6">
                                 <div class="component-card">
                                     <div class="component-header">
@@ -241,7 +242,7 @@
                                     </div>
                                 </div>
                             </div>
-                            <!-- Power Supply Selection -->
+                            <!-- Power Supply -->
                             <div class="col-md-6">
                                 <div class="component-card">
                                     <div class="component-header">
@@ -259,17 +260,14 @@
                                 </div>
                             </div>
                         </div>
-                        <div class="text-center mt-4">
-                            <button type="submit" class="btn btn-build btn-lg">
-                                <i class="fas fa-cogs me-2"></i>Build PC
-                            </button>
-                        </div>
-                    </form>
-                    <!-- Total Price Display -->
-                    <div class="total-price text-center">
-                        <h4>Total Price: $<span id="totalPrice">0.00</span></h4>
+                        <!-- Nút submit -->
+                        <button type="submit" class="btn btn-primary btn-submit">Xem cấu hình</button>
                     </div>
                 </div>
+            </form>
+            <!-- Total Price Display -->
+            <div class="total-price text-center">
+                <h4>Total Price: $<span id="totalPrice">0.00</span></h4>
             </div>
         </div>
         <jsp:include page="footer.jsp"/>
