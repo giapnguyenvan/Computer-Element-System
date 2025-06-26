@@ -277,6 +277,32 @@
             .breadcrumb-sep {
                 margin: 0 6px;
             }
+            .pc-builder-bg {
+                position: relative;
+                background: url('assets/backgroeoe.jpg.jpg') center/cover no-repeat;
+                color: #fff;
+                min-height: 964px;
+                overflow: hidden;
+                border-radius: 12px;
+            }
+            .pc-builder-bg .bg-overlay {
+                position: absolute;
+                inset: 0;
+                background: rgba(0,0,0,0.45);
+                z-index: 1;
+                border-radius: 12px;
+                height: 100%;
+                width: 100%;
+            }
+            .pc-builder-bg > *:not(.bg-overlay) {
+                position: relative;
+                z-index: 2;
+            }
+            .pc-builder-bg h2,
+            .pc-builder-bg p {
+                z-index: 2;
+                position: relative;
+            }
         </style>
     </head>
     <body>
@@ -603,23 +629,20 @@
                     </div>
                     <!-- Content chọn linh kiện -->
                     <div class="col-md-9 content-col">
-                        <div class="component-card text-center p-4 mb-4">
-                            <h2 class="mb-3">Chào mừng đến với PC Builder!</h2>
-                            <p class="lead">Hãy chọn các linh kiện phù hợp hoặc khám phá các chương trình khuyến mại hấp dẫn của chúng tôi.</p>
-                            <img src="https://cdn.pixabay.com/photo/2017/01/06/19/15/pc-1958934_1280.jpg"
-                                 alt="PC Builder Welcome"
-                                 class="img-fluid rounded shadow mb-3"
-                                 style="max-width: 350px; height: 200px; object-fit: cover; border-radius: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.08);">
-                        </div>
-                        <div class="component-card promotion-card d-flex flex-column flex-md-row align-items-center p-4 mb-4">
-                            <img src="https://images.unsplash.com/photo-1517336714731-489689fd1ca8?auto=format&fit=crop&w=600&q=80"
-                                 alt="Khuyến mại lớn"
-                                 class="img-fluid rounded shadow mb-3 mb-md-0 me-md-4"
-                                 style="max-width: 260px; height: 160px; object-fit: cover; border-radius: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.08);">
-                            <div class="text-start">
-                                <h4 class="mb-2 text-danger">Chương trình khuyến mại: "Mua PC - Tặng Chuột Gaming!"</h4>
-                                <p class="mb-2">Khi mua bất kỳ bộ PC nào tại shop trong tháng này, bạn sẽ nhận ngay một chuột gaming cao cấp trị giá 500.000đ. Số lượng có hạn!</p>
-                                <a href="PromotionDetailServlet?id=1" class="btn btn-primary">Xem chi tiết khuyến mại</a>
+                        <div class="pc-builder-bg component-card text-center p-4 mb-4" style="position: relative;">
+                            <div class="bg-overlay"></div>
+                            <h2 class="mb-3 position-relative">Chào mừng đến với PC Builder!</h2>
+                            <p class="lead position-relative">Hãy chọn các linh kiện phù hợp hoặc khám phá các chương trình khuyến mại hấp dẫn của chúng tôi.</p>
+                            <div class="component-card promotion-card d-flex flex-column flex-md-row align-items-center p-4 mb-4" style="background: transparent; box-shadow: none;">
+                                <img src="https://images.unsplash.com/photo-1517336714731-489689fd1ca8?auto=format&fit=crop&w=600&q=80"
+                                     alt="Khuyến mại lớn"
+                                     class="img-fluid rounded shadow mb-3 mb-md-0 me-md-4"
+                                     style="max-width: 260px; height: 160px; object-fit: cover; border-radius: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.08);">
+                                <div class="text-start">
+                                    <h4 class="mb-2 text-danger">Chương trình khuyến mại: "Mua PC - Tặng Chuột Gaming!"</h4>
+                                    <p class="mb-2">Khi mua bất kỳ bộ PC nào tại shop trong tháng này, bạn sẽ nhận ngay một chuột gaming cao cấp trị giá 500.000đ. Số lượng có hạn!</p>
+                                    <a href="PromotionDetailServlet?id=1" class="btn btn-primary">Xem chi tiết khuyến mại</a>
+                                </div>
                             </div>
                         </div>
                     </div>
