@@ -644,6 +644,8 @@
                                     <a href="PromotionDetailServlet?id=1" class="btn btn-primary">Xem chi tiết khuyến mại</a>
                                 </div>
                             </div>
+                            <!-- Vùng hiển thị sản phẩm động -->
+                            <div id="productList" class="mt-4"></div>
                         </div>
                     </div>
                 </div>
@@ -733,6 +735,53 @@
                     });
                 });
             }
+            // Hiển thị sản phẩm khi bấm submenu (giống GearVN)
+            const typeMap = {
+                "CPU": 1,
+                "GPU": 2,
+                "Mainboard": 3,
+                "RAM": 4
+                // Thêm các loại khác nếu có
+            };
+            document.querySelectorAll('.submenu-col ul li a').forEach(link => {
+                link.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    const subCategory = this.textContent.trim();
+                    console.log('Đã click vào:', subCategory);
+                    const typeId = typeMap[subCategory];
+                    if (typeId) {
+                        fetch('/Project_G2/api/products?type_id=' + typeId)
+                            .then(res => res.json())
+                            .then(products => {
+                                let html = `<h4 class=\"mb-3\">Sản phẩm: ${subCategory}</h4>`;
+                                if (products.length > 0) {
+                                    html += '<div class="row">';
+                                    products.forEach(p => {
+                                        html += `
+                                            <div class=\"col-md-4 mb-3\">
+                                                <div class=\"card\">
+                                                    <img src=\"${p.image_url || 'default.jpg'}\" class=\"card-img-top\" alt=\"${p.name}\">
+                                                    <div class=\"card-body\">
+                                                        <h5 class=\"card-title\">${p.name}</h5>
+                                                        <p class=\"card-text\">${p.price} USD</p>
+                                                        <p class=\"card-text\">${p.description || ''}</p>
+                                                        <button class=\"btn btn-primary\">Chọn mua</button>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        `;
+                                    });
+                                    html += '</div>';
+                                } else {
+                                    html += '<p>Không có sản phẩm.</p>';
+                                }
+                                document.getElementById('productList').innerHTML = html;
+                            });
+                    } else {
+                        document.getElementById('productList').innerHTML = '<p>Chưa hỗ trợ danh mục này.</p>';
+                    }
+                });
+            });
         </script>
     </body>
 </html> 
