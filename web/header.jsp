@@ -105,11 +105,11 @@
                                     </a>
                                     <ul class="dropdown-menu dropdown-menu-end shadow" aria-labelledby="userDropdown">
                                         <li>
-                                            <a class="dropdown-item" href="${pageContext.request.contextPath}/userprofile">
+                                            <a class="dropdown-item" href="${pageContext.request.contextPath}/userprofile?action=profile">
                                                 <i class="fas fa-user-circle me-2"></i>Profile
                                             </a>
                                         </li>
-                                        <li><a class="dropdown-item" href="${pageContext.request.contextPath}/orderHistory"><i class="fas fa-history me-2"></i>Order History</a></li>
+                                        <li><a class="dropdown-item" href="${pageContext.request.contextPath}/userprofile?action=orders"><i class="fas fa-history me-2"></i>Order History</a></li>
                                         <li><hr class="dropdown-divider"></li>
                                         <li><a class="dropdown-item text-danger" href="${pageContext.request.contextPath}/logout"><i class="fas fa-sign-out-alt me-2"></i>Logout</a></li>
                                     </ul>
