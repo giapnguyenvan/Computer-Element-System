@@ -575,7 +575,54 @@
                     <!-- Content chọn linh kiện -->
                     <div class="col-md-9 content-col">
                         <div class="pc-builder-bg component-card text-center p-4 mb-4" style="position: relative;">
-                            <div class="bg-overlay"></div>
+                            <div class="bg-overlay" style="background: none; position: static; z-index: auto; height: auto; width: auto;">
+                                <!-- Build Case PC Progress Tracker -->
+                                <div class="container py-3">
+                                    <div class="row justify-content-center">
+                                        <div class="col-12">
+                                            <div class="progress-tracker mb-3">
+                                                <ul class="progress-steps d-flex flex-wrap justify-content-center list-unstyled mb-0" style="gap: 18px;">
+                                                    <li class="step" id="step-cpu">
+                                                        <span class="step-label">CPU</span>
+                                                        <div class="step-selected" id="selected-cpu" style="font-size:0.95em;color:#0d6efd;"></div>
+                                                    </li>
+                                                    <li class="step" id="step-mainboard">
+                                                        <span class="step-label">Mainboard</span>
+                                                        <div class="step-selected" id="selected-mainboard"></div>
+                                                    </li>
+                                                    <li class="step" id="step-ram">
+                                                        <span class="step-label">RAM</span>
+                                                        <div class="step-selected" id="selected-ram"></div>
+                                                    </li>
+                                                    <li class="step" id="step-gpu">
+                                                        <span class="step-label">GPU</span>
+                                                        <div class="step-selected" id="selected-gpu"></div>
+                                                    </li>
+                                                    <li class="step" id="step-storage">
+                                                        <span class="step-label">Storage</span>
+                                                        <div class="step-selected" id="selected-storage"></div>
+                                                    </li>
+                                                    <li class="step" id="step-psu">
+                                                        <span class="step-label">PSU</span>
+                                                        <div class="step-selected" id="selected-psu"></div>
+                                                    </li>
+                                                    <li class="step" id="step-case">
+                                                        <span class="step-label">Case</span>
+                                                        <div class="step-selected" id="selected-case"></div>
+                                                    </li>
+                                                    <li class="step" id="step-cooler">
+                                                        <span class="step-label">Cooler</span>
+                                                        <div class="step-selected" id="selected-cooler"></div>
+                                                    </li>
+                                                </ul>
+                                            </div>
+                                            <div class="progress" style="height: 8px;">
+                                                <div class="progress-bar bg-primary" id="build-progress-bar" role="progressbar" style="width: 0%;" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100"></div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
                             <h2 class="mb-3 position-relative">Chào mừng đến với PC Builder!</h2>
                             <p class="lead position-relative">Hãy chọn các linh kiện phù hợp hoặc khám phá các chương trình khuyến mại hấp dẫn của chúng tôi.</p>
                             <div class="component-card promotion-card d-flex flex-column flex-md-row align-items-center p-4 mb-4" style="background: transparent; box-shadow: none;">
