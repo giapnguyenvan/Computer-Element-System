@@ -33,7 +33,6 @@ INSERT INTO `user` VALUES
 -- Dữ liệu cho bảng customer
 INSERT INTO `customer` VALUES 
     (1,'Lê Thị Khách Hàng','customer01@example.com','hashedpassword3','0909988776','123 Đường ABC, Quận 1, TP.HCM',0,NULL),
-    (2,'NguyenVanGiap','giapThieuNang@gmail.com','cesvg2810A!','0994885738','KhongBietHoiLamVL',0,NULL),
     (3,'Phạm Đức Trọng','trongpdhe181640@fpt.edu.vn','$2a$10$iC2jTTQm8GSE5ni9iURIouVE.c/qVXK8PKSshKj7HjAb/Ie5r5Tea','0559868660','ChauPhong-LienHa-DongAnh-HaNoi',1,NULL);
 
 -- Dữ liệu cho bảng staff
@@ -69,12 +68,12 @@ INSERT INTO `product` VALUES
 
 -- Dữ liệu cho bảng cartitem
 INSERT INTO `cartitem` VALUES 
-    (1,2,2,1),
-    (2,2,5,1),
-    (3,2,3,1),
-    (4,2,18,1),
-    (5,2,19,1),
-    (6,2,20,1),
-    (7,2,17,1),
-    (8,2,8,1),
-    (9,2,9,1); 
+    (1,1,2,1),
+    (2,1,5,1),
+    (3,1,3,1),
+    (4,1,18,1),
+    (5,1,19,1),
+    (6,1,20,1),
+    (7,1,17,1),
+    (8,1,8,1),
+    (9,1,9,1); 

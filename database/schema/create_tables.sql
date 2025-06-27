@@ -240,6 +240,49 @@ CREATE TABLE `transactions` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 -- ================================
+-- MENU DYNAMIC TABLES
+-- ================================
+CREATE TABLE menu_item (
+    menu_item_id INT PRIMARY KEY AUTO_INCREMENT,
+    name VARCHAR(100) NOT NULL,
+    icon VARCHAR(255),
+    url VARCHAR(255),
+    parent_id INT,
+    description TEXT,
+    status ENUM('Activate','Deactivate') NOT NULL DEFAULT 'Activate',
+    FOREIGN KEY (parent_id) REFERENCES menu_item(menu_item_id)
+);
+
+CREATE TABLE menu_attribute (
+    attribute_id INT PRIMARY KEY AUTO_INCREMENT,
+    menu_item_id INT NOT NULL,
+    name VARCHAR(100) NOT NULL,
+    type VARCHAR(50),
+    url VARCHAR(255),
+    description TEXT,
+    status ENUM('Activate','Deactivate') NOT NULL DEFAULT 'Activate',
+    FOREIGN KEY (menu_item_id) REFERENCES menu_item(menu_item_id)
+);
+
+CREATE TABLE menu_attribute_value (
+    value_id INT PRIMARY KEY AUTO_INCREMENT,
+    attribute_id INT NOT NULL,
+    value VARCHAR(100) NOT NULL,
+    url VARCHAR(255),
+    description TEXT,
+    status ENUM('Activate','Deactivate') NOT NULL DEFAULT 'Activate',
+    FOREIGN KEY (attribute_id) REFERENCES menu_attribute(attribute_id)
+);
+
+CREATE TABLE product_menu_attribute_value (
+    product_id INT NOT NULL,
+    value_id INT NOT NULL,
+    PRIMARY KEY (product_id, value_id),
+    FOREIGN KEY (product_id) REFERENCES product(product_id),
+    FOREIGN KEY (value_id) REFERENCES menu_attribute_value(value_id)
+);
+
+-- ================================
 -- SELECT ALL DATA FROM TABLES
 -- ================================
 SELECT * FROM `admin`;
