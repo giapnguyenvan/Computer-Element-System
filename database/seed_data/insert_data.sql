@@ -66,14 +66,6 @@ INSERT INTO `product` VALUES
     (18,'G.Skill Trident Z RGB 16GB',4,5,95.00,80.00,60,'16GB DDR4 3600MHz','Active','2025-06-20 09:18:08'),
     (19,'Kingston Fury Beast 8GB DDR4',4,5,42.00,32.00,90,'8GB DDR4 3200MHz','Active','2025-06-20 09:18:08'),
     (20,'Corsair Dominator Platinum 32GB',4,5,180.00,150.00,40,'32GB DDR5 5200MHz','Active','2025-06-20 09:18:08');
--- Dữ liệu cho bảng staff
-INSERT INTO `staff` VALUES 
-    (1,1,'Nguyễn Văn Nhân viên','0901123456','2024-01-01',NULL);
-
--- Dữ liệu cho bảng user
-INSERT INTO `user` VALUES 
-    (1,'staff01','hashedpassword1','staff01@example.com','Staff','Active',1,NULL),
-    (2,'admin01','hashedpassword2','admin01@example.com','Admin','Active',1,NULL);
 
 -- Dữ liệu cho bảng voucher
 INSERT INTO `voucher` (`voucher_id`, `code`, `description`, `discount_type`, `discount_value`, `min_order_amount`, `max_uses`, `max_uses_per_user`, `start_date`, `end_date`, `status`) VALUES
@@ -84,7 +76,8 @@ INSERT INTO `voucher` (`voucher_id`, `code`, `description`, `discount_type`, `di
 -- Dữ liệu cho bảng voucher_usage
 INSERT INTO `voucher_usage` (`usage_id`, `voucher_id`, `customer_id`, `order_id`, `used_at`) VALUES
     (1, 1, 3, NULL, '2024-06-21 10:00:00'),
-    (2, 2, 2, NULL, '2024-06-22 11:00:00'); 
+    (2, 2, 2, NULL, '2024-06-22 11:00:00');
+
 -- Dữ liệu cho bảng cartitem
 INSERT INTO `cartitem` VALUES 
     (1,2,2,1),
@@ -95,4 +88,35 @@ INSERT INTO `cartitem` VALUES
     (6,2,20,1),
     (7,2,17,1),
     (8,2,8,1),
-    (9,2,9,1); 
+    (9,2,9,1);
+
+-- Dữ liệu cho bảng blog
+INSERT INTO `blog` (`blog_id`, `title`, `content`, `customer_id`, `created_at`) VALUES
+    (1, 'Hướng dẫn build PC gaming giá rẻ', 'Bài viết hướng dẫn cách build PC gaming với ngân sách 15 triệu đồng...', 3, '2024-06-20 10:00:00'),
+    (2, 'So sánh CPU Intel vs AMD 2024', 'Phân tích chi tiết về hiệu năng và giá cả giữa CPU Intel và AMD...', 3, '2024-06-21 14:30:00'),
+    (3, 'Review GPU RTX 4060 Ti', 'Đánh giá chi tiết về card đồ họa NVIDIA RTX 4060 Ti...', 2, '2024-06-22 09:15:00');
+
+-- Dữ liệu cho bảng blog_image
+INSERT INTO `blog_image` (`image_id`, `blog_id`, `image_url`, `image_alt`, `display_order`, `created_at`) VALUES
+    (1, 1, '/assets/images/blog/pc-build-guide-1.jpg', 'PC Build Guide Main Image', 1, '2024-06-20 10:00:00'),
+    (2, 1, '/assets/images/blog/pc-build-guide-2.jpg', 'PC Components Layout', 2, '2024-06-20 10:00:00'),
+    (3, 1, '/assets/images/blog/pc-build-guide-3.jpg', 'Final PC Setup', 3, '2024-06-20 10:00:00'),
+    (4, 2, '/assets/images/blog/cpu-comparison-1.jpg', 'Intel vs AMD CPU Comparison', 1, '2024-06-21 14:30:00'),
+    (5, 2, '/assets/images/blog/cpu-comparison-2.jpg', 'Benchmark Results', 2, '2024-06-21 14:30:00'),
+    (6, 3, '/assets/images/blog/rtx-4060ti-review-1.jpg', 'RTX 4060 Ti Front View', 1, '2024-06-22 09:15:00'),
+    (7, 3, '/assets/images/blog/rtx-4060ti-review-2.jpg', 'RTX 4060 Ti Gaming Performance', 2, '2024-06-22 09:15:00');
+
+-- Dữ liệu cho bảng feedback
+INSERT INTO `feedback` (`feedback_id`, `customer_id`, `product_id`, `rating`, `content`, `created_at`) VALUES
+    (1, 3, 1, 5, 'CPU rất tốt, hiệu năng ổn định và giá cả hợp lý. Khuyến nghị cho ai muốn build PC gaming!', '2024-06-20 15:30:00'),
+    (2, 2, 6, 4, 'Card đồ họa tốt, chơi game mượt mà. Chỉ hơi nóng một chút khi chơi game nặng.', '2024-06-21 16:45:00'),
+    (3, 3, 16, 5, 'RAM chất lượng tốt, tương thích hoàn hảo với mainboard. Giao hàng nhanh!', '2024-06-22 11:20:00');
+
+-- Dữ liệu cho bảng feedback_image
+INSERT INTO `feedback_image` (`image_id`, `feedback_id`, `image_url`, `image_alt`, `display_order`, `created_at`) VALUES
+    (1, 1, '/assets/images/feedback/cpu-review-1.jpg', 'CPU Installation', 1, '2024-06-20 15:30:00'),
+    (2, 1, '/assets/images/feedback/cpu-review-2.jpg', 'CPU Performance Test', 2, '2024-06-20 15:30:00'),
+    (3, 2, '/assets/images/feedback/gpu-review-1.jpg', 'GPU Installation', 1, '2024-06-21 16:45:00'),
+    (4, 2, '/assets/images/feedback/gpu-review-2.jpg', 'Gaming Performance', 2, '2024-06-21 16:45:00'),
+    (5, 3, '/assets/images/feedback/ram-review-1.jpg', 'RAM Package', 1, '2024-06-22 11:20:00'),
+    (6, 3, '/assets/images/feedback/ram-review-2.jpg', 'RAM Installation', 2, '2024-06-22 11:20:00'); 

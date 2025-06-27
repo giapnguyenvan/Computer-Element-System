@@ -3,6 +3,8 @@ CREATE DATABASE IF NOT EXISTS project_g2;
 USE project_g2;
 
 -- Xóa bảng theo thứ tự phụ thuộc (bảng con trước, bảng cha sau)
+DROP TABLE IF EXISTS `blog_image`;
+DROP TABLE IF EXISTS `feedback_image`;
 DROP TABLE IF EXISTS `cartitem`;
 DROP TABLE IF EXISTS `orderdetail`;
 DROP TABLE IF EXISTS `order`;
@@ -227,6 +229,47 @@ CREATE TABLE `blog` (
   CONSTRAINT `blog_ibfk_1` FOREIGN KEY (`customer_id`) REFERENCES `customer` (`customer_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
+-- Bảng phụ cho ảnh blog
+CREATE TABLE `blog_image` (
+  `image_id` int NOT NULL AUTO_INCREMENT,
+  `blog_id` int NOT NULL,
+  `image_url` varchar(255) NOT NULL,
+  `image_alt` varchar(255) DEFAULT NULL,
+  `display_order` int DEFAULT 0,
+  `created_at` datetime DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (`image_id`),
+  KEY `blog_id` (`blog_id`),
+  CONSTRAINT `blog_image_ibfk_1` FOREIGN KEY (`blog_id`) REFERENCES `blog` (`blog_id`) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+CREATE TABLE `feedback` (
+  `feedback_id` int NOT NULL AUTO_INCREMENT,
+  `customer_id` int DEFAULT NULL,
+  `product_id` int DEFAULT NULL,
+  `rating` int DEFAULT NULL,
+  `content` text,
+  `created_at` datetime DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (`feedback_id`),
+  KEY `customer_id` (`customer_id`),
+  KEY `product_id` (`product_id`),
+  CONSTRAINT `feedback_ibfk_1` FOREIGN KEY (`customer_id`) REFERENCES `customer` (`customer_id`),
+  CONSTRAINT `feedback_ibfk_2` FOREIGN KEY (`product_id`) REFERENCES `product` (`product_id`),
+  CONSTRAINT `feedback_chk_1` CHECK ((`rating` between 1 and 5))
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+-- Bảng phụ cho ảnh feedback
+CREATE TABLE `feedback_image` (
+  `image_id` int NOT NULL AUTO_INCREMENT,
+  `feedback_id` int NOT NULL,
+  `image_url` varchar(255) NOT NULL,
+  `image_alt` varchar(255) DEFAULT NULL,
+  `display_order` int DEFAULT 0,
+  `created_at` datetime DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (`image_id`),
+  KEY `feedback_id` (`feedback_id`),
+  CONSTRAINT `feedback_image_ibfk_1` FOREIGN KEY (`feedback_id`) REFERENCES `feedback` (`feedback_id`) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
 CREATE TABLE `transactions` (
   `transaction_id` INT AUTO_INCREMENT PRIMARY KEY,
   `transaction_code` varchar(50),
@@ -278,11 +321,13 @@ CREATE TABLE `voucher_usage` (
 -- ================================
 SELECT * FROM `admin`;
 SELECT * FROM `blog`;
+SELECT * FROM `blog_image`;
 SELECT * FROM `brand`;
 SELECT * FROM `cartitem`;
 SELECT * FROM `componenttype`;
 SELECT * FROM `customer`;
 SELECT * FROM `feedback`;
+SELECT * FROM `feedback_image`;
 SELECT * FROM `inventorylog`;
 SELECT * FROM `model`;
 SELECT * FROM `order`;

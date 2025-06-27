@@ -11,12 +11,15 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
+import jakarta.servlet.annotation.MultipartConfig;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.Part;
 import java.util.Vector;
 import java.util.List;
 import model.Blog;
+import model.BlogImage;
 import model.Customer;
 import java.util.Collections;
 import java.util.HashMap;
@@ -27,6 +30,11 @@ import java.util.Map;
  * @author ADMIN
  */
 @WebServlet(name="ViewBlogServlet", urlPatterns={"/viewblogs"})
+@MultipartConfig(
+    fileSizeThreshold = 1024 * 1024, // 1 MB
+    maxFileSize = 1024 * 1024 * 10,  // 10 MB
+    maxRequestSize = 1024 * 1024 * 50 // 50 MB
+)
 public class ViewBlogServlet extends HttpServlet {
    
     private static final int PAGE_SIZE = 10; // Number of blogs per page
@@ -329,9 +337,53 @@ public class ViewBlogServlet extends HttpServlet {
         try {
             int customerId = Integer.parseInt(customerIdStr);
             Blog blog = new Blog(0, title.trim(), content.trim(), customerId, null);
-            blogDAO.insertBlog(blog);
             
-            request.getSession().setAttribute("success", "Blog created successfully!");
+            // Handle image uploads
+            List<Part> fileParts = request.getParts().stream()
+                .filter(part -> "images".equals(part.getName()) && part.getSize() > 0)
+                .collect(java.util.stream.Collectors.toList());
+            
+            // Add uploaded images to blog
+            for (int i = 0; i < fileParts.size(); i++) {
+                Part filePart = fileParts.get(i);
+                String fileName = getSubmittedFileName(filePart);
+                
+                if (fileName != null && !fileName.isEmpty()) {
+                    // Generate unique filename
+                    String uniqueFileName = System.currentTimeMillis() + "_" + fileName;
+                    String uploadPath = getServletContext().getRealPath("/uploads/blog/");
+                    
+                    // Create directory if it doesn't exist
+                    java.io.File uploadDir = new java.io.File(uploadPath);
+                    if (!uploadDir.exists()) {
+                        uploadDir.mkdirs();
+                    }
+                    
+                    // Save file
+                    String filePath = uploadPath + uniqueFileName;
+                    filePart.write(filePath);
+                    
+                    // Create BlogImage object
+                    String imageUrl = "/uploads/blog/" + uniqueFileName;
+                    String imageAlt = request.getParameter("image_alts[" + i + "]");
+                    if (imageAlt == null || imageAlt.trim().isEmpty()) {
+                        imageAlt = fileName;
+                    }
+                    
+                    BlogImage image = new BlogImage(0, 0, imageUrl, imageAlt, i + 1, null);
+                    blog.addImage(image);
+                }
+            }
+            
+            // Insert blog with images
+            int blogId = blogDAO.insertBlog(blog);
+            
+            if (blogId > 0) {
+                request.getSession().setAttribute("success", "Blog created successfully with " + blog.getImages().size() + " image(s)!");
+            } else {
+                request.getSession().setAttribute("success", "Blog created successfully!");
+            }
+            
             response.sendRedirect("viewblogs");
         } catch (NumberFormatException e) {
             request.getSession().setAttribute("error", "Invalid customer ID format.");
@@ -352,5 +404,18 @@ public class ViewBlogServlet extends HttpServlet {
     throws ServletException, IOException {
         // This method is not used in view mode
         response.sendRedirect("viewblogs");
+    }
+    
+    // Helper method to get submitted filename
+    private String getSubmittedFileName(Part part) {
+        String header = part.getHeader("content-disposition");
+        if (header == null) return null;
+        
+        for (String headerPart : header.split(";")) {
+            if (headerPart.trim().startsWith("filename")) {
+                return headerPart.substring(headerPart.indexOf('=') + 1).trim().replace("\"", "");
+            }
+        }
+        return null;
     }
 }
