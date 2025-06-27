@@ -69,11 +69,13 @@
                 <div class="products-grid" id="ramProductsContainer">
                     <c:forEach var="product" items="${ramProducts}">
                         <div class="product-card">
-                            <img src="${product.image_url}" class="product-image" alt="${product.name}">
-                            <h5 class="product-title">${product.name}</h5>
-                            <p class="product-description">${product.description}</p>
+                            <a href="${pageContext.request.contextPath}/productservlet?service=productDetail&id=${product.id}" style="text-decoration: none; color: inherit;">
+                                <img src="${product.image_url}" class="product-image" alt="${product.name}">
+                                <h5 class="product-title">${product.name}</h5>
+                                <p class="product-description">${product.description}</p>
+                            </a>
                             <div class="product-price">
-                                <fmt:formatNumber value="${product.price}" type="number" pattern="###,###"/>đ
+                                <fmt:formatNumber value="${product.price}" type="number" pattern="###,###"/> VNĐ
                             </div>
 
                             <!-- Add to Cart Button -->
@@ -199,7 +201,33 @@
             // Initialize event handlers on page load
             document.addEventListener('DOMContentLoaded', initializeRAMEventHandlers);
 
+            // Global variables
+            let currentUserId = 0;
+            
+            // Get current user ID from session
+            <c:choose>
+                <c:when test="${not empty sessionScope.customerAuth}">
+                    currentUserId = ${sessionScope.customerAuth.customer_id};
+                </c:when>
+                <c:when test="${not empty sessionScope.userAuth}">
+                    currentUserId = ${sessionScope.userAuth.id};
+                </c:when>
+                <c:otherwise>
+                    currentUserId = 0;
+                </c:otherwise>
+            </c:choose>
+
             async function addToCart(productId, productName, productPrice) {
+                // Check if user is logged in
+                if (currentUserId === 0) {
+                    Swal.fire({
+                        icon: 'warning',
+                        title: 'Please Login',
+                        text: 'You need to login to add products to cart'
+                    });
+                    return;
+                }
+
                 const addButton = document.getElementById('addBtn_' + productId);
 
                 // Disable button and show loading
@@ -213,7 +241,7 @@
                             'Content-Type': 'application/json'
                         },
                         body: JSON.stringify({
-                            userId: currentUserId,
+                            customerId: currentUserId,
                             productId: productId,
                             quantity: 1
                         })
@@ -230,6 +258,9 @@
                             timer: 2000,
                             showConfirmButton: false
                         });
+
+                        // Update cart count
+                        updateCartCount();
 
                         // Add visual feedback
                         addButton.classList.add('btn-success');
@@ -257,6 +288,29 @@
                     }
                 }
             }
+
+            // Function to update cart count
+            async function updateCartCount() {
+                try {
+                    const response = await fetch('${pageContext.request.contextPath}/CartApiServlet?customerId=' + currentUserId);
+                    const result = await response.json();
+
+                    if (result.success && result.data) {
+                        const totalItems = result.data.reduce((sum, item) => sum + item.quantity, 0);
+                        const cartCountElement = document.getElementById('cartCount');
+                        if (cartCountElement) {
+                            cartCountElement.textContent = totalItems;
+                        }
+                    }
+                } catch (error) {
+                    console.error('Error updating cart count:', error);
+                }
+            }
+
+            // Initialize cart count on page load
+            document.addEventListener('DOMContentLoaded', function() {
+                updateCartCount();
+            });
         </script>
     </body>
 </html> 

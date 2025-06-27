@@ -69,65 +69,6 @@
             </div>
         </section>
 
-        <!-- Today's Deals -->
-        <section class="deal-section">
-            <div class="container">
-                <div class="d-flex justify-content-between align-items-center mb-4">
-                    <h2 class="mb-0">Today's Best Deals</h2>
-                    <a href="#" class="btn btn-link">View All</a>
-                </div>
-
-                <!-- Display error message if any -->
-                <c:if test="${not empty errorMessage}">
-                    <div class="alert alert-danger" role="alert">
-                        ${errorMessage}
-                    </div>
-                </c:if>
-
-                <!-- Debug information -->
-                <c:if test="${empty product}">
-                    <div class="alert alert-warning" role="alert">
-                        No products available at the moment.
-                    </div>
-                </c:if>
-
-                <div class="row">
-                    <c:forEach var="product" items="${product}">
-                        <div class="col-md-3 mb-4">
-                            <div class="card product-card h-100">
-                                <a href="${pageContext.request.contextPath}/productservlet?service=productDetail&id=${product.id}" style="text-decoration: none;">
-                                    <img src="${product.image_url}" class="card-img-top" alt="${product.name}" style="height: 200px; object-fit: cover;">
-                                    <div class="card-body d-flex flex-column">
-                                        <h5 class="card-title">${product.name}</h5>
-                                        <p class="card-text flex-grow-1">${product.description}</p>
-                                        <div class="d-flex align-items-center mb-3">
-                                            <span class="price fw-bold text-primary fs-5">$${product.price}</span>
-                                        </div>
-                                    </div>
-                                </a>       
-
-                                <!-- Quantity Selector -->
-                                <div class="d-flex align-items-center mb-3">
-                                    <div class="quantity-selector" style="width: 120px; margin: 0 auto;">
-                                        <button type="button" class="qty-btn" onclick="changeQuantity(${product.id}, -1)">-</button>
-                                        <input type="number" id="quantity_${product.id}" value="1" min="1" max="99" class="qty-input" style="text-align:center;">
-                                        <button type="button" class="qty-btn" onclick="changeQuantity(${product.id}, 1)">+</button>
-                                    </div>
-                                </div>
-
-                                <!-- Add to Cart Button -->
-                                <button class="btn btn-primary w-100" 
-                                        onclick="addToCart(${product.id}, '${product.name}', ${product.price})"
-                                        id="addBtn_${product.id}">
-                                    <i class="fas fa-cart-plus me-2"></i>Add to Cart
-                                </button>
-                            </div>
-                        </div>
-                    </c:forEach>
-                </div>
-            </div>
-        </section>
-
         <!-- Categories -->
         <section class="py-5">
             <div class="container">
@@ -300,7 +241,20 @@
         <script>
                                             // Global variables
                                             let cartCount = 0;
-                                            const currentUserId = ${sessionScope.customerAuth.customer_id}; // Thay đổi theo user đang đăng nhập
+                                            let currentUserId = 0;
+                                            
+                                            // Get current user ID from session
+                                            <c:choose>
+                                                <c:when test="${not empty sessionScope.customerAuth}">
+                                                    currentUserId = ${sessionScope.customerAuth.customer_id};
+                                                </c:when>
+                                                <c:when test="${not empty sessionScope.userAuth}">
+                                                    currentUserId = ${sessionScope.userAuth.id};
+                                                </c:when>
+                                                <c:otherwise>
+                                                    currentUserId = 0;
+                                                </c:otherwise>
+                                            </c:choose>
 
                                             // Function to change quantity
                                             function changeQuantity(productId, change) {
@@ -318,6 +272,16 @@
 
                                             // Function to add product to cart
                                             async function addToCart(productId, productName, productPrice) {
+                                                // Check if user is logged in
+                                                if (currentUserId === 0) {
+                                                    Swal.fire({
+                                                        icon: 'warning',
+                                                        title: 'Please Login',
+                                                        text: 'You need to login to add products to cart'
+                                                    });
+                                                    return;
+                                                }
+
                                                 const quantityInput = document.getElementById('quantity_' + productId);
                                                 const quantity = parseInt(quantityInput.value);
                                                 const addButton = document.getElementById('addBtn_' + productId);
@@ -332,7 +296,7 @@
                                                         productId: productId,
                                                         quantity: quantity
                                                     }));
-                                                    const response = await fetch('/CES/CartApiServlet', {
+                                                    const response = await fetch('${pageContext.request.contextPath}/CartApiServlet', {
                                                         method: 'POST',
                                                         headers: {
                                                             'Content-Type': 'application/json'
@@ -392,7 +356,7 @@
                                             // Function to update cart count
                                             async function updateCartCount() {
                                                 try {
-                                                    const response = await fetch('CartApiServlet?userId=' + currentUserId);
+                                                    const response = await fetch('${pageContext.request.contextPath}/CartApiServlet?customerId=' + currentUserId);
                                                     const result = await response.json();
 
                                                     if (result.success && result.data) {

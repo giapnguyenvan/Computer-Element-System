@@ -213,10 +213,50 @@ public class ViewBlogServlet extends HttpServlet {
     public void doPost(HttpServletRequest request, HttpServletResponse response)
     throws ServletException, IOException {
         String action = request.getParameter("action");
-        
         try {
             if ("add".equals(action)) {
                 addBlog(request, response);
+            } else if ("delete".equals(action)) {
+                // Xử lý xóa blog
+                Object authObj = request.getSession().getAttribute("customerAuth");
+                if (authObj == null) {
+                    request.getSession().setAttribute("error", "You must be logged in to delete a blog.");
+                    response.sendRedirect("viewblogs");
+                    return;
+                }
+                int blogId = Integer.parseInt(request.getParameter("blog_id"));
+                int customerId = ((model.Customer)authObj).getCustomer_id();
+                boolean deleted = blogDAO.deleteBlogById(blogId, customerId);
+                if (deleted) {
+                    request.getSession().setAttribute("success", "Blog deleted successfully!");
+                } else {
+                    request.getSession().setAttribute("error", "Failed to delete blog. You can only delete your own blogs.");
+                }
+                response.sendRedirect("viewblogs");
+            } else if ("update".equals(action)) {
+                // Xử lý cập nhật blog
+                Object authObj = request.getSession().getAttribute("customerAuth");
+                if (authObj == null) {
+                    request.getSession().setAttribute("error", "You must be logged in to update a blog.");
+                    response.sendRedirect("viewblogs");
+                    return;
+                }
+                int blogId = Integer.parseInt(request.getParameter("blog_id"));
+                int customerId = ((model.Customer)authObj).getCustomer_id();
+                String title = request.getParameter("title");
+                String content = request.getParameter("content");
+                // Kiểm tra quyền sở hữu
+                model.Blog blog = blogDAO.getBlogById(blogId);
+                if (blog == null || blog.getCustomer_id() != customerId) {
+                    request.getSession().setAttribute("error", "You can only update your own blogs.");
+                    response.sendRedirect("viewblogs");
+                    return;
+                }
+                blog.setTitle(title);
+                blog.setContent(content);
+                blogDAO.updateBlog(blog);
+                request.getSession().setAttribute("success", "Blog updated successfully!");
+                response.sendRedirect("viewblogs");
             } else {
                 processRequest(request, response);
             }
