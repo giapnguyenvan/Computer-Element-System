@@ -71,7 +71,7 @@ public class UserProfileServlet extends HttpServlet {
                 }
                 case "orders": {
                     // Placeholder - No data set yet
-                    content = "orderHistory.jsp";
+                    content = "orders.jsp";
                     activePage = "orders";
                     break;
                 }
@@ -83,7 +83,7 @@ public class UserProfileServlet extends HttpServlet {
                 }
                 case "promotion": {
                     // Placeholder - No data set yet
-                    content = "promotions.jsp";
+                    content = "promotion.jsp";
                     activePage = "promotion";
                     break;
                 }
