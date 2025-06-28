@@ -181,6 +181,6 @@ public class CustomerDAO {
             return stmt.executeUpdate() > 0;
         }
     }
-
+    
     // You might want to add more methods here, e.g., getCustomerByUserId, updateCustomer, etc.
 } 
