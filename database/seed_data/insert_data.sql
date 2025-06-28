@@ -45,146 +45,55 @@ INSERT INTO model (series_id, name) VALUES
 (25, '2022'), (25, '2024'), (26, 'Standard'),
 (27, 'Standard'), (27, 'Height-Adjustable'), (28, 'Standard 120x60');
 
--- Insert data into product
-INSERT INTO product (name, component_type_id, brand_id, model_id, price, import_price, stock, description, status) VALUES
-('AMD Ryzen 7 9800X3D', 10, 6, 1, 480.00, 384.00, 50, '8-core CPU with 3D V-Cache', 'Active'),
-('AMD Ryzen 9 9700X', 10, 6, 2, 400.00, 320.00, 40, '8-core high-performance CPU', 'Active'),
-('Intel Core Ultra 7 265K', 10, 7, 3, 400.00, 320.00, 45, 'High-clock CPU for gaming', 'Active'),
-('ASUS ROG Strix X870-F', 11, 8, 4, 350.00, 280.00, 30, 'AM5 motherboard with Wi-Fi 6E', 'Active'),
-('ASUS ROG Strix B650-E', 11, 8, 5, 300.00, 240.00, 35, 'B650 chipset with PCIe 5.0', 'Active'),
-('Gigabyte B650 Aorus Elite AX', 11, 10, 6, 250.00, 200.00, 50, 'Budget AM5 board with Wi-Fi', 'Active'),
-('Corsair Vengeance LPX DDR5-6000 32GB', 12, 12, 7, 120.00, 96.00, 100, '32GB DDR5 dual-channel RAM', 'Active'),
-('Corsair Vengeance RGB DDR5-6400 32GB', 12, 12, 8, 140.00, 112.00, 80, 'RGB DDR5 RAM, 32GB', 'Active'),
-('G.Skill Trident Z5 DDR5-6000 32GB', 12, 13, 9, 130.00, 104.00, 90, 'High-speed DDR5 with RGB', 'Active'),
-('NVIDIA GeForce RTX 5090', 13, 11, 10, 1500.00, 1200.00, 20, 'Top-tier GPU for 4K gaming', 'Active'),
-('NVIDIA GeForce RTX 5080', 13, 11, 11, 1000.00, 800.00, 25, 'High-end GPU for 1440p', 'Active'),
-('MSI Radeon RX 9070 XT', 13, 9, 12, 800.00, 640.00, 30, 'AMD GPU with ray tracing', 'Active'),
-('WD Black SN850X 2TB', 14, 14, 13, 180.00, 144.00, 80, 'High-speed M.2 SSD, 7300MB/s', 'Active'),
-('WD Black SN850X 1TB', 14, 14, 14, 100.00, 80.00, 100, '1TB NVMe SSD for gaming', 'Active'),
-('Samsung 970 EVO Plus 2TB', 14, 15, 15, 200.00, 160.00, 70, 'Reliable 2TB NVMe SSD', 'Active'),
-('Corsair RM850e 80+ Gold', 15, 12, 16, 130.00, 104.00, 40, 'Fully modular 850W PSU', 'Active'),
-('Corsair RM1000e 80+ Gold', 15, 12, 17, 160.00, 128.00, 35, '1000W PSU for high-end builds', 'Active'),
-('MSI MPG A850G', 15, 9, 18, 140.00, 112.00, 50, '80+ Gold PSU, modular', 'Active'),
-('ASUS Lancool 216', 16, 8, 19, 100.00, 80.00, 60, 'ATX case with excellent airflow', 'Active'),
-('ASUS Lancool 205', 16, 8, 20, 90.00, 72.00, 70, 'Mid-tower case with RGB', 'Active'),
-('Gigabyte Aorus C700', 16, 10, 21, 200.00, 160.00, 20, 'Premium ATX case', 'Active'),
-('Arctic Liquid Freezer III 360mm', 17, 17, 22, 120.00, 96.00, 60, 'High-performance AIO cooler', 'Active'),
-('Arctic Liquid Freezer III 280mm', 17, 17, 23, 100.00, 80.00, 65, '280mm AIO for compact builds', 'Active'),
-('Noctua NH-U12S', 17, 16, 24, 50.00, 40.00, 80, 'Air cooler with low noise', 'Active'),
-('Logitech G Pro X Superlight 2', 18, 18, 25, 100.00, 80.00, 70, 'Lightweight wireless mouse', 'Active'),
-('Logitech G305', 18, 18, 26, 50.00, 40.00, 90, 'Budget wireless gaming mouse', 'Active'),
-('Razer DeathAdder V3', 18, 19, 27, 80.00, 64.00, 60, 'Ergonomic wired mouse', 'Active'),
-('Razer Ornata V4 Pro', 19, 19, 28, 150.00, 120.00, 40, 'Hybrid mechanical keyboard', 'Active'),
-('Razer Ornata Chroma', 19, 19, 29, 100.00, 80.00, 50, 'RGB membrane keyboard', 'Active'),
-('Logitech BlackWidow V3', 19, 18, 30, 130.00, 104.00, 45, 'Mechanical RGB keyboard', 'Active'),
-('Beyerdynamic DT 990 Pro 250ohm', 20, 20, 31, 150.00, 120.00, 25, 'Open-back headphones', 'Active'),
-('Beyerdynamic DT 990 Edition 600ohm', 20, 20, 32, 200.00, 160.00, 20, 'Premium open-back headphones', 'Active'),
-('SteelSeries Arctis Nova Pro', 20, 21, 33, 250.00, 200.00, 15, 'Wireless gaming headset', 'Active'),
-('LG Odyssey 27in QHD 240Hz', 21, 22, 34, 400.00, 320.00, 15, '27-inch QHD monitor, 240Hz', 'Active'),
-('LG Odyssey 32in 4K', 21, 22, 35, 600.00, 480.00, 10, '32-inch 4K gaming monitor', 'Active'),
-('MSI Optix MPG 27', 21, 9, 36, 350.00, 280.00, 20, '27-inch QHD gaming monitor', 'Active'),
-('Secretlab Titan Evo 2022', 22, 23, 37, 500.00, 400.00, 10, 'Ergonomic gaming chair', 'Active'),
-('Secretlab Titan Evo 2024', 22, 23, 38, 550.00, 440.00, 8, 'Updated ergonomic chair', 'Active'),
-('Herman Miller Sayl', 22, 24, 39, 600.00, 480.00, 5, 'Minimalist ergonomic chair', 'Active'),
-('IKEA UPPSTÅ Standard', 23, 25, 40, 200.00, 160.00, 30, 'Adjustable height desk', 'Active'),
-('IKEA UPPSTÅ Height-Adjustable', 23, 25, 41, 300.00, 240.00, 25, 'Motorized standing desk', 'Active'),
-('IKEA LAGKAPTEN 120x60', 23, 25, 42, 150.00, 120.00, 40, 'Compact desk for small spaces', 'Active');
+-- Dữ liệu cho bảng product
+INSERT INTO `product` VALUES 
+    (1,'Intel Core i5-12400F',1,1,180.00,150.00,50,'6-core, 12-thread, LGA1700','Active','2025-06-20 09:18:08'),
+    (2,'Intel Core i7-13700K',1,1,420.00,370.00,30,'16-core, 24-thread, LGA1700','Active','2025-06-20 09:18:08'),
+    (3,'AMD Ryzen 5 5600X',1,2,200.00,170.00,40,'6-core, 12-thread, AM4','Active','2025-06-20 09:18:08'),
+    (4,'AMD Ryzen 7 5800X',1,2,310.00,270.00,25,'8-core, 16-thread, AM4','Active','2025-06-20 09:18:08'),
+    (5,'Intel Core i9-13900K',1,1,600.00,520.00,10,'24-core, 32-thread, LGA1700','Active','2025-06-20 09:18:08'),
+    (6,'NVIDIA RTX 3060 12GB',2,3,350.00,300.00,20,'12GB GDDR6, Ray Tracing','Active','2025-06-20 09:18:08'),
+    (7,'NVIDIA RTX 4070 12GB',2,3,620.00,550.00,15,'12GB GDDR6X, DLSS 3','Active','2025-06-20 09:18:08'),
+    (8,'ASUS RTX 4060 Ti Dual',2,4,480.00,420.00,18,'8GB GDDR6, Dual Fan','Active','2025-06-20 09:18:08'),
+    (9,'AMD Radeon RX 6700 XT',2,2,400.00,350.00,12,'12GB GDDR6','Active','2025-06-20 09:18:08'),
+    (10,'NVIDIA RTX 3080 10GB',2,3,850.00,780.00,8,'10GB GDDR6X, High-end gaming','Active','2025-06-20 09:18:08'),
+    (11,'ASUS ROG Strix Z790-A',3,4,300.00,260.00,12,'LGA1700, DDR5, ATX','Active','2025-06-20 09:18:08'),
+    (12,'ASUS TUF B550-Plus',3,4,160.00,130.00,20,'AM4, DDR4, ATX','Active','2025-06-20 09:18:08'),
+    (13,'MSI MAG B660M Mortar',3,4,180.00,150.00,25,'LGA1700, DDR4, mATX','Active','2025-06-20 09:18:08'),
+    (14,'Gigabyte B660 DS3H',3,4,140.00,110.00,18,'LGA1700, DDR4, ATX','Active','2025-06-20 09:18:08'),
+    (15,'ASUS PRIME A320M-K',3,4,80.00,60.00,30,'AM4, DDR4, mATX','Active','2025-06-20 09:18:08'),
+    (16,'Corsair Vengeance LPX 8GB DDR4',4,5,45.00,35.00,100,'8GB DDR4 3200MHz','Active','2025-06-20 09:18:08'),
+    (17,'Corsair Vengeance LPX 16GB DDR4',4,5,80.00,65.00,80,'16GB DDR4 3200MHz','Active','2025-06-20 09:18:08'),
+    (18,'G.Skill Trident Z RGB 16GB',4,5,95.00,80.00,60,'16GB DDR4 3600MHz','Active','2025-06-20 09:18:08'),
+    (19,'Kingston Fury Beast 8GB DDR4',4,5,42.00,32.00,90,'8GB DDR4 3200MHz','Active','2025-06-20 09:18:08'),
+    (20,'Corsair Dominator Platinum 32GB',4,5,180.00,150.00,40,'32GB DDR5 5200MHz','Active','2025-06-20 09:18:08');
+-- Dữ liệu cho bảng staff
+INSERT INTO `staff` VALUES 
+    (1,1,'Nguyễn Văn Nhân viên','0901123456','2024-01-01',NULL);
 
--- Insert data into paymentmethod
-INSERT INTO paymentmethod (method_name, description) VALUES
-('Cash', 'Tiền mặt'),
-('Transfer', 'Chuyển khoản');
+-- Dữ liệu cho bảng user
+INSERT INTO `user` VALUES 
+    (1,'staff01','hashedpassword1','staff01@example.com','Staff','Active',1,NULL),
+    (2,'admin01','hashedpassword2','admin01@example.com','Admin','Active',1,NULL);
 
--- Insert data into user
-INSERT INTO `user` (user_id, username, password, email, role, status, is_verified, verification_token) VALUES 
-(1, 'staff01', 'hashedpassword1', 'staff01@example.com', 'Staff', 'Active', 1, NULL),
-(2, 'admin01', 'hashedpassword2', 'admin01@example.com', 'Admin', 'Active', 1, NULL);
+-- Dữ liệu cho bảng voucher
+INSERT INTO `voucher` (`voucher_id`, `code`, `description`, `discount_type`, `discount_value`, `min_order_amount`, `max_uses`, `max_uses_per_user`, `start_date`, `end_date`, `status`) VALUES
+    (1, 'WELCOME10', '10% off for new users', 'percent', 10.00, 100.00, 100, 1, '2024-06-01 00:00:00', '2024-12-31 23:59:59', 'Active'),
+    (2, 'SUMMER50', '50,000 VND off orders over 500,000 VND', 'fixed', 50000.00, 500000.00, 50, 2, '2024-06-01 00:00:00', '2024-08-31 23:59:59', 'Active'),
+    (3, 'FREEMOUSE', 'Mua bất kỳ bộ PC nào trong tháng này, nhận ngay chuột gaming trị giá 500.000đ. Số lượng có hạn!', 'fixed', 500000, 0, 50, 1, '2024-06-01 00:00:00', '2024-06-30 23:59:59', 'Active');
 
--- Insert data into customer
-INSERT INTO `customer` (customer_id, name, email, password, phone, shipping_address, is_verified, verification_token) VALUES 
-(1, 'Lê Thị Khách Hàng', 'customer01@example.com', 'hashedpassword3', '0909988776', '123 Đường ABC, Quận 1, TP.HCM', 0, NULL),
-(2, 'NguyenVanGiap', 'giapThieuNang@gmail.com', 'cesvg2810A!', '0994885738', 'KhongBietHoiLamVL', 0, NULL),
-(3, 'Phạm Đức Trọng', 'trongpdhe181640@fpt.edu.vn', '$2a$10$iC2jTTQm8GSE5ni9iURIouVE.c/qVXK8PKSshKj7HjAb/Ie5r5Tea', '0559868660', 'ChauPhong-LienHa-DongAnh-HaNoi', 1, NULL);
-
--- Insert data into staff
-INSERT INTO `staff` (staff_id, user_id, name, phone, enter_date, leave_date) VALUES 
-(1, 1, 'Nguyễn Văn Nhân viên', '0901123456', '2024-01-01', NULL);
-
--- Insert data into admin
-INSERT INTO `admin` (admin_id, user_id, name) VALUES 
-(1, 2, 'Trần Thị Quản Trị');
-
--- Insert data into shipper
-INSERT INTO `shipper` (shipper_id, name, phone, email, vehicle_number, vehicle_type, status, current_location, join_date, rating, total_deliveries) VALUES
-(1, 'Nguyễn Văn Giao Hàng', '0901234567', 'shipper01@example.com', '51A-12345', 'Motorcycle', 'Active', 'Quận 1, TP.HCM', '2024-01-15', 4.8, 150),
-(2, 'Trần Thị Vận Chuyển', '0902345678', 'shipper02@example.com', '51B-67890', 'Motorcycle', 'Active', 'Quận 3, TP.HCM', '2024-02-01', 4.9, 200),
-(3, 'Lê Văn Tài Xế', '0903456789', 'shipper03@example.com', '51C-11111', 'Car', 'Busy', 'Quận 7, TP.HCM', '2024-01-20', 4.7, 80),
-(4, 'Phạm Thị Giao Hàng', '0904567890', 'shipper04@example.com', '51D-22222', 'Motorcycle', 'Active', 'Quận 10, TP.HCM', '2024-03-01', 4.6, 120),
-(5, 'Hoàng Văn Vận Chuyển', '0905678901', 'shipper05@example.com', '51E-33333', 'Truck', 'Inactive', 'Quận 5, TP.HCM', '2024-02-15', 4.5, 60);
-
--- Insert data into voucher
-INSERT INTO `voucher` (voucher_id, code, description, discount_type, discount_value, min_order_amount, max_uses, max_uses_per_user, start_date, end_date, status) VALUES
-(1, 'WELCOME10', '10% off for new users', 'percent', 10.00, 100.00, 100, 1, '2024-06-01 00:00:00', '2024-12-31 23:59:59', 'Active'),
-(2, 'SUMMER50', '50,000 VND off orders over 500,000 VND', 'fixed', 50000.00, 500000.00, 50, 2, '2024-06-01 00:00:00', '2024-08-31 23:59:59', 'Active'),
-(3, 'FREEMOUSE', 'Free gaming mouse with any PC component purchase this month (limited quantity)', 'fixed', 0.00, 0.00, 50, 1, '2024-06-01 00:00:00', '2024-06-30 23:59:59', 'Active');
-
--- Insert data into orders
-INSERT INTO `orders` (order_id, customer_id, order_date, total_amount, shipping_address, shipping_fee, status, payment_method_id, shipper_id) VALUES
-(1, 2, '2024-06-21 09:00:00', 3210.00, 'KhongBietHoiLamVL', 10.00, 'Pending', 1, NULL);
-
--- Insert data into orderdetail
-INSERT INTO `orderdetail` (order_detail_id, order_id, product_id, quantity, price) VALUES
-(1, 1, 22, 1, 400.00), -- AMD Ryzen 9 9700X
-(2, 1, 25, 1, 300.00), -- ASUS ROG Strix B650-E
-(3, 1, 23, 1, 400.00), -- Intel Core Ultra 7 265K
-(4, 1, 38, 1, 140.00), -- MSI MPG A850G
-(5, 1, 39, 1, 90.00),  -- ASUS Lancool 205
-(6, 1, 40, 1, 200.00), -- Gigabyte Aorus C700
-(7, 1, 37, 1, 160.00), -- Corsair RM1000e 80+ Gold
-(8, 1, 28, 1, 140.00), -- Corsair Vengeance RGB DDR5-6400 32GB
-(9, 1, 29, 1, 130.00); -- G.Skill Trident Z5 DDR5-6000 32GB
-
--- Insert data into voucher_usage
-INSERT INTO `voucher_usage` (usage_id, voucher_id, customer_id, order_id, used_at) VALUES
-(1, 1, 3, 1, '2024-06-21 10:00:00'),
-(2, 2, 2, 1, '2024-06-22 11:00:00');
-
--- Insert data into cartitem
-INSERT INTO `cartitem` (cart_item_id, customer_id, product_id, quantity) VALUES 
-(1, 2, 22, 1), -- AMD Ryzen 9 9700X
-(2, 2, 25, 1), -- ASUS ROG Strix B650-E
-(3, 2, 23, 1), -- Intel Core Ultra 7 265K
-(4, 2, 38, 1), -- MSI MPG A850G
-(5, 2, 39, 1), -- ASUS Lancool 205
-(6, 2, 40, 1), -- Gigabyte Aorus C700
-(7, 2, 37, 1), -- Corsair RM1000e 80+ Gold
-(8, 2, 28, 1), -- Corsair Vengeance RGB DDR5-6400 32GB
-(9, 2, 29, 1); -- G.Skill Trident Z5 DDR5-6000 32GB
-
--- Insert data into transactions
-INSERT INTO `transactions` (transaction_id, transaction_code, order_id, payment_method_id, total_amount, paid) VALUES
-(1, 'TXN001', 1, 1, 3210.00, FALSE);
-
--- Select all data from tables
-SELECT * FROM `admin`;
-SELECT * FROM `blog`;
-SELECT * FROM `brand`;
-SELECT * FROM `cartitem`;
-SELECT * FROM `componenttype`;
-SELECT * FROM `customer`;
-SELECT * FROM `feedback`;
-SELECT * FROM `inventorylog`;
-SELECT * FROM `model`;
-SELECT * FROM `orders`;
-SELECT * FROM `orderdetail`;
-SELECT * FROM `paymentmethod`;
-SELECT * FROM `product`;
-SELECT * FROM `productimage`;
-SELECT * FROM `productspecification`;
-SELECT * FROM `series`;
-SELECT * FROM `shipper`;
-SELECT * FROM `staff`;
-SELECT * FROM `user`;
-SELECT * FROM `voucher`;
-SELECT * FROM `voucher_usage`;
-SELECT * FROM `transactions`;
+-- Dữ liệu cho bảng voucher_usage
+INSERT INTO `voucher_usage` (`usage_id`, `voucher_id`, `customer_id`, `order_id`, `used_at`) VALUES
+    (1, 1, 3, NULL, '2024-06-21 10:00:00'),
+    (2, 2, 2, NULL, '2024-06-22 11:00:00'); 
+-- Dữ liệu cho bảng cartitem
+INSERT INTO `cartitem` VALUES 
+    (1,2,2,1),
+    (2,2,5,1),
+    (3,2,3,1),
+    (4,2,18,1),
+    (5,2,19,1),
+    (6,2,20,1),
+    (7,2,17,1),
+    (8,2,8,1),
+    (9,2,9,1); 

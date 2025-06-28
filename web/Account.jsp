@@ -277,7 +277,7 @@
     
     <div class="main-content">
         <div class="d-flex justify-content-center my-4">
-            <a href="Account?view=user" class="btn btn-outline-primary mx-2 ${param.view != 'customer' ? 'active' : ''}">User</a>
+            <a href="Account?view=user" class="btn btn-outline-primary mx-2 ${param.view != 'customer' ? 'active' : ''}">Staff Management</a>
             <a href="Account?view=customer" class="btn btn-outline-primary mx-2 ${param.view == 'customer' ? 'active' : ''}">Customer</a>
         </div>
         <div class="container-fluid">
