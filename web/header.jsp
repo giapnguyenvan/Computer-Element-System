@@ -98,6 +98,28 @@
                                         <li><a class="dropdown-item text-danger" href="${pageContext.request.contextPath}/logout"><i class="fas fa-sign-out-alt me-2"></i>Logout</a></li>
                                     </ul>
                                 </c:when>
+                                <c:when test="${fn:toLowerCase(sessionScope.user_role) eq 'staff'}">
+                                    <a class="btn btn-outline-primary dropdown-toggle" href="#" role="button" id="userDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+                                        <i class="fas fa-user me-1"></i>
+                                        ${sessionScope.user_name} (Staff)
+                                    </a>
+                                    <ul class="dropdown-menu dropdown-menu-end shadow" aria-labelledby="userDropdown">
+                                        <li>
+                                            <a class="dropdown-item text-primary" href="${pageContext.request.contextPath}/staffservlet">
+                                                <i class="fas fa-gauge-high me-2"></i>Staff Dashboard
+                                            </a>
+                                        </li>
+                                        <li><hr class="dropdown-divider"></li>
+                                        <li>
+                                            <a class="dropdown-item" href="${pageContext.request.contextPath}/staffservlet">
+                                                <i class="fas fa-user-circle me-2"></i>Profile
+                                            </a>
+                                        </li>
+                                        <li><a class="dropdown-item" href="${pageContext.request.contextPath}/orderHistory"><i class="fas fa-history me-2"></i>Order History</a></li>
+                                        <li><hr class="dropdown-divider"></li>
+                                        <li><a class="dropdown-item text-danger" href="${pageContext.request.contextPath}/logout"><i class="fas fa-sign-out-alt me-2"></i>Logout</a></li>
+                                    </ul>
+                                </c:when>
                                 <c:otherwise>
                                     <a class="btn btn-outline-primary dropdown-toggle" href="#" role="button" id="userDropdown" data-bs-toggle="dropdown" aria-expanded="false">
                                         <i class="fas fa-user me-1"></i>
