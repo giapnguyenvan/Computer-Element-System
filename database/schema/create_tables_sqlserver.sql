@@ -207,7 +207,6 @@ CREATE TABLE menu_item (
     name NVARCHAR(100) NOT NULL,
     icon NVARCHAR(255),
     parent_id INT,
-    description NVARCHAR(MAX),
     url NVARCHAR(255),
     status NVARCHAR(20) NOT NULL DEFAULT 'Active',
     FOREIGN KEY (parent_id) REFERENCES menu_item(menu_item_id)
@@ -217,8 +216,6 @@ CREATE TABLE menu_attribute (
     attribute_id INT IDENTITY(1,1) PRIMARY KEY,
     menu_item_id INT NOT NULL,
     name NVARCHAR(100) NOT NULL,
-    type NVARCHAR(50),
-    description NVARCHAR(MAX),
     url NVARCHAR(255),
     status NVARCHAR(20) NOT NULL DEFAULT 'Active',
     FOREIGN KEY (menu_item_id) REFERENCES menu_item(menu_item_id)
@@ -228,16 +225,7 @@ CREATE TABLE menu_attribute_value (
     value_id INT IDENTITY(1,1) PRIMARY KEY,
     attribute_id INT NOT NULL,
     value NVARCHAR(100) NOT NULL,
-    description NVARCHAR(MAX),
     url NVARCHAR(255),
     status NVARCHAR(20) NOT NULL DEFAULT 'Active',
     FOREIGN KEY (attribute_id) REFERENCES menu_attribute(attribute_id)
-);
-
-CREATE TABLE product_menu_attribute_value (
-    product_id INT NOT NULL,
-    value_id INT NOT NULL,
-    PRIMARY KEY (product_id, value_id),
-    FOREIGN KEY (product_id) REFERENCES product(product_id),
-    FOREIGN KEY (value_id) REFERENCES menu_attribute_value(value_id)
 ); 

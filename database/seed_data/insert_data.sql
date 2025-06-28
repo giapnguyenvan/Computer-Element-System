@@ -157,6 +157,50 @@ INSERT INTO `cartitem` (cart_item_id, customer_id, product_id, quantity) VALUES
 INSERT INTO `transactions` (transaction_id, transaction_code, order_id, payment_method_id, total_amount, paid) VALUES
 (1, 'TXN001', 1, 1, 3210.00, FALSE);
 
+-- Insert data into menu_item (parent items first)
+INSERT INTO `menu_item` (menu_item_id, name, icon, url, parent_id, status) VALUES
+(1, 'Sản phẩm', 'fas fa-laptop', '/products', NULL, 'Activate'),
+(2, 'Danh mục', 'fas fa-th-large', '/categories', NULL, 'Activate'),
+(3, 'Quản lý', 'fas fa-cogs', '/admin', NULL, 'Activate');
+
+-- Insert data into menu_item (child items)
+INSERT INTO `menu_item` (menu_item_id, name, icon, url, parent_id, status) VALUES
+(4, 'CPU', 'fas fa-microchip', '/products/cpu', 1, 'Activate'),
+(5, 'GPU', 'fas fa-tv', '/products/gpu', 1, 'Activate'),
+(6, 'RAM', 'fas fa-memory', '/products/ram', 1, 'Activate'),
+(7, 'Người dùng', 'fas fa-users', '/admin/users', 3, 'Activate'),
+(8, 'Đơn hàng', 'fas fa-shopping-cart', '/admin/orders', 3, 'Activate'),
+(9, 'Báo cáo', 'fas fa-chart-bar', '/admin/reports', 3, 'Activate');
+
+-- Insert data into menu_attribute (attributes for menu items)
+INSERT INTO `menu_attribute` (attribute_id, menu_item_id, name, url, status) VALUES
+(1, 1, 'Tất cả sản phẩm', '/products/all', 'Activate'),
+(2, 1, 'Sản phẩm mới', '/products/new', 'Activate'),
+(3, 1, 'Khuyến mãi', '/products/sale', 'Activate'),
+(4, 2, 'Theo thương hiệu', '/categories/brand', 'Activate'),
+(5, 2, 'Theo giá', '/categories/price', 'Activate'),
+(6, 3, 'Dashboard', '/admin/dashboard', 'Activate'),
+(7, 3, 'Cài đặt', '/admin/settings', 'Activate');
+
+-- Insert data into menu_attribute_value (values for attributes)
+INSERT INTO `menu_attribute_value` (value_id, attribute_id, value, url, status) VALUES
+(1, 1, 'Xem tất cả', '/products/list', 'Activate'),
+(2, 1, 'Tìm kiếm', '/products/search', 'Activate'),
+(3, 2, 'Sản phẩm mới nhất', '/products/latest', 'Activate'),
+(4, 2, 'Sắp xếp theo ngày', '/products/sort-by-date', 'Activate'),
+(5, 3, 'Giảm giá 50%', '/products/discount-50', 'Activate'),
+(6, 3, 'Flash sale', '/products/flash-sale', 'Activate'),
+(7, 4, 'AMD', '/categories/brand/amd', 'Activate'),
+(8, 4, 'Intel', '/categories/brand/intel', 'Activate'),
+(9, 4, 'NVIDIA', '/categories/brand/nvidia', 'Activate'),
+(10, 5, 'Dưới 1 triệu', '/categories/price/under-1m', 'Activate'),
+(11, 5, '1-5 triệu', '/categories/price/1m-5m', 'Activate'),
+(12, 5, 'Trên 5 triệu', '/categories/price/over-5m', 'Activate'),
+(13, 6, 'Tổng quan', '/admin/dashboard/overview', 'Activate'),
+(14, 6, 'Thống kê', '/admin/dashboard/stats', 'Activate'),
+(15, 7, 'Cấu hình hệ thống', '/admin/settings/system', 'Activate'),
+(16, 7, 'Cấu hình email', '/admin/settings/email', 'Activate');
+
 -- Select all data from tables
 SELECT * FROM `admin`;
 SELECT * FROM `blog`;
@@ -179,3 +223,6 @@ SELECT * FROM `user`;
 SELECT * FROM `voucher`;
 SELECT * FROM `voucher_usage`;
 SELECT * FROM `transactions`;
+SELECT * FROM `menu_item`;
+SELECT * FROM `menu_attribute`;
+SELECT * FROM `menu_attribute_value`;
