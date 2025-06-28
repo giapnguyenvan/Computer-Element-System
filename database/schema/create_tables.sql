@@ -239,6 +239,40 @@ CREATE TABLE `transactions` (
   FOREIGN KEY (`payment_method_id`) REFERENCES `paymentmethod`(`payment_method_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
+-- Table structure for table `voucher`
+DROP TABLE IF EXISTS `voucher`;
+CREATE TABLE `voucher` (
+  `voucher_id` INT NOT NULL AUTO_INCREMENT,
+  `code` VARCHAR(50) NOT NULL UNIQUE,
+  `description` VARCHAR(255) DEFAULT NULL,
+  `discount_type` ENUM('percent','fixed') NOT NULL DEFAULT 'percent',
+  `discount_value` DECIMAL(10,2) NOT NULL,
+  `min_order_amount` DECIMAL(18,2) DEFAULT 0.00,
+  `max_uses` INT DEFAULT NULL,
+  `max_uses_per_user` INT DEFAULT NULL,
+  `start_date` DATETIME DEFAULT NULL,
+  `end_date` DATETIME DEFAULT NULL,
+  `status` ENUM('Active','Inactive','Expired') NOT NULL DEFAULT 'Active',
+  PRIMARY KEY (`voucher_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+-- Table structure for table `voucher_usage`
+DROP TABLE IF EXISTS `voucher_usage`;
+CREATE TABLE `voucher_usage` (
+  `usage_id` INT NOT NULL AUTO_INCREMENT,
+  `voucher_id` INT NOT NULL,
+  `customer_id` INT NOT NULL,
+  `order_id` INT DEFAULT NULL,
+  `used_at` DATETIME DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (`usage_id`),
+  KEY `voucher_id` (`voucher_id`),
+  KEY `customer_id` (`customer_id`),
+  KEY `order_id` (`order_id`),
+  CONSTRAINT `voucher_usage_ibfk_1` FOREIGN KEY (`voucher_id`) REFERENCES `voucher` (`voucher_id`),
+  CONSTRAINT `voucher_usage_ibfk_2` FOREIGN KEY (`customer_id`) REFERENCES `customer` (`customer_id`),
+  CONSTRAINT `voucher_usage_ibfk_3` FOREIGN KEY (`order_id`) REFERENCES `order` (`order_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
 -- ================================
 -- MENU DYNAMIC TABLES
 -- ================================
@@ -302,5 +336,7 @@ SELECT * FROM `productimage`;
 SELECT * FROM `productspecification`;
 SELECT * FROM `series`;
 SELECT * FROM `staff`;
+SELECT * FROM `user`;
+SELECT * FROM `voucher`;
+SELECT * FROM `voucher_usage`; 
 SELECT * FROM `transactions`;
-SELECT * FROM `user`; 
