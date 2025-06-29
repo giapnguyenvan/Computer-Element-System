@@ -60,7 +60,7 @@ CREATE TABLE model (
 CREATE TABLE customer (
     customer_id INT IDENTITY(1,1) PRIMARY KEY,
     name NVARCHAR(100),
-    email NVARCHAR(100),
+    email NVARCHAR(100) UNIQUE,
     password NVARCHAR(255),
     phone NVARCHAR(20),
     shipping_address NVARCHAR(255),
@@ -79,6 +79,15 @@ CREATE TABLE staff (
     FOREIGN KEY (user_id) REFERENCES [user](user_id)
 );
 
+-- Bảng shipper
+CREATE TABLE shipper (
+    shipper_id INT IDENTITY(1,1) PRIMARY KEY,
+    name NVARCHAR(100) NOT NULL,
+    phone NVARCHAR(20) NOT NULL,
+    email NVARCHAR(100),
+    status NVARCHAR(20) NOT NULL DEFAULT 'Active'
+);
+
 -- Bảng admin
 CREATE TABLE admin (
     admin_id INT IDENTITY(1,1) PRIMARY KEY,
@@ -93,14 +102,16 @@ CREATE TABLE product (
     name NVARCHAR(255),
     component_type_id INT NOT NULL,
     brand_id INT NOT NULL,
+    model_id INT,
     price DECIMAL(18,2),
     import_price DECIMAL(18,2),
-    stock INT,
+    stock INT NOT NULL DEFAULT 0,
     description NVARCHAR(MAX),
     status NVARCHAR(20) NOT NULL DEFAULT 'Active',
     created_at DATETIME DEFAULT GETDATE(),
     FOREIGN KEY (component_type_id) REFERENCES componenttype(type_id),
-    FOREIGN KEY (brand_id) REFERENCES brand(brand_id)
+    FOREIGN KEY (brand_id) REFERENCES brand(brand_id),
+    FOREIGN KEY (model_id) REFERENCES model(model_id)
 );
 
 -- Bảng cartitem
@@ -113,8 +124,8 @@ CREATE TABLE cartitem (
     FOREIGN KEY (product_id) REFERENCES product(product_id)
 );
 
--- Bảng order
-CREATE TABLE [order] (
+-- Bảng orders
+CREATE TABLE orders (
     order_id INT IDENTITY(1,1) PRIMARY KEY,
     customer_id INT NOT NULL,
     order_date DATETIME DEFAULT GETDATE(),
@@ -134,7 +145,7 @@ CREATE TABLE orderdetail (
     product_id INT NOT NULL,
     quantity INT NOT NULL,
     price DECIMAL(18,2) NOT NULL,
-    FOREIGN KEY (order_id) REFERENCES [order](order_id),
+    FOREIGN KEY (order_id) REFERENCES orders(order_id),
     FOREIGN KEY (product_id) REFERENCES product(product_id)
 );
 
@@ -197,8 +208,35 @@ CREATE TABLE transactions (
     total_amount DECIMAL(18,2),
     created_at DATETIME DEFAULT GETDATE(),
     paid BIT DEFAULT 0,
-    FOREIGN KEY (order_id) REFERENCES [order](order_id),
+    FOREIGN KEY (order_id) REFERENCES orders(order_id),
     FOREIGN KEY (payment_method_id) REFERENCES paymentmethod(payment_method_id)
+);
+
+-- Bảng voucher
+CREATE TABLE voucher (
+    voucher_id INT IDENTITY(1,1) PRIMARY KEY,
+    code NVARCHAR(50) NOT NULL UNIQUE,
+    description NVARCHAR(255),
+    discount_type NVARCHAR(20) NOT NULL DEFAULT 'percent',
+    discount_value DECIMAL(10,2) NOT NULL,
+    min_order_amount DECIMAL(18,2) DEFAULT 0.00,
+    max_uses INT,
+    max_uses_per_user INT,
+    start_date DATETIME,
+    end_date DATETIME,
+    status NVARCHAR(20) NOT NULL DEFAULT 'Active'
+);
+
+-- Bảng voucher_usage
+CREATE TABLE voucher_usage (
+    usage_id INT IDENTITY(1,1) PRIMARY KEY,
+    voucher_id INT NOT NULL,
+    customer_id INT NOT NULL,
+    order_id INT,
+    used_at DATETIME DEFAULT GETDATE(),
+    FOREIGN KEY (voucher_id) REFERENCES voucher(voucher_id),
+    FOREIGN KEY (customer_id) REFERENCES customer(customer_id),
+    FOREIGN KEY (order_id) REFERENCES orders(order_id)
 );
 
 -- Bảng menu động
@@ -206,9 +244,9 @@ CREATE TABLE menu_item (
     menu_item_id INT IDENTITY(1,1) PRIMARY KEY,
     name NVARCHAR(100) NOT NULL,
     icon NVARCHAR(255),
-    parent_id INT,
     url NVARCHAR(255),
-    status NVARCHAR(20) NOT NULL DEFAULT 'Active',
+    parent_id INT,
+    status NVARCHAR(20) NOT NULL DEFAULT 'Activate',
     FOREIGN KEY (parent_id) REFERENCES menu_item(menu_item_id)
 );
 
@@ -217,7 +255,7 @@ CREATE TABLE menu_attribute (
     menu_item_id INT NOT NULL,
     name NVARCHAR(100) NOT NULL,
     url NVARCHAR(255),
-    status NVARCHAR(20) NOT NULL DEFAULT 'Active',
+    status NVARCHAR(20) NOT NULL DEFAULT 'Activate',
     FOREIGN KEY (menu_item_id) REFERENCES menu_item(menu_item_id)
 );
 
@@ -226,6 +264,6 @@ CREATE TABLE menu_attribute_value (
     attribute_id INT NOT NULL,
     value NVARCHAR(100) NOT NULL,
     url NVARCHAR(255),
-    status NVARCHAR(20) NOT NULL DEFAULT 'Active',
+    status NVARCHAR(20) NOT NULL DEFAULT 'Activate',
     FOREIGN KEY (attribute_id) REFERENCES menu_attribute(attribute_id)
 ); 
