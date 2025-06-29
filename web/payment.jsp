@@ -480,37 +480,16 @@
                             console.log(amount);
                             const description = row.c[1].v;
 
-                            // Tách description thành từng từ và kiểm tra
+                            // Kiểm tra transaction code trong description
                             var transactionCode = '${transaction.transactionCode}';
                             var expectedAmount = ${transaction.totalAmount} * 0.99;
                             var isValidTransaction = false;
 
-                            if (description) {
-                                // Tách description thành mảng các từ (split by space)
-                                var words = description.split(' ');
-                                console.log('Description words: ' + words.join(', '));
+                            // Sử dụng contains để kiểm tra transaction code
+                            if (description && description.indexOf(transactionCode) !== -1) {
+                                console.log('Transaction code found in description: ' + description);
                                 console.log('Looking for transaction code: ' + transactionCode);
-                                
-                                // Kiểm tra từng từ xem có match với transaction code không
-                                for (var i = 0; i < words.length; i++) {
-                                    if (words[i] === transactionCode) {
-                                        console.log('Found exact match at word ' + i + ': ' + words[i]);
-                                        isValidTransaction = true;
-                                        break;
-                                    }
-                                    // Kiểm tra contains (nếu transaction code nằm trong từ đó)
-                                    if (words[i].indexOf(transactionCode) !== -1) {
-                                        console.log('Found partial match at word ' + i + ': ' + words[i]);
-                                        isValidTransaction = true;
-                                        break;
-                                    }
-                                }
-                                
-                                // Nếu không tìm thấy trong các từ riêng lẻ, thử check toàn bộ description
-                                if (!isValidTransaction && description.indexOf(transactionCode) !== -1) {
-                                    console.log('Found in full description: ' + description);
-                                    isValidTransaction = true;
-                                }
+                                isValidTransaction = true;
                             }
 
                             if (isValidTransaction && amount >= expectedAmount) {
