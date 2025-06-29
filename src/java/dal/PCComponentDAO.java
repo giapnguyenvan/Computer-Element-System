@@ -15,8 +15,7 @@ public class PCComponentDAO {
 
     public PCComponentDAO() {
         try {
-            DBContext dbContext = new DBContext();
-            conn = dbContext.getConnection();
+            conn = DBContext.getInstance().getConnection();
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -29,8 +28,7 @@ public class PCComponentDAO {
         try {
             if (conn == null) {
                 try {
-                    DBContext dbContext = new DBContext();
-                    conn = dbContext.getConnection();
+                    conn = DBContext.getInstance().getConnection();
                 } catch (Exception e) {
                     e.printStackTrace();
                     return components;
@@ -74,8 +72,7 @@ public class PCComponentDAO {
         try {
             if (conn == null) {
                 try {
-                    DBContext dbContext = new DBContext();
-                    conn = dbContext.getConnection();
+                    conn = DBContext.getInstance().getConnection();
                 } catch (Exception e) {
                     e.printStackTrace();
                     return null;
@@ -118,8 +115,7 @@ public class PCComponentDAO {
         try {
             if (conn == null) {
                 try {
-                    DBContext dbContext = new DBContext();
-                    conn = dbContext.getConnection();
+                    conn = DBContext.getInstance().getConnection();
                 } catch (Exception e) {
                     e.printStackTrace();
                     return false;
