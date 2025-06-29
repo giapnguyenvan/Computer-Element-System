@@ -9,7 +9,9 @@ DROP TABLE IF EXISTS `orderdetail`;
 DROP TABLE IF EXISTS `orders`;
 DROP TABLE IF EXISTS `productimage`;
 DROP TABLE IF EXISTS `productspecification`;
+DROP TABLE IF EXISTS `feedback_image`;
 DROP TABLE IF EXISTS `feedback`;
+DROP TABLE IF EXISTS `blog_image`;
 DROP TABLE IF EXISTS `inventorylog`;
 DROP TABLE IF EXISTS `blog`;
 DROP TABLE IF EXISTS `product`;
@@ -223,6 +225,18 @@ CREATE TABLE `feedback` (
   CONSTRAINT `feedback_chk_1` CHECK (`rating` BETWEEN 1 AND 5)
 ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
+CREATE TABLE `feedback_image` (
+  `image_id` INT NOT NULL AUTO_INCREMENT,
+  `feedback_id` INT NOT NULL,
+  `image_url` VARCHAR(255) DEFAULT NULL,
+  `image_alt` VARCHAR(255) DEFAULT NULL,
+  `display_order` INT DEFAULT 1,
+  `created_at` DATETIME DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (`image_id`),
+  KEY `feedback_id` (`feedback_id`),
+  CONSTRAINT `feedback_image_ibfk_1` FOREIGN KEY (`feedback_id`) REFERENCES `feedback` (`feedback_id`)
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
 CREATE TABLE `inventorylog` (
   `log_id` INT NOT NULL AUTO_INCREMENT,
   `product_id` INT NOT NULL,
@@ -244,6 +258,18 @@ CREATE TABLE `blog` (
   PRIMARY KEY (`blog_id`),
   KEY `customer_id` (`customer_id`),
   CONSTRAINT `blog_ibfk_1` FOREIGN KEY (`customer_id`) REFERENCES `customer` (`customer_id`)
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+CREATE TABLE `blog_image` (
+  `image_id` INT NOT NULL AUTO_INCREMENT,
+  `blog_id` INT NOT NULL,
+  `image_url` VARCHAR(255) DEFAULT NULL,
+  `image_alt` VARCHAR(255) DEFAULT NULL,
+  `display_order` INT DEFAULT 1,
+  `created_at` DATETIME DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (`image_id`),
+  KEY `blog_id` (`blog_id`),
+  CONSTRAINT `blog_image_ibfk_1` FOREIGN KEY (`blog_id`) REFERENCES `blog` (`blog_id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 CREATE TABLE `transactions` (
