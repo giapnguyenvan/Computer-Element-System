@@ -14,6 +14,9 @@ import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import dal.MenuItemDAO;
+import model.MenuItem;
+import java.util.List;
 
 /**
  *
@@ -37,6 +40,10 @@ public class HomePageServlet extends HttpServlet {
         try {
             ProductDAO dao = new ProductDAO();
             Vector<Products> plist = dao.getAllProduct();
+            
+            // Lấy menu động
+            List<MenuItem> menuItems = MenuItemDAO.getAllMenuItems();
+            request.setAttribute("menuItems", menuItems);
             
             // Add debug information
             System.out.println("Number of products loaded: " + (plist != null ? plist.size() : 0));

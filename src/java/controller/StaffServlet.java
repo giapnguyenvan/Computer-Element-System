@@ -8,6 +8,9 @@ import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 import model.User;
 import java.io.IOException;
+import dal.MenuItemDAO;
+import model.MenuItem;
+import java.util.List;
 
 @WebServlet(name = "StaffServlet", urlPatterns = {"/staffservlet"})
 public class StaffServlet extends HttpServlet {
@@ -30,6 +33,10 @@ public class StaffServlet extends HttpServlet {
             response.sendRedirect(request.getContextPath() + "/homepageservlet");
             return;
         }
+        
+        // Lấy menu động
+        List<MenuItem> menuItems = MenuItemDAO.getAllMenuItems();
+        request.setAttribute("menuItems", menuItems);
         
         // Forward to staff dashboard
         request.getRequestDispatcher("staffDashboard.jsp").forward(request, response);

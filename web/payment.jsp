@@ -381,195 +381,194 @@
         <!-- Include Header -->
         <jsp:include page="footer.jsp"/>
 
-        <!-- Scripts -->
-        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
-
+        <!-- Bootstrap JS -->
+        <!-- Đã được load trong header.jsp -->
+        
         <script>
-                                       // Theme Management
-                                       function switchTheme() {
-                                           const themeSwitch = document.getElementById("themeSwitch");
-                                           const theme = themeSwitch.checked ? 'dark' : 'light';
+            // Theme Management
+            function switchTheme() {
+                const themeSwitch = document.getElementById("themeSwitch");
+                const theme = themeSwitch.checked ? 'dark' : 'light';
 
-                                           document.documentElement.setAttribute("data-bs-theme", theme);
-                                           setCookie('currentTheme', theme, 365);
+                document.documentElement.setAttribute("data-bs-theme", theme);
+                setCookie('currentTheme', theme, 365);
 
-                                           // Update icon
-                                           const icon = themeSwitch.nextElementSibling.querySelector('i');
-                                           icon.className = theme === 'dark' ? 'fas fa-sun' : 'fas fa-moon';
-                                       }
+                // Update icon
+                const icon = themeSwitch.nextElementSibling.querySelector('i');
+                icon.className = theme === 'dark' ? 'fas fa-sun' : 'fas fa-moon';
+            }
 
-                                       function initializeTheme() {
-                                           const savedTheme = getCookie('currentTheme');
-                                           const theme = savedTheme || 'light';
+            function initializeTheme() {
+                const savedTheme = getCookie('currentTheme');
+                const theme = savedTheme || 'light';
 
-                                           document.documentElement.setAttribute('data-bs-theme', theme);
-                                           document.getElementById("themeSwitch").checked = theme === 'dark';
+                document.documentElement.setAttribute('data-bs-theme', theme);
+                document.getElementById("themeSwitch").checked = theme === 'dark';
 
-                                           const icon = document.querySelector('#themeSwitch + label i');
-                                           icon.className = theme === 'dark' ? 'fas fa-sun' : 'fas fa-moon';
-                                       }
-                                       initializeTheme();
-                                       function setCookie(name, value, days) {
-                                           const expires = new Date();
-                                           expires.setTime(expires.getTime() + (days * 24 * 60 * 60 * 1000));
-                                           document.cookie = `${name}=${value};expires=${expires.toUTCString()};path=/;SameSite=Lax`;
-                                       }
+                const icon = document.querySelector('#themeSwitch + label i');
+                icon.className = theme === 'dark' ? 'fas fa-sun' : 'fas fa-moon';
+            }
+            initializeTheme();
+            function setCookie(name, value, days) {
+                const expires = new Date();
+                expires.setTime(expires.getTime() + (days * 24 * 60 * 60 * 1000));
+                document.cookie = `${name}=${value};expires=${expires.toUTCString()};path=/;SameSite=Lax`;
+            }
 
-                                       function getCookie(name) {
-                                           const nameEQ = name + "=";
-                                           const ca = document.cookie.split(';');
-                                           for (let i = 0; i < ca.length; i++) {
-                                               let c = ca[i];
-                                               while (c.charAt(0) === ' ')
-                                                   c = c.substring(1, c.length);
-                                               if (c.indexOf(nameEQ) === 0)
-                                                   return c.substring(nameEQ.length, c.length);
-                                           }
-                                           return null;
-                                       }
+            function getCookie(name) {
+                const nameEQ = name + "=";
+                const ca = document.cookie.split(';');
+                for (let i = 0; i < ca.length; i++) {
+                    let c = ca[i];
+                    while (c.charAt(0) === ' ')
+                        c = c.substring(1, c.length);
+                    if (c.indexOf(nameEQ) === 0)
+                        return c.substring(nameEQ.length, c.length);
+                }
+                return null;
+            }
 
-                                       // Payment Status Management
-                                       let paymentCheckInterval;
+            // Payment Status Management
+            let paymentCheckInterval;
 
-                                       function updatePaymentStatus(status, message) {
-                                           const indicator = document.getElementById('statusIndicator');
-                                           const qrCode = document.getElementById('qrCode');
-                                           // Đảm bảo className luôn có status-indicator và trạng thái
-                                           indicator.className = `status-indicator ${status}`;
-                                           switch (status) {
-                                               case 'success':
-                                                   indicator.innerHTML = '<i class="fas fa-check me-1"></i>' + message;
-                                                   qrCode.classList.remove('pulse');
-                                                   break;
-                                               case 'error':
-                                                   indicator.innerHTML = '<i class="fas fa-times me-1"></i>' + message;
-                                                   qrCode.classList.remove('pulse');
-                                                   break;
-                                               case 'processing':
-                                                   indicator.innerHTML = '<i class="fas fa-spinner fa-spin me-1"></i>' + message;
-                                                   qrCode.classList.add('pulse');
-                                                   break;
-                                               case 'pending':
-                                                   indicator.innerHTML = '<i class="fas fa-clock me-1"></i>' + message;
-                                                   qrCode.classList.add('pulse');
-                                                   break;
-                                               default:
-                                                   indicator.innerHTML = message;
-                                                   qrCode.classList.add('pulse');
-                                           }
-                                       }
+            function updatePaymentStatus(status, message) {
+                const indicator = document.getElementById('statusIndicator');
+                const qrCode = document.getElementById('qrCode');
+                // Đảm bảo className luôn có status-indicator và trạng thái
+                indicator.className = `status-indicator ${status}`;
+                switch (status) {
+                    case 'success':
+                        indicator.innerHTML = '<i class="fas fa-check me-1"></i>' + message;
+                        qrCode.classList.remove('pulse');
+                        break;
+                    case 'error':
+                        indicator.innerHTML = '<i class="fas fa-times me-1"></i>' + message;
+                        qrCode.classList.remove('pulse');
+                        break;
+                    case 'processing':
+                        indicator.innerHTML = '<i class="fas fa-spinner fa-spin me-1"></i>' + message;
+                        qrCode.classList.add('pulse');
+                        break;
+                    case 'pending':
+                        indicator.innerHTML = '<i class="fas fa-clock me-1"></i>' + message;
+                        qrCode.classList.add('pulse');
+                        break;
+                    default:
+                        indicator.innerHTML = message;
+                        qrCode.classList.add('pulse');
+                }
+            }
 
-                                       // Payment Processing
-                                       async function checkPaymentStatus(amount) {
-                                           try {
-                                               const response = await fetch('/CES/payment-servlet', {
-                                                   method: 'POST',
-                                                   headers: {
-                                                       'Content-Type': 'application/json',
-                                                   },
-                                                   body: JSON.stringify({
-                                                       transactionCode: '${transaction.transactionCode}',
-                                                       amount: amount
-                                                   })
-                                               });
+            // Payment Processing
+            async function checkPaymentStatus(amount) {
+                try {
+                    const response = await fetch('/CES/payment-servlet', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify({
+                            transactionCode: '${transaction.transactionCode}',
+                            amount: amount
+                        })
+                    });
 
-                                               if (response.ok) {
-                                                   const data = await response.json();
+                    if (response.ok) {
+                        const data = await response.json();
 
-                                                   if (data.status === 200) {
-                                                       updatePaymentStatus('success', 'Thanh toán thành công!');
-                                                       clearInterval(paymentCheckInterval);
+                        if (data.status === 200) {
+                            updatePaymentStatus('success', 'Thanh toán thành công!');
+                            clearInterval(paymentCheckInterval);
 
-                                                       setTimeout(() => {
-                                                           window.location = '/CES/homepageservlet';
-                                                       }, 2000);
-                                                   } else if (data.status !== 200) {
-                                                       updatePaymentStatus('error', 'Thanh toán thất bại');
-                                                       clearInterval(paymentCheckInterval);
-                                                   }
-                                               }
-                                           } catch (error) {
-                                               console.error('Lỗi kiểm tra thanh toán:', error);
-                                           }
-                                       }
+                            setTimeout(() => {
+                                window.location = '/CES/homepageservlet';
+                            }, 2000);
+                        } else if (data.status !== 200) {
+                            updatePaymentStatus('error', 'Thanh toán thất bại');
+                            clearInterval(paymentCheckInterval);
+                        }
+                    }
+                } catch (error) {
+                    console.error('Lỗi kiểm tra thanh toán:', error);
+                }
+            }
 
-                                       // Google Sheets Integration (Alternative approach)
-                                       async function checkGoogleSheets() {
-                                           const HEAD_URL = "https://docs.google.com/spreadsheets/d/";
-                                           const SHEET_ID = "1eBH93hAdhslmqjEsqEj2KCHVHdSjy553BZs_ZJ6ZEr4";
-                                           const GID_STRING = "gviz/tq?sheet=trans";
-                                           const sizeOfCell = 10;
-                                           try {
-                                               let sheet_range = "A2:F" + (sizeOfCell + 1);
-                                               let full_link = HEAD_URL + SHEET_ID + "/" + GID_STRING + "&range=" + sheet_range;
+            // Google Sheets Integration (Alternative approach)
+            async function checkGoogleSheets() {
+                const HEAD_URL = "https://docs.google.com/spreadsheets/d/";
+                const SHEET_ID = "1eBH93hAdhslmqjEsqEj2KCHVHdSjy553BZs_ZJ6ZEr4";
+                const GID_STRING = "gviz/tq?sheet=trans";
+                const sizeOfCell = 10;
+                try {
+                    let sheet_range = "A2:F" + (sizeOfCell + 1);
+                    let full_link = HEAD_URL + SHEET_ID + "/" + GID_STRING + "&range=" + sheet_range;
 
-                                               const response = await fetch(full_link);
-                                               const dataText = await response.text();
-                                               const data = JSON.parse(dataText.substr(47).slice(0, -2)).table.rows;
-                                               console.log(data);
-                                               if (data) {
-                                                   data.forEach(row => {
-                                                       const amount = parseFloat(row.c[2].v);
-                                                       console.log(amount);
-                                                       const description = row.c[1].v;
+                    const response = await fetch(full_link);
+                    const dataText = await response.text();
+                    const data = JSON.parse(dataText.substr(47).slice(0, -2)).table.rows;
+                    console.log(data);
+                    if (data) {
+                        data.forEach(row => {
+                            const amount = parseFloat(row.c[2].v);
+                            console.log(amount);
+                            const description = row.c[1].v;
 
-                                                       if (description === '${transaction.transactionCode}') {
-                                                           console.log("di qua day");
-                                                           if (amount >= ${transaction.totalAmount} * 0.99) {
+                            if (description === '${transaction.transactionCode}') {
+                                console.log("di qua day");
+                                if (amount >= ${transaction.totalAmount} * 0.99) {
 //                                                               updatePaymentStatus('success', 'Thanh toán thành công!');
-                                                               clearInterval(paymentCheckInterval);
-                                                               checkPaymentStatus(amount);
-                                                               setTimeout(() => {
+                                    clearInterval(paymentCheckInterval);
+                                    checkPaymentStatus(amount);
+                                    setTimeout(() => {
 //                                                                   document.getElementById('redirectForm').submit();
-                                                               }, 2000);
-                                                           }
-                                                       }
-                                                   });
-                                               }
-                                           } catch (error) {
-                                               console.error('Lỗi kiểm tra Google Sheets:', error);
-                                           }
-                                       }
+                                    }, 2000);
+                                }
+                            }
+                        });
+                    }
+                } catch (error) {
+                    console.error('Lỗi kiểm tra Google Sheets:', error);
+                }
+            }
 
-                                       // Show loading
-                                       function showLoading() {
-                                           document.getElementById('loadingSpinner').style.display = 'block';
-                                       }
+            // Show loading
+            function showLoading() {
+                document.getElementById('loadingSpinner').style.display = 'block';
+            }
 
-                                       function hideLoading() {
-                                           document.getElementById('loadingSpinner').style.display = 'none';
-                                       }
+            function hideLoading() {
+                document.getElementById('loadingSpinner').style.display = 'none';
+            }
 
-                                       // Initialize
-                                       document.addEventListener('DOMContentLoaded', function () {
-                                           initializeTheme();
-                                           updatePaymentStatus('pending', 'Chờ thanh toán');
+            // Initialize
+            document.addEventListener('DOMContentLoaded', function () {
+                initializeTheme();
+                updatePaymentStatus('pending', 'Chờ thanh toán');
 
-                                           // Start payment checking
-                                           paymentCheckInterval = setInterval(checkGoogleSheets, 3000);
+                // Start payment checking
+                paymentCheckInterval = setInterval(checkGoogleSheets, 3000);
 
-                                           // Auto-timeout after 10 minutes
-                                           setTimeout(() => {
-                                               if (paymentCheckInterval) {
-                                                   clearInterval(paymentCheckInterval);
-                                                   updatePaymentStatus('error', 'Hết thời gian thanh toán');
-                                               }
-                                           }, 600000);
-                                       });
+                // Auto-timeout after 10 minutes
+                setTimeout(() => {
+                    if (paymentCheckInterval) {
+                        clearInterval(paymentCheckInterval);
+                        updatePaymentStatus('error', 'Hết thời gian thanh toán');
+                    }
+                }, 600000);
+            });
 
-                                       // Handle page visibility change
-                                       document.addEventListener('visibilitychange', function () {
-                                           if (document.hidden) {
-                                               if (paymentCheckInterval) {
-                                                   clearInterval(paymentCheckInterval);
-                                               }
-                                           } else {
-                                               if (!paymentCheckInterval) {
-                                                   paymentCheckInterval = setInterval(checkGoogleSheets, 3000);
-                                               }
-                                           }
-                                       });
+            // Handle page visibility change
+            document.addEventListener('visibilitychange', function () {
+                if (document.hidden) {
+                    if (paymentCheckInterval) {
+                        clearInterval(paymentCheckInterval);
+                    }
+                } else {
+                    if (!paymentCheckInterval) {
+                        paymentCheckInterval = setInterval(checkGoogleSheets, 3000);
+                    }
+                }
+            });
         </script>
     </body>
 </html>

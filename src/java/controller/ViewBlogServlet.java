@@ -21,6 +21,8 @@ import model.Customer;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
+import dal.MenuItemDAO;
+import model.MenuItem;
 
 /**
  *
@@ -164,6 +166,10 @@ public class ViewBlogServlet extends HttpServlet {
             request.setAttribute("currentPage", page);
             request.setAttribute("totalPages", totalPages);
             request.setAttribute("totalBlogs", totalBlogs);
+            
+            // Lấy menu động
+            List<MenuItem> menuItems = MenuItemDAO.getAllMenuItems();
+            request.setAttribute("menuItems", menuItems);
             
             // Forward to JSP
             request.getRequestDispatcher("viewblogs.jsp").forward(request, response);
