@@ -86,7 +86,6 @@
             margin: 15px 0;
             overflow-x: auto;
             padding: 10px 0;
-            flex-wrap: wrap;
         }
         .gallery-image {
             width: 120px;
@@ -95,12 +94,9 @@
             border-radius: 5px;
             cursor: pointer;
             transition: transform 0.2s;
-            border: 2px solid transparent;
         }
         .gallery-image:hover {
             transform: scale(1.05);
-            border-color: #007bff;
-            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
         }
         .image-upload-area {
             border: 2px dashed #ddd;
@@ -150,31 +146,6 @@
         .image-alt-input {
             margin-top: 5px;
             font-size: 0.8em;
-        }
-        .modal-image-gallery {
-            background-color: #f8f9fa;
-            border-radius: 8px;
-            padding: 15px;
-            margin-bottom: 20px;
-        }
-        .modal-image-gallery h6 {
-            margin-bottom: 10px;
-            color: #495057;
-            font-weight: 600;
-        }
-        .modal-image-count {
-            background-color: #007bff;
-            color: white;
-            padding: 2px 8px;
-            border-radius: 12px;
-            font-size: 0.8em;
-            margin-left: 10px;
-        }
-        .no-images-message {
-            text-align: center;
-            color: #6c757d;
-            font-style: italic;
-            padding: 20px;
         }
     </style>
 </head>
@@ -275,8 +246,13 @@
                             </div>
                             <div class="mt-3">
                                 <button type="button" class="btn btn-sm btn-info" 
-                                        onclick="showBlogContent(this, '${fn:escapeXml(blog.title)}', '${fn:escapeXml(blog.content)}', '${fn:escapeXml(customerNames[blog.customer_id])}', '<fmt:formatDate value='${blog.created_at}' pattern='dd/MM/yyyy HH:mm'/>', ${blog.blog_id})">
-                                    <i class="fas fa-eye me-1"></i>View Details
+                                        onclick="showBlogContent(this)" 
+                                        data-title="${fn:escapeXml(blog.title)}"
+                                        data-content="${fn:escapeXml(blog.content)}"
+                                        data-author="${fn:escapeXml(customerNames[blog.customer_id])}"
+                                        data-created="<fmt:formatDate value='${blog.created_at}' pattern='dd/MM/yyyy HH:mm'/>"
+                                        data-images='${blog.images != null ? blog.images : "[]"}'>
+                                    View Details
                                 </button>
                             </div>
                         </div>
@@ -332,27 +308,17 @@
                 <div class="modal-body">
                     <div class="blog-meta mb-3">
                         <small>
-                            <i class="fas fa-user"></i> Author: <span id="modalBlogAuthor"></span><br>
-                            <i class="fas fa-calendar"></i> Created: <span id="modalBlogCreated"></span>
+                            Author: <span id="modalBlogAuthor"></span><br>
+                            Created: <span id="modalBlogCreated"></span>
                         </small>
                     </div>
                     
-                    <!-- Image Gallery Section -->
-                    <div id="modalBlogImages" class="modal-image-gallery" style="display: none;">
-                        <h6>
-                            <i class="fas fa-images"></i> Blog Images
-                            <span id="modalImageCount" class="modal-image-count"></span>
-                        </h6>
-                        <div class="image-gallery" id="modalImageGallery">
-                            <!-- Images will be loaded here -->
-                        </div>
+                    <!-- Image Gallery -->
+                    <div id="modalBlogImages" class="image-gallery" style="display: none;">
+                        <!-- Images will be loaded here -->
                     </div>
                     
-                    <!-- Blog Content -->
-                    <div class="blog-content-section">
-                        <h6><i class="fas fa-file-text"></i> Blog Content</h6>
-                        <div id="modalBlogContent" style="white-space: pre-wrap; line-height: 1.6; color: #333;"></div>
-                    </div>
+                    <div id="modalBlogContent" style="white-space: pre-wrap;"></div>
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
@@ -431,144 +397,54 @@
         </div>
     </div>
 
-    <!-- Edit Blog Modal -->
-    <div class="modal fade" id="editBlogModal" tabindex="-1">
-        <div class="modal-dialog modal-xl">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title">Edit Blog</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-                </div>
-                <form action="viewblogs" method="POST" enctype="multipart/form-data">
-                    <div class="modal-body">
-                        <input type="hidden" name="action" value="update">
-                        <input type="hidden" name="blog_id" id="edit_blog_id">
-                        <input type="hidden" name="customer_id" id="edit_customer_id">
-                        <div class="mb-3">
-                            <label class="form-label">Title:</label>
-                            <input type="text" class="form-control" name="title" id="edit_title" required>
-                        </div>
-                        <div class="mb-3">
-                            <label class="form-label">Content:</label>
-                            <textarea class="form-control" name="content" id="edit_content" rows="10" required></textarea>
-                        </div>
-                        
-                        <!-- Existing Images Section -->
-                        <div class="mb-3">
-                            <label class="form-label">Current Images</label>
-                            <div id="editCurrentImages" class="image-preview">
-                                <!-- Current images will be loaded here -->
-                            </div>
-                        </div>
-                        
-                        <!-- Add New Images Section -->
-                        <div class="mb-3">
-                            <label class="form-label">Add New Images</label>
-                            <div class="image-upload-area" id="editImageUploadArea">
-                                <i class="fas fa-cloud-upload-alt fa-2x mb-2"></i>
-                                <p class="mb-2">Drag and drop new images here or click to select</p>
-                                <input type="file" id="editImageInput" name="new_images" multiple accept="image/*" style="display: none;">
-                                <button type="button" class="btn btn-outline-primary" onclick="document.getElementById('editImageInput').click()">
-                                    Select New Images
-                                </button>
-                            </div>
-                            <div class="image-preview" id="editImagePreview"></div>
-                        </div>
-                    </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                        <button type="submit" class="btn btn-primary">Update Blog</button>
-                    </div>
-                </form>
-            </div>
-        </div>
-    </div>
-
-    <!-- My Blogs Section (cuối trang) -->
-    <c:if test="${not empty sessionScope.customerAuth}">
-        <div class="container mt-5">
-            <h4>My Blogs</h4>
-            <c:set var="myCustomerId" value="${sessionScope.customerAuth.customer_id}" />
-            <c:set var="myBlogCount" value="0" />
-            <c:forEach items="${blogList}" var="blog">
-                <c:if test="${blog.customer_id == myCustomerId}">
-                    <c:set var="myBlogCount" value="${myBlogCount + 1}" />
-                </c:if>
-            </c:forEach>
-            <c:if test="${myBlogCount == 0}">
-                <div class="alert alert-info">You have not written any blogs yet.</div>
-            </c:if>
-            <c:forEach items="${blogList}" var="blog">
-                <c:if test="${blog.customer_id == myCustomerId}">
-                    <div class="card mb-3">
-                        <div class="card-body">
-                            <h5 class="card-title">${blog.title}</h5>
-                            <p class="card-text">${fn:substring(blog.content, 0, 100)}${fn:length(blog.content) > 100 ? '...' : ''}</p>
-                            <div class="d-flex justify-content-between align-items-center">
-                                <small class="text-muted">Created: <fmt:formatDate value="${blog.created_at}" pattern="dd/MM/yyyy HH:mm"/></small>
-                                <div>
-                                    <button type="button" class="btn btn-sm btn-primary" 
-                                            onclick="editBlog(this)"
-                                            data-id="${blog.blog_id}"
-                                            data-title="${fn:escapeXml(blog.title)}"
-                                            data-content="${fn:escapeXml(blog.content)}"
-                                            data-customer-id="${blog.customer_id}"
-                                            data-images='${blog.images != null ? blog.images : "[]"}'
-                                            data-bs-toggle="modal" 
-                                            data-bs-target="#editBlogModal">
-                                        Edit
-                                    </button>
-                                    <form action="viewblogs" method="post" style="display:inline;">
-                                        <input type="hidden" name="action" value="delete" />
-                                        <input type="hidden" name="blog_id" value="${blog.blog_id}" />
-                                        <button type="submit" class="btn btn-danger btn-sm" onclick="return confirm('Are you sure you want to delete this blog?');">Delete</button>
-                                    </form>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </c:if>
-            </c:forEach>
-        </div>
-    </c:if>
-
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
     <script>
         // Global variables for image management
         let uploadedImages = [];
-        let editUploadedImages = [];
         
-        function showBlogContent(element, title, content, author, created, blogId) {
+        function showBlogContent(element) {
+            const title = element.getAttribute('data-title');
+            const content = element.getAttribute('data-content');
+            const author = element.getAttribute('data-author');
+            const created = element.getAttribute('data-created');
+            const imagesData = element.getAttribute('data-images');
+            
             document.getElementById('modalBlogTitle').textContent = title;
             document.getElementById('modalBlogContent').textContent = content;
             document.getElementById('modalBlogAuthor').textContent = author;
             document.getElementById('modalBlogCreated').textContent = created;
             
-            // Handle images - we'll load them from the server using blogId
+            // Handle images
             const imagesContainer = document.getElementById('modalBlogImages');
-            const imageGallery = document.getElementById('modalImageGallery');
-            const imageCount = document.getElementById('modalImageCount');
+            imagesContainer.innerHTML = '';
             
-            imagesContainer.style.display = 'none';
-            imageGallery.innerHTML = '';
-            
-            // For now, we'll show a placeholder message
-            // In a real implementation, you would make an AJAX call to get images
-            imageGallery.innerHTML = '<div class="no-images-message">Loading images...</div>';
-            imagesContainer.style.display = 'block';
-            imageCount.textContent = '...';
-            
-            // Simulate loading images (replace with actual AJAX call)
-            setTimeout(() => {
-                // This is where you would make an AJAX call to get images for the blog
-                // For demo purposes, we'll show a message
-                imageGallery.innerHTML = '<div class="no-images-message">Images feature is ready! Blog ID: ' + blogId + '</div>';
-                imageCount.textContent = '0';
-            }, 500);
+            if (imagesData && imagesData !== '[]') {
+                try {
+                    const images = JSON.parse(imagesData);
+                    if (images.length > 0) {
+                        images.forEach(image => {
+                            const imgElement = document.createElement('img');
+                            imgElement.src = image.image_url;
+                            imgElement.alt = image.image_alt || 'Blog image';
+                            imgElement.className = 'gallery-image';
+                            imgElement.onclick = () => openImageModal(image.image_url);
+                            imagesContainer.appendChild(imgElement);
+                        });
+                        imagesContainer.style.display = 'flex';
+                    } else {
+                        imagesContainer.style.display = 'none';
+                    }
+                } catch (e) {
+                    imagesContainer.style.display = 'none';
+                }
+            } else {
+                imagesContainer.style.display = 'none';
+            }
             
             new bootstrap.Modal(document.getElementById('blogContentModal')).show();
         }
         
-        function openImageModal(imageUrl, imageAlt) {
+        function openImageModal(imageUrl) {
             // Create a simple image modal
             const modal = document.createElement('div');
             modal.className = 'modal fade';
@@ -580,7 +456,7 @@
                             <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                         </div>
                         <div class="modal-body text-center">
-                            <img src="${imageUrl}" class="img-fluid" alt="${imageAlt || 'Blog image'}">
+                            <img src="${imageUrl}" class="img-fluid" alt="Blog image">
                         </div>
                     </div>
                 </div>
@@ -592,7 +468,7 @@
             });
         }
         
-        // Image upload handling for add blog
+        // Image upload handling
         const imageUploadArea = document.getElementById('imageUploadArea');
         const imageInput = document.getElementById('imageInput');
         const imagePreview = document.getElementById('imagePreview');
@@ -610,39 +486,14 @@
             e.preventDefault();
             imageUploadArea.classList.remove('dragover');
             const files = e.dataTransfer.files;
-            handleImageFiles(files, imagePreview, uploadedImages);
+            handleImageFiles(files);
         });
         
         imageInput.addEventListener('change', (e) => {
-            handleImageFiles(e.target.files, imagePreview, uploadedImages);
+            handleImageFiles(e.target.files);
         });
         
-        // Image upload handling for edit blog
-        const editImageUploadArea = document.getElementById('editImageUploadArea');
-        const editImageInput = document.getElementById('editImageInput');
-        const editImagePreview = document.getElementById('editImagePreview');
-        
-        editImageUploadArea.addEventListener('dragover', (e) => {
-            e.preventDefault();
-            editImageUploadArea.classList.add('dragover');
-        });
-        
-        editImageUploadArea.addEventListener('dragleave', () => {
-            editImageUploadArea.classList.remove('dragover');
-        });
-        
-        editImageUploadArea.addEventListener('drop', (e) => {
-            e.preventDefault();
-            editImageUploadArea.classList.remove('dragover');
-            const files = e.dataTransfer.files;
-            handleImageFiles(files, editImagePreview, editUploadedImages);
-        });
-        
-        editImageInput.addEventListener('change', (e) => {
-            handleImageFiles(e.target.files, editImagePreview, editUploadedImages);
-        });
-        
-        function handleImageFiles(files, previewContainer, imagesArray) {
+        function handleImageFiles(files) {
             Array.from(files).forEach((file, index) => {
                 if (file.type.startsWith('image/')) {
                     const reader = new FileReader();
@@ -651,48 +502,44 @@
                             file: file,
                             url: e.target.result,
                             alt: file.name,
-                            order: imagesArray.length + 1
+                            order: uploadedImages.length + 1
                         };
-                        imagesArray.push(imageData);
-                        displayImagePreview(imageData, previewContainer, imagesArray);
+                        uploadedImages.push(imageData);
+                        displayImagePreview(imageData);
                     };
                     reader.readAsDataURL(file);
                 }
             });
         }
         
-        function displayImagePreview(imageData, container, imagesArray) {
+        function displayImagePreview(imageData) {
             const previewItem = document.createElement('div');
             previewItem.className = 'image-preview-item';
             previewItem.innerHTML = `
                 <img src="${imageData.url}" alt="${imageData.alt}">
-                <button type="button" class="remove-btn" onclick="removeImage(${imagesArray.indexOf(imageData)}, '${container.id}')">
+                <button type="button" class="remove-btn" onclick="removeImage(${uploadedImages.indexOf(imageData)})">
                     <i class="fas fa-times"></i>
                 </button>
                 <input type="text" class="form-control image-alt-input" 
                        placeholder="Alt text" value="${imageData.alt}"
-                       onchange="updateImageAlt(${imagesArray.indexOf(imageData)}, this.value)">
+                       onchange="updateImageAlt(${uploadedImages.indexOf(imageData)}, this.value)">
             `;
-            container.appendChild(previewItem);
+            imagePreview.appendChild(previewItem);
         }
         
-        function removeImage(index, containerId) {
-            const container = document.getElementById(containerId);
-            const imagesArray = containerId === 'imagePreview' ? uploadedImages : editUploadedImages;
-            
-            imagesArray.splice(index, 1);
-            container.innerHTML = '';
+        function removeImage(index) {
+            uploadedImages.splice(index, 1);
+            imagePreview.innerHTML = '';
             
             // Redisplay remaining images
-            imagesArray.forEach(imageData => {
-                displayImagePreview(imageData, container, imagesArray);
+            uploadedImages.forEach(imageData => {
+                displayImagePreview(imageData);
             });
         }
         
         function updateImageAlt(index, altText) {
-            const imagesArray = event.target.closest('#imagePreview') ? uploadedImages : editUploadedImages;
-            if (imagesArray[index]) {
-                imagesArray[index].alt = altText;
+            if (uploadedImages[index]) {
+                uploadedImages[index].alt = altText;
             }
         }
         
@@ -749,68 +596,6 @@
             const charCount = document.getElementById('charCount');
             charCount.textContent = content.length;
         }
-
-        function editBlog(element) {
-            const id = element.getAttribute('data-id');
-            const title = element.getAttribute('data-title');
-            const content = element.getAttribute('data-content');
-            const customerId = element.getAttribute('data-customer-id');
-            const imagesData = element.getAttribute('data-images');
-            
-            document.getElementById('edit_blog_id').value = id;
-            document.getElementById('edit_title').value = title;
-            document.getElementById('edit_content').value = content;
-            document.getElementById('edit_customer_id').value = customerId;
-            
-            // Load existing images
-            const currentImagesContainer = document.getElementById('editCurrentImages');
-            currentImagesContainer.innerHTML = '';
-            editUploadedImages = [];
-            
-            if (imagesData && imagesData !== '[]') {
-                try {
-                    const images = JSON.parse(imagesData);
-                    images.forEach((image, index) => {
-                        const previewItem = document.createElement('div');
-                        previewItem.className = 'image-preview-item';
-                        previewItem.innerHTML = `
-                            <img src="${image.image_url}" alt="${image.image_alt || 'Blog image'}">
-                            <button type="button" class="remove-btn" onclick="removeExistingImage(${image.image_id})">
-                                <i class="fas fa-times"></i>
-                            </button>
-                            <input type="text" class="form-control image-alt-input" 
-                                   placeholder="Alt text" value="${image.image_alt || ''}"
-                                   onchange="updateExistingImageAlt(${image.image_id}, this.value)">
-                            <input type="hidden" name="existing_image_ids[]" value="${image.image_id}">
-                        `;
-                        currentImagesContainer.appendChild(previewItem);
-                    });
-                } catch (e) {
-                    console.error('Error parsing images data:', e);
-                }
-            }
-        }
-        
-        function removeExistingImage(imageId) {
-            // Add to a list of images to be deleted
-            const deleteInput = document.createElement('input');
-            deleteInput.type = 'hidden';
-            deleteInput.name = 'delete_image_ids[]';
-            deleteInput.value = imageId;
-            document.querySelector('#editBlogModal form').appendChild(deleteInput);
-            
-            // Remove from display
-            event.target.closest('.image-preview-item').remove();
-        }
-        
-        function updateExistingImageAlt(imageId, altText) {
-            // Update the alt text for existing image
-            const altInput = document.createElement('input');
-            altInput.type = 'hidden';
-            altInput.name = `update_image_alts[${imageId}]`;
-            altInput.value = altText;
-            document.querySelector('#editBlogModal form').appendChild(altInput);
-        }
     </script>
 </body>
-</html>
+</html> 

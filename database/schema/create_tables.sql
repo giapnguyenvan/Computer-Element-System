@@ -15,6 +15,7 @@ DROP TABLE IF EXISTS `blog`;
 DROP TABLE IF EXISTS `product`;
 DROP TABLE IF EXISTS `admin`;
 DROP TABLE IF EXISTS `staff`;
+DROP TABLE IF EXISTS `shipper`;
 DROP TABLE IF EXISTS `customer`;
 DROP TABLE IF EXISTS `model`;
 DROP TABLE IF EXISTS `series`;
@@ -61,7 +62,7 @@ CREATE TABLE `user` (
   UNIQUE KEY `username` (`username`)
 ) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
--- Create tables with dependencies
+-- Bảng phụ thuộc nhiều bảng cha
 CREATE TABLE `series` (
   `series_id` INT NOT NULL AUTO_INCREMENT,
   `brand_id` INT NOT NULL,
@@ -147,20 +148,20 @@ CREATE TABLE `cartitem` (
   CONSTRAINT `cartitem_ibfk_2` FOREIGN KEY (`product_id`) REFERENCES `product` (`product_id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=10 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
-CREATE TABLE `orders` (
-  `order_id` INT NOT NULL AUTO_INCREMENT,
-  `customer_id` INT NOT NULL,
-  `order_date` DATETIME DEFAULT CURRENT_TIMESTAMP,
-  `total_amount` DECIMAL(18,2) DEFAULT NULL,
-  `shipping_address` VARCHAR(255) DEFAULT NULL,
-  `shipping_fee` DECIMAL(10,2) DEFAULT '0.00',
-  `status` ENUM('Pending', 'Shipping', 'Completed', 'Cancel') NOT NULL DEFAULT 'Pending',
-  `payment_method_id` INT NOT NULL,
+CREATE TABLE `order` (
+  `order_id` int NOT NULL AUTO_INCREMENT,
+  `customer_id` int NOT NULL,
+  `order_date` datetime DEFAULT CURRENT_TIMESTAMP,
+  `total_amount` decimal(18,2) DEFAULT NULL,
+  `shipping_address` varchar(255) DEFAULT NULL,
+  `shipping_fee` decimal(10,2) DEFAULT '0.00',
+  `status` enum('Pending','Shipping','Completed','Cancel') NOT NULL DEFAULT 'Pending',
+  `payment_method_id` int DEFAULT NULL,
   PRIMARY KEY (`order_id`),
   KEY `customer_id` (`customer_id`),
   KEY `payment_method_id` (`payment_method_id`),
-  CONSTRAINT `orders_ibfk_1` FOREIGN KEY (`customer_id`) REFERENCES `customer` (`customer_id`),
-  CONSTRAINT `orders_ibfk_2` FOREIGN KEY (`payment_method_id`) REFERENCES `paymentmethod` (`payment_method_id`)
+  CONSTRAINT `order_ibfk_1` FOREIGN KEY (`customer_id`) REFERENCES `customer` (`customer_id`),
+  CONSTRAINT `order_ibfk_2` FOREIGN KEY (`payment_method_id`) REFERENCES `paymentmethod` (`payment_method_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 CREATE TABLE `orderdetail` (
