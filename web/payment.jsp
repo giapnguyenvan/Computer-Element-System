@@ -11,7 +11,7 @@
     <head>
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>Thanh toán khóa học - Cuz Learning</title>
+        <title>Payment</title>
         <!-- Bootstrap CSS -->
         <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
         <!-- Font Awesome -->
@@ -378,43 +378,10 @@
             </div>
         </div>
 
-        <!-- Include Header -->
+        <!-- Include Footer -->
         <jsp:include page="footer.jsp"/>
-
-        <!-- Bootstrap JS -->
-        <!-- Đã được load trong header.jsp -->
         
         <script>
-            // Theme Management
-            function switchTheme() {
-                const themeSwitch = document.getElementById("themeSwitch");
-                const theme = themeSwitch.checked ? 'dark' : 'light';
-
-                document.documentElement.setAttribute("data-bs-theme", theme);
-                setCookie('currentTheme', theme, 365);
-
-                // Update icon
-                const icon = themeSwitch.nextElementSibling.querySelector('i');
-                icon.className = theme === 'dark' ? 'fas fa-sun' : 'fas fa-moon';
-            }
-
-            function initializeTheme() {
-                const savedTheme = getCookie('currentTheme');
-                const theme = savedTheme || 'light';
-
-                document.documentElement.setAttribute('data-bs-theme', theme);
-                document.getElementById("themeSwitch").checked = theme === 'dark';
-
-                const icon = document.querySelector('#themeSwitch + label i');
-                icon.className = theme === 'dark' ? 'fas fa-sun' : 'fas fa-moon';
-            }
-            initializeTheme();
-            function setCookie(name, value, days) {
-                const expires = new Date();
-                expires.setTime(expires.getTime() + (days * 24 * 60 * 60 * 1000));
-                document.cookie = `${name}=${value};expires=${expires.toUTCString()};path=/;SameSite=Lax`;
-            }
-
             function getCookie(name) {
                 const nameEQ = name + "=";
                 const ca = document.cookie.split(';');
@@ -513,16 +480,24 @@
                             console.log(amount);
                             const description = row.c[1].v;
 
-                            if (description === '${transaction.transactionCode}') {
-                                console.log("di qua day");
-                                if (amount >= ${transaction.totalAmount} * 0.99) {
-//                                                               updatePaymentStatus('success', 'Thanh toán thành công!');
-                                    clearInterval(paymentCheckInterval);
-                                    checkPaymentStatus(amount);
-                                    setTimeout(() => {
-//                                                                   document.getElementById('redirectForm').submit();
-                                    }, 2000);
-                                }
+                            // Kiểm tra transaction code trong description
+                            var transactionCode = '${transaction.transactionCode}';
+                            var expectedAmount = ${transaction.totalAmount} * 0.99;
+                            var isValidTransaction = false;
+
+                            // Sử dụng contains để kiểm tra transaction code
+                            if (description && description.indexOf(transactionCode) !== -1) {
+                                console.log('Transaction code found in description: ' + description);
+                                console.log('Looking for transaction code: ' + transactionCode);
+                                isValidTransaction = true;
+                            }
+
+                            if (isValidTransaction && amount >= expectedAmount) {
+                                console.log('Valid transaction found! Amount: ' + amount + ', Expected: ' + expectedAmount);
+                                clearInterval(paymentCheckInterval);
+                                checkPaymentStatus(amount);
+                            } else if (isValidTransaction) {
+                                console.log('Transaction code found but amount insufficient. Amount: ' + amount + ', Expected: ' + expectedAmount);
                             }
                         });
                     }
@@ -531,20 +506,9 @@
                 }
             }
 
-            // Show loading
-            function showLoading() {
-                document.getElementById('loadingSpinner').style.display = 'block';
-            }
-
-            function hideLoading() {
-                document.getElementById('loadingSpinner').style.display = 'none';
-            }
-
             // Initialize
             document.addEventListener('DOMContentLoaded', function () {
-                initializeTheme();
                 updatePaymentStatus('pending', 'Chờ thanh toán');
-
                 // Start payment checking
                 paymentCheckInterval = setInterval(checkGoogleSheets, 3000);
 
