@@ -5,10 +5,16 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Vector;
 import model.Blog;
+import model.BlogImage;
 
 public class BlogDAO {
+    private BlogImageDAO blogImageDAO;
 
-    // Get all blogs with pagination
+    public BlogDAO() {
+        this.blogImageDAO = new BlogImageDAO();
+    }
+
+    // Get all blogs with pagination and images
     public Vector<Blog> getAllBlogs(int page, int pageSize) {
         DBContext db = DBContext.getInstance();
         Vector<Blog> listBlogs = new Vector<>();
@@ -26,6 +32,9 @@ public class BlogDAO {
                     rs.getInt("customer_id"),
                     rs.getTimestamp("created_at")
                 );
+                // Load images for this blog
+                Vector<BlogImage> images = blogImageDAO.getImagesByBlogId(b.getBlog_id());
+                b.setImages(images);
                 listBlogs.add(b);
             }
         } catch (SQLException ex) {
@@ -34,7 +43,7 @@ public class BlogDAO {
         return listBlogs;
     }
 
-    // Get blog by ID
+    // Get blog by ID with images
     public Blog getBlogById(int blogId) {
         DBContext db = DBContext.getInstance();
         String sql = "SELECT * FROM blog WHERE blog_id = ?";
@@ -43,13 +52,17 @@ public class BlogDAO {
             ptm.setInt(1, blogId);
             ResultSet rs = ptm.executeQuery();
             if (rs.next()) {
-                return new Blog(
+                Blog b = new Blog(
                     rs.getInt("blog_id"),
                     rs.getString("title"),
                     rs.getString("content"),
                     rs.getInt("customer_id"),
                     rs.getTimestamp("created_at")
                 );
+                // Load images for this blog
+                Vector<BlogImage> images = blogImageDAO.getImagesByBlogId(b.getBlog_id());
+                b.setImages(images);
+                return b;
             }
         } catch (SQLException ex) {
             ex.printStackTrace();
@@ -57,7 +70,7 @@ public class BlogDAO {
         return null;
     }
 
-    // Get blogs by customer ID
+    // Get blogs by customer ID with images
     public Vector<Blog> getBlogsByCustomer(int customerId) {
         DBContext db = DBContext.getInstance();
         Vector<Blog> listBlogs = new Vector<>();
@@ -74,6 +87,9 @@ public class BlogDAO {
                     rs.getInt("customer_id"),
                     rs.getTimestamp("created_at")
                 );
+                // Load images for this blog
+                Vector<BlogImage> images = blogImageDAO.getImagesByBlogId(b.getBlog_id());
+                b.setImages(images);
                 listBlogs.add(b);
             }
         } catch (SQLException ex) {
@@ -82,22 +98,42 @@ public class BlogDAO {
         return listBlogs;
     }
 
-    // Insert new blog
-    public void insertBlog(Blog b) {
+    // Insert new blog with images
+    public int insertBlog(Blog b) {
         DBContext db = DBContext.getInstance();
         String sql = "INSERT INTO blog (title, content, customer_id) VALUES (?, ?, ?)";
         try {
-            PreparedStatement ptm = db.getConnection().prepareStatement(sql);
+            PreparedStatement ptm = db.getConnection().prepareStatement(sql, PreparedStatement.RETURN_GENERATED_KEYS);
             ptm.setString(1, b.getTitle());
             ptm.setString(2, b.getContent());
             ptm.setInt(3, b.getCustomer_id());
             ptm.executeUpdate();
+            
+            // Get the generated blog ID
+            ResultSet rs = ptm.getGeneratedKeys();
+            if (rs.next()) {
+                int blogId = rs.getInt(1);
+                
+                // Insert images if any
+                if (b.getImages() != null && !b.getImages().isEmpty()) {
+                    for (BlogImage image : b.getImages()) {
+                        image.setBlog_id(blogId);
+                        if (image.getDisplay_order() == 0) {
+                            image.setDisplay_order(blogImageDAO.getNextDisplayOrder(blogId));
+                        }
+                        blogImageDAO.insertBlogImage(image);
+                    }
+                }
+                
+                return blogId;
+            }
         } catch (SQLException ex) {
             ex.printStackTrace();
         }
+        return -1;
     }
 
-    // Update existing blog
+    // Update existing blog with images
     public void updateBlog(Blog b) {
         DBContext db = DBContext.getInstance();
         String sql = "UPDATE blog SET title = ?, content = ? WHERE blog_id = ? AND customer_id = ?";
@@ -108,12 +144,27 @@ public class BlogDAO {
             ptm.setInt(3, b.getBlog_id());
             ptm.setInt(4, b.getCustomer_id());
             ptm.executeUpdate();
+            
+            // Update images if provided
+            if (b.getImages() != null) {
+                // Delete existing images
+                blogImageDAO.deleteAllImagesByBlogId(b.getBlog_id());
+                
+                // Insert new images
+                for (BlogImage image : b.getImages()) {
+                    image.setBlog_id(b.getBlog_id());
+                    if (image.getDisplay_order() == 0) {
+                        image.setDisplay_order(blogImageDAO.getNextDisplayOrder(b.getBlog_id()));
+                    }
+                    blogImageDAO.insertBlogImage(image);
+                }
+            }
         } catch (SQLException ex) {
             ex.printStackTrace();
         }
     }
 
-    // Delete blog
+    // Delete blog and its images
     public void deleteBlog(int blogId, int customerId) {
         DBContext db = DBContext.getInstance();
         String sql = "DELETE FROM blog WHERE blog_id = ? AND customer_id = ?";
@@ -122,6 +173,9 @@ public class BlogDAO {
             ptm.setInt(1, blogId);
             ptm.setInt(2, customerId);
             ptm.executeUpdate();
+            
+            // Delete associated images (CASCADE should handle this, but we'll do it explicitly)
+            blogImageDAO.deleteAllImagesByBlogId(blogId);
         } catch (SQLException ex) {
             ex.printStackTrace();
         }
@@ -143,7 +197,7 @@ public class BlogDAO {
         return 0;
     }
 
-    // Search blogs by title
+    // Search blogs by title with images
     public Vector<Blog> searchBlogsByTitle(String searchTerm, int page, int pageSize) {
         DBContext db = DBContext.getInstance();
         Vector<Blog> listBlogs = new Vector<>();
@@ -162,6 +216,9 @@ public class BlogDAO {
                     rs.getInt("customer_id"),
                     rs.getTimestamp("created_at")
                 );
+                // Load images for this blog
+                Vector<BlogImage> images = blogImageDAO.getImagesByBlogId(b.getBlog_id());
+                b.setImages(images);
                 listBlogs.add(b);
             }
         } catch (SQLException ex) {
@@ -179,6 +236,12 @@ public class BlogDAO {
             ptm.setInt(1, blogId);
             ptm.setInt(2, customerId);
             int affected = ptm.executeUpdate();
+            
+            if (affected > 0) {
+                // Delete associated images
+                blogImageDAO.deleteAllImagesByBlogId(blogId);
+            }
+            
             return affected > 0;
         } catch (SQLException ex) {
             ex.printStackTrace();
@@ -186,16 +249,39 @@ public class BlogDAO {
         }
     }
 
+    // Add image to blog
+    public void addImageToBlog(int blogId, String imageUrl, String imageAlt) {
+        BlogImage image = new BlogImage(0, blogId, imageUrl, imageAlt, 
+                                      blogImageDAO.getNextDisplayOrder(blogId), null);
+        blogImageDAO.insertBlogImage(image);
+    }
+
+    // Remove image from blog
+    public void removeImageFromBlog(int imageId) {
+        blogImageDAO.deleteBlogImage(imageId);
+    }
+
+    // Reorder images for a blog
+    public void reorderBlogImages(int blogId, Vector<Integer> imageIds) {
+        blogImageDAO.reorderImages(blogId, imageIds);
+    }
+
     public static void main(String[] args) {
         BlogDAO dao = new BlogDAO();
         
         System.out.println("=== Blog DAO Test Cases ===\n");
         
-        // Test 1: Insert a new blog
-        System.out.println("Test 1: Inserting a new blog");
-        Blog newBlog = new Blog(0, "Test Blog Title", "This is a test blog content", 1, null);
-        dao.insertBlog(newBlog);
-        System.out.println("Blog inserted successfully\n");
+        // Test 1: Insert a new blog with images
+        System.out.println("Test 1: Inserting a new blog with images");
+        Blog newBlog = new Blog(0, "Test Blog with Images", "This is a test blog content with images", 1, null);
+        
+        // Add some test images
+        newBlog.addImage(new BlogImage(0, 0, "/assets/images/blog/test1.jpg", "Test Image 1", 1, null));
+        newBlog.addImage(new BlogImage(0, 0, "/assets/images/blog/test2.jpg", "Test Image 2", 2, null));
+        
+        int blogId = dao.insertBlog(newBlog);
+        System.out.println("Blog inserted with ID: " + blogId);
+        System.out.println();
         
         // Test 2: Get all blogs and count
         System.out.println("Test 2: Getting all blogs (page 1, 5 items per page)");
@@ -203,7 +289,7 @@ public class BlogDAO {
         System.out.println("Total blogs in database: " + dao.getTotalBlogCount());
         System.out.println("Blogs on first page:");
         for (Blog b : blogs) {
-            System.out.println("- " + b.getTitle() + " (ID: " + b.getBlog_id() + ")");
+            System.out.println("- " + b.getTitle() + " (ID: " + b.getBlog_id() + ", Images: " + b.getImages().size() + ")");
         }
         System.out.println();
         
@@ -214,11 +300,12 @@ public class BlogDAO {
             Blog foundBlog = dao.getBlogById(testBlogId);
             if (foundBlog != null) {
                 System.out.println("Found blog: " + foundBlog.getTitle());
+                System.out.println("Number of images: " + foundBlog.getImages().size());
                 
                 // Test 4: Update blog
                 System.out.println("\nTest 4: Updating blog");
-                foundBlog.setTitle("Updated Blog Title");
-                foundBlog.setContent("This content has been updated");
+                foundBlog.setTitle("Updated Blog Title with Images");
+                foundBlog.setContent("This content has been updated with images");
                 dao.updateBlog(foundBlog);
                 
                 // Verify update
@@ -229,38 +316,21 @@ public class BlogDAO {
         }
         
         // Test 5: Get blogs by customer
-        System.out.println("Test 5: Getting blogs by customer (customer_id = 1)");
+        System.out.println("Test 5: Getting blogs by customer ID 1");
         Vector<Blog> customerBlogs = dao.getBlogsByCustomer(1);
-        System.out.println("Found " + customerBlogs.size() + " blogs for customer 1");
+        System.out.println("Customer has " + customerBlogs.size() + " blogs");
         for (Blog b : customerBlogs) {
-            System.out.println("- " + b.getTitle());
+            System.out.println("- " + b.getTitle() + " (Images: " + b.getImages().size() + ")");
         }
         System.out.println();
         
-        // Test 6: Search blogs by title
-        System.out.println("Test 6: Searching blogs with title containing 'Test'");
+        // Test 6: Search blogs
+        System.out.println("Test 6: Searching blogs by title");
         Vector<Blog> searchResults = dao.searchBlogsByTitle("Test", 1, 10);
-        System.out.println("Found " + searchResults.size() + " blogs containing 'Test'");
+        System.out.println("Found " + searchResults.size() + " blogs matching 'Test'");
         for (Blog b : searchResults) {
-            System.out.println("- " + b.getTitle());
+            System.out.println("- " + b.getTitle() + " (Images: " + b.getImages().size() + ")");
         }
         System.out.println();
-        
-        // Test 7: Delete a blog (if we have search results)
-        if (!searchResults.isEmpty()) {
-            System.out.println("Test 7: Deleting a blog");
-            Blog blogToDelete = searchResults.get(0);
-            dao.deleteBlog(blogToDelete.getBlog_id(), blogToDelete.getCustomer_id());
-            
-            // Verify deletion
-            Blog deletedBlog = dao.getBlogById(blogToDelete.getBlog_id());
-            if (deletedBlog == null) {
-                System.out.println("Blog successfully deleted");
-            } else {
-                System.out.println("Blog deletion failed");
-            }
-        }
-        
-        System.out.println("\n=== Test Cases Completed ===");
     }
 } 

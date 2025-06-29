@@ -1,6 +1,7 @@
 package controller;
 
 import dal.CustomerDAO;
+import dal.MenuItemDAO;
 import java.io.IOException;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
@@ -10,6 +11,8 @@ import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 import java.sql.SQLException;
 import model.Customer;
+import model.MenuItem;
+import java.util.List;
 
 /**
  *
@@ -54,6 +57,10 @@ public class UserProfileServlet extends HttpServlet {
         try {
             String content = "profile.jsp"; // Default content
             String activePage = "profile";  // Default active page
+
+            // Lấy menu động
+            List<MenuItem> menuItems = MenuItemDAO.getAllMenuItems();
+            request.setAttribute("menuItems", menuItems);
 
             switch (action) {
                 case "profile": {

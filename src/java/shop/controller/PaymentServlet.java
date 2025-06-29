@@ -23,6 +23,9 @@ import shop.entities.Order;
 import shop.entities.OrderDetail;
 import shop.entities.Transaction;
 import shop.utils.ResponseUtils;
+import dal.MenuItemDAO;
+import model.MenuItem;
+import java.util.List;
 
 /**
  *
@@ -96,6 +99,11 @@ public class PaymentServlet extends HttpServlet {
             }
             request.setAttribute("order", order);
             request.setAttribute("transaction", transaction);
+            
+            // Lấy menu động
+            List<MenuItem> menuItems = MenuItemDAO.getAllMenuItems();
+            request.setAttribute("menuItems", menuItems);
+            
             request.getRequestDispatcher("payment.jsp").forward(request, response);
 
         } catch (Exception e) {

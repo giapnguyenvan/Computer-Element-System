@@ -11,7 +11,7 @@
     <head>
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>Thanh toán khóa học - Cuz Learning</title>
+        <title>Payment</title>
         <!-- Bootstrap CSS -->
         <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
         <!-- Font Awesome -->
@@ -378,198 +378,182 @@
             </div>
         </div>
 
-        <!-- Include Header -->
+        <!-- Include Footer -->
         <jsp:include page="footer.jsp"/>
-
-        <!-- Scripts -->
-        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
-
+        
         <script>
-                                       // Theme Management
-                                       function switchTheme() {
-                                           const themeSwitch = document.getElementById("themeSwitch");
-                                           const theme = themeSwitch.checked ? 'dark' : 'light';
+            function getCookie(name) {
+                const nameEQ = name + "=";
+                const ca = document.cookie.split(';');
+                for (let i = 0; i < ca.length; i++) {
+                    let c = ca[i];
+                    while (c.charAt(0) === ' ')
+                        c = c.substring(1, c.length);
+                    if (c.indexOf(nameEQ) === 0)
+                        return c.substring(nameEQ.length, c.length);
+                }
+                return null;
+            }
 
-                                           document.documentElement.setAttribute("data-bs-theme", theme);
-                                           setCookie('currentTheme', theme, 365);
+            // Payment Status Management
+            let paymentCheckInterval;
 
-                                           // Update icon
-                                           const icon = themeSwitch.nextElementSibling.querySelector('i');
-                                           icon.className = theme === 'dark' ? 'fas fa-sun' : 'fas fa-moon';
-                                       }
+            function updatePaymentStatus(status, message) {
+                const indicator = document.getElementById('statusIndicator');
+                const qrCode = document.getElementById('qrCode');
+                // Đảm bảo className luôn có status-indicator và trạng thái
+                indicator.className = `status-indicator ${status}`;
+                switch (status) {
+                    case 'success':
+                        indicator.innerHTML = '<i class="fas fa-check me-1"></i>' + message;
+                        qrCode.classList.remove('pulse');
+                        break;
+                    case 'error':
+                        indicator.innerHTML = '<i class="fas fa-times me-1"></i>' + message;
+                        qrCode.classList.remove('pulse');
+                        break;
+                    case 'processing':
+                        indicator.innerHTML = '<i class="fas fa-spinner fa-spin me-1"></i>' + message;
+                        qrCode.classList.add('pulse');
+                        break;
+                    case 'pending':
+                        indicator.innerHTML = '<i class="fas fa-clock me-1"></i>' + message;
+                        qrCode.classList.add('pulse');
+                        break;
+                    default:
+                        indicator.innerHTML = message;
+                        qrCode.classList.add('pulse');
+                }
+            }
 
-                                       function initializeTheme() {
-                                           const savedTheme = getCookie('currentTheme');
-                                           const theme = savedTheme || 'light';
+            // Payment Processing
+            async function checkPaymentStatus(amount) {
+                try {
+                    const response = await fetch('/CES/payment-servlet', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify({
+                            transactionCode: '${transaction.transactionCode}',
+                            amount: amount
+                        })
+                    });
 
-                                           document.documentElement.setAttribute('data-bs-theme', theme);
-                                           document.getElementById("themeSwitch").checked = theme === 'dark';
+                    if (response.ok) {
+                        const data = await response.json();
 
-                                           const icon = document.querySelector('#themeSwitch + label i');
-                                           icon.className = theme === 'dark' ? 'fas fa-sun' : 'fas fa-moon';
-                                       }
-                                       initializeTheme();
-                                       function setCookie(name, value, days) {
-                                           const expires = new Date();
-                                           expires.setTime(expires.getTime() + (days * 24 * 60 * 60 * 1000));
-                                           document.cookie = `${name}=${value};expires=${expires.toUTCString()};path=/;SameSite=Lax`;
-                                       }
+                        if (data.status === 200) {
+                            updatePaymentStatus('success', 'Thanh toán thành công!');
+                            clearInterval(paymentCheckInterval);
 
-                                       function getCookie(name) {
-                                           const nameEQ = name + "=";
-                                           const ca = document.cookie.split(';');
-                                           for (let i = 0; i < ca.length; i++) {
-                                               let c = ca[i];
-                                               while (c.charAt(0) === ' ')
-                                                   c = c.substring(1, c.length);
-                                               if (c.indexOf(nameEQ) === 0)
-                                                   return c.substring(nameEQ.length, c.length);
-                                           }
-                                           return null;
-                                       }
+                            setTimeout(() => {
+                                window.location = '/CES/homepageservlet';
+                            }, 2000);
+                        } else if (data.status !== 200) {
+                            updatePaymentStatus('error', 'Thanh toán thất bại');
+                            clearInterval(paymentCheckInterval);
+                        }
+                    }
+                } catch (error) {
+                    console.error('Lỗi kiểm tra thanh toán:', error);
+                }
+            }
 
-                                       // Payment Status Management
-                                       let paymentCheckInterval;
+            // Google Sheets Integration (Alternative approach)
+            async function checkGoogleSheets() {
+                const HEAD_URL = "https://docs.google.com/spreadsheets/d/";
+                const SHEET_ID = "1eBH93hAdhslmqjEsqEj2KCHVHdSjy553BZs_ZJ6ZEr4";
+                const GID_STRING = "gviz/tq?sheet=trans";
+                const sizeOfCell = 10;
+                try {
+                    let sheet_range = "A2:F" + (sizeOfCell + 1);
+                    let full_link = HEAD_URL + SHEET_ID + "/" + GID_STRING + "&range=" + sheet_range;
 
-                                       function updatePaymentStatus(status, message) {
-                                           const indicator = document.getElementById('statusIndicator');
-                                           const qrCode = document.getElementById('qrCode');
-                                           // Đảm bảo className luôn có status-indicator và trạng thái
-                                           indicator.className = `status-indicator ${status}`;
-                                           switch (status) {
-                                               case 'success':
-                                                   indicator.innerHTML = '<i class="fas fa-check me-1"></i>' + message;
-                                                   qrCode.classList.remove('pulse');
-                                                   break;
-                                               case 'error':
-                                                   indicator.innerHTML = '<i class="fas fa-times me-1"></i>' + message;
-                                                   qrCode.classList.remove('pulse');
-                                                   break;
-                                               case 'processing':
-                                                   indicator.innerHTML = '<i class="fas fa-spinner fa-spin me-1"></i>' + message;
-                                                   qrCode.classList.add('pulse');
-                                                   break;
-                                               case 'pending':
-                                                   indicator.innerHTML = '<i class="fas fa-clock me-1"></i>' + message;
-                                                   qrCode.classList.add('pulse');
-                                                   break;
-                                               default:
-                                                   indicator.innerHTML = message;
-                                                   qrCode.classList.add('pulse');
-                                           }
-                                       }
+                    const response = await fetch(full_link);
+                    const dataText = await response.text();
+                    const data = JSON.parse(dataText.substr(47).slice(0, -2)).table.rows;
+                    console.log(data);
+                    if (data) {
+                        data.forEach(row => {
+                            const amount = parseFloat(row.c[2].v);
+                            console.log(amount);
+                            const description = row.c[1].v;
 
-                                       // Payment Processing
-                                       async function checkPaymentStatus(amount) {
-                                           try {
-                                               const response = await fetch('/CES/payment-servlet', {
-                                                   method: 'POST',
-                                                   headers: {
-                                                       'Content-Type': 'application/json',
-                                                   },
-                                                   body: JSON.stringify({
-                                                       transactionCode: '${transaction.transactionCode}',
-                                                       amount: amount
-                                                   })
-                                               });
+                            // Tách description thành từng từ và kiểm tra
+                            var transactionCode = '${transaction.transactionCode}';
+                            var expectedAmount = ${transaction.totalAmount} * 0.99;
+                            var isValidTransaction = false;
 
-                                               if (response.ok) {
-                                                   const data = await response.json();
+                            if (description) {
+                                // Tách description thành mảng các từ (split by space)
+                                var words = description.split(' ');
+                                console.log('Description words: ' + words.join(', '));
+                                console.log('Looking for transaction code: ' + transactionCode);
+                                
+                                // Kiểm tra từng từ xem có match với transaction code không
+                                for (var i = 0; i < words.length; i++) {
+                                    if (words[i] === transactionCode) {
+                                        console.log('Found exact match at word ' + i + ': ' + words[i]);
+                                        isValidTransaction = true;
+                                        break;
+                                    }
+                                    // Kiểm tra contains (nếu transaction code nằm trong từ đó)
+                                    if (words[i].indexOf(transactionCode) !== -1) {
+                                        console.log('Found partial match at word ' + i + ': ' + words[i]);
+                                        isValidTransaction = true;
+                                        break;
+                                    }
+                                }
+                                
+                                // Nếu không tìm thấy trong các từ riêng lẻ, thử check toàn bộ description
+                                if (!isValidTransaction && description.indexOf(transactionCode) !== -1) {
+                                    console.log('Found in full description: ' + description);
+                                    isValidTransaction = true;
+                                }
+                            }
 
-                                                   if (data.status === 200) {
-                                                       updatePaymentStatus('success', 'Thanh toán thành công!');
-                                                       clearInterval(paymentCheckInterval);
+                            if (isValidTransaction && amount >= expectedAmount) {
+                                console.log('Valid transaction found! Amount: ' + amount + ', Expected: ' + expectedAmount);
+                                clearInterval(paymentCheckInterval);
+                                checkPaymentStatus(amount);
+                            } else if (isValidTransaction) {
+                                console.log('Transaction code found but amount insufficient. Amount: ' + amount + ', Expected: ' + expectedAmount);
+                            }
+                        });
+                    }
+                } catch (error) {
+                    console.error('Lỗi kiểm tra Google Sheets:', error);
+                }
+            }
 
-                                                       setTimeout(() => {
-                                                           window.location = '/CES/homepageservlet';
-                                                       }, 2000);
-                                                   } else if (data.status !== 200) {
-                                                       updatePaymentStatus('error', 'Thanh toán thất bại');
-                                                       clearInterval(paymentCheckInterval);
-                                                   }
-                                               }
-                                           } catch (error) {
-                                               console.error('Lỗi kiểm tra thanh toán:', error);
-                                           }
-                                       }
+            // Initialize
+            document.addEventListener('DOMContentLoaded', function () {
+                updatePaymentStatus('pending', 'Chờ thanh toán');
+                // Start payment checking
+                paymentCheckInterval = setInterval(checkGoogleSheets, 3000);
 
-                                       // Google Sheets Integration (Alternative approach)
-                                       async function checkGoogleSheets() {
-                                           const HEAD_URL = "https://docs.google.com/spreadsheets/d/";
-                                           const SHEET_ID = "1eBH93hAdhslmqjEsqEj2KCHVHdSjy553BZs_ZJ6ZEr4";
-                                           const GID_STRING = "gviz/tq?sheet=trans";
-                                           const sizeOfCell = 10;
-                                           try {
-                                               let sheet_range = "A2:F" + (sizeOfCell + 1);
-                                               let full_link = HEAD_URL + SHEET_ID + "/" + GID_STRING + "&range=" + sheet_range;
+                // Auto-timeout after 10 minutes
+                setTimeout(() => {
+                    if (paymentCheckInterval) {
+                        clearInterval(paymentCheckInterval);
+                        updatePaymentStatus('error', 'Hết thời gian thanh toán');
+                    }
+                }, 600000);
+            });
 
-                                               const response = await fetch(full_link);
-                                               const dataText = await response.text();
-                                               const data = JSON.parse(dataText.substr(47).slice(0, -2)).table.rows;
-                                               console.log(data);
-                                               if (data) {
-                                                   data.forEach(row => {
-                                                       const amount = parseFloat(row.c[2].v);
-                                                       console.log(amount);
-                                                       const description = row.c[1].v;
-
-                                                       if (description === '${transaction.transactionCode}') {
-                                                           console.log("di qua day");
-                                                           if (amount >= ${transaction.totalAmount} * 0.99) {
-//                                                               updatePaymentStatus('success', 'Thanh toán thành công!');
-                                                               clearInterval(paymentCheckInterval);
-                                                               checkPaymentStatus(amount);
-                                                               setTimeout(() => {
-//                                                                   document.getElementById('redirectForm').submit();
-                                                               }, 2000);
-                                                           }
-                                                       }
-                                                   });
-                                               }
-                                           } catch (error) {
-                                               console.error('Lỗi kiểm tra Google Sheets:', error);
-                                           }
-                                       }
-
-                                       // Show loading
-                                       function showLoading() {
-                                           document.getElementById('loadingSpinner').style.display = 'block';
-                                       }
-
-                                       function hideLoading() {
-                                           document.getElementById('loadingSpinner').style.display = 'none';
-                                       }
-
-                                       // Initialize
-                                       document.addEventListener('DOMContentLoaded', function () {
-                                           initializeTheme();
-                                           updatePaymentStatus('pending', 'Chờ thanh toán');
-
-                                           // Start payment checking
-                                           paymentCheckInterval = setInterval(checkGoogleSheets, 3000);
-
-                                           // Auto-timeout after 10 minutes
-                                           setTimeout(() => {
-                                               if (paymentCheckInterval) {
-                                                   clearInterval(paymentCheckInterval);
-                                                   updatePaymentStatus('error', 'Hết thời gian thanh toán');
-                                               }
-                                           }, 600000);
-                                       });
-
-                                       // Handle page visibility change
-                                       document.addEventListener('visibilitychange', function () {
-                                           if (document.hidden) {
-                                               if (paymentCheckInterval) {
-                                                   clearInterval(paymentCheckInterval);
-                                               }
-                                           } else {
-                                               if (!paymentCheckInterval) {
-                                                   paymentCheckInterval = setInterval(checkGoogleSheets, 3000);
-                                               }
-                                           }
-                                       });
+            // Handle page visibility change
+            document.addEventListener('visibilitychange', function () {
+                if (document.hidden) {
+                    if (paymentCheckInterval) {
+                        clearInterval(paymentCheckInterval);
+                    }
+                } else {
+                    if (!paymentCheckInterval) {
+                        paymentCheckInterval = setInterval(checkGoogleSheets, 3000);
+                    }
+                }
+            });
         </script>
     </body>
 </html>

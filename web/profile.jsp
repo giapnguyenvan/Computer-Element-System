@@ -7,5 +7,6 @@
         <p><strong>Email:</strong> ${data.email}</p>
         <p><strong>Số điện thoại:</strong> ${data.phone}</p>
         <p><strong>Địa chỉ giao hàng:</strong> ${data.shipping_address}</p>
-    </div>
+        <button>Submit</button>
+    </div>               
 </div>
