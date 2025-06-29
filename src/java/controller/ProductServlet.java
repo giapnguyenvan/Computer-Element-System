@@ -39,6 +39,7 @@ public class ProductServlet extends HttpServlet {
     public void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         response.setContentType("text/html;charset=UTF-8");
+        
         String service = request.getParameter("service");
         String sortBy = request.getParameter("sortBy");
         String order = request.getParameter("order");

@@ -145,9 +145,6 @@
         <!-- Footer -->
         <jsp:include page="footer.jsp"/>
 
-        <!-- Bootstrap JS -->
-        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-
         <!-- Initialize Bootstrap Components -->
         <script>
             // Function to initialize dropdowns

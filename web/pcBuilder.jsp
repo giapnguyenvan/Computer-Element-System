@@ -312,325 +312,317 @@
                 <div class="row equal-height">
                     <!-- Sidebar Megamenu -->
                     <div class="col-md-3 sidebar mb-4 mb-md-0">
-                        <ul class="sidebar-menu">
-                            <li class="menu-item has-submenu">
-                                <a href="#"><i class="fas fa-laptop fa-fw me-2"></i> Laptop</a>
-                                <div class="submenu">
-                                    <div class="submenu-col">
-                                        <h6>Thương hiệu</h6>
-                                        <ul>
-                                            <li><a href="#">ASUS</a></li>
-                                            <li><a href="#">DELL</a></li>
-                                            <li><a href="#">HP</a></li>
-                                        </ul>
+                        <div class="sidebar-section mb-4">
+                            <h5 class="mb-3">Build Case PC</h5>
+                            <ul class="sidebar-menu">
+                                <li class="menu-item has-submenu">
+                                    <a href="#"><i class="fas fa-microchip fa-fw me-2"></i> CPU</a>
+                                    <div class="submenu">
+                                        <div class="submenu-col">
+                                            <h6>Brand</h6>
+                                            <ul>
+                                                <li><a href="#">Intel</a></li>
+                                                <li><a href="#">AMD</a></li>
+                                            </ul>
+                                        </div>
+                                        <div class="submenu-col">
+                                            <h6>Type</h6>
+                                            <ul>
+                                                <li><a href="#">Desktop</a></li>
+                                                <li><a href="#">Workstation</a></li>
+                                            </ul>
+                                        </div>
                                     </div>
-                                    <div class="submenu-col">
-                                        <h6>Loại sản phẩm</h6>
-                                        <ul>
-                                            <li><a href="#">Ultrabook</a></li>
-                                            <li><a href="#">Gaming</a></li>
-                                        </ul>
+                                </li>
+                                <li class="menu-item has-submenu">
+                                    <a href="#"><i class="fas fa-microchip fa-fw me-2"></i> Mainboard</a>
+                                    <div class="submenu">
+                                        <div class="submenu-col">
+                                            <h6>Brand</h6>
+                                            <ul>
+                                                <li><a href="#">ASUS</a></li>
+                                                <li><a href="#">MSI</a></li>
+                                                <li><a href="#">Gigabyte</a></li>
+                                            </ul>
+                                        </div>
+                                        <div class="submenu-col">
+                                            <h6>Type</h6>
+                                            <ul>
+                                                <li><a href="#">ATX</a></li>
+                                                <li><a href="#">Micro ATX</a></li>
+                                                <li><a href="#">Mini ITX</a></li>
+                                            </ul>
+                                        </div>
                                     </div>
-                                </div>
-                            </li>
-                            <li class="menu-item has-submenu">
-                                <a href="#"><i class="fas fa-gamepad fa-fw me-2"></i> Laptop Gaming</a>
-                                <div class="submenu">
-                                    <div class="submenu-col">
-                                        <h6>Thương hiệu</h6>
-                                        <ul>
-                                            <li><a href="#">MSI</a></li>
-                                            <li><a href="#">Acer</a></li>
-                                        </ul>
+                                </li>
+                                <li class="menu-item has-submenu">
+                                    <a href="#"><i class="fas fa-memory fa-fw me-2"></i> RAM</a>
+                                    <div class="submenu">
+                                        <div class="submenu-col">
+                                            <h6>Brand</h6>
+                                            <ul>
+                                                <li><a href="#">Corsair</a></li>
+                                                <li><a href="#">Kingston</a></li>
+                                            </ul>
+                                        </div>
+                                        <div class="submenu-col">
+                                            <h6>Type</h6>
+                                            <ul>
+                                                <li><a href="#">DDR4</a></li>
+                                                <li><a href="#">DDR5</a></li>
+                                            </ul>
+                                        </div>
                                     </div>
-                                    <div class="submenu-col">
-                                        <h6>Loại sản phẩm</h6>
-                                        <ul>
-                                            <li><a href="#">RTX Series</a></li>
-                                            <li><a href="#">GTX Series</a></li>
-                                        </ul>
+                                </li>
+                                <li class="menu-item has-submenu">
+                                    <a href="#"><i class="fas fa-video fa-fw me-2"></i> GPU</a>
+                                    <div class="submenu">
+                                        <div class="submenu-col">
+                                            <h6>Brand</h6>
+                                            <ul>
+                                                <li><a href="#">NVIDIA</a></li>
+                                                <li><a href="#">AMD</a></li>
+                                            </ul>
+                                        </div>
+                                        <div class="submenu-col">
+                                            <h6>Type</h6>
+                                            <ul>
+                                                <li><a href="#">RTX Series</a></li>
+                                                <li><a href="#">GTX Series</a></li>
+                                            </ul>
+                                        </div>
                                     </div>
-                                </div>
-                            </li>
-                            <li class="menu-item has-submenu">
-                                <a href="#"><i class="fas fa-desktop fa-fw me-2"></i> PC GVN</a>
-                                <div class="submenu">
-                                    <div class="submenu-col">
-                                        <h6>Thương hiệu</h6>
-                                        <ul>
-                                            <li><a href="#">GVN</a></li>
-                                            <li><a href="#">Custom</a></li>
-                                        </ul>
+                                </li>
+                                <li class="menu-item has-submenu">
+                                    <a href="#"><i class="fas fa-hdd fa-fw me-2"></i> Storage</a>
+                                    <div class="submenu">
+                                        <div class="submenu-col">
+                                            <h6>Type</h6>
+                                            <ul>
+                                                <li><a href="#">SSD</a></li>
+                                                <li><a href="#">HDD</a></li>
+                                            </ul>
+                                        </div>
+                                        <div class="submenu-col">
+                                            <h6>Brand</h6>
+                                            <ul>
+                                                <li><a href="#">Samsung</a></li>
+                                                <li><a href="#">Western Digital</a></li>
+                                            </ul>
+                                        </div>
                                     </div>
-                                    <div class="submenu-col">
-                                        <h6>Loại sản phẩm</h6>
-                                        <ul>
-                                            <li><a href="#">PC Gaming</a></li>
-                                            <li><a href="#">PC Văn phòng</a></li>
-                                        </ul>
+                                </li>
+                                <li class="menu-item has-submenu">
+                                    <a href="#"><i class="fas fa-server fa-fw me-2"></i> PSU</a>
+                                    <div class="submenu">
+                                        <div class="submenu-col">
+                                            <h6>Brand</h6>
+                                            <ul>
+                                                <li><a href="#">Corsair</a></li>
+                                                <li><a href="#">Cooler Master</a></li>
+                                            </ul>
+                                        </div>
+                                        <div class="submenu-col">
+                                            <h6>Type</h6>
+                                            <ul>
+                                                <li><a href="#">Modular</a></li>
+                                                <li><a href="#">Non-Modular</a></li>
+                                            </ul>
+                                        </div>
                                     </div>
-                                </div>
-                            </li>
-                            <li class="menu-item has-submenu">
-                                <a href="#"><i class="fas fa-microchip fa-fw me-2"></i> Main, CPU, VGA</a>
-                                <div class="submenu">
-                                    <div class="submenu-col">
-                                        <h6>Thương hiệu</h6>
-                                        <ul>
-                                            <li><a href="#">Intel</a></li>
-                                            <li><a href="#">AMD</a></li>
-                                            <li><a href="#">ASUS</a></li>
-                                        </ul>
+                                </li>
+                                <li class="menu-item has-submenu">
+                                    <a href="#"><i class="fas fa-desktop fa-fw me-2"></i> Case</a>
+                                    <div class="submenu">
+                                        <div class="submenu-col">
+                                            <h6>Brand</h6>
+                                            <ul>
+                                                <li><a href="#">NZXT</a></li>
+                                                <li><a href="#">Corsair</a></li>
+                                            </ul>
+                                        </div>
+                                        <div class="submenu-col">
+                                            <h6>Type</h6>
+                                            <ul>
+                                                <li><a href="#">Mid Tower</a></li>
+                                                <li><a href="#">Full Tower</a></li>
+                                            </ul>
+                                        </div>
                                     </div>
-                                    <div class="submenu-col">
-                                        <h6>Loại sản phẩm</h6>
-                                        <ul>
-                                            <li><a href="#">Mainboard</a></li>
-                                            <li><a href="#">CPU</a></li>
-                                            <li><a href="#">VGA</a></li>
-                                        </ul>
+                                </li>
+                                <li class="menu-item has-submenu">
+                                    <a href="#"><i class="fas fa-fan fa-fw me-2"></i> Cooler</a>
+                                    <div class="submenu">
+                                        <div class="submenu-col">
+                                            <h6>Brand</h6>
+                                            <ul>
+                                                <li><a href="#">Corsair</a></li>
+                                                <li><a href="#">Cooler Master</a></li>
+                                            </ul>
+                                        </div>
+                                        <div class="submenu-col">
+                                            <h6>Type</h6>
+                                            <ul>
+                                                <li><a href="#">Air Cooler</a></li>
+                                                <li><a href="#">Liquid Cooler</a></li>
+                                            </ul>
+                                        </div>
                                     </div>
-                                </div>
-                            </li>
-                            <li class="menu-item has-submenu">
-                                <a href="#"><i class="fas fa-server fa-fw me-2"></i> Case, Nguồn, Tản</a>
-                                <div class="submenu">
-                                    <div class="submenu-col">
-                                        <h6>Thương hiệu</h6>
-                                        <ul>
-                                            <li><a href="#">Corsair</a></li>
-                                            <li><a href="#">Cooler Master</a></li>
-                                        </ul>
+                                </li>
+                            </ul>
+                        </div>
+                        <div class="sidebar-section">
+                            <h5 class="mb-3">Accessories</h5>
+                            <ul class="sidebar-menu">
+                                <li class="menu-item has-submenu">
+                                    <a href="#"><i class="fas fa-mouse fa-fw me-2"></i> Mouse</a>
+                                    <div class="submenu">
+                                        <div class="submenu-col">
+                                            <h6>Brand</h6>
+                                            <ul>
+                                                <li><a href="#">Logitech</a></li>
+                                                <li><a href="#">Razer</a></li>
+                                            </ul>
+                                        </div>
+                                        <div class="submenu-col">
+                                            <h6>Type</h6>
+                                            <ul>
+                                                <li><a href="#">Gaming Mouse</a></li>
+                                                <li><a href="#">Wireless Mouse</a></li>
+                                            </ul>
+                                        </div>
                                     </div>
-                                    <div class="submenu-col">
-                                        <h6>Loại sản phẩm</h6>
-                                        <ul>
-                                            <li><a href="#">Case</a></li>
-                                            <li><a href="#">Nguồn</a></li>
-                                            <li><a href="#">Tản nhiệt</a></li>
-                                        </ul>
+                                </li>
+                                <li class="menu-item has-submenu">
+                                    <a href="#"><i class="fas fa-keyboard fa-fw me-2"></i> Keyboard</a>
+                                    <div class="submenu">
+                                        <div class="submenu-col">
+                                            <h6>Brand</h6>
+                                            <ul>
+                                                <li><a href="#">DareU</a></li>
+                                                <li><a href="#">Logitech</a></li>
+                                            </ul>
+                                        </div>
+                                        <div class="submenu-col">
+                                            <h6>Type</h6>
+                                            <ul>
+                                                <li><a href="#">Mechanical</a></li>
+                                                <li><a href="#">Wireless</a></li>
+                                            </ul>
+                                        </div>
                                     </div>
-                                </div>
-                            </li>
-                            <li class="menu-item has-submenu">
-                                <a href="#"><i class="fas fa-memory fa-fw me-2"></i> Ổ cứng, RAM, Thẻ nhớ</a>
-                                <div class="submenu">
-                                    <div class="submenu-col">
-                                        <h6>Thương hiệu</h6>
-                                        <ul>
-                                            <li><a href="#">Samsung</a></li>
-                                            <li><a href="#">Kingston</a></li>
-                                        </ul>
+                                </li>
+                                <li class="menu-item has-submenu">
+                                    <a href="#"><i class="fas fa-headphones fa-fw me-2"></i> Headphone</a>
+                                    <div class="submenu">
+                                        <div class="submenu-col">
+                                            <h6>Brand</h6>
+                                            <ul>
+                                                <li><a href="#">HyperX</a></li>
+                                                <li><a href="#">Sony</a></li>
+                                            </ul>
+                                        </div>
+                                        <div class="submenu-col">
+                                            <h6>Type</h6>
+                                            <ul>
+                                                <li><a href="#">Gaming</a></li>
+                                                <li><a href="#">Bluetooth</a></li>
+                                            </ul>
+                                        </div>
                                     </div>
-                                    <div class="submenu-col">
-                                        <h6>Loại sản phẩm</h6>
-                                        <ul>
-                                            <li><a href="#">SSD</a></li>
-                                            <li><a href="#">HDD</a></li>
-                                            <li><a href="#">RAM</a></li>
-                                            <li><a href="#">Thẻ nhớ</a></li>
-                                        </ul>
+                                </li>
+                                <li class="menu-item has-submenu">
+                                    <a href="#"><i class="fas fa-tv fa-fw me-2"></i> Monitor</a>
+                                    <div class="submenu">
+                                        <div class="submenu-col">
+                                            <h6>Brand</h6>
+                                            <ul>
+                                                <li><a href="#">LG</a></li>
+                                                <li><a href="#">Samsung</a></li>
+                                            </ul>
+                                        </div>
+                                        <div class="submenu-col">
+                                            <h6>Type</h6>
+                                            <ul>
+                                                <li><a href="#">Gaming</a></li>
+                                                <li><a href="#">Graphic Design</a></li>
+                                            </ul>
+                                        </div>
                                     </div>
-                                </div>
-                            </li>
-                            <li class="menu-item has-submenu">
-                                <a href="#"><i class="fas fa-volume-up fa-fw me-2"></i> Loa, Micro, Webcam</a>
-                                <div class="submenu">
-                                    <div class="submenu-col">
-                                        <h6>Thương hiệu</h6>
-                                        <ul>
-                                            <li><a href="#">Logitech</a></li>
-                                            <li><a href="#">Razer</a></li>
-                                        </ul>
+                                </li>
+                                <li class="menu-item has-submenu">
+                                    <a href="#"><i class="fas fa-chair fa-fw me-2"></i> Chair & Desk</a>
+                                    <div class="submenu">
+                                        <div class="submenu-col">
+                                            <h6>Brand</h6>
+                                            <ul>
+                                                <li><a href="#">E-Dra</a></li>
+                                                <li><a href="#">DXRacer</a></li>
+                                            </ul>
+                                        </div>
+                                        <div class="submenu-col">
+                                            <h6>Type</h6>
+                                            <ul>
+                                                <li><a href="#">Gaming Chair</a></li>
+                                                <li><a href="#">Gaming Desk</a></li>
+                                            </ul>
+                                        </div>
                                     </div>
-                                    <div class="submenu-col">
-                                        <h6>Loại sản phẩm</h6>
-                                        <ul>
-                                            <li><a href="#">Loa</a></li>
-                                            <li><a href="#">Micro</a></li>
-                                            <li><a href="#">Webcam</a></li>
-                                        </ul>
-                                    </div>
-                                </div>
-                            </li>
-                            <li class="menu-item has-submenu">
-                                <a href="#"><i class="fas fa-tv fa-fw me-2"></i> Màn hình</a>
-                                <div class="submenu">
-                                    <div class="submenu-col">
-                                        <h6>Thương hiệu</h6>
-                                        <ul>
-                                            <li><a href="#">LG</a></li>
-                                            <li><a href="#">Samsung</a></li>
-                                        </ul>
-                                    </div>
-                                    <div class="submenu-col">
-                                        <h6>Loại sản phẩm</h6>
-                                        <ul>
-                                            <li><a href="#">Gaming</a></li>
-                                            <li><a href="#">Đồ họa</a></li>
-                                        </ul>
-                                    </div>
-                                </div>
-                            </li>
-                            <li class="menu-item has-submenu">
-                                <a href="#"><i class="fas fa-keyboard fa-fw me-2"></i> Bàn phím</a>
-                                <div class="submenu">
-                                    <div class="submenu-col">
-                                        <h6>Thương hiệu</h6>
-                                        <ul>
-                                            <li><a href="#">DareU</a></li>
-                                            <li><a href="#">Logitech</a></li>
-                                        </ul>
-                                    </div>
-                                    <div class="submenu-col">
-                                        <h6>Loại sản phẩm</h6>
-                                        <ul>
-                                            <li><a href="#">Cơ</a></li>
-                                            <li><a href="#">Không dây</a></li>
-                                        </ul>
-                                    </div>
-                                </div>
-                            </li>
-                            <li class="menu-item has-submenu">
-                                <a href="#"><i class="fas fa-mouse fa-fw me-2"></i> Chuột + Lót chuột</a>
-                                <div class="submenu">
-                                    <div class="submenu-col">
-                                        <h6>Thương hiệu</h6>
-                                        <ul>
-                                            <li><a href="#">Razer</a></li>
-                                            <li><a href="#">Logitech</a></li>
-                                        </ul>
-                                    </div>
-                                    <div class="submenu-col">
-                                        <h6>Loại sản phẩm</h6>
-                                        <ul>
-                                            <li><a href="#">Chuột gaming</a></li>
-                                            <li><a href="#">Lót chuột</a></li>
-                                        </ul>
-                                    </div>
-                                </div>
-                            </li>
-                            <li class="menu-item has-submenu">
-                                <a href="#"><i class="fas fa-headphones fa-fw me-2"></i> Tai Nghe</a>
-                                <div class="submenu">
-                                    <div class="submenu-col">
-                                        <h6>Thương hiệu</h6>
-                                        <ul>
-                                            <li><a href="#">HyperX</a></li>
-                                            <li><a href="#">Sony</a></li>
-                                        </ul>
-                                    </div>
-                                    <div class="submenu-col">
-                                        <h6>Loại sản phẩm</h6>
-                                        <ul>
-                                            <li><a href="#">Gaming</a></li>
-                                            <li><a href="#">Bluetooth</a></li>
-                                        </ul>
-                                    </div>
-                                </div>
-                            </li>
-                            <li class="menu-item has-submenu">
-                                <a href="#"><i class="fas fa-chair fa-fw me-2"></i> Ghế - Bàn</a>
-                                <div class="submenu">
-                                    <div class="submenu-col">
-                                        <h6>Thương hiệu</h6>
-                                        <ul>
-                                            <li><a href="#">E-Dra</a></li>
-                                            <li><a href="#">DXRacer</a></li>
-                                        </ul>
-                                    </div>
-                                    <div class="submenu-col">
-                                        <h6>Loại sản phẩm</h6>
-                                        <ul>
-                                            <li><a href="#">Ghế gaming</a></li>
-                                            <li><a href="#">Bàn gaming</a></li>
-                                        </ul>
-                                    </div>
-                                </div>
-                            </li>
-                            <li class="menu-item has-submenu">
-                                <a href="#"><i class="fas fa-network-wired fa-fw me-2"></i> Phần mềm, mạng</a>
-                                <div class="submenu">
-                                    <div class="submenu-col">
-                                        <h6>Thương hiệu</h6>
-                                        <ul>
-                                            <li><a href="#">Microsoft</a></li>
-                                            <li><a href="#">Kaspersky</a></li>
-                                        </ul>
-                                    </div>
-                                    <div class="submenu-col">
-                                        <h6>Loại sản phẩm</h6>
-                                        <ul>
-                                            <li><a href="#">Phần mềm bản quyền</a></li>
-                                            <li><a href="#">Thiết bị mạng</a></li>
-                                        </ul>
-                                    </div>
-                                </div>
-                            </li>
-                            <li class="menu-item has-submenu">
-                                <a href="#"><i class="fas fa-gamepad fa-fw me-2"></i> Handheld, Console</a>
-                                <div class="submenu">
-                                    <div class="submenu-col">
-                                        <h6>Thương hiệu</h6>
-                                        <ul>
-                                            <li><a href="#">Sony</a></li>
-                                            <li><a href="#">Nintendo</a></li>
-                                        </ul>
-                                    </div>
-                                    <div class="submenu-col">
-                                        <h6>Loại sản phẩm</h6>
-                                        <ul>
-                                            <li><a href="#">PlayStation</a></li>
-                                            <li><a href="#">Switch</a></li>
-                                        </ul>
-                                    </div>
-                                </div>
-                            </li>
-                            <li class="menu-item has-submenu">
-                                <a href="#"><i class="fas fa-plug fa-fw me-2"></i> Phụ kiện (Hub, sạc, cáp...)</a>
-                                <div class="submenu">
-                                    <div class="submenu-col">
-                                        <h6>Thương hiệu</h6>
-                                        <ul>
-                                            <li><a href="#">Anker</a></li>
-                                            <li><a href="#">Ugreen</a></li>
-                                        </ul>
-                                    </div>
-                                    <div class="submenu-col">
-                                        <h6>Loại sản phẩm</h6>
-                                        <ul>
-                                            <li><a href="#">Hub</a></li>
-                                            <li><a href="#">Sạc</a></li>
-                                            <li><a href="#">Cáp</a></li>
-                                        </ul>
-                                    </div>
-                                </div>
-                            </li>
-                            <li class="menu-item has-submenu">
-                                <a href="#"><i class="fas fa-info-circle fa-fw me-2"></i> Dịch vụ và thông tin khác</a>
-                                <div class="submenu">
-                                    <div class="submenu-col">
-                                        <h6>Dịch vụ</h6>
-                                        <ul>
-                                            <li><a href="#">Bảo hành</a></li>
-                                            <li><a href="#">Lắp đặt</a></li>
-                                        </ul>
-                                    </div>
-                                    <div class="submenu-col">
-                                        <h6>Thông tin</h6>
-                                        <ul>
-                                            <li><a href="#">Tin tức</a></li>
-                                            <li><a href="#">Khuyến mãi</a></li>
-                                        </ul>
-                                    </div>
-                                </div>
-                            </li>
-                        </ul>
+                                </li>
+                            </ul>
+                        </div>
                     </div>
                     <!-- Content chọn linh kiện -->
                     <div class="col-md-9 content-col">
                         <div class="pc-builder-bg component-card text-center p-4 mb-4" style="position: relative;">
-                            <div class="bg-overlay"></div>
+                            <div class="bg-overlay" style="background: none; position: static; z-index: auto; height: auto; width: auto;">
+                                <!-- Build Case PC Progress Tracker -->
+                                <div class="container py-3">
+                                    <div class="row justify-content-center">
+                                        <div class="col-12">
+                                            <div class="progress-tracker mb-3">
+                                                <ul class="progress-steps d-flex flex-wrap justify-content-center list-unstyled mb-0" style="gap: 18px;">
+                                                    <li class="step" id="step-cpu">
+                                                        <span class="step-label">CPU</span>
+                                                        <div class="step-selected" id="selected-cpu" style="font-size:0.95em;color:#0d6efd;"></div>
+                                                    </li>
+                                                    <li class="step" id="step-mainboard">
+                                                        <span class="step-label">Mainboard</span>
+                                                        <div class="step-selected" id="selected-mainboard"></div>
+                                                    </li>
+                                                    <li class="step" id="step-ram">
+                                                        <span class="step-label">RAM</span>
+                                                        <div class="step-selected" id="selected-ram"></div>
+                                                    </li>
+                                                    <li class="step" id="step-gpu">
+                                                        <span class="step-label">GPU</span>
+                                                        <div class="step-selected" id="selected-gpu"></div>
+                                                    </li>
+                                                    <li class="step" id="step-storage">
+                                                        <span class="step-label">Storage</span>
+                                                        <div class="step-selected" id="selected-storage"></div>
+                                                    </li>
+                                                    <li class="step" id="step-psu">
+                                                        <span class="step-label">PSU</span>
+                                                        <div class="step-selected" id="selected-psu"></div>
+                                                    </li>
+                                                    <li class="step" id="step-case">
+                                                        <span class="step-label">Case</span>
+                                                        <div class="step-selected" id="selected-case"></div>
+                                                    </li>
+                                                    <li class="step" id="step-cooler">
+                                                        <span class="step-label">Cooler</span>
+                                                        <div class="step-selected" id="selected-cooler"></div>
+                                                    </li>
+                                                </ul>
+                                            </div>
+                                            <div class="progress" style="height: 8px;">
+                                                <div class="progress-bar bg-primary" id="build-progress-bar" role="progressbar" style="width: 0%;" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100"></div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
                             <h2 class="mb-3 position-relative">Chào mừng đến với PC Builder!</h2>
                             <p class="lead position-relative">Hãy chọn các linh kiện phù hợp hoặc khám phá các chương trình khuyến mại hấp dẫn của chúng tôi.</p>
                             <div class="component-card promotion-card d-flex flex-column flex-md-row align-items-center p-4 mb-4" style="background: transparent; box-shadow: none;">
@@ -644,6 +636,8 @@
                                     <a href="PromotionDetailServlet?id=1" class="btn btn-primary">Xem chi tiết khuyến mại</a>
                                 </div>
                             </div>
+                            <!-- Vùng hiển thị sản phẩm động -->
+                            <div id="productList" class="mt-4"></div>
                         </div>
                     </div>
                 </div>
@@ -654,7 +648,6 @@
             </div>
         </div>
         <jsp:include page="footer.jsp"/>
-        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
         <script>
             // Add JavaScript to calculate total price when components are selected
             document.querySelectorAll('select').forEach(select => {
@@ -733,6 +726,53 @@
                     });
                 });
             }
+            // Hiển thị sản phẩm khi bấm submenu (giống GearVN)
+            const typeMap = {
+                "CPU": 1,
+                "GPU": 2,
+                "Mainboard": 3,
+                "RAM": 4
+                // Thêm các loại khác nếu có
+            };
+            document.querySelectorAll('.submenu-col ul li a').forEach(link => {
+                link.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    const subCategory = this.textContent.trim();
+                    console.log('Đã click vào:', subCategory);
+                    const typeId = typeMap[subCategory];
+                    if (typeId) {
+                        fetch('/Project_G2/api/products?type_id=' + typeId)
+                            .then(res => res.json())
+                            .then(products => {
+                                let html = `<h4 class=\"mb-3\">Sản phẩm: ${subCategory}</h4>`;
+                                if (products.length > 0) {
+                                    html += '<div class="row">';
+                                    products.forEach(p => {
+                                        html += `
+                                            <div class=\"col-md-4 mb-3\">
+                                                <div class=\"card\">
+                                                    <img src=\"${p.image_url || 'default.jpg'}\" class=\"card-img-top\" alt=\"${p.name}\">
+                                                    <div class=\"card-body\">
+                                                        <h5 class=\"card-title\">${p.name}</h5>
+                                                        <p class=\"card-text\">${p.price} USD</p>
+                                                        <p class=\"card-text\">${p.description || ''}</p>
+                                                        <button class=\"btn btn-primary\">Chọn mua</button>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        `;
+                                    });
+                                    html += '</div>';
+                                } else {
+                                    html += '<p>Không có sản phẩm.</p>';
+                                }
+                                document.getElementById('productList').innerHTML = html;
+                            });
+                    } else {
+                        document.getElementById('productList').innerHTML = '<p>Chưa hỗ trợ danh mục này.</p>';
+                    }
+                });
+            });
         </script>
     </body>
 </html> 

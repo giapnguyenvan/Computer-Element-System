@@ -1,17 +1,10 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
-<%@ page import="model.User" %>
+<%@ page import="model.Customer" %>
 <%
-    // Check if user is logged in and is an admin
-    User user = (User) session.getAttribute("userAuth");
-    if (user == null) {
+    Customer customer = (Customer) session.getAttribute("customerAuth");
+    if (customer == null) {
         response.sendRedirect(request.getContextPath() + "/login");
-        return;
-    }
-    
-    // Check if user is admin (không phân biệt hoa thường)
-    if (!"admin".equalsIgnoreCase(user.getRole())) {
-        response.sendRedirect(request.getContextPath() + "/homepageservlet");
         return;
     }
 %>
@@ -20,11 +13,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Admin Dashboard - Account Management</title>
+    <title>Customer Dashboard</title>
     <!-- Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <!-- Font Awesome -->
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <style>
         body {
             padding-top: 0;
@@ -37,14 +28,6 @@
             min-height: 100vh;
             background-color: #343a40;
             padding-top: 20px;
-        }
-
-        .sidebar .logo-container {
-            padding: 15px 20px;
-        }
-
-        .sidebar .logo-container h3 {
-            margin: 0;
         }
 
         .admin-profile {
@@ -125,17 +108,17 @@
     </style>
 </head>
 <body>
-    <!-- Include Header -->
+    <!-- Include Header (if needed) -->
     <jsp:include page="header.jsp" />
     
     <div class="container-fluid">
         <div class="row">
             <!-- Sidebar -->
-            <jsp:include page="sidebar.jsp" />
+            <jsp:include page="userProfileSideBar.jsp" />
             
             <!-- Main Content -->
             <div class="col-md-9 col-lg-10 main-content">
-                <iframe id="mainFrame" name="mainFrame" src="${pageContext.request.contextPath}/adminHome.jsp"></iframe>
+                <jsp:include page="${content}" />
             </div>
         </div>
     </div>
@@ -143,4 +126,4 @@
     <!-- Bootstrap JS -->
     <!-- Đã được load trong header.jsp -->
 </body>
-</html> 
+</html>
