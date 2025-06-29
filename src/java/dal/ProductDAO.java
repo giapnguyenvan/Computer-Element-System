@@ -479,6 +479,121 @@ public class ProductDAO {
         }
     }
 
+    public Vector<Products> getProductsByComponentType(int componentTypeId) {
+        DBContext db = DBContext.getInstance();
+        Vector<Products> list = new Vector<>();
+        String sql = """
+                     SELECT
+                         p.product_id,
+                         p.name,
+                         p.description,
+                         p.price,
+                         p.stock,
+                         p.status,
+                         p.import_price,
+                         p.created_at,
+                         p.component_type_id,
+                         p.brand_id,
+                         p.model_id,
+                         b.name as brand_name,
+                         ct.name as component_type_name,
+                         s.name as series_name,
+                         m.name as model_name,
+                         (SELECT image_url FROM ProductImage pi WHERE pi.product_id = p.product_id LIMIT 1) as image_url
+                     FROM
+                         Product p
+                     JOIN
+                         Brand b ON p.brand_id = b.brand_id
+                     JOIN
+                         ComponentType ct ON p.component_type_id = ct.type_id
+                     LEFT JOIN
+                         Model m ON p.model_id = m.model_id
+                     LEFT JOIN
+                         Series s ON m.series_id = s.series_id
+                     WHERE
+                         p.component_type_id = ? AND p.status = 'Active'
+                     ORDER BY
+                         b.name, s.name, m.name, p.name
+                     """;
+
+        try {
+            PreparedStatement ptm = db.getConnection().prepareStatement(sql);
+            ptm.setInt(1, componentTypeId);
+            ResultSet rs = ptm.executeQuery();
+            while (rs.next()) {
+                Products p = new Products(
+                        rs.getInt("product_id"),
+                        rs.getString("name"),
+                        rs.getInt("component_type_id"),
+                        rs.getInt("brand_id"),
+                        rs.getBigDecimal("price"),
+                        rs.getBigDecimal("import_price"),
+                        rs.getInt("stock"),
+                        rs.getString("description"),
+                        rs.getString("status"),
+                        rs.getTimestamp("created_at"),
+                        rs.getString("image_url"),
+                        rs.getString("brand_name"),
+                        rs.getString("component_type_name")
+                );
+                // Set additional series and model information
+                p.setSeriesName(rs.getString("series_name"));
+                p.setModelName(rs.getString("model_name"));
+                list.add(p);
+            }
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+        }
+        return list;
+    }
+
+    public Vector<String> getBrandsByComponentType(int componentTypeId) {
+        DBContext db = DBContext.getInstance();
+        Vector<String> brands = new Vector<>();
+        String sql = """
+                     SELECT DISTINCT b.name
+                     FROM Product p
+                     JOIN Brand b ON p.brand_id = b.brand_id
+                     WHERE p.component_type_id = ? AND p.status = 'Active'
+                     ORDER BY b.name
+                     """;
+        try {
+            PreparedStatement ptm = db.getConnection().prepareStatement(sql);
+            ptm.setInt(1, componentTypeId);
+            ResultSet rs = ptm.executeQuery();
+            while (rs.next()) {
+                brands.add(rs.getString("name"));
+            }
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+        }
+        return brands;
+    }
+
+    public Vector<String> getSeriesByComponentType(int componentTypeId) {
+        DBContext db = DBContext.getInstance();
+        Vector<String> series = new Vector<>();
+        String sql = """
+                     SELECT DISTINCT s.name
+                     FROM Product p
+                     LEFT JOIN Model m ON p.model_id = m.model_id
+                     LEFT JOIN Series s ON m.series_id = s.series_id
+                     WHERE p.component_type_id = ? AND p.status = 'Active' AND s.name IS NOT NULL
+                     ORDER BY s.name
+                     """;
+        try {
+            PreparedStatement ptm = db.getConnection().prepareStatement(sql);
+            ptm.setInt(1, componentTypeId);
+            ResultSet rs = ptm.executeQuery();
+            while (rs.next()) {
+                series.add(rs.getString("name"));
+            }
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+        }
+        return series;
+    }
+
     public static void main(String[] args) {
         ProductDAO dao = new ProductDAO();
         Vector<Products> list = dao.getAllProduct();
