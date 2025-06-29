@@ -116,200 +116,177 @@
 
         <!-- Custom JavaScript -->
         <script>
-            // Function to load page content using AJAX
-            function loadGPUPage(pageNumber) {
-                // Prevent loading if it's a disabled button or current page
-                const currentPage = parseInt(document.querySelector('#gpuPaginationContainer .page-item.active .page-link').textContent);
-                if (pageNumber === currentPage || 
-                    document.querySelector('#gpuPaginationContainer .page-item.disabled .page-link[onclick*="loadGPUPage(' + pageNumber + ')"]')) {
-                    return;
-                }
+                                // Function to load page content using AJAX
+                                function loadGPUPage(pageNumber) {
+                                    // Prevent loading if it's a disabled button or current page
+                                    const currentPage = parseInt(document.querySelector('#gpuPaginationContainer .page-item.active .page-link').textContent);
+                                    if (pageNumber === currentPage ||
+                                            document.querySelector('#gpuPaginationContainer .page-item.disabled .page-link[onclick*="loadGPUPage(' + pageNumber + ')"]')) {
+                                        return;
+                                    }
 
-                // Show loading indicator
-                const productsContainer = document.getElementById('gpuProductsContainer');
-                productsContainer.style.opacity = '0.5';
+                                    // Show loading indicator
+                                    const productsContainer = document.getElementById('gpuProductsContainer');
+                                    productsContainer.style.opacity = '0.5';
 
-                fetch('${pageContext.request.contextPath}/GPUCategoryServlet?page=' + pageNumber, {
-                    method: 'GET',
-                    headers: {
-                        'X-Requested-With': 'XMLHttpRequest'
-                    }
-                })
-                .then(response => {
-                    if (!response.ok) {
-                        throw new Error('Network response was not ok');
-                    }
-                    return response.text();
-                })
-                .then(html => {
-                    // Create a temporary container
-                    const temp = document.createElement('div');
-                    temp.innerHTML = html;
+                                    fetch('${pageContext.request.contextPath}/GPUCategoryServlet?page=' + pageNumber, {
+                                        method: 'GET',
+                                        headers: {
+                                            'X-Requested-With': 'XMLHttpRequest'
+                                        }
+                                    })
+                                            .then(response => {
+                                                if (!response.ok) {
+                                                    throw new Error('Network response was not ok');
+                                                }
+                                                return response.text();
+                                            })
+                                            .then(html => {
+                                                // Create a temporary container
+                                                const temp = document.createElement('div');
+                                                temp.innerHTML = html;
 
-                    // Update products
-                    const newProducts = temp.querySelector('#gpuProductsContainer');
-                    if (newProducts) {
-                        productsContainer.innerHTML = newProducts.innerHTML;
-                    }
+                                                // Update products
+                                                const newProducts = temp.querySelector('#gpuProductsContainer');
+                                                if (newProducts) {
+                                                    productsContainer.innerHTML = newProducts.innerHTML;
+                                                }
 
-                    // Update pagination
-                    const newPagination = temp.querySelector('#gpuPaginationContainer');
-                    if (newPagination) {
-                        document.getElementById('gpuPaginationContainer').innerHTML = newPagination.innerHTML;
-                    }
+                                                // Update pagination
+                                                const newPagination = temp.querySelector('#gpuPaginationContainer');
+                                                if (newPagination) {
+                                                    document.getElementById('gpuPaginationContainer').innerHTML = newPagination.innerHTML;
+                                                }
 
-                    // Update active states
-                    document.querySelectorAll('#gpuPaginationContainer .page-item').forEach(item => {
-                        item.classList.remove('active');
-                    });
-                    const activePageLink = document.querySelector('#gpuPaginationContainer .page-link[onclick*="loadGPUPage(' + pageNumber + ')"]');
-                    if (activePageLink) {
-                        activePageLink.parentElement.classList.add('active');
-                    }
+                                                // Update active states
+                                                document.querySelectorAll('#gpuPaginationContainer .page-item').forEach(item => {
+                                                    item.classList.remove('active');
+                                                });
+                                                const activePageLink = document.querySelector('#gpuPaginationContainer .page-link[onclick*="loadGPUPage(' + pageNumber + ')"]');
+                                                if (activePageLink) {
+                                                    activePageLink.parentElement.classList.add('active');
+                                                }
 
-                    // Restore opacity
-                    productsContainer.style.opacity = '1';
+                                                // Restore opacity
+                                                productsContainer.style.opacity = '1';
 
-                    // Reinitialize event handlers if needed
-                    initializeGPUEventHandlers();
-                })
-                .catch(error => {
-                    console.error('Error loading page:', error);
-                    Swal.fire({
-                        icon: 'error',
-                        title: 'Error',
-                        text: 'Failed to load page. Please try again.'
-                    });
-                    // Restore opacity
-                    productsContainer.style.opacity = '1';
-                });
-            }
+                                                // Reinitialize event handlers if needed
+                                                initializeGPUEventHandlers();
+                                            })
+                                            .catch(error => {
+                                                console.error('Error loading page:', error);
+                                                Swal.fire({
+                                                    icon: 'error',
+                                                    title: 'Error',
+                                                    text: 'Failed to load page. Please try again.'
+                                                });
+                                                // Restore opacity
+                                                productsContainer.style.opacity = '1';
+                                            });
+                                }
 
-            // Function to initialize event handlers
-            function initializeGPUEventHandlers() {
-                // Add any event handlers that need to be reinitialized after content update
-                document.querySelectorAll('#gpuProductsContainer .add-to-cart-btn').forEach(button => {
-                    const productId = button.id.replace('addBtn_', '');
-                    const productName = button.closest('.product-card').querySelector('.product-title').textContent;
-                    const productPrice = button.closest('.product-card').querySelector('.product-price').textContent;
-                    
-                    button.onclick = () => addToCart(productId, productName, productPrice);
-                });
-            }
+                                // Function to initialize event handlers
+                                function initializeGPUEventHandlers() {
+                                    // Add any event handlers that need to be reinitialized after content update
+                                    document.querySelectorAll('#gpuProductsContainer .add-to-cart-btn').forEach(button => {
+                                        const productId = button.id.replace('addBtn_', '');
+                                        const productName = button.closest('.product-card').querySelector('.product-title').textContent;
+                                        const productPrice = button.closest('.product-card').querySelector('.product-price').textContent;
 
-            // Initialize event handlers on page load
-            document.addEventListener('DOMContentLoaded', initializeGPUEventHandlers);
+                                        button.onclick = () => addToCart(productId, productName, productPrice);
+                                    });
+                                }
 
-            // Global variables
-            let currentUserId = 0;
-            
-            // Get current user ID from session
-            <c:choose>
-                <c:when test="${not empty sessionScope.customerAuth}">
-                    currentUserId = ${sessionScope.customerAuth.customer_id};
-                </c:when>
-                <c:when test="${not empty sessionScope.userAuth}">
-                    currentUserId = ${sessionScope.userAuth.id};
-                </c:when>
-                <c:otherwise>
-                    currentUserId = 0;
-                </c:otherwise>
-            </c:choose>
+                                // Initialize event handlers on page load
+                                document.addEventListener('DOMContentLoaded', initializeGPUEventHandlers);
 
-            async function addToCart(productId, productName, productPrice) {
-                // Check if user is logged in
-                if (currentUserId === 0) {
-                    Swal.fire({
-                        icon: 'warning',
-                        title: 'Please Login',
-                        text: 'You need to login to add products to cart'
-                    });
-                    return;
-                }
 
-                const addButton = document.getElementById('addBtn_' + productId);
 
-                // Disable button and show loading
-                addButton.disabled = true;
-                addButton.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Adding...';
+                                async function addToCart(productId, productName, productPrice) {
 
-                try {
-                    const response = await fetch('${pageContext.request.contextPath}/CartApiServlet', {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json'
-                        },
-                        body: JSON.stringify({
-                            customerId: currentUserId,
-                            productId: productId,
-                            quantity: 1
-                        })
-                    });
+                                    const addButton = document.getElementById('addBtn_' + productId);
 
-                    const result = await response.json();
+                                    // Disable button and show loading
+                                    addButton.disabled = true;
+                                    addButton.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Adding...';
 
-                    if (result.success) {
-                        // Show success message
-                        Swal.fire({
-                            icon: 'success',
-                            title: 'Success!',
-                            text: productName + ' has been added to your cart!',
-                            timer: 2000,
-                            showConfirmButton: false
-                        });
+                                    try {
+                                        const response = await fetch('${pageContext.request.contextPath}/CartApiServlet', {
+                                            method: 'POST',
+                                            headers: {
+                                                'Content-Type': 'application/json'
+                                            },
+                                            body: JSON.stringify({
+                                                userId: currentUserId,
+                                                productId: productId,
+                                                quantity: 1
+                                            })
+                                        });
 
-                        // Update cart count
-                        updateCartCount();
+                                        const result = await response.json();
 
-                        // Add visual feedback
-                        addButton.classList.add('btn-success');
-                        addButton.innerHTML = '<i class="fas fa-check me-2"></i>Added!';
+                                        if (result.success) {
+                                            // Show success message
+                                            Swal.fire({
+                                                icon: 'success',
+                                                title: 'Success!',
+                                                text: productName + ' has been added to your cart!',
+                                                timer: 2000,
+                                                showConfirmButton: false
+                                            });
 
-                        setTimeout(() => {
-                            addButton.classList.remove('btn-success');
-                            addButton.innerHTML = '<i class="fas fa-shopping-cart me-2"></i>Add to Cart';
-                        }, 2000);
-                    } else {
-                        throw new Error(result.message || 'Failed to add to cart');
-                    }
-                } catch (error) {
-                    console.error('Error adding to cart:', error);
-                    Swal.fire({
-                        icon: 'error',
-                        title: 'Error!',
-                        text: error.message || 'Failed to add product to cart. Please try again.'
-                    });
-                } finally {
-                    // Re-enable button
-                    addButton.disabled = false;
-                    if (!addButton.classList.contains('btn-success')) {
-                        addButton.innerHTML = '<i class="fas fa-shopping-cart me-2"></i>Add to Cart';
-                    }
-                }
-            }
+                                            // Update cart count
+                                            updateCartCount();
 
-            // Function to update cart count
-            async function updateCartCount() {
-                try {
-                    const response = await fetch('${pageContext.request.contextPath}/CartApiServlet?customerId=' + currentUserId);
-                    const result = await response.json();
+                                            // Add visual feedback
+                                            addButton.classList.add('btn-success');
+                                            addButton.innerHTML = '<i class="fas fa-check me-2"></i>Added!';
 
-                    if (result.success && result.data) {
-                        const totalItems = result.data.reduce((sum, item) => sum + item.quantity, 0);
-                        const cartCountElement = document.getElementById('cartCount');
-                        if (cartCountElement) {
-                            cartCountElement.textContent = totalItems;
-                        }
-                    }
-                } catch (error) {
-                    console.error('Error updating cart count:', error);
-                }
-            }
+                                            setTimeout(() => {
+                                                addButton.classList.remove('btn-success');
+                                                addButton.innerHTML = '<i class="fas fa-shopping-cart me-2"></i>Add to Cart';
+                                            }, 2000);
+                                        } else {
+                                            throw new Error(result.message || 'Failed to add to cart');
+                                        }
+                                    } catch (error) {
+                                        console.error('Error adding to cart:', error);
+                                        Swal.fire({
+                                            icon: 'error',
+                                            title: 'Error!',
+                                            text: error.message || 'Failed to add product to cart. Please try again.'
+                                        });
+                                    } finally {
+                                        // Re-enable button
+                                        addButton.disabled = false;
+                                        if (!addButton.classList.contains('btn-success')) {
+                                            addButton.innerHTML = '<i class="fas fa-shopping-cart me-2"></i>Add to Cart';
+                                        }
+                                    }
+                                }
 
-            // Initialize cart count on page load
-            document.addEventListener('DOMContentLoaded', function() {
-                updateCartCount();
-            });
+                                // Function to update cart count
+                                async function updateCartCount() {
+                                    try {
+                                        const response = await fetch('${pageContext.request.contextPath}/CartApiServlet?customerId=' + currentUserId);
+                                        const result = await response.json();
+
+                                        if (result.success && result.data) {
+                                            const totalItems = result.data.reduce((sum, item) => sum + item.quantity, 0);
+                                            const cartCountElement = document.getElementById('cartCount');
+                                            if (cartCountElement) {
+                                                cartCountElement.textContent = totalItems;
+                                            }
+                                        }
+                                    } catch (error) {
+                                        console.error('Error updating cart count:', error);
+                                    }
+                                }
+
+                                // Initialize cart count on page load
+                                document.addEventListener('DOMContentLoaded', function () {
+                                    updateCartCount();
+                                });
         </script>
     </body>
 </html> 
