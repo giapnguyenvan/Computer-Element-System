@@ -34,13 +34,13 @@
                 background: rgba(255, 255, 255, 0.95) !important;
                 backdrop-filter: blur(10px);
                 border-bottom: 1px solid rgba(0, 0, 0, 0.1);
-                box-shadow: var(--box-shadow);
+                box-shadow: 0 10px 25px rgba(0,0,0,0.1);
             }
 
             .navbar-brand {
                 font-weight: 700;
                 font-size: 1.5rem;
-                color: var(--primary-color) !important;
+                color: #667eea !important;
             }
 
             .window {
@@ -58,7 +58,7 @@
 
             .order-info {
                 flex: 1;
-                padding: 30px 24px 30px 24px;
+                padding: 30px 24px;
                 display: flex;
                 flex-direction: column;
                 position: relative;
@@ -72,17 +72,6 @@
                 margin-bottom: 1.5rem;
                 text-align: center;
                 text-shadow: 2px 2px 4px rgba(0,0,0,0.1);
-            }
-
-            .product-image {
-                width: 100%;
-                max-width: 400px;
-                height: 250px;
-                object-fit: cover;
-                border-radius: var(--border-radius);
-                margin: 0 auto 1.5rem;
-                display: block;
-                box-shadow: var(--box-shadow);
             }
 
             .order-details {
@@ -123,7 +112,7 @@
 
             .credit-info {
                 flex: 1;
-                padding: 30px 24px 30px 24px;
+                padding: 30px 24px;
                 display: flex;
                 flex-direction: column;
                 align-items: center;
@@ -164,36 +153,6 @@
                 margin: 0.5rem 0;
             }
 
-            .theme-switch {
-                position: relative;
-            }
-
-            .form-switch .form-check-input {
-                width: 3rem;
-                height: 1.5rem;
-                border-radius: 2rem;
-                background-color: #6c757d;
-                border: none;
-                transition: var(--transition);
-            }
-
-            .form-switch .form-check-input:checked {
-                background-color: var(--success-color);
-                border-color: var(--success-color);
-            }
-
-            .form-switch .form-check-input:focus {
-                box-shadow: 0 0 0 0.25rem rgba(16, 185, 129, 0.25);
-            }
-
-            .profile-img {
-                width: 32px;
-                height: 32px;
-                border-radius: 50%;
-                object-fit: cover;
-                border: 2px solid var(--primary-color);
-            }
-
             .loading-spinner {
                 display: none;
                 position: absolute;
@@ -206,7 +165,7 @@
             .spinner-border {
                 width: 3rem;
                 height: 3rem;
-                color: var(--primary-color);
+                color: #667eea;
             }
 
             .status-indicator {
@@ -217,22 +176,23 @@
                 border-radius: 2rem;
                 font-size: 0.875rem;
                 font-weight: 500;
-                background: #ffc107; /* vàng mặc định cho pending/processing */
+                background: #ffc107;
                 color: #212529;
             }
 
             .status-indicator.success {
-                background: #28a745; /* xanh cho thành công */
+                background: #28a745;
                 color: #fff;
             }
 
             .status-indicator.error {
-                background: #dc3545; /* đỏ cho lỗi */
+                background: #dc3545;
                 color: #fff;
             }
 
-            .status-indicator.pending, .status-indicator.processing {
-                background: #ffc107; /* vàng cho chờ thanh toán và đang xử lý */
+            .status-indicator.pending, 
+            .status-indicator.processing {
+                background: #ffc107;
                 color: #212529;
             }
 
@@ -318,6 +278,7 @@
     <body>
         <!-- Include Header -->
         <jsp:include page="header.jsp"/>
+        
         <!-- Loading Spinner -->
         <div class="loading-spinner" id="loadingSpinner">
             <div class="spinner-border" role="status">
@@ -378,9 +339,10 @@
             </div>
         </div>
 
-        <!-- Include Header -->
+        <!-- Include Footer -->
         <jsp:include page="footer.jsp"/>
 
+<<<<<<< Updated upstream
         <!-- Scripts -->
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
@@ -431,6 +393,11 @@
 
                                        // Payment Status Management
                                        let paymentCheckInterval;
+=======
+        <script>
+            // Payment Status Management
+            let paymentCheckInterval;
+>>>>>>> Stashed changes
 
                                        function updatePaymentStatus(status, message) {
                                            const indicator = document.getElementById('statusIndicator');
@@ -504,6 +471,7 @@
                                                let sheet_range = "A2:F" + (sizeOfCell + 1);
                                                let full_link = HEAD_URL + SHEET_ID + "/" + GID_STRING + "&range=" + sheet_range;
 
+<<<<<<< Updated upstream
                                                const response = await fetch(full_link);
                                                const dataText = await response.text();
                                                const data = JSON.parse(dataText.substr(47).slice(0, -2)).table.rows;
@@ -531,6 +499,63 @@
                                                console.error('Lỗi kiểm tra Google Sheets:', error);
                                            }
                                        }
+=======
+                    const response = await fetch(full_link);
+                    const dataText = await response.text();
+                    const data = JSON.parse(dataText.substr(47).slice(0, -2)).table.rows;
+                    console.log(data);
+                    if (data) {
+                        data.forEach(row => {
+                            const amount = parseFloat(row.c[2].v);
+                            console.log(amount);
+                            const description = row.c[1].v;
+                            // Tách description thành từng từ và kiểm tra
+                            var transactionCode = '${transaction.transactionCode}';
+                            var expectedAmount = ${transaction.totalAmount} * 0.99;
+                            var isValidTransaction = false;
+                            
+                            if (description) {
+                                // Tách description thành mảng các từ (split by space)
+                                var words = description.split(' ');
+                                console.log('Description words: ' + words.join(', '));
+                                console.log('Looking for transaction code: ' + transactionCode);
+                                
+                                // Kiểm tra từng từ xem có match với transaction code không
+                                for (var i = 0; i < words.length; i++) {
+                                    if (words[i] === transactionCode) {
+                                        console.log('Found exact match at word ' + i + ': ' + words[i]);
+                                        isValidTransaction = true;
+                                        break;
+                                    }
+                                    // Kiểm tra contains (nếu transaction code nằm trong từ đó)
+                                    if (words[i].indexOf(transactionCode) !== -1) {
+                                        console.log('Found partial match at word ' + i + ': ' + words[i]);
+                                        isValidTransaction = true;
+                                        break;
+                                    }
+                                }
+                                
+                                // Nếu không tìm thấy trong các từ riêng lẻ, thử check toàn bộ description
+                                if (!isValidTransaction && description.indexOf(transactionCode) !== -1) {
+                                    console.log('Found in full description: ' + description);
+                                    isValidTransaction = true;
+                                }
+                            }
+                            
+                            if (isValidTransaction && amount >= expectedAmount) {
+                                console.log('Valid transaction found! Amount: ' + amount + ', Expected: ' + expectedAmount);
+                                clearInterval(paymentCheckInterval);
+                                checkPaymentStatus(amount);
+                            } else if (isValidTransaction) {
+                                console.log('Transaction code found but amount insufficient. Amount: ' + amount + ', Expected: ' + expectedAmount);
+                            }
+                        });
+                    }
+                } catch (error) {
+                    console.error('Lỗi kiểm tra Google Sheets:', error);
+                }
+            }
+>>>>>>> Stashed changes
 
                                        // Show loading
                                        function showLoading() {
@@ -541,10 +566,16 @@
                                            document.getElementById('loadingSpinner').style.display = 'none';
                                        }
 
+<<<<<<< Updated upstream
                                        // Initialize
                                        document.addEventListener('DOMContentLoaded', function () {
                                            initializeTheme();
                                            updatePaymentStatus('pending', 'Chờ thanh toán');
+=======
+            // Initialize
+            document.addEventListener('DOMContentLoaded', function () {
+                updatePaymentStatus('pending', 'Chờ thanh toán');
+>>>>>>> Stashed changes
 
                                            // Start payment checking
                                            paymentCheckInterval = setInterval(checkGoogleSheets, 3000);
