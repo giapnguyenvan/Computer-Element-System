@@ -15,6 +15,10 @@ import dal.ProductDAO;
 import model.Products;
 import com.google.gson.Gson;
 import java.util.Vector;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import dal.DBContext;
 
 @WebServlet(name = "PCBuilderServlet", urlPatterns = {"/PCBuilderServlet"})
 public class PCBuilderServlet extends HttpServlet {
@@ -58,23 +62,31 @@ public class PCBuilderServlet extends HttpServlet {
             Vector<Products> caseProducts = productDAO.getProductsByComponentType(7); // Case
             Vector<Products> coolerProducts = productDAO.getProductsByComponentType(8); // Cooler
 
-            // Load brands and series for each component type
-            Vector<String> cpuBrands = productDAO.getBrandsByComponentType(1);
-            Vector<String> cpuSeries = productDAO.getSeriesByComponentType(1);
-            Vector<String> mainboardBrands = productDAO.getBrandsByComponentType(2);
-            Vector<String> mainboardSeries = productDAO.getSeriesByComponentType(2);
-            Vector<String> ramBrands = productDAO.getBrandsByComponentType(3);
-            Vector<String> ramSeries = productDAO.getSeriesByComponentType(3);
-            Vector<String> gpuBrands = productDAO.getBrandsByComponentType(4);
-            Vector<String> gpuSeries = productDAO.getSeriesByComponentType(4);
-            Vector<String> storageBrands = productDAO.getBrandsByComponentType(5);
-            Vector<String> storageSeries = productDAO.getSeriesByComponentType(5);
-            Vector<String> psuBrands = productDAO.getBrandsByComponentType(6);
-            Vector<String> psuSeries = productDAO.getSeriesByComponentType(6);
-            Vector<String> caseBrands = productDAO.getBrandsByComponentType(7);
-            Vector<String> caseSeries = productDAO.getSeriesByComponentType(7);
-            Vector<String> coolerBrands = productDAO.getBrandsByComponentType(8);
-            Vector<String> coolerSeries = productDAO.getSeriesByComponentType(8);
+            // Chỉ truyền brands và series cho từng component type
+            Map<String, Vector<String>> brandsMap = new HashMap<>();
+            Map<String, Vector<String>> seriesMap = new HashMap<>();
+            String[] types = {"CPU", "Mainboard", "RAM", "GPU", "Storage", "PSU", "Case", "Cooler"};
+            int[] typeIds = {1, 2, 3, 4, 5, 6, 7, 8}; // mapping đúng với DB
+            for (int i = 0; i < types.length; i++) {
+                brandsMap.put(types[i], productDAO.getBrandsByComponentType(typeIds[i]));
+                seriesMap.put(types[i], productDAO.getSeriesByComponentType(typeIds[i]));
+            }
+            request.setAttribute("brandsMap", brandsMap);
+            request.setAttribute("seriesMap", seriesMap);
+
+            // Thêm: truyền model cho từng componenttype (không còn bảng model, lấy trực tiếp từ product)
+            Map<Integer, Vector<String>> allModelMap = new HashMap<>();
+            for (int i = 1; i <= 8; i++) {
+                allModelMap.put(i, productDAO.getModelStringByComponentType(i));
+            }
+            request.setAttribute("allModelMap", allModelMap);
+
+            // Truyền series cho từng componenttype (bảng series vẫn còn)
+            Map<Integer, Vector<String>> allSeriesMap = new HashMap<>();
+            for (int i = 1; i <= 8; i++) {
+                allSeriesMap.put(i, productDAO.getSeriesByComponentType(i));
+            }
+            request.setAttribute("allSeriesMap", allSeriesMap);
 
             // Set attributes for JSP
             request.setAttribute("cpuList", cpuList);
@@ -94,24 +106,6 @@ public class PCBuilderServlet extends HttpServlet {
             request.setAttribute("caseProducts", caseProducts);
             request.setAttribute("coolerProducts", coolerProducts);
 
-            // Set brands and series attributes
-            request.setAttribute("cpuBrands", cpuBrands);
-            request.setAttribute("cpuSeries", cpuSeries);
-            request.setAttribute("mainboardBrands", mainboardBrands);
-            request.setAttribute("mainboardSeries", mainboardSeries);
-            request.setAttribute("ramBrands", ramBrands);
-            request.setAttribute("ramSeries", ramSeries);
-            request.setAttribute("gpuBrands", gpuBrands);
-            request.setAttribute("gpuSeries", gpuSeries);
-            request.setAttribute("storageBrands", storageBrands);
-            request.setAttribute("storageSeries", storageSeries);
-            request.setAttribute("psuBrands", psuBrands);
-            request.setAttribute("psuSeries", psuSeries);
-            request.setAttribute("caseBrands", caseBrands);
-            request.setAttribute("caseSeries", caseSeries);
-            request.setAttribute("coolerBrands", coolerBrands);
-            request.setAttribute("coolerSeries", coolerSeries);
-
             // Forward to PC Builder page
             request.getRequestDispatcher("pcBuilder.jsp").forward(request, response);
             
@@ -119,7 +113,9 @@ public class PCBuilderServlet extends HttpServlet {
             System.err.println("Error in PCBuilderServlet: " + e.getMessage());
             e.printStackTrace();
             request.setAttribute("error", "An error occurred while loading the PC Builder page: " + e.getMessage());
-            request.getRequestDispatcher("error.jsp").forward(request, response);
+            if (!response.isCommitted()) {
+                request.getRequestDispatcher("error.jsp").forward(request, response);
+            }
         }
     }
 

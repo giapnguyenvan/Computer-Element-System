@@ -1,110 +1,118 @@
 -- COMPONENTTYPE
 INSERT INTO componenttype (type_id, name, description) VALUES
 (1, 'CPU', 'Bộ vi xử lý'),
-(2, 'GPU', 'Card đồ họa'),
+(2, 'Mainboard', 'Bo mạch chủ'),
 (3, 'RAM', 'Bộ nhớ trong'),
-(4, 'Motherboard', 'Bo mạch chủ'),
+(4, 'GPU', 'Card đồ họa'),
 (5, 'Storage', 'Ổ cứng'),
 (6, 'PSU', 'Nguồn máy tính'),
 (7, 'Case', 'Vỏ máy tính'),
-(8, 'Cooling', 'Tản nhiệt'),
-(9, 'Peripherals', 'Thiết bị ngoại vi'),
-(10, 'Monitor', 'Màn hình');
+(8, 'Cooler', 'Tản nhiệt'),
+(9, 'Mouse', 'Chuột máy tính'),
+(10, 'Keyboard', 'Bàn phím'),
+(11, 'Headphone', 'Tai nghe'),
+(12, 'Monitor', 'Màn hình'),
+(13, 'Chair', 'Ghế'),
+(14, 'Desk', 'Bàn');
 
 -- BRAND
 INSERT INTO brand (brand_id, name) VALUES
-(1, 'Intel'),
-(2, 'AMD'),
-(3, 'NVIDIA'),
-(4, 'Corsair'),
-(5, 'G.Skill'),
-(6, 'ASUS'),
-(7, 'Gigabyte'),
-(8, 'MSI'),
-(9, 'Samsung'),
-(10, 'Western Digital'),
-(11, 'Seagate'),
-(12, 'EVGA'),
-(13, 'Thermaltake'),
-(14, 'Lian Li'),
-(15, 'Arctic'),
-(16, 'Logitech'),
-(17, 'Razer'),
-(18, 'Samsung'),
-(19, 'LG'),
-(20, 'AOC');
+(1, 'AMD'),
+(2, 'Intel'),
+(3, 'ASUS'),
+(4, 'MSI'),
+(5, 'Gigabyte'),
+(6, 'NVIDIA'),
+(7, 'Corsair'),
+(8, 'G.Skill'),
+(9, 'WD'),
+(10, 'Samsung'),
+(11, 'Noctua'),
+(12, 'Arctic'),
+(13, 'Logitech'),
+(14, 'Razer'),
+(15, 'Beyerdynamic'),
+(16, 'SteelSeries'),
+(17, 'LG'),
+(18, 'Secretlab'),
+(19, 'Herman Miller'),
+(20, 'IKEA');
 
 -- SERIES
 INSERT INTO series (series_id, brand_id, name) VALUES
-(1, 1, 'Core i5'),
-(2, 2, 'Ryzen 5'),
-(3, 3, 'RTX 30'),
-(4, 4, 'Vengeance'),
-(5, 5, 'Ripjaws'),
-(6, 6, 'ROG Strix'),
-(7, 7, 'Aorus Elite'),
-(8, 9, 'Black SN850X'),
-(9, 9, '970 EVO Plus'),
-(10, 4, 'RMx'),
-(11, 14, 'Lancool'),
-(12, 15, 'Liquid Freezer III'),
-(13, 16, 'G Pro'),
-(14, 17, 'Ornata'),
-(15, 17, 'DT 990'),
-(16, 18, 'Odyssey'),
-(17, 16, 'Titan Evo'),
-(18, 16, 'UPPSTÅ');
-
--- MODEL
-INSERT INTO model (model_id, series_id, name) VALUES
-(1, 1, '10400F'),
-(2, 1, '10600K'),
-(3, 1, '12400F'),
-(4, 1, '13700K'),
-(5, 1, '13900K'),
-(6, 2, '5600X'),
-(7, 2, '5800X'),
-(8, 3, '3060'),
-(9, 3, '3070'),
-(10, 3, '3080'),
-(11, 3, '4070'),
-(12, 4, 'LPX 8GB'),
-(13, 4, 'LPX 16GB'),
-(14, 4, 'LPX 32GB'),
-(15, 5, 'Z 16GB'),
-(16, 6, 'Z790-A'),
-(17, 6, 'B550-Plus'),
-(18, 8, 'B660M Mortar'),
-(19, 7, 'B660 DS3H'),
-(20, 6, 'A320M-K'),
-(21, 4, 'Dominator Platinum 32GB'),
-(22, 5, 'Trident Z RGB 16GB'),
-(23, 5, 'Fury Beast 8GB');
+(1, 1, 'Ryzen 9000'), -- AMD
+(2, 2, 'Core Ultra 200'), -- Intel
+(3, 3, 'ROG Strix'), -- ASUS
+(4, 5, 'Aorus Elite'), -- Gigabyte
+(5, 7, 'Vengeance'), -- Corsair
+(6, 8, 'Trident Z5'), -- G.Skill
+(7, 6, 'GeForce RTX 50'), -- NVIDIA
+(8, 4, 'Radeon RX 9000'), -- MSI
+(9, 9, 'Black SN850X'), -- WD
+(10, 10, '970 EVO Plus'), -- Samsung
+(11, 7, 'RMx'), -- Corsair
+(12, 4, 'MPG'), -- MSI
+(13, 3, 'Lancool'), -- ASUS
+(14, 5, 'Aorus C'), -- Gigabyte
+(15, 12, 'Liquid Freezer III'), -- Arctic
+(16, 11, 'NH-U'), -- Noctua
+(17, 13, 'G Pro'), -- Logitech
+(18, 14, 'DeathAdder'), -- Razer
+(19, 13, 'Ornata'), -- Logitech
+(20, 14, 'BlackWidow'), -- Razer
+(21, 15, 'DT 990'), -- Beyerdynamic
+(22, 16, 'Arctis'), -- SteelSeries
+(23, 17, 'Odyssey'), -- LG
+(24, 4, 'Optix'), -- MSI
+(25, 18, 'Titan Evo'), -- Secretlab
+(26, 19, 'Sayl'), -- Herman Miller
+(27, 20, 'UPPSTÅ'), -- IKEA
+(28, 20, 'LAGKAPTEN');
 
 -- PRODUCT
-INSERT INTO product (product_id, name, component_type_id, brand_id, model_id, price, import_price, stock, description, status, created_at) VALUES
-(1, 'Intel Core i5-10400F', 1, 1, 1, 4000000, 3500000, 10, 'CPU Intel 6 nhân 12 luồng', 'Active', NOW()),
-(2, 'Intel Core i5-10600K', 1, 1, 2, 4500000, 4000000, 5, 'CPU Intel 6 nhân 12 luồng ép xung', 'Active', NOW()),
-(3, 'Intel Core i5-12400F', 1, 1, 3, 4500000, 4000000, 50, '6-core, 12-thread, LGA1700', 'Active', NOW()),
-(4, 'Intel Core i7-13700K', 1, 1, 4, 10500000, 9250000, 30, '16-core, 24-thread, LGA1700', 'Active', NOW()),
-(5, 'Intel Core i9-13900K', 1, 1, 5, 15000000, 13000000, 10, '24-core, 32-thread, LGA1700', 'Active', NOW()),
-(6, 'AMD Ryzen 5 5600X', 1, 2, 6, 5000000, 4250000, 40, '6-core, 12-thread, AM4', 'Active', NOW()),
-(7, 'AMD Ryzen 7 5800X', 1, 2, 7, 7750000, 6750000, 25, '8-core, 16-thread, AM4', 'Active', NOW()),
-(8, 'NVIDIA RTX 3060 12GB', 2, 3, 8, 8750000, 7500000, 20, '12GB GDDR6, Ray Tracing', 'Active', NOW()),
-(9, 'NVIDIA RTX 4070 12GB', 2, 3, 11, 15500000, 13750000, 15, '12GB GDDR6X, DLSS 3', 'Active', NOW()),
-(10, 'ASUS RTX 4060 Ti Dual', 2, 6, 8, 12000000, 10500000, 18, '8GB GDDR6, Dual Fan', 'Active', NOW()),
-(11, 'AMD Radeon RX 6700 XT', 2, 2, 8, 10000000, 8750000, 12, '12GB GDDR6', 'Active', NOW()),
-(12, 'NVIDIA RTX 3080 10GB', 2, 3, 10, 21250000, 19500000, 8, '10GB GDDR6X, High-end gaming', 'Active', NOW()),
-(13, 'ASUS ROG Strix Z790-A', 4, 6, 16, 7500000, 6500000, 12, 'LGA1700, DDR5, ATX', 'Active', NOW()),
-(14, 'ASUS TUF B550-Plus', 4, 6, 17, 4000000, 3250000, 20, 'AM4, DDR4, ATX', 'Active', NOW()),
-(15, 'MSI MAG B660M Mortar', 4, 8, 18, 4500000, 3750000, 25, 'LGA1700, DDR4, mATX', 'Active', NOW()),
-(16, 'Gigabyte B660 DS3H', 4, 7, 19, 3500000, 2750000, 18, 'LGA1700, DDR4, ATX', 'Active', NOW()),
-(17, 'ASUS PRIME A320M-K', 4, 6, 20, 2000000, 1500000, 30, 'AM4, DDR4, mATX', 'Active', NOW()),
-(18, 'Corsair Vengeance LPX 8GB DDR4', 3, 4, 12, 1125000, 875000, 100, '8GB DDR4 3200MHz', 'Active', NOW()),
-(19, 'Corsair Vengeance LPX 16GB DDR4', 3, 4, 13, 2000000, 1625000, 80, '16GB DDR4 3200MHz', 'Active', NOW()),
-(20, 'G.Skill Trident Z RGB 16GB', 3, 5, 22, 2375000, 2000000, 60, '16GB DDR4 3600MHz', 'Active', NOW()),
-(21, 'Kingston Fury Beast 8GB DDR4', 3, 5, 23, 1050000, 800000, 90, '8GB DDR4 3200MHz', 'Active', NOW()),
-(22, 'Corsair Dominator Platinum 32GB', 3, 4, 21, 4500000, 3750000, 40, '32GB DDR5 5200MHz', 'Active', NOW());
+INSERT INTO product (name, component_type_id, brand_id, model, price, import_price, stock, description, status, created_at) VALUES
+('AMD Ryzen 7 9800X3D', 1, 1, '9800X3D', 480.00, 384.00, 50, '8-core CPU with 3D V-Cache', 'Active', NOW()),
+('AMD Ryzen 9 9700X', 1, 1, '9700X', 400.00, 320.00, 40, '8-core high-performance CPU', 'Active', NOW()),
+('Intel Core Ultra 7 265K', 1, 2, '265K', 400.00, 320.00, 45, 'High-clock CPU for gaming', 'Active', NOW()),
+('ASUS ROG Strix X870-F', 2, 3, 'X870-F', 350.00, 280.00, 30, 'AM5 motherboard with Wi-Fi 6E', 'Active', NOW()),
+('ASUS ROG Strix B650-E', 2, 3, 'B650-E', 300.00, 240.00, 35, 'B650 chipset with PCIe 5.0', 'Active', NOW()),
+('Gigabyte B650 Aorus Elite AX', 2, 5, 'B650 AX', 250.00, 200.00, 50, 'Budget AM5 board with Wi-Fi', 'Active', NOW()),
+('Corsair Vengeance LPX DDR5-6000 32GB', 3, 7, 'LPX DDR5-6000', 120.00, 96.00, 100, '32GB DDR5 dual-channel RAM', 'Active', NOW()),
+('Corsair Vengeance RGB DDR5-6400 32GB', 3, 7, 'RGB DDR5-6400', 140.00, 112.00, 80, 'RGB DDR5 RAM, 32GB', 'Active', NOW()),
+('G.Skill Trident Z5 DDR5-6000 32GB', 3, 8, 'Z5 DDR5-6000', 130.00, 104.00, 90, 'High-speed DDR5 with RGB', 'Active', NOW()),
+('NVIDIA GeForce RTX 5090', 4, 6, '5090', 1500.00, 1200.00, 20, 'Top-tier GPU for 4K gaming', 'Active', NOW()),
+('NVIDIA GeForce RTX 5080', 4, 6, '5080', 1000.00, 800.00, 25, 'High-end GPU for 1440p', 'Active', NOW()),
+('MSI Radeon RX 9070 XT', 4, 4, '9070 XT', 800.00, 640.00, 30, 'AMD GPU with ray tracing', 'Active', NOW()),
+('WD Black SN850X 2TB', 5, 9, '2TB', 180.00, 144.00, 80, 'High-speed M.2 SSD, 7300MB/s', 'Active', NOW()),
+('WD Black SN850X 1TB', 5, 9, '1TB', 100.00, 80.00, 100, '1TB NVMe SSD for gaming', 'Active', NOW()),
+('Samsung 970 EVO Plus 2TB', 5, 10, '2TB NVMe', 200.00, 160.00, 70, 'Reliable 2TB NVMe SSD', 'Active', NOW()),
+('Corsair RM850e 80+ Gold', 6, 7, '850e', 130.00, 104.00, 40, 'Fully modular 850W PSU', 'Active', NOW()),
+('Corsair RM1000e 80+ Gold', 6, 7, '1000e', 160.00, 128.00, 35, '1000W PSU for high-end builds', 'Active', NOW()),
+('MSI MPG A850G', 6, 4, 'A850G', 140.00, 112.00, 50, '80+ Gold PSU, modular', 'Active', NOW()),
+('ASUS Lancool 216', 7, 3, '216', 100.00, 80.00, 60, 'ATX case with excellent airflow', 'Active', NOW()),
+('ASUS Lancool 205', 7, 3, '205', 90.00, 72.00, 70, 'Mid-tower case with RGB', 'Active', NOW()),
+('Gigabyte Aorus C700', 7, 5, '700', 200.00, 160.00, 20, 'Premium ATX case', 'Active', NOW()),
+('Arctic Liquid Freezer III 360mm', 8, 12, '360mm AIO', 120.00, 96.00, 60, 'High-performance AIO cooler', 'Active', NOW()),
+('Arctic Liquid Freezer III 280mm', 8, 12, '280mm AIO', 100.00, 80.00, 65, '280mm AIO for compact builds', 'Active', NOW()),
+('Noctua NH-U12S', 8, 11, 'U12S', 50.00, 40.00, 80, 'Air cooler with low noise', 'Active', NOW()),
+('Logitech G Pro X Superlight 2', 9, 13, 'X Superlight 2', 100.00, 80.00, 70, 'Lightweight wireless mouse', 'Active', NOW()),
+('Logitech G305', 9, 13, 'G305', 50.00, 40.00, 90, 'Budget wireless gaming mouse', 'Active', NOW()),
+('Razer DeathAdder V3', 9, 14, 'V3', 80.00, 64.00, 60, 'Ergonomic wired mouse', 'Active', NOW()),
+('Razer Ornata V4 Pro', 10, 14, 'V4 Pro', 150.00, 120.00, 40, 'Hybrid mechanical keyboard', 'Active', NOW()),
+('Razer Ornata Chroma', 10, 14, 'Chroma', 100.00, 80.00, 50, 'RGB membrane keyboard', 'Active', NOW()),
+('Logitech BlackWidow V3', 10, 13, 'V3', 130.00, 104.00, 45, 'Mechanical RGB keyboard', 'Active', NOW()),
+('Beyerdynamic DT 990 Pro 250ohm', 11, 15, 'Pro 250ohm', 150.00, 120.00, 25, 'Open-back headphones', 'Active', NOW()),
+('Beyerdynamic DT 990 Edition 600ohm', 11, 15, 'Edition 600ohm', 200.00, 160.00, 20, 'Premium open-back headphones', 'Active', NOW()),
+('SteelSeries Arctis Nova Pro', 11, 16, 'Nova Pro', 250.00, 200.00, 15, 'Wireless gaming headset', 'Active', NOW()),
+('LG Odyssey 27in QHD 240Hz', 12, 17, '27in QHD 240Hz', 400.00, 320.00, 15, '27-inch QHD monitor, 240Hz', 'Active', NOW()),
+('LG Odyssey 32in 4K', 12, 17, '32in 4K', 600.00, 480.00, 10, '32-inch 4K gaming monitor', 'Active', NOW()),
+('MSI Optix MPG 27', 12, 4, 'MPG 27', 350.00, 280.00, 20, '27-inch QHD gaming monitor', 'Active', NOW()),
+('Secretlab Titan Evo 2022', 13, 18, '2022', 500.00, 400.00, 10, 'Ergonomic gaming chair', 'Active', NOW()),
+('Secretlab Titan Evo 2024', 13, 18, '2024', 550.00, 440.00, 8, 'Updated ergonomic chair', 'Active', NOW()),
+('Herman Miller Sayl', 13, 19, 'Standard', 600.00, 480.00, 5, 'Minimalist ergonomic chair', 'Active', NOW()),
+('IKEA UPPSTÅ Standard', 14, 20, 'Standard', 200.00, 160.00, 30, 'Adjustable height desk', 'Active', NOW()),
+('IKEA UPPSTÅ Height-Adjustable', 14, 20, 'Height-Adjustable', 300.00, 240.00, 25, 'Motorized standing desk', 'Active', NOW()),
+('IKEA LAGKAPTEN 120x60', 14, 20, 'Standard 120x60', 150.00, 120.00, 40, 'Compact desk for small spaces', 'Active', NOW());
 
 -- USER
 INSERT INTO user (user_id, username, password, email, role, status, is_verified, verification_token) VALUES 
@@ -182,7 +190,8 @@ INSERT INTO menu_item (menu_item_id, name, icon, url, parent_id, status) VALUES
 (3, 'Quản lý', 'fas fa-cogs', '/admin', NULL, 'Activate'),
 (4, 'CPU', 'fas fa-microchip', '/products/cpu', 1, 'Activate'),
 (5, 'GPU', 'fas fa-tv', '/products/gpu', 1, 'Activate'),
-(6, 'RAM', 'fas fa-memory', '/products/ram', 1, 'Activate');
+(6, 'RAM', 'fas fa-memory', '/products/ram', 1, 'Activate'),
+(7, 'Build PC', 'fas fa-desktop', '/PCBuilderServlet', NULL, 'Activate');
 
 -- MENU_ATTRIBUTE
 INSERT INTO menu_attribute (attribute_id, menu_item_id, name, url, status) VALUES
@@ -214,27 +223,26 @@ INSERT INTO menu_attribute_value (value_id, attribute_id, value, url, status) VA
 (16, 7, 'Cấu hình email', '/admin/settings/email', 'Activate');
 
 -- Select all data from tables
-SELECT * FROM `admin`;
-SELECT * FROM `blog`;
-SELECT * FROM `brand`;
-SELECT * FROM `cartitem`;
-SELECT * FROM `componenttype`;
-SELECT * FROM `customer`;
-SELECT * FROM `feedback`;
-SELECT * FROM `inventorylog`;
-SELECT * FROM `model`;
-SELECT * FROM `orders`;
-SELECT * FROM `orderdetail`;
-SELECT * FROM `paymentmethod`;
-SELECT * FROM `product`;
-SELECT * FROM `productimage`;
-SELECT * FROM `productspecification`;
-SELECT * FROM `series`;
-SELECT * FROM `staff`;
-SELECT * FROM `user`;
-SELECT * FROM `voucher`;
-SELECT * FROM `voucher_usage`;
-SELECT * FROM `transactions`;
-SELECT * FROM `menu_item`;
-SELECT * FROM `menu_attribute`;
-SELECT * FROM `menu_attribute_value`;
+SELECT * FROM admin;
+SELECT * FROM blog;
+SELECT * FROM brand;
+SELECT * FROM cartitem;
+SELECT * FROM componenttype;
+SELECT * FROM customer;
+SELECT * FROM feedback;
+SELECT * FROM inventorylog;
+SELECT * FROM orders;
+SELECT * FROM orderdetail;
+SELECT * FROM paymentmethod;
+SELECT * FROM product;
+SELECT * FROM productimage;
+SELECT * FROM productspecification;
+SELECT * FROM series;
+SELECT * FROM staff;
+SELECT * FROM user;
+SELECT * FROM voucher;
+SELECT * FROM voucher_usage;
+SELECT * FROM transactions;
+SELECT * FROM menu_item;
+SELECT * FROM menu_attribute;
+SELECT * FROM menu_attribute_value;

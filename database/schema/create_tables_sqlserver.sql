@@ -178,6 +178,17 @@ CREATE TABLE feedback (
     FOREIGN KEY (product_id) REFERENCES product(product_id)
 );
 
+-- Bảng feedback_image
+CREATE TABLE feedback_image (
+    image_id INT IDENTITY(1,1) PRIMARY KEY,
+    feedback_id INT NOT NULL,
+    image_url NVARCHAR(255),
+    image_alt NVARCHAR(255),
+    display_order INT DEFAULT 1,
+    created_at DATETIME DEFAULT GETDATE(),
+    FOREIGN KEY (feedback_id) REFERENCES feedback(feedback_id)
+);
+
 -- Bảng inventorylog
 CREATE TABLE inventorylog (
     log_id INT IDENTITY(1,1) PRIMARY KEY,
@@ -197,6 +208,17 @@ CREATE TABLE blog (
     customer_id INT NOT NULL,
     created_at DATETIME DEFAULT GETDATE(),
     FOREIGN KEY (customer_id) REFERENCES customer(customer_id)
+);
+
+-- Bảng blog_image
+CREATE TABLE blog_image (
+    image_id INT IDENTITY(1,1) PRIMARY KEY,
+    blog_id INT NOT NULL,
+    image_url NVARCHAR(255),
+    image_alt NVARCHAR(255),
+    display_order INT DEFAULT 1,
+    created_at DATETIME DEFAULT GETDATE(),
+    FOREIGN KEY (blog_id) REFERENCES blog(blog_id)
 );
 
 -- Bảng transactions

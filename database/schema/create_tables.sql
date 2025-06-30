@@ -1,3 +1,4 @@
+
 -- Create and use database
 DROP DATABASE IF EXISTS project_g2;
 CREATE DATABASE IF NOT EXISTS project_g2;
@@ -19,7 +20,6 @@ DROP TABLE IF EXISTS `admin`;
 DROP TABLE IF EXISTS `staff`;
 DROP TABLE IF EXISTS `shipper`;
 DROP TABLE IF EXISTS `customer`;
-DROP TABLE IF EXISTS `model`;
 DROP TABLE IF EXISTS `series`;
 DROP TABLE IF EXISTS `user`;
 DROP TABLE IF EXISTS `brand`;
@@ -77,15 +77,6 @@ CREATE TABLE `series` (
   CONSTRAINT `series_ibfk_1` FOREIGN KEY (`brand_id`) REFERENCES `brand` (`brand_id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
-CREATE TABLE `model` (
-  `model_id` INT NOT NULL AUTO_INCREMENT,
-  `series_id` INT NOT NULL,
-  `name` VARCHAR(100) DEFAULT NULL,
-  PRIMARY KEY (`model_id`),
-  KEY `series_id` (`series_id`),
-  CONSTRAINT `model_ibfk_1` FOREIGN KEY (`series_id`) REFERENCES `series` (`series_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
-
 CREATE TABLE `customer` (
   `customer_id` INT NOT NULL AUTO_INCREMENT,
   `name` VARCHAR(100) DEFAULT NULL,
@@ -134,7 +125,7 @@ CREATE TABLE `product` (
   `name` VARCHAR(255) DEFAULT NULL,
   `component_type_id` INT NOT NULL,
   `brand_id` INT NOT NULL,
-  `model_id` INT DEFAULT NULL,
+  `model` VARCHAR(100) DEFAULT NULL,
   `price` DECIMAL(18,2) DEFAULT NULL,
   `import_price` DECIMAL(18,2) DEFAULT NULL,
   `stock` INT NOT NULL DEFAULT 0,
@@ -144,10 +135,8 @@ CREATE TABLE `product` (
   PRIMARY KEY (`product_id`),
   KEY `component_type_id` (`component_type_id`),
   KEY `brand_id` (`brand_id`),
-  KEY `model_id` (`model_id`),
   CONSTRAINT `product_ibfk_1` FOREIGN KEY (`component_type_id`) REFERENCES `componenttype` (`type_id`),
-  CONSTRAINT `product_ibfk_2` FOREIGN KEY (`brand_id`) REFERENCES `brand` (`brand_id`),
-  CONSTRAINT `product_ibfk_3` FOREIGN KEY (`model_id`) REFERENCES `model` (`model_id`)
+  CONSTRAINT `product_ibfk_2` FOREIGN KEY (`brand_id`) REFERENCES `brand` (`brand_id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 CREATE TABLE `cartitem` (

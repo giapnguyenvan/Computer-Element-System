@@ -1,5 +1,6 @@
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 <!DOCTYPE html>
 <html>
     <head>
@@ -308,6 +309,7 @@
     <body>
         <jsp:include page="header.jsp"/>
         <div class="container-fluid py-4">
+            
             <form action="PCBuilderServlet" method="post">
                 <div class="row equal-height">
                     <!-- Sidebar Megamenu -->
@@ -322,7 +324,7 @@
                                         <div class="submenu-col">
                                             <h6>Brand</h6>
                                             <ul>
-                                                <c:forEach var="brand" items="${cpuBrands}">
+                                                <c:forEach var="brand" items="${brandsMap['CPU']}">
                                                     <li><a href="#" data-component="cpu" data-brand="${brand}">${brand}</a></li>
                                                 </c:forEach>
                                             </ul>
@@ -330,7 +332,7 @@
                                         <div class="submenu-col">
                                             <h6>Series</h6>
                                             <ul>
-                                                <c:forEach var="series" items="${cpuSeries}">
+                                                <c:forEach var="series" items="${seriesMap['CPU']}">
                                                     <li><a href="#" data-component="cpu" data-series="${series}">${series}</a></li>
                                                 </c:forEach>
                                             </ul>
@@ -345,7 +347,7 @@
                                         <div class="submenu-col">
                                             <h6>Brand</h6>
                                             <ul>
-                                                <c:forEach var="brand" items="${mainboardBrands}">
+                                                <c:forEach var="brand" items="${brandsMap['Mainboard']}">
                                                     <li><a href="#" data-component="mainboard" data-brand="${brand}">${brand}</a></li>
                                                 </c:forEach>
                                             </ul>
@@ -353,7 +355,7 @@
                                         <div class="submenu-col">
                                             <h6>Series</h6>
                                             <ul>
-                                                <c:forEach var="series" items="${mainboardSeries}">
+                                                <c:forEach var="series" items="${seriesMap['Mainboard']}">
                                                     <li><a href="#" data-component="mainboard" data-series="${series}">${series}</a></li>
                                                 </c:forEach>
                                             </ul>
@@ -368,7 +370,7 @@
                                         <div class="submenu-col">
                                             <h6>Brand</h6>
                                             <ul>
-                                                <c:forEach var="brand" items="${ramBrands}">
+                                                <c:forEach var="brand" items="${brandsMap['RAM']}">
                                                     <li><a href="#" data-component="ram" data-brand="${brand}">${brand}</a></li>
                                                 </c:forEach>
                                             </ul>
@@ -376,7 +378,7 @@
                                         <div class="submenu-col">
                                             <h6>Series</h6>
                                             <ul>
-                                                <c:forEach var="series" items="${ramSeries}">
+                                                <c:forEach var="series" items="${seriesMap['RAM']}">
                                                     <li><a href="#" data-component="ram" data-series="${series}">${series}</a></li>
                                                 </c:forEach>
                                             </ul>
@@ -391,7 +393,7 @@
                                         <div class="submenu-col">
                                             <h6>Brand</h6>
                                             <ul>
-                                                <c:forEach var="brand" items="${gpuBrands}">
+                                                <c:forEach var="brand" items="${brandsMap['GPU']}">
                                                     <li><a href="#" data-component="gpu" data-brand="${brand}">${brand}</a></li>
                                                 </c:forEach>
                                             </ul>
@@ -399,7 +401,7 @@
                                         <div class="submenu-col">
                                             <h6>Series</h6>
                                             <ul>
-                                                <c:forEach var="series" items="${gpuSeries}">
+                                                <c:forEach var="series" items="${seriesMap['GPU']}">
                                                     <li><a href="#" data-component="gpu" data-series="${series}">${series}</a></li>
                                                 </c:forEach>
                                             </ul>
@@ -414,7 +416,7 @@
                                         <div class="submenu-col">
                                             <h6>Brand</h6>
                                             <ul>
-                                                <c:forEach var="brand" items="${storageBrands}">
+                                                <c:forEach var="brand" items="${brandsMap['Storage']}">
                                                     <li><a href="#" data-component="storage" data-brand="${brand}">${brand}</a></li>
                                                 </c:forEach>
                                             </ul>
@@ -422,7 +424,7 @@
                                         <div class="submenu-col">
                                             <h6>Series</h6>
                                             <ul>
-                                                <c:forEach var="series" items="${storageSeries}">
+                                                <c:forEach var="series" items="${seriesMap['Storage']}">
                                                     <li><a href="#" data-component="storage" data-series="${series}">${series}</a></li>
                                                 </c:forEach>
                                             </ul>
@@ -437,7 +439,7 @@
                                         <div class="submenu-col">
                                             <h6>Brand</h6>
                                             <ul>
-                                                <c:forEach var="brand" items="${psuBrands}">
+                                                <c:forEach var="brand" items="${brandsMap['PSU']}">
                                                     <li><a href="#" data-component="psu" data-brand="${brand}">${brand}</a></li>
                                                 </c:forEach>
                                             </ul>
@@ -445,7 +447,7 @@
                                         <div class="submenu-col">
                                             <h6>Series</h6>
                                             <ul>
-                                                <c:forEach var="series" items="${psuSeries}">
+                                                <c:forEach var="series" items="${seriesMap['PSU']}">
                                                     <li><a href="#" data-component="psu" data-series="${series}">${series}</a></li>
                                                 </c:forEach>
                                             </ul>
@@ -460,7 +462,7 @@
                                         <div class="submenu-col">
                                             <h6>Brand</h6>
                                             <ul>
-                                                <c:forEach var="brand" items="${caseBrands}">
+                                                <c:forEach var="brand" items="${brandsMap['Case']}">
                                                     <li><a href="#" data-component="case" data-brand="${brand}">${brand}</a></li>
                                                 </c:forEach>
                                             </ul>
@@ -468,7 +470,7 @@
                                         <div class="submenu-col">
                                             <h6>Series</h6>
                                             <ul>
-                                                <c:forEach var="series" items="${caseSeries}">
+                                                <c:forEach var="series" items="${seriesMap['Case']}">
                                                     <li><a href="#" data-component="case" data-series="${series}">${series}</a></li>
                                                 </c:forEach>
                                             </ul>
@@ -483,7 +485,7 @@
                                         <div class="submenu-col">
                                             <h6>Brand</h6>
                                             <ul>
-                                                <c:forEach var="brand" items="${coolerBrands}">
+                                                <c:forEach var="brand" items="${brandsMap['Cooler']}">
                                                     <li><a href="#" data-component="cooler" data-brand="${brand}">${brand}</a></li>
                                                 </c:forEach>
                                             </ul>
@@ -491,7 +493,7 @@
                                         <div class="submenu-col">
                                             <h6>Series</h6>
                                             <ul>
-                                                <c:forEach var="series" items="${coolerSeries}">
+                                                <c:forEach var="series" items="${seriesMap['Cooler']}">
                                                     <li><a href="#" data-component="cooler" data-series="${series}">${series}</a></li>
                                                 </c:forEach>
                                             </ul>
@@ -603,6 +605,12 @@
                     </div>
                     <!-- Content chọn linh kiện -->
                     <div class="col-md-9 content-col">
+                        <div class="container mt-3">
+                            <pre>
+                                allSeriesMap: ${allSeriesMap}
+                                allModelMap: ${allModelMap}
+                            </pre>
+                        </div>
                         <div class="pc-builder-bg component-card text-center p-4 mb-4" style="position: relative;">
                             <div class="bg-overlay" style="background: none; position: static; z-index: auto; height: auto; width: auto;">
                                 <!-- Build Case PC Progress Tracker -->
@@ -674,6 +682,37 @@
             <!-- Total Price Display -->
             <div class="total-price text-center">
                 <h4>Total Price: $<span id="totalPrice">0.00</span></h4>
+            </div>
+        </div>
+        <div class="container mt-5">
+            <h3 class="mb-4">Danh sách Series và Model theo từng loại linh kiện</h3>
+            <div class="row">
+                <c:set var="typeNames" value="CPU,Mainboard,RAM,GPU,Storage,PSU,Case,Cooler" />
+                <c:forEach var="typeId" begin="1" end="8" varStatus="status">
+                    <div class="col-md-3 mb-4">
+                        <div class="card h-100 shadow-sm">
+                            <div class="card-header bg-primary text-white">
+                                <strong>
+                                    <c:out value="${fn:split(typeNames, ',')[typeId-1]}" />
+                                </strong>
+                            </div>
+                            <div class="card-body">
+                                <strong>Series:</strong>
+                                <ul class="mb-2" style="font-size:0.97em;">
+                                    <c:forEach var="series" items="${allSeriesMap[typeId]}">
+                                        <li>${series}</li>
+                                    </c:forEach>
+                                </ul>
+                                <strong>Model:</strong>
+                                <ul style="font-size:0.97em;">
+                                    <c:forEach var="model" items="${allModelMap[typeId]}">
+                                        <li>${model}</li>
+                                    </c:forEach>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </c:forEach>
             </div>
         </div>
         <jsp:include page="footer.jsp"/>
