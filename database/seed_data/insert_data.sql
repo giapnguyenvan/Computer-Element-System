@@ -182,7 +182,8 @@ INSERT INTO menu_item (menu_item_id, name, icon, url, parent_id, status) VALUES
 (3, 'Quản lý', 'fas fa-cogs', '/admin', NULL, 'Activate'),
 (4, 'CPU', 'fas fa-microchip', '/products/cpu', 1, 'Activate'),
 (5, 'GPU', 'fas fa-tv', '/products/gpu', 1, 'Activate'),
-(6, 'RAM', 'fas fa-memory', '/products/ram', 1, 'Activate');
+(6, 'RAM', 'fas fa-memory', '/products/ram', 1, 'Activate'),
+(7, 'Build PC', 'fas fa-desktop', '/PCBuilderServlet', NULL, 'Activate');
 
 -- MENU_ATTRIBUTE
 INSERT INTO menu_attribute (attribute_id, menu_item_id, name, url, status) VALUES
