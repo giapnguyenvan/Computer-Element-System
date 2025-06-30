@@ -58,23 +58,15 @@ public class PCBuilderServlet extends HttpServlet {
             Vector<Products> caseProducts = productDAO.getProductsByComponentType(7); // Case
             Vector<Products> coolerProducts = productDAO.getProductsByComponentType(8); // Cooler
 
-            // Load brands and series for each component type
-            Vector<String> cpuBrands = productDAO.getBrandsByComponentType(1);
-            Vector<String> cpuSeries = productDAO.getSeriesByComponentType(1);
-            Vector<String> mainboardBrands = productDAO.getBrandsByComponentType(2);
-            Vector<String> mainboardSeries = productDAO.getSeriesByComponentType(2);
-            Vector<String> ramBrands = productDAO.getBrandsByComponentType(3);
-            Vector<String> ramSeries = productDAO.getSeriesByComponentType(3);
-            Vector<String> gpuBrands = productDAO.getBrandsByComponentType(4);
-            Vector<String> gpuSeries = productDAO.getSeriesByComponentType(4);
-            Vector<String> storageBrands = productDAO.getBrandsByComponentType(5);
-            Vector<String> storageSeries = productDAO.getSeriesByComponentType(5);
-            Vector<String> psuBrands = productDAO.getBrandsByComponentType(6);
-            Vector<String> psuSeries = productDAO.getSeriesByComponentType(6);
-            Vector<String> caseBrands = productDAO.getBrandsByComponentType(7);
-            Vector<String> caseSeries = productDAO.getSeriesByComponentType(7);
-            Vector<String> coolerBrands = productDAO.getBrandsByComponentType(8);
-            Vector<String> coolerSeries = productDAO.getSeriesByComponentType(8);
+            // Sử dụng Map để truyền brands và series cho từng componenttype
+            Map<String, Vector<String>> brandsMap = new HashMap<>();
+            Map<String, Vector<String>> seriesMap = new HashMap<>();
+            String[] types = {"CPU", "Mainboard", "RAM", "GPU", "Storage", "PSU", "Case", "Cooler"};
+            int[] typeIds = {10, 11, 12, 13, 14, 15, 16, 17}; // Đúng với DB của bạn
+            for (int i = 0; i < types.length; i++) {
+                brandsMap.put(types[i], productDAO.getBrandsByComponentType(typeIds[i]));
+                seriesMap.put(types[i], productDAO.getSeriesByComponentType(typeIds[i]));
+            }
 
             // Set attributes for JSP
             request.setAttribute("cpuList", cpuList);
@@ -93,24 +85,6 @@ public class PCBuilderServlet extends HttpServlet {
             request.setAttribute("psuProducts", psuProducts);
             request.setAttribute("caseProducts", caseProducts);
             request.setAttribute("coolerProducts", coolerProducts);
-
-            // Set brands and series attributes
-            request.setAttribute("cpuBrands", cpuBrands);
-            request.setAttribute("cpuSeries", cpuSeries);
-            request.setAttribute("mainboardBrands", mainboardBrands);
-            request.setAttribute("mainboardSeries", mainboardSeries);
-            request.setAttribute("ramBrands", ramBrands);
-            request.setAttribute("ramSeries", ramSeries);
-            request.setAttribute("gpuBrands", gpuBrands);
-            request.setAttribute("gpuSeries", gpuSeries);
-            request.setAttribute("storageBrands", storageBrands);
-            request.setAttribute("storageSeries", storageSeries);
-            request.setAttribute("psuBrands", psuBrands);
-            request.setAttribute("psuSeries", psuSeries);
-            request.setAttribute("caseBrands", caseBrands);
-            request.setAttribute("caseSeries", caseSeries);
-            request.setAttribute("coolerBrands", coolerBrands);
-            request.setAttribute("coolerSeries", coolerSeries);
 
             // Forward to PC Builder page
             request.getRequestDispatcher("pcBuilder.jsp").forward(request, response);
