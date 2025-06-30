@@ -243,7 +243,7 @@ public class ViewBlogServlet extends HttpServlet {
                 java.util.Vector<model.BlogImage> images = blogImageDAO.getImagesByBlogId(blogId);
                 blogDAO.deleteBlog(blogId, customerId);
                 for (model.BlogImage img : images) {
-                    if (img.getImage_url() != null && img.getImage_url().startsWith("/uploads/blog/")) {
+                    if (img.getImage_url() != null && img.getImage_url().startsWith("/img/blog/")) {
                         String realPath = getServletContext().getRealPath(img.getImage_url());
                         java.io.File file = new java.io.File(realPath);
                         if (file.exists()) file.delete();
@@ -362,7 +362,7 @@ public class ViewBlogServlet extends HttpServlet {
                 if (fileName != null && !fileName.isEmpty()) {
                     // Generate unique filename
                     String uniqueFileName = System.currentTimeMillis() + "_" + fileName;
-                    String uploadPath = getServletContext().getRealPath("/uploads/blog/");
+                    String uploadPath = getServletContext().getRealPath("/img/blog/");
                     
                     // Create directory if it doesn't exist
                     java.io.File uploadDir = new java.io.File(uploadPath);
@@ -375,7 +375,7 @@ public class ViewBlogServlet extends HttpServlet {
                     filePart.write(filePath);
                     
                     // Create BlogImage object
-                    String imageUrl = "/uploads/blog/" + uniqueFileName;
+                    String imageUrl = "/img/blog/" + uniqueFileName;
                     String imageAlt = request.getParameter("image_alts[" + i + "]");
                     if (imageAlt == null || imageAlt.trim().isEmpty()) {
                         imageAlt = fileName;
