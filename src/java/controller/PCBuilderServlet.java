@@ -74,6 +74,20 @@ public class PCBuilderServlet extends HttpServlet {
             request.setAttribute("brandsMap", brandsMap);
             request.setAttribute("seriesMap", seriesMap);
 
+            // Thêm: truyền model cho từng componenttype (không còn bảng model, lấy trực tiếp từ product)
+            Map<Integer, Vector<String>> allModelMap = new HashMap<>();
+            for (int i = 1; i <= 8; i++) {
+                allModelMap.put(i, productDAO.getModelStringByComponentType(i));
+            }
+            request.setAttribute("allModelMap", allModelMap);
+
+            // Truyền series cho từng componenttype (bảng series vẫn còn)
+            Map<Integer, Vector<String>> allSeriesMap = new HashMap<>();
+            for (int i = 1; i <= 8; i++) {
+                allSeriesMap.put(i, productDAO.getSeriesByComponentType(i));
+            }
+            request.setAttribute("allSeriesMap", allSeriesMap);
+
             // Set attributes for JSP
             request.setAttribute("cpuList", cpuList);
             request.setAttribute("gpuList", gpuList);

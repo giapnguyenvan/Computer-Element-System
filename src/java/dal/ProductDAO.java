@@ -570,17 +570,18 @@ public class ProductDAO {
         return brands;
     }
 
+    // Lấy danh sách series (string) theo component_type_id từ bảng product thông qua brand
     public Vector<String> getSeriesByComponentType(int componentTypeId) {
         DBContext db = DBContext.getInstance();
         Vector<String> series = new Vector<>();
         String sql = """
-                     SELECT DISTINCT s.name
-                     FROM Product p
-                     LEFT JOIN Model m ON p.model_id = m.model_id
-                     LEFT JOIN Series s ON m.series_id = s.series_id
-                     WHERE p.component_type_id = ? AND p.status = 'Active' AND s.name IS NOT NULL
-                     ORDER BY s.name
-                     """;
+            SELECT DISTINCT s.name
+            FROM series s
+            JOIN brand b ON s.brand_id = b.brand_id
+            JOIN product p ON p.brand_id = b.brand_id
+            WHERE p.component_type_id = ? AND s.name IS NOT NULL
+            ORDER BY s.name
+        """;
         try {
             PreparedStatement ptm = db.getConnection().prepareStatement(sql);
             ptm.setInt(1, componentTypeId);
@@ -592,6 +593,24 @@ public class ProductDAO {
             ex.printStackTrace();
         }
         return series;
+    }
+
+    // Lấy danh sách model (string) theo component_type_id từ bảng product
+    public Vector<String> getModelStringByComponentType(int componentTypeId) {
+        DBContext db = DBContext.getInstance();
+        Vector<String> models = new Vector<>();
+        String sql = "SELECT DISTINCT model FROM product WHERE component_type_id = ? AND status = 'Active' AND model IS NOT NULL";
+        try {
+            PreparedStatement ptm = db.getConnection().prepareStatement(sql);
+            ptm.setInt(1, componentTypeId);
+            ResultSet rs = ptm.executeQuery();
+            while (rs.next()) {
+                models.add(rs.getString("model"));
+            }
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+        }
+        return models;
     }
 
     public static void main(String[] args) {
