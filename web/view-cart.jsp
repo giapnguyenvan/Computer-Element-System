@@ -1,16 +1,16 @@
 <%-- 
     Document   : view-cart
-    Created on : Jun 25, 2025, 6:34:07 PM
+    Created on : Jun 25, 2025, 6:34:07 PM
     Author     : admin
 --%>
 
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <!DOCTYPE html>
-<html lang="vi">
+<html lang="en">
     <head>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>Giỏ Hàng - ShopXinh</title>
+        <title>Shopping Cart - ShopXinh</title>
         <!-- Thêm Bootstrap CSS -->
         <!--<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">-->
         <!-- Thêm Font Awesome -->
@@ -347,15 +347,15 @@
 
             <div class="cart-container">
                 <div class="cart-header">
-                    <h2>Chi Tiết Đơn Hàng</h2>
-                    <p id="cart-count">Đang tải...</p>
+                    <h2>Order Details</h2>
+                    <p id="cart-count">Loading...</p>
                 </div>
 
                 <div id="message-container"></div>
 
                 <div id="loading-container" class="loading">
                     <div class="loading-spinner"></div>
-                    <p>Đang tải giỏ hàng...</p>
+                    <p>Loading cart...</p>
                 </div>
 
                 <div id="cart-items-container" class="cart-items" style="display: none;">
@@ -364,33 +364,33 @@
 
                 <div id="empty-cart" class="empty-cart" style="display: none;">
                     <div style="font-size: 4rem; margin-bottom: 20px; color: #ddd;">🛒</div>
-                    <h3>Giỏ hàng của bạn đang trống</h3>
-                    <p>Hãy thêm một số sản phẩm vào giỏ hàng để tiếp tục mua sắm</p>
+                    <h3>Your cart is empty</h3>
+                    <p>Add some products to your cart to continue shopping</p>
                     <button class="btn1 btn1-continue" style="margin-top: 20px;" onclick="window.location.href = '/CES/homepageservlet'">
-                        🛍️ Tiếp Tục Mua Sắm
+                        🛍️ Continue Shopping
                     </button>
                 </div>
 
                 <div id="cart-summary" class="cart-summary" style="display: none;">
                     <div class="summary-row">
-                        <span>Tạm tính:</span>
+                        <span>Subtotal:</span>
                         <span id="subtotal">0₫</span>
                     </div>
                     <div class="summary-row">
-                        <span>Phí vận chuyển:</span>
-                        <span id="shipping">Miễn phí</span>
+                        <span>Shipping:</span>
+                        <span id="shipping">Free</span>
                     </div>
                     <div class="summary-row total">
-                        <span>Tổng cộng:</span>
+                        <span>Total:</span>
                         <span id="total">0₫</span>
                     </div>
 
                     <div class="checkout-section">
                         <button class="btn1 btn1-continue" onclick="window.location.href = '/CES/homepageservlet'">
-                            🛍️ Tiếp Tục Mua Sắm
+                            🛍️ Continue Shopping
                         </button>
                         <button class="btn1 btn1-checkout" onclick="proceedToCheckout()">
-                            💳 Thanh Toán Ngay
+                            💳 Checkout Now
                         </button>
                     </div>
                 </div>
@@ -449,7 +449,7 @@
                     cartItems = response.data || [];
                     renderCartItems();
                 } catch (error) {
-                    showMessage('Lỗi khi tải giỏ hàng: ' + error.message, 'error');
+                    showMessage('Error loading cart: ' + error.message, 'error');
                 } finally {
                     setLoading(false);
                 }
@@ -476,9 +476,9 @@
                     }
 
                     renderCartItems();
-                    showMessage('Đã cập nhật số lượng!', 'success', 2000);
+                    showMessage('Quantity updated!', 'success', 2000);
                 } catch (error) {
-                    showMessage('Lỗi khi cập nhật: ' + error.message, 'error');
+                    showMessage('Error updating: ' + error.message, 'error');
                     loadCartItems(); // Reload to get correct data
                 } finally {
                     disableButtons(false);
@@ -487,7 +487,7 @@
 
             // Remove item from cart
             async function removeItem(itemId) {
-                if (!confirm('Bạn có chắc muốn xóa sản phẩm này khỏi giỏ hàng?')) {
+                if (!confirm('Are you sure you want to remove this item from cart?')) {
                     return;
                 }
 
@@ -499,9 +499,9 @@
                     cartItems = cartItems.filter(item => item.id !== itemId);
 
                     renderCartItems();
-                    showMessage('Đã xóa sản phẩm khỏi giỏ hàng!', 'success', 2000);
+                    showMessage('Item removed from cart!', 'success', 2000);
                 } catch (error) {
-                    showMessage('Lỗi khi xóa sản phẩm: ' + error.message, 'error');
+                    showMessage('Error removing item: ' + error.message, 'error');
                 } finally {
                     disableButtons(false);
                 }
@@ -517,9 +517,9 @@
                     });
 
                     loadCartItems();
-                    showMessage('Đã thêm sản phẩm vào giỏ hàng!', 'success', 2000);
+                    showMessage('Product added to cart!', 'success', 2000);
                 } catch (error) {
-                    showMessage('Lỗi khi thêm sản phẩm: ' + error.message, 'error');
+                    showMessage('Error adding product: ' + error.message, 'error');
             }
             }
 
@@ -534,14 +534,14 @@
                     container.style.display = 'none';
                     summary.style.display = 'none';
                     emptyCart.style.display = 'block';
-                    countElement.textContent = 'Giỏ hàng trống';
+                    countElement.textContent = 'Cart is empty';
                     return;
                 }
 
                 container.style.display = 'block';
                 summary.style.display = 'block';
                 emptyCart.style.display = 'none';
-                countElement.textContent = cartItems.length + ' sản phẩm trong giỏ hàng';
+                countElement.textContent = cartItems.length + ' items in cart';
 
                 container.innerHTML = cartItems.map(item =>
                     '<div class="cart-item" data-item-id="' + item.id + '">' +
@@ -549,7 +549,7 @@
                             'alt="' + item.product.name + '" class="item-image">' +
                             '<div class="item-details">' +
                             '<div class="item-name">' + item.product.name + '</div>' +
-                            '<div class="item-description">' + (item.product.description || 'Sản phẩm chất lượng cao') + '</div>' +
+                            '<div class="item-description">' + (item.product.description || 'High quality product') + '</div>' +
                             '<div class="item-price">' + formatPrice(item.product.price) + '₫</div>' +
                             '</div>' +
                             '<div class="quantity-controls">' +
@@ -558,7 +558,7 @@
                             'onchange="updateQuantityUI(' + item.id + ', this.value)" min="1" max="99">' +
                             '<button class="quantity-btn1" onclick="updateQuantityUI(' + item.id + ', ' + (item.quantity + 1) + ')">+</button>' +
                             '</div>' +
-                            '<button class="remove-btn1" onclick="removeItem(' + item.id + ')">🗑️ Xóa</button>' +
+                            '<button class="remove-btn1" onclick="removeItem(' + item.id + ')">🗑️ Remove</button>' +
                             '</div>'
                 ).join('');
 
@@ -626,7 +626,7 @@
             // Checkout function
             function proceedToCheckout() {
                 if (cartItems.length === 0) {
-                    showMessage('Giỏ hàng trống, không thể thanh toán!', 'error');
+                    showMessage('Cart is empty, cannot proceed to checkout!', 'error');
                     return;
                 }
 
@@ -637,7 +637,7 @@
             // Handle page refresh
             window.addEventListener('beforeunload', function () {
                 if (isLoading) {
-                    return 'Đang có thao tác đang thực hiện, bạn có chắc muốn rời khỏi trang?';
+                    return 'There are operations in progress, are you sure you want to leave this page?';
                 }
             });
         </script>
