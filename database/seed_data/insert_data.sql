@@ -47,18 +47,18 @@ INSERT INTO series (series_id, brand_id, name) VALUES
 (5, 7, 'Vengeance'), -- Corsair
 (6, 8, 'Trident Z5'), -- G.Skill
 (7, 6, 'GeForce RTX 50'), -- NVIDIA
-(8, 4, 'Radeon RX 9000'), -- MSI (Radeon is AMD, but MSI makes cards)
+(8, 4, 'Radeon RX 9000'), -- MSI
 (9, 9, 'Black SN850X'), -- WD
 (10, 10, '970 EVO Plus'), -- Samsung
 (11, 7, 'RMx'), -- Corsair
 (12, 4, 'MPG'), -- MSI
-(13, 3, 'Lancool'), -- ASUS (Lian Li/Lancool) - Should be Lian Li, but mapping to ASUS for now based on your current data
+(13, 3, 'Lancool'), -- ASUS
 (14, 5, 'Aorus C'), -- Gigabyte
 (15, 12, 'Liquid Freezer III'), -- Arctic
 (16, 11, 'NH-U'), -- Noctua
 (17, 13, 'G Pro'), -- Logitech
 (18, 14, 'DeathAdder'), -- Razer
-(19, 13, 'Ornata'), -- Logitech (Your original data had Razer for Ornata, changed to Logitech based on model assignment)
+(19, 13, 'Ornata'), -- Logitech
 (20, 14, 'BlackWidow'), -- Razer
 (21, 15, 'DT 990'), -- Beyerdynamic
 (22, 16, 'Arctis'), -- SteelSeries
@@ -67,110 +67,52 @@ INSERT INTO series (series_id, brand_id, name) VALUES
 (25, 18, 'Titan Evo'), -- Secretlab
 (26, 19, 'Sayl'), -- Herman Miller
 (27, 20, 'UPPSTÅ'), -- IKEA
-(28, 20, 'LAGKAPTEN'); -- IKEA
-
--- MODEL
-INSERT INTO model (model_id, series_id, name) VALUES
-(1, 1, '9800X3D'), -- Ryzen 9000
-(2, 1, '9700X'), -- Ryzen 9000
-(3, 2, '265K'), -- Core Ultra 200
-(4, 3, 'X870-F'), -- ROG Strix
-(5, 3, 'B650-E'), -- ROG Strix
-(6, 4, 'B650 AX'), -- Aorus Elite
-(7, 5, 'LPX DDR5-6000'), -- Vengeance
-(8, 5, 'RGB DDR5-6400'), -- Vengeance
-(9, 6, 'Z5 DDR5-6000'), -- Trident Z5
-(10, 7, '5090'), -- GeForce RTX 50
-(11, 7, '5080'), -- GeForce RTX 50
-(12, 8, '9070 XT'), -- Radeon RX 9000
-(13, 9, '2TB'), -- Black SN850X
-(14, 9, '1TB'), -- Black SN850X
-(15, 10, '2TB NVMe'), -- 970 EVO Plus
-(16, 11, '850e'), -- RMx
-(17, 11, '1000e'), -- RMx
-(18, 12, 'A850G'), -- MPG
-(19, 13, '216'), -- Lancool (ASUS/Lian Li)
-(20, 13, '205'), -- Lancool (ASUS/Lian Li)
-(21, 14, '700'), -- Aorus C
-(22, 15, '360mm AIO'), -- Liquid Freezer III
-(23, 15, '280mm AIO'), -- Liquid Freezer III
-(24, 16, 'U12S'), -- NH-U
-(25, 17, 'X Superlight 2'), -- G Pro
-(26, 17, 'G305'), -- G Pro
-(27, 18, 'V3'), -- DeathAdder
-(28, 19, 'V4 Pro'), -- Ornata (Your original data assigned this to Razer, but you linked Ornata to Logitech for series 19. If Ornata is Razer, you need to adjust series 19's brand_id)
-(29, 19, 'Chroma'), -- Ornata
-(30, 20, 'V3'), -- BlackWidow
-(31, 21, 'Pro 250ohm'), -- DT 990
-(32, 21, 'Edition 600ohm'), -- DT 990
-(33, 22, 'Nova Pro'), -- Arctis
-(34, 23, '27in QHD 240Hz'), -- Odyssey
-(35, 23, '32in 4K'), -- Odyssey
-(36, 24, 'MPG 27'), -- Optix
-(37, 25, '2022'), -- Titan Evo
-(38, 25, '2024'), -- Titan Evo
-(39, 26, 'Standard'), -- Sayl
-(40, 27, 'Standard'), -- UPPSTÅ
-(41, 27, 'Height-Adjustable'), -- UPPSTÅ
-(42, 28, 'Standard 120x60'); -- LAGKAPTEN
+(28, 20, 'LAGKAPTEN');
 
 -- PRODUCT
-INSERT INTO product (name, component_type_id, brand_id, model_id, price, import_price, stock, description, status, created_at) VALUES
-('AMD Ryzen 7 9800X3D', 1, 1, 1, 480.00, 384.00, 50, '8-core CPU with 3D V-Cache', 'Active', NOW()), -- brand_id 1 (AMD)
-('AMD Ryzen 9 9700X', 1, 1, 2, 400.00, 320.00, 40, '8-core high-performance CPU', 'Active', NOW()), -- brand_id 1 (AMD)
-('Intel Core Ultra 7 265K', 1, 2, 3, 400.00, 320.00, 45, 'High-clock CPU for gaming', 'Active', NOW()), -- brand_id 2 (Intel)
-
-('ASUS ROG Strix X870-F', 2, 3, 4, 350.00, 280.00, 30, 'AM5 motherboard with Wi-Fi 6E', 'Active', NOW()), -- brand_id 3 (ASUS)
-('ASUS ROG Strix B650-E', 2, 3, 5, 300.00, 240.00, 35, 'B650 chipset with PCIe 5.0', 'Active', NOW()), -- brand_id 3 (ASUS)
-('Gigabyte B650 Aorus Elite AX', 2, 5, 6, 250.00, 200.00, 50, 'Budget AM5 board with Wi-Fi', 'Active', NOW()), -- brand_id 5 (Gigabyte)
-
-('Corsair Vengeance LPX DDR5-6000 32GB', 3, 7, 7, 120.00, 96.00, 100, '32GB DDR5 dual-channel RAM', 'Active', NOW()), -- brand_id 7 (Corsair)
-('Corsair Vengeance RGB DDR5-6400 32GB', 3, 7, 8, 140.00, 112.00, 80, 'RGB DDR5 RAM, 32GB', 'Active', NOW()), -- brand_id 7 (Corsair)
-('G.Skill Trident Z5 DDR5-6000 32GB', 3, 8, 9, 130.00, 104.00, 90, 'High-speed DDR5 with RGB', 'Active', NOW()), -- brand_id 8 (G.Skill)
-
-('NVIDIA GeForce RTX 5090', 4, 6, 10, 1500.00, 1200.00, 20, 'Top-tier GPU for 4K gaming', 'Active', NOW()), -- brand_id 6 (NVIDIA)
-('NVIDIA GeForce RTX 5080', 4, 6, 11, 1000.00, 800.00, 25, 'High-end GPU for 1440p', 'Active', NOW()), -- brand_id 6 (NVIDIA)
-('MSI Radeon RX 9070 XT', 4, 4, 12, 800.00, 640.00, 30, 'AMD GPU with ray tracing', 'Active', NOW()), -- brand_id 4 (MSI) (assuming MSI is the card manufacturer)
-
-('WD Black SN850X 2TB', 5, 9, 13, 180.00, 144.00, 80, 'High-speed M.2 SSD, 7300MB/s', 'Active', NOW()), -- brand_id 9 (WD)
-('WD Black SN850X 1TB', 5, 9, 14, 100.00, 80.00, 100, '1TB NVMe SSD for gaming', 'Active', NOW()), -- brand_id 9 (WD)
-('Samsung 970 EVO Plus 2TB', 5, 10, 15, 200.00, 160.00, 70, 'Reliable 2TB NVMe SSD', 'Active', NOW()), -- brand_id 10 (Samsung)
-
-('Corsair RM850e 80+ Gold', 6, 7, 16, 130.00, 104.00, 40, 'Fully modular 850W PSU', 'Active', NOW()), -- brand_id 7 (Corsair)
-('Corsair RM1000e 80+ Gold', 6, 7, 17, 160.00, 128.00, 35, '1000W PSU for high-end builds', 'Active', NOW()), -- brand_id 7 (Corsair)
-('MSI MPG A850G', 6, 4, 18, 140.00, 112.00, 50, '80+ Gold PSU, modular', 'Active', NOW()), -- brand_id 4 (MSI)
-
-('ASUS Lancool 216', 7, 3, 19, 100.00, 80.00, 60, 'ATX case with excellent airflow', 'Active', NOW()), -- brand_id 3 (ASUS) (Assuming Lancool is part of ASUS product line in your context, usually Lian Li)
-('ASUS Lancool 205', 7, 3, 20, 90.00, 72.00, 70, 'Mid-tower case with RGB', 'Active', NOW()), -- brand_id 3 (ASUS)
-('Gigabyte Aorus C700', 7, 5, 21, 200.00, 160.00, 20, 'Premium ATX case', 'Active', NOW()), -- brand_id 5 (Gigabyte)
-
-('Arctic Liquid Freezer III 360mm', 8, 12, 22, 120.00, 96.00, 60, 'High-performance AIO cooler', 'Active', NOW()), -- brand_id 12 (Arctic)
-('Arctic Liquid Freezer III 280mm', 8, 12, 23, 100.00, 80.00, 65, '280mm AIO for compact builds', 'Active', NOW()), -- brand_id 12 (Arctic)
-('Noctua NH-U12S', 8, 11, 24, 50.00, 40.00, 80, 'Air cooler with low noise', 'Active', NOW()), -- brand_id 11 (Noctua)
-
-('Logitech G Pro X Superlight 2', 9, 13, 25, 100.00, 80.00, 70, 'Lightweight wireless mouse', 'Active', NOW()), -- brand_id 13 (Logitech)
-('Logitech G305', 9, 13, 26, 50.00, 40.00, 90, 'Budget wireless gaming mouse', 'Active', NOW()), -- brand_id 13 (Logitech)
-('Razer DeathAdder V3', 9, 14, 27, 80.00, 64.00, 60, 'Ergonomic wired mouse', 'Active', NOW()), -- brand_id 14 (Razer)
-
-('Razer Ornata V4 Pro', 10, 14, 28, 150.00, 120.00, 40, 'Hybrid mechanical keyboard', 'Active', NOW()), -- brand_id 14 (Razer) (Corrected based on common knowledge of Ornata being Razer)
-('Razer Ornata Chroma', 10, 14, 29, 100.00, 80.00, 50, 'RGB membrane keyboard', 'Active', NOW()), -- brand_id 14 (Razer)
-('Logitech BlackWidow V3', 10, 13, 30, 130.00, 104.00, 45, 'Mechanical RGB keyboard', 'Active', NOW()), -- brand_id 13 (Logitech) (Corrected: BlackWidow is Razer, but your model data links it to Logitech. I'll keep it consistent with your current model data, but this might be a logical error in your model data.)
-
-('Beyerdynamic DT 990 Pro 250ohm', 11, 15, 31, 150.00, 120.00, 25, 'Open-back headphones', 'Active', NOW()), -- brand_id 15 (Beyerdynamic)
-('Beyerdynamic DT 990 Edition 600ohm', 11, 15, 32, 200.00, 160.00, 20, 'Premium open-back headphones', 'Active', NOW()), -- brand_id 15 (Beyerdynamic)
-('SteelSeries Arctis Nova Pro', 11, 16, 33, 250.00, 200.00, 15, 'Wireless gaming headset', 'Active', NOW()), -- brand_id 16 (SteelSeries)
-
-('LG Odyssey 27in QHD 240Hz', 12, 17, 34, 400.00, 320.00, 15, '27-inch QHD monitor, 240Hz', 'Active', NOW()), -- brand_id 17 (LG)
-('LG Odyssey 32in 4K', 12, 17, 35, 600.00, 480.00, 10, '32-inch 4K gaming monitor', 'Active', NOW()), -- brand_id 17 (LG)
-('MSI Optix MPG 27', 12, 4, 36, 350.00, 280.00, 20, '27-inch QHD gaming monitor', 'Active', NOW()), -- brand_id 4 (MSI)
-('Secretlab Titan Evo 2022', 13, 18, 37, 500.00, 400.00, 10, 'Ergonomic gaming chair', 'Active', NOW()), -- brand_id 18 (Secretlab)
-('Secretlab Titan Evo 2024', 13, 18, 38, 550.00, 440.00, 8, 'Updated ergonomic chair', 'Active', NOW()), -- brand_id 18 (Secretlab)
-('Herman Miller Sayl', 13, 19, 39, 600.00, 480.00, 5, 'Minimalist ergonomic chair', 'Active', NOW()), -- brand_id 19 (Herman Miller)
-
-('IKEA UPPSTÅ Standard', 14, 20, 40, 200.00, 160.00, 30, 'Adjustable height desk', 'Active', NOW()), -- brand_id 20 (IKEA)
-('IKEA UPPSTÅ Height-Adjustable', 14, 20, 41, 300.00, 240.00, 25, 'Motorized standing desk', 'Active', NOW()), -- brand_id 20 (IKEA)
-('IKEA LAGKAPTEN 120x60', 14, 20, 42, 150.00, 120.00, 40, 'Compact desk for small spaces', 'Active', NOW()); -- brand_id 20 (IKEA)
-
+INSERT INTO product (name, component_type_id, brand_id, model, price, import_price, stock, description, status, created_at) VALUES
+('AMD Ryzen 7 9800X3D', 1, 1, '9800X3D', 480.00, 384.00, 50, '8-core CPU with 3D V-Cache', 'Active', NOW()),
+('AMD Ryzen 9 9700X', 1, 1, '9700X', 400.00, 320.00, 40, '8-core high-performance CPU', 'Active', NOW()),
+('Intel Core Ultra 7 265K', 1, 2, '265K', 400.00, 320.00, 45, 'High-clock CPU for gaming', 'Active', NOW()),
+('ASUS ROG Strix X870-F', 2, 3, 'X870-F', 350.00, 280.00, 30, 'AM5 motherboard with Wi-Fi 6E', 'Active', NOW()),
+('ASUS ROG Strix B650-E', 2, 3, 'B650-E', 300.00, 240.00, 35, 'B650 chipset with PCIe 5.0', 'Active', NOW()),
+('Gigabyte B650 Aorus Elite AX', 2, 5, 'B650 AX', 250.00, 200.00, 50, 'Budget AM5 board with Wi-Fi', 'Active', NOW()),
+('Corsair Vengeance LPX DDR5-6000 32GB', 3, 7, 'LPX DDR5-6000', 120.00, 96.00, 100, '32GB DDR5 dual-channel RAM', 'Active', NOW()),
+('Corsair Vengeance RGB DDR5-6400 32GB', 3, 7, 'RGB DDR5-6400', 140.00, 112.00, 80, 'RGB DDR5 RAM, 32GB', 'Active', NOW()),
+('G.Skill Trident Z5 DDR5-6000 32GB', 3, 8, 'Z5 DDR5-6000', 130.00, 104.00, 90, 'High-speed DDR5 with RGB', 'Active', NOW()),
+('NVIDIA GeForce RTX 5090', 4, 6, '5090', 1500.00, 1200.00, 20, 'Top-tier GPU for 4K gaming', 'Active', NOW()),
+('NVIDIA GeForce RTX 5080', 4, 6, '5080', 1000.00, 800.00, 25, 'High-end GPU for 1440p', 'Active', NOW()),
+('MSI Radeon RX 9070 XT', 4, 4, '9070 XT', 800.00, 640.00, 30, 'AMD GPU with ray tracing', 'Active', NOW()),
+('WD Black SN850X 2TB', 5, 9, '2TB', 180.00, 144.00, 80, 'High-speed M.2 SSD, 7300MB/s', 'Active', NOW()),
+('WD Black SN850X 1TB', 5, 9, '1TB', 100.00, 80.00, 100, '1TB NVMe SSD for gaming', 'Active', NOW()),
+('Samsung 970 EVO Plus 2TB', 5, 10, '2TB NVMe', 200.00, 160.00, 70, 'Reliable 2TB NVMe SSD', 'Active', NOW()),
+('Corsair RM850e 80+ Gold', 6, 7, '850e', 130.00, 104.00, 40, 'Fully modular 850W PSU', 'Active', NOW()),
+('Corsair RM1000e 80+ Gold', 6, 7, '1000e', 160.00, 128.00, 35, '1000W PSU for high-end builds', 'Active', NOW()),
+('MSI MPG A850G', 6, 4, 'A850G', 140.00, 112.00, 50, '80+ Gold PSU, modular', 'Active', NOW()),
+('ASUS Lancool 216', 7, 3, '216', 100.00, 80.00, 60, 'ATX case with excellent airflow', 'Active', NOW()),
+('ASUS Lancool 205', 7, 3, '205', 90.00, 72.00, 70, 'Mid-tower case with RGB', 'Active', NOW()),
+('Gigabyte Aorus C700', 7, 5, '700', 200.00, 160.00, 20, 'Premium ATX case', 'Active', NOW()),
+('Arctic Liquid Freezer III 360mm', 8, 12, '360mm AIO', 120.00, 96.00, 60, 'High-performance AIO cooler', 'Active', NOW()),
+('Arctic Liquid Freezer III 280mm', 8, 12, '280mm AIO', 100.00, 80.00, 65, '280mm AIO for compact builds', 'Active', NOW()),
+('Noctua NH-U12S', 8, 11, 'U12S', 50.00, 40.00, 80, 'Air cooler with low noise', 'Active', NOW()),
+('Logitech G Pro X Superlight 2', 9, 13, 'X Superlight 2', 100.00, 80.00, 70, 'Lightweight wireless mouse', 'Active', NOW()),
+('Logitech G305', 9, 13, 'G305', 50.00, 40.00, 90, 'Budget wireless gaming mouse', 'Active', NOW()),
+('Razer DeathAdder V3', 9, 14, 'V3', 80.00, 64.00, 60, 'Ergonomic wired mouse', 'Active', NOW()),
+('Razer Ornata V4 Pro', 10, 14, 'V4 Pro', 150.00, 120.00, 40, 'Hybrid mechanical keyboard', 'Active', NOW()),
+('Razer Ornata Chroma', 10, 14, 'Chroma', 100.00, 80.00, 50, 'RGB membrane keyboard', 'Active', NOW()),
+('Logitech BlackWidow V3', 10, 13, 'V3', 130.00, 104.00, 45, 'Mechanical RGB keyboard', 'Active', NOW()),
+('Beyerdynamic DT 990 Pro 250ohm', 11, 15, 'Pro 250ohm', 150.00, 120.00, 25, 'Open-back headphones', 'Active', NOW()),
+('Beyerdynamic DT 990 Edition 600ohm', 11, 15, 'Edition 600ohm', 200.00, 160.00, 20, 'Premium open-back headphones', 'Active', NOW()),
+('SteelSeries Arctis Nova Pro', 11, 16, 'Nova Pro', 250.00, 200.00, 15, 'Wireless gaming headset', 'Active', NOW()),
+('LG Odyssey 27in QHD 240Hz', 12, 17, '27in QHD 240Hz', 400.00, 320.00, 15, '27-inch QHD monitor, 240Hz', 'Active', NOW()),
+('LG Odyssey 32in 4K', 12, 17, '32in 4K', 600.00, 480.00, 10, '32-inch 4K gaming monitor', 'Active', NOW()),
+('MSI Optix MPG 27', 12, 4, 'MPG 27', 350.00, 280.00, 20, '27-inch QHD gaming monitor', 'Active', NOW()),
+('Secretlab Titan Evo 2022', 13, 18, '2022', 500.00, 400.00, 10, 'Ergonomic gaming chair', 'Active', NOW()),
+('Secretlab Titan Evo 2024', 13, 18, '2024', 550.00, 440.00, 8, 'Updated ergonomic chair', 'Active', NOW()),
+('Herman Miller Sayl', 13, 19, 'Standard', 600.00, 480.00, 5, 'Minimalist ergonomic chair', 'Active', NOW()),
+('IKEA UPPSTÅ Standard', 14, 20, 'Standard', 200.00, 160.00, 30, 'Adjustable height desk', 'Active', NOW()),
+('IKEA UPPSTÅ Height-Adjustable', 14, 20, 'Height-Adjustable', 300.00, 240.00, 25, 'Motorized standing desk', 'Active', NOW()),
+('IKEA LAGKAPTEN 120x60', 14, 20, 'Standard 120x60', 150.00, 120.00, 40, 'Compact desk for small spaces', 'Active', NOW());
 
 -- USER
 INSERT INTO user (user_id, username, password, email, role, status, is_verified, verification_token) VALUES 
@@ -289,7 +231,6 @@ SELECT * FROM componenttype;
 SELECT * FROM customer;
 SELECT * FROM feedback;
 SELECT * FROM inventorylog;
-SELECT * FROM model;
 SELECT * FROM orders;
 SELECT * FROM orderdetail;
 SELECT * FROM paymentmethod;
