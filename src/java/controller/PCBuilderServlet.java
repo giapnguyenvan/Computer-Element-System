@@ -15,6 +15,10 @@ import dal.ProductDAO;
 import model.Products;
 import com.google.gson.Gson;
 import java.util.Vector;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import dal.DBContext;
 
 @WebServlet(name = "PCBuilderServlet", urlPatterns = {"/PCBuilderServlet"})
 public class PCBuilderServlet extends HttpServlet {
