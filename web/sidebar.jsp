@@ -7,7 +7,7 @@
 <!-- Sidebar -->
 <div class="col-md-3 col-lg-2 sidebar">
     <!-- Đã xóa logo-container và chữ CES -->
-    
+
     <!-- Admin Profile -->
     <div class="admin-profile d-flex align-items-center" style="padding-top: 36px;">
         <img src="${pageContext.request.contextPath}/assets/admin-avartar.png.jpg" alt="Admin Avatar" class="admin-avatar" style="width:50px;height:50px;border-radius:50%;object-fit:cover;background:#e0e7ff;">
@@ -18,23 +18,29 @@
     </div>
 
     <nav>
-        <a href="${pageContext.request.contextPath}/adminservlet" class="<%= request.getRequestURI().endsWith("adminservlet") ? "active" : "" %>">
+        <a href="${pageContext.request.contextPath}/adminservlet" class="<%= request.getRequestURI().endsWith("adminservlet") ? "active" : ""%>">
             <i class="fas fa-home me-2"></i> Dashboard
         </a>
-        <a href="${pageContext.request.contextPath}/Account" target="mainFrame" class="<%= request.getRequestURI().contains("Account") ? "active" : "" %>">
+        <a href="${pageContext.request.contextPath}/Account" target="mainFrame" class="<%= request.getRequestURI().contains("Account") ? "active" : ""%>">
             <i class="fas fa-user-gear me-2"></i> Accounts
         </a>
-        <a href="${pageContext.request.contextPath}/category?sort=default" target="mainFrame" class="<%= request.getRequestURI().endsWith("categoryList.jsp") ? "active" : "" %>">
+        <a href="${pageContext.request.contextPath}/category?sort=default" target="mainFrame" class="<%= request.getRequestURI().endsWith("categoryList.jsp") ? "active" : ""%>">
             <i class="fas fa-list me-2"></i> Categories
         </a>
-        <a href="${pageContext.request.contextPath}/productservlet" target="mainFrame" class="<%= request.getRequestURI().contains("productservlet") ? "active" : "" %>">
+        <a href="${pageContext.request.contextPath}/productservlet" target="mainFrame" class="<%= request.getRequestURI().contains("productservlet") ? "active" : ""%>">
             <i class="fas fa-box me-2"></i> Products
         </a>
-        <a href="${pageContext.request.contextPath}/manageblogs" target="mainFrame" class="<%= request.getRequestURI().contains("viewblogs") ? "active" : "" %>">
+        <a href="${pageContext.request.contextPath}/manageblogs" target="mainFrame" class="<%= request.getRequestURI().contains("viewblogs") ? "active" : ""%>">
             <i class="fas fa-blog me-2"></i> Blogs
         </a>
-        <a href="${pageContext.request.contextPath}/managefeedback" target="mainFrame" class="<%= request.getRequestURI().contains("managefeedback") ? "active" : "" %>">
+        <a href="${pageContext.request.contextPath}/managefeedback" target="mainFrame" class="<%= request.getRequestURI().contains("managefeedback") ? "active" : ""%>">
             <i class="fas fa-comments me-2"></i> Feedbacks
+        </a>
+        <a href="${pageContext.request.contextPath}/manageshipper" target="mainFrame" class="<%= request.getRequestURI().contains("managefeedback") ? "active" : ""%>">
+            <i class="fas fa-truck me-2"></i>Shipper
+        </a>
+        <a href="${pageContext.request.contextPath}/managevouchers" target="mainFrame" class="<%= request.getRequestURI().contains("managefeedback") ? "active" : ""%>">
+            <i class="fas fa-ticket-alt me-2"></i>Vouchers
         </a>
         <a href="${pageContext.request.contextPath}/logout">
             <i class="fas fa-sign-out-alt me-2"></i> Logout
