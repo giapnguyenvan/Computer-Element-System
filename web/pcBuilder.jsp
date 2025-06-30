@@ -308,16 +308,7 @@
     <body>
         <jsp:include page="header.jsp"/>
         <div class="container-fluid py-4">
-            <pre>
-CPU Brands: ${brandsMap['CPU']}
-CPU Series: ${seriesMap['CPU']}
-Motherboard Brands: ${brandsMap['Motherboard']}
-Motherboard Series: ${seriesMap['Motherboard']}
-RAM Brands: ${brandsMap['RAM']}
-RAM Series: ${seriesMap['RAM']}
-GPU Brands: ${brandsMap['GPU']}
-GPU Series: ${seriesMap['GPU']}
-            </pre>
+            
             <form action="PCBuilderServlet" method="post">
                 <div class="row equal-height">
                     <!-- Sidebar Megamenu -->
