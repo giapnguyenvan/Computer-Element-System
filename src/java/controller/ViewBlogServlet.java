@@ -241,14 +241,17 @@ public class ViewBlogServlet extends HttpServlet {
                 int customerId = ((model.Customer)authObj).getCustomer_id();
                 dal.BlogImageDAO blogImageDAO = new dal.BlogImageDAO();
                 java.util.Vector<model.BlogImage> images = blogImageDAO.getImagesByBlogId(blogId);
-                blogDAO.deleteBlog(blogId, customerId);
+                // Delete image files and DB records first
                 for (model.BlogImage img : images) {
                     if (img.getImage_url() != null && img.getImage_url().startsWith("/img/blog/")) {
                         String realPath = getServletContext().getRealPath(img.getImage_url());
                         java.io.File file = new java.io.File(realPath);
                         if (file.exists()) file.delete();
                     }
+                    blogImageDAO.deleteBlogImage(img.getImage_id());
                 }
+                // Then delete the blog
+                blogDAO.deleteBlog(blogId, customerId);
                 request.getSession().setAttribute("success", "Blog deleted successfully!");
                 response.sendRedirect("viewblogs");
                 return;
