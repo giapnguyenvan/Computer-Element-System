@@ -58,15 +58,17 @@ public class PCBuilderServlet extends HttpServlet {
             Vector<Products> caseProducts = productDAO.getProductsByComponentType(7); // Case
             Vector<Products> coolerProducts = productDAO.getProductsByComponentType(8); // Cooler
 
-            // Sử dụng Map để truyền brands và series cho từng componenttype
+            // Chỉ truyền brands và series cho từng component type
             Map<String, Vector<String>> brandsMap = new HashMap<>();
             Map<String, Vector<String>> seriesMap = new HashMap<>();
             String[] types = {"CPU", "Mainboard", "RAM", "GPU", "Storage", "PSU", "Case", "Cooler"};
-            int[] typeIds = {10, 11, 12, 13, 14, 15, 16, 17}; // Đúng với DB của bạn
+            int[] typeIds = {1, 2, 3, 4, 5, 6, 7, 8}; // mapping đúng với DB
             for (int i = 0; i < types.length; i++) {
                 brandsMap.put(types[i], productDAO.getBrandsByComponentType(typeIds[i]));
                 seriesMap.put(types[i], productDAO.getSeriesByComponentType(typeIds[i]));
             }
+            request.setAttribute("brandsMap", brandsMap);
+            request.setAttribute("seriesMap", seriesMap);
 
             // Set attributes for JSP
             request.setAttribute("cpuList", cpuList);
@@ -93,7 +95,9 @@ public class PCBuilderServlet extends HttpServlet {
             System.err.println("Error in PCBuilderServlet: " + e.getMessage());
             e.printStackTrace();
             request.setAttribute("error", "An error occurred while loading the PC Builder page: " + e.getMessage());
-            request.getRequestDispatcher("error.jsp").forward(request, response);
+            if (!response.isCommitted()) {
+                request.getRequestDispatcher("error.jsp").forward(request, response);
+            }
         }
     }
 
