@@ -231,7 +231,6 @@ public class ViewBlogServlet extends HttpServlet {
             if ("add".equals(action)) {
                 addBlog(request, response);
             } else if ("delete".equals(action)) {
-                // Xử lý xóa blog
                 Object authObj = request.getSession().getAttribute("customerAuth");
                 if (authObj == null) {
                     request.getSession().setAttribute("error", "You must be logged in to delete a blog.");
@@ -240,13 +239,19 @@ public class ViewBlogServlet extends HttpServlet {
                 }
                 int blogId = Integer.parseInt(request.getParameter("blog_id"));
                 int customerId = ((model.Customer)authObj).getCustomer_id();
-                boolean deleted = blogDAO.deleteBlogById(blogId, customerId);
-                if (deleted) {
-                    request.getSession().setAttribute("success", "Blog deleted successfully!");
-                } else {
-                    request.getSession().setAttribute("error", "Failed to delete blog. You can only delete your own blogs.");
+                dal.BlogImageDAO blogImageDAO = new dal.BlogImageDAO();
+                java.util.Vector<model.BlogImage> images = blogImageDAO.getImagesByBlogId(blogId);
+                blogDAO.deleteBlog(blogId, customerId);
+                for (model.BlogImage img : images) {
+                    if (img.getImage_url() != null && img.getImage_url().startsWith("/uploads/blog/")) {
+                        String realPath = getServletContext().getRealPath(img.getImage_url());
+                        java.io.File file = new java.io.File(realPath);
+                        if (file.exists()) file.delete();
+                    }
                 }
+                request.getSession().setAttribute("success", "Blog deleted successfully!");
                 response.sendRedirect("viewblogs");
+                return;
             } else if ("update".equals(action)) {
                 // Xử lý cập nhật blog
                 Object authObj = request.getSession().getAttribute("customerAuth");
