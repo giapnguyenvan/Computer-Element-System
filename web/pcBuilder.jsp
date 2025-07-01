@@ -447,7 +447,7 @@
                                 
                                 <!-- PSU Section -->
                                 <li class="menu-item has-submenu">
-                                    <a href="#"><i class="fas fa-server fa-fw me-2"></i> PSU</a>
+                                    <a href="#"><i class="fas fa-plug fa-fw me-2"></i> PSU</a>
                                     <div class="submenu">
                                         <div class="submenu-col">
                                             <h6>Brand</h6>
@@ -686,7 +686,7 @@
                                         <button class="btn btn-pcbuilder-white btn-lg" onclick="selectComponent('storage')"><i class="fas fa-hdd me-2"></i>Select Storage</button>
                                     </div>
                                     <div class="col-auto mb-2">
-                                        <button class="btn btn-pcbuilder-white btn-lg" onclick="selectComponent('psu')"><i class="fas fa-server me-2"></i>Select PSU</button>
+                                        <button class="btn btn-pcbuilder-white btn-lg" onclick="selectComponent('psu')"><i class="fas fa-plug me-2"></i>Select PSU</button>
                                     </div>
                                     <div class="col-auto mb-2">
                                         <button class="btn btn-pcbuilder-white btn-lg" onclick="selectComponent('case')"><i class="fas fa-desktop me-2"></i>Select Case</button>
