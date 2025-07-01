@@ -304,6 +304,19 @@
                 z-index: 2;
                 position: relative;
             }
+            .btn-pcbuilder-white {
+                background: #fff !important;
+                color: #0d6efd !important;
+                border: 2px solid #0d6efd !important;
+                font-weight: 600;
+                box-shadow: 0 2px 8px rgba(13,110,253,0.08);
+                transition: background 0.2s, color 0.2s, box-shadow 0.2s;
+            }
+            .btn-pcbuilder-white:hover, .btn-pcbuilder-white:focus {
+                background: #0d6efd !important;
+                color: #fff !important;
+                box-shadow: 0 4px 16px rgba(13,110,253,0.15);
+            }
         </style>
     </head>
     <body>
@@ -342,7 +355,7 @@
                                 
                                 <!-- Mainboard Section -->
                                 <li class="menu-item has-submenu">
-                                    <a href="#"><i class="fas fa-microchip fa-fw me-2"></i> Mainboard</a>
+                                    <a href="#"><i class="fas fa-server fa-fw me-2"></i> Mainboard</a>
                                     <div class="submenu">
                                         <div class="submenu-col">
                                             <h6>Brand</h6>
@@ -434,7 +447,7 @@
                                 
                                 <!-- PSU Section -->
                                 <li class="menu-item has-submenu">
-                                    <a href="#"><i class="fas fa-server fa-fw me-2"></i> PSU</a>
+                                    <a href="#"><i class="fas fa-plug fa-fw me-2"></i> PSU</a>
                                     <div class="submenu">
                                         <div class="submenu-col">
                                             <h6>Brand</h6>
@@ -605,12 +618,6 @@
                     </div>
                     <!-- Content chọn linh kiện -->
                     <div class="col-md-9 content-col">
-                        <div class="container mt-3">
-                            <pre>
-                                allSeriesMap: ${allSeriesMap}
-                                allModelMap: ${allModelMap}
-                            </pre>
-                        </div>
                         <div class="pc-builder-bg component-card text-center p-4 mb-4" style="position: relative;">
                             <div class="bg-overlay" style="background: none; position: static; z-index: auto; height: auto; width: auto;">
                                 <!-- Build Case PC Progress Tracker -->
@@ -660,17 +667,33 @@
                                     </div>
                                 </div>
                             </div>
-                            <h2 class="mb-3 position-relative">Chào mừng đến với PC Builder!</h2>
-                            <p class="lead position-relative">Hãy chọn các linh kiện phù hợp hoặc khám phá các chương trình khuyến mại hấp dẫn của chúng tôi.</p>
-                            <div class="component-card promotion-card d-flex flex-column flex-md-row align-items-center p-4 mb-4" style="background: transparent; box-shadow: none;">
-                                <img src="https://images.unsplash.com/photo-1517336714731-489689fd1ca8?auto=format&fit=crop&w=600&q=80"
-                                     alt="Khuyến mại lớn"
-                                     class="img-fluid rounded shadow mb-3 mb-md-0 me-md-4"
-                                     style="max-width: 260px; height: 160px; object-fit: cover; border-radius: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.08);">
-                                <div class="text-start">
-                                    <h4 class="mb-2 text-danger">Chương trình khuyến mại: "Mua PC - Tặng Chuột Gaming!"</h4>
-                                    <p class="mb-2">Khi mua bất kỳ bộ PC nào tại shop trong tháng này, bạn sẽ nhận ngay một chuột gaming cao cấp trị giá 500.000đ. Số lượng có hạn!</p>
-                                    <a href="PromotionDetailServlet?id=1" class="btn btn-primary">Xem chi tiết khuyến mại</a>
+                            <!-- Dãy nút chọn linh kiện tích hợp vào đây -->
+                            <div class="container mb-4">
+                                <div class="row mb-2 justify-content-center">
+                                    <div class="col-auto mb-2">
+                                        <button class="btn btn-pcbuilder-white btn-lg" onclick="selectComponent('cpu')"><i class="fas fa-microchip me-2"></i>Select CPU</button>
+                                    </div>
+                                    <div class="col-auto mb-2">
+                                        <button class="btn btn-pcbuilder-white btn-lg" onclick="selectComponent('mainboard')"><i class="fas fa-server me-2"></i>Select Mainboard</button>
+                                    </div>
+                                    <div class="col-auto mb-2">
+                                        <button class="btn btn-pcbuilder-white btn-lg" onclick="selectComponent('ram')"><i class="fas fa-memory me-2"></i>Select RAM</button>
+                                    </div>
+                                    <div class="col-auto mb-2">
+                                        <button class="btn btn-pcbuilder-white btn-lg" onclick="selectComponent('gpu')"><i class="fas fa-video me-2"></i>Select GPU</button>
+                                    </div>
+                                    <div class="col-auto mb-2">
+                                        <button class="btn btn-pcbuilder-white btn-lg" onclick="selectComponent('storage')"><i class="fas fa-hdd me-2"></i>Select Storage</button>
+                                    </div>
+                                    <div class="col-auto mb-2">
+                                        <button class="btn btn-pcbuilder-white btn-lg" onclick="selectComponent('psu')"><i class="fas fa-plug me-2"></i>Select PSU</button>
+                                    </div>
+                                    <div class="col-auto mb-2">
+                                        <button class="btn btn-pcbuilder-white btn-lg" onclick="selectComponent('case')"><i class="fas fa-desktop me-2"></i>Select Case</button>
+                                    </div>
+                                    <div class="col-auto mb-2">
+                                        <button class="btn btn-pcbuilder-white btn-lg" onclick="selectComponent('cooler')"><i class="fas fa-fan me-2"></i>Select Cooler</button>
+                                    </div>
                                 </div>
                             </div>
                             <!-- Vùng hiển thị sản phẩm động -->
@@ -847,7 +870,7 @@
                                                             <strong>Stock:</strong> ${p.stock}
                                                         </p>
                                                         <p class="card-text">${p.description || ''}</p>
-                                                        <button class="btn btn-primary" onclick="selectComponent('${component}', ${p.product_id}, '${p.name}', ${p.price})">
+                                                        <button class="btn btn-primary" onclick="selectComponent(componentType, ${p.product_id}, '${p.name}', ${p.price})">
                                                             Select ${component.toUpperCase()}
                                                         </button>
                                                     </div>
@@ -872,31 +895,46 @@
             });
             
             // Function to select a component and update progress
-            function selectComponent(componentType, productId, productName, price) {
-                // Update the progress tracker
-                const stepElement = document.getElementById(`step-${componentType.toLowerCase()}`);
-                const selectedElement = document.getElementById(`selected-${componentType.toLowerCase()}`);
-                
-                if (stepElement && selectedElement) {
-                    stepElement.classList.add('selected');
-                    selectedElement.textContent = productName;
-                    selectedElement.style.color = '#28a745';
-                }
-                
-                // Update progress bar
-                updateProgressBar();
-                
-                // Store selection in session storage
-                const selection = {
-                    productId: productId,
-                    productName: productName,
-                    price: price,
-                    componentType: componentType
-                };
-                sessionStorage.setItem(`selected_${componentType}`, JSON.stringify(selection));
-                
-                // Show success message
-                showNotification(`Selected ${componentType.toUpperCase()}: ${productName}`, 'success');
+            function selectComponent(componentType) {
+                const url = `PCBuilderServlet?action=getProducts&componentType=${componentType}`;
+                fetch(url)
+                    .then(res => res.json())
+                    .then(products => {
+                        let html = `<div class='row'>`;
+                        products.forEach(p => {
+                            html += `
+                                <div class="col-md-4 mb-4">
+                                    <div class="card component-card h-100">
+                                        <img src="${p.image_url || 'assets/images/default-product.jpg'}" class="card-img-top" alt="${p.name}" style="height: 200px; object-fit: cover;">
+                                        <div class="card-body d-flex flex-column justify-content-between">
+                                            <div>
+                                                <h5 class="card-title">${p.name}</h5>
+                                                <p class="card-text mb-2">
+                                                    <strong>Brand:</strong> ${p.brandName}<br>
+                                                    <strong>Series:</strong> ${p.seriesName || 'N/A'}<br>
+                                                    <strong>Model:</strong> ${p.modelName || 'N/A'}<br>
+                                                    <strong>Price:</strong> $${p.price}<br>
+                                                    <strong>Stock:</strong> ${p.stock}
+                                                </p>
+                                                <p class="card-text small text-muted">${p.description || ''}</p>
+                                            </div>
+                                            <button class="btn btn-primary mt-2" onclick="confirmSelectComponent('${componentType}', ${p.product_id}, '${p.name}', ${p.price})">Add to configuration</button>
+                                        </div>
+                                    </div>
+                                </div>
+                            `;
+                        });
+                        html += '</div>';
+                        document.getElementById('componentModalContent').innerHTML = html;
+                        // Hiển thị modal
+                        const modal = new bootstrap.Modal(document.getElementById('componentModal'));
+                        modal.show();
+                    })
+                    .catch(error => {
+                        document.getElementById('componentModalContent').innerHTML = '<p>Lỗi khi tải sản phẩm.</p>';
+                        const modal = new bootstrap.Modal(document.getElementById('componentModal'));
+                        modal.show();
+                    });
             }
             
             // Function to update progress bar
@@ -938,10 +976,50 @@
                 }, 3000);
             }
             
+            // Hàm xác nhận chọn linh kiện trong modal
+            function confirmSelectComponent(componentType, productId, productName, price) {
+                // Đóng modal
+                const modal = bootstrap.Modal.getInstance(document.getElementById('componentModal'));
+                if (modal) modal.hide();
+                // Cập nhật cấu hình như cũ
+                const stepElement = document.getElementById(`step-${componentType.toLowerCase()}`);
+                const selectedElement = document.getElementById(`selected-${componentType.toLowerCase()}`);
+                if (stepElement && selectedElement) {
+                    stepElement.classList.add('selected');
+                    selectedElement.textContent = productName;
+                    selectedElement.style.color = '#28a745';
+                }
+                updateProgressBar();
+                const selection = {
+                    productId: productId,
+                    productName: productName,
+                    price: price,
+                    componentType: componentType
+                };
+                sessionStorage.setItem(`selected_${componentType}`, JSON.stringify(selection));
+                showNotification(`Đã chọn ${componentType.toUpperCase()}: ${productName}`, 'success');
+            }
+            
             // Load saved selections on page load
             window.addEventListener('load', function() {
                 updateProgressBar();
             });
         </script>
+        <!-- Modal chọn linh kiện -->
+        <div class="modal fade" id="componentModal" tabindex="-1" aria-labelledby="componentModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-xl">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="componentModalLabel">Select component</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <div id="componentModalContent">
+                            <!-- Sản phẩm sẽ được render ở đây -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
     </body>
 </html> 
