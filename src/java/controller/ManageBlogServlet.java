@@ -268,7 +268,7 @@ public class ManageBlogServlet extends HttpServlet {
             Blog blog = blogDAO.getBlogById(blogId);
             
             if (blog != null) {
-                // Get customer information
+                // Get author information
                 List<Customer> customers = customerDAO.getAllCustomers();
                 Customer customer = customers.stream()
                     .filter(c -> c.getCustomer_id() == blog.getCustomer_id())
