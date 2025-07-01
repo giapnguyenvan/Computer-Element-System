@@ -6,12 +6,12 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <!DOCTYPE html>
-<html lang="vi">
+<html lang="en">
 
     <head>
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>Thanh toán khóa học - Cuz Learning</title>
+        <title>Payment</title>
         <!-- Bootstrap CSS -->
         <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
         <!-- Font Awesome -->
@@ -321,7 +321,7 @@
         <!-- Loading Spinner -->
         <div class="loading-spinner" id="loadingSpinner">
             <div class="spinner-border" role="status">
-                <span class="visually-hidden">Đang tải...</span>
+                <span class="visually-hidden">Loading...</span>
             </div>
         </div>
 
@@ -330,25 +330,25 @@
             <div class="window fade-in">
                 <!-- Status Indicator -->
                 <div class="status-indicator" id="statusIndicator">
-                    <i class="fas fa-clock me-1"></i>Chờ thanh toán
+                    <i class="fas fa-hourglass-half me-1"></i>Waiting for payment
                 </div>
 
                 <!-- Order Information -->
                 <div class="order-info">
-                    <h1><i class="fas fa-info-circle me-2"></i>Thông tin đơn hàng</h1>
+                    <h1><i class="fas fa-info-circle me-2"></i>Order Information</h1>
 
                     <div class="order-details">
                         <c:forEach items="${order.orderDetails}" var="orderDetail">
                             <div class="detail-row">
-                                <span class="detail-label"><i class="fas fa-code me-2"></i>Tên sản phẩm:</span>
+                                <span class="detail-label"><i class="fas fa-box me-2"></i>Product Name:</span>
                                 <span class="detail-value">${orderDetail.product.name}</span>
-                                <span class="detail-label"><i class="fas fa-code me-2"></i>Số lượng:</span>
+                                <span class="detail-label"><i class="fas fa-sort-numeric-up me-2"></i>Quantity:</span>
                                 <span class="detail-value">${orderDetail.quantity}</span>
                             </div>
                         </c:forEach>
 
                         <div class="detail-row">
-                            <span class="detail-label"><i class="fas fa-money-bill-wave me-2"></i>TỔNG CỘNG:</span>
+                            <span class="detail-label"><i class="fas fa-money-bill-wave me-2"></i>TOTAL:</span>
                             <span class="detail-value">${transaction.totalAmount} VND</span>
                         </div>
                     </div>
@@ -357,20 +357,20 @@
                 <!-- Payment Information -->
                 <div class="credit-info">
                     <div class="qr-section" style="display: flex; flex-direction: column; justify-content: center; align-items: center">
-                        <h1><i class="fas fa-qrcode me-2"></i>Quét mã để thanh toán</h1>
+                        <h1><i class="fas fa-qrcode me-2"></i>Scan to pay</h1>
 
                         <img src="https://img.vietqr.io/image/MB-0817300803-qr_only.jpg?amount=${transaction.totalAmount}&addInfo=${transaction.transactionCode}&accountName=Nguyen%20Duc%20Cuong" 
-                             alt="QR Code thanh toán" class="qr-code pulse" id="qrCode">
+                             alt="Payment QR Code" class="qr-code pulse" id="qrCode">
 
                         <div class="payment-info">
-                            <div><i class="fas fa-bank me-2"></i><strong>Ngân hàng:</strong> MB Bank</div>
-                            <div><i class="fas fa-money-bill-wave me-2"></i><strong>Số tài khoản:</strong> 0817300803</div>
-                            <div><i class="fas fa-user me-2"></i><strong>Tên tài khoản:</strong>Nguyen Duc Cuong</div>
+                            <div><i class="fas fa-university me-2"></i><strong>Bank:</strong> MB Bank</div>
+                            <div><i class="fas fa-credit-card me-2"></i><strong>Account Number:</strong> 0817300803</div>
+                            <div><i class="fas fa-user me-2"></i><strong>Account Name:</strong>Nguyen Duc Cuong</div>
                             <div class="payment-amount">
-                                <i class="fas fa-dollar-sign me-1"></i>${transaction.totalAmount} VND
+                                <i class="fas fa-coins me-1"></i>${transaction.totalAmount} VND
                             </div>
                             <div class="text-muted">
-                                <i class="fas fa-hashtag me-1"></i>Mã GD: ${transaction.transactionCode}
+                                <i class="fas fa-receipt me-1"></i>Transaction Code: ${transaction.transactionCode}
                             </div>
                         </div>
                     </div>
@@ -378,198 +378,161 @@
             </div>
         </div>
 
-        <!-- Include Header -->
+        <!-- Include Footer -->
         <jsp:include page="footer.jsp"/>
-
-        <!-- Scripts -->
-        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
-
+        
         <script>
-                                       // Theme Management
-                                       function switchTheme() {
-                                           const themeSwitch = document.getElementById("themeSwitch");
-                                           const theme = themeSwitch.checked ? 'dark' : 'light';
+            function getCookie(name) {
+                const nameEQ = name + "=";
+                const ca = document.cookie.split(';');
+                for (let i = 0; i < ca.length; i++) {
+                    let c = ca[i];
+                    while (c.charAt(0) === ' ')
+                        c = c.substring(1, c.length);
+                    if (c.indexOf(nameEQ) === 0)
+                        return c.substring(nameEQ.length, c.length);
+                }
+                return null;
+            }
 
-                                           document.documentElement.setAttribute("data-bs-theme", theme);
-                                           setCookie('currentTheme', theme, 365);
+            // Payment Status Management
+            let paymentCheckInterval;
 
-                                           // Update icon
-                                           const icon = themeSwitch.nextElementSibling.querySelector('i');
-                                           icon.className = theme === 'dark' ? 'fas fa-sun' : 'fas fa-moon';
-                                       }
+            function updatePaymentStatus(status, message) {
+                const indicator = document.getElementById('statusIndicator');
+                const qrCode = document.getElementById('qrCode');
+                // Ensure className always has status-indicator and status
+                indicator.className = `status-indicator ${status}`;
+                switch (status) {
+                    case 'success':
+                        indicator.innerHTML = '<i class="fas fa-check-circle me-1"></i>' + message;
+                        qrCode.classList.remove('pulse');
+                        break;
+                    case 'error':
+                        indicator.innerHTML = '<i class="fas fa-exclamation-triangle me-1"></i>' + message;
+                        qrCode.classList.remove('pulse');
+                        break;
+                    case 'processing':
+                        indicator.innerHTML = '<i class="fas fa-sync fa-spin me-1"></i>' + message;
+                        qrCode.classList.add('pulse');
+                        break;
+                    case 'pending':
+                        indicator.innerHTML = '<i class="fas fa-hourglass-half me-1"></i>' + message;
+                        qrCode.classList.add('pulse');
+                        break;
+                    default:
+                        indicator.innerHTML = message;
+                        qrCode.classList.add('pulse');
+                }
+            }
 
-                                       function initializeTheme() {
-                                           const savedTheme = getCookie('currentTheme');
-                                           const theme = savedTheme || 'light';
+            // Payment Processing
+            async function checkPaymentStatus(amount) {
+                try {
+                    const response = await fetch('/CES/payment-servlet', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify({
+                            transactionCode: '${transaction.transactionCode}',
+                            amount: amount
+                        })
+                    });
 
-                                           document.documentElement.setAttribute('data-bs-theme', theme);
-                                           document.getElementById("themeSwitch").checked = theme === 'dark';
+                    if (response.ok) {
+                        const data = await response.json();
 
-                                           const icon = document.querySelector('#themeSwitch + label i');
-                                           icon.className = theme === 'dark' ? 'fas fa-sun' : 'fas fa-moon';
-                                       }
-                                       initializeTheme();
-                                       function setCookie(name, value, days) {
-                                           const expires = new Date();
-                                           expires.setTime(expires.getTime() + (days * 24 * 60 * 60 * 1000));
-                                           document.cookie = `${name}=${value};expires=${expires.toUTCString()};path=/;SameSite=Lax`;
-                                       }
+                        if (data.status === 200) {
+                            updatePaymentStatus('success', 'Payment successful!');
+                            clearInterval(paymentCheckInterval);
 
-                                       function getCookie(name) {
-                                           const nameEQ = name + "=";
-                                           const ca = document.cookie.split(';');
-                                           for (let i = 0; i < ca.length; i++) {
-                                               let c = ca[i];
-                                               while (c.charAt(0) === ' ')
-                                                   c = c.substring(1, c.length);
-                                               if (c.indexOf(nameEQ) === 0)
-                                                   return c.substring(nameEQ.length, c.length);
-                                           }
-                                           return null;
-                                       }
+                            setTimeout(() => {
+                                window.location = '/CES/homepageservlet';
+                            }, 2000);
+                        } else if (data.status !== 200) {
+                            updatePaymentStatus('error', 'Payment failed');
+                            clearInterval(paymentCheckInterval);
+                        }
+                    }
+                } catch (error) {
+                    console.error('Payment check error:', error);
+                }
+            }
 
-                                       // Payment Status Management
-                                       let paymentCheckInterval;
+            // Google Sheets Integration (Alternative approach)
+            async function checkGoogleSheets() {
+                const HEAD_URL = "https://docs.google.com/spreadsheets/d/";
+                const SHEET_ID = "1eBH93hAdhslmqjEsqEj2KCHVHdSjy553BZs_ZJ6ZEr4";
+                const GID_STRING = "gviz/tq?sheet=trans";
+                const sizeOfCell = 10;
+                try {
+                    let sheet_range = "A2:F" + (sizeOfCell + 1);
+                    let full_link = HEAD_URL + SHEET_ID + "/" + GID_STRING + "&range=" + sheet_range;
 
-                                       function updatePaymentStatus(status, message) {
-                                           const indicator = document.getElementById('statusIndicator');
-                                           const qrCode = document.getElementById('qrCode');
-                                           // Đảm bảo className luôn có status-indicator và trạng thái
-                                           indicator.className = `status-indicator ${status}`;
-                                           switch (status) {
-                                               case 'success':
-                                                   indicator.innerHTML = '<i class="fas fa-check me-1"></i>' + message;
-                                                   qrCode.classList.remove('pulse');
-                                                   break;
-                                               case 'error':
-                                                   indicator.innerHTML = '<i class="fas fa-times me-1"></i>' + message;
-                                                   qrCode.classList.remove('pulse');
-                                                   break;
-                                               case 'processing':
-                                                   indicator.innerHTML = '<i class="fas fa-spinner fa-spin me-1"></i>' + message;
-                                                   qrCode.classList.add('pulse');
-                                                   break;
-                                               case 'pending':
-                                                   indicator.innerHTML = '<i class="fas fa-clock me-1"></i>' + message;
-                                                   qrCode.classList.add('pulse');
-                                                   break;
-                                               default:
-                                                   indicator.innerHTML = message;
-                                                   qrCode.classList.add('pulse');
-                                           }
-                                       }
+                    const response = await fetch(full_link);
+                    const dataText = await response.text();
+                    const data = JSON.parse(dataText.substr(47).slice(0, -2)).table.rows;
+                    console.log(data);
+                    if (data) {
+                        data.forEach(row => {
+                            const amount = parseFloat(row.c[2].v);
+                            console.log(amount);
+                            const description = row.c[1].v;
 
-                                       // Payment Processing
-                                       async function checkPaymentStatus(amount) {
-                                           try {
-                                               const response = await fetch('/CES/payment-servlet', {
-                                                   method: 'POST',
-                                                   headers: {
-                                                       'Content-Type': 'application/json',
-                                                   },
-                                                   body: JSON.stringify({
-                                                       transactionCode: '${transaction.transactionCode}',
-                                                       amount: amount
-                                                   })
-                                               });
+                            // Check transaction code in description
+                            var transactionCode = '${transaction.transactionCode}';
+                            var expectedAmount = ${transaction.totalAmount} * 0.99;
+                            var isValidTransaction = false;
 
-                                               if (response.ok) {
-                                                   const data = await response.json();
+                            // Use contains to check transaction code
+                            if (description && description.indexOf(transactionCode) !== -1) {
+                                console.log('Transaction code found in description: ' + description);
+                                console.log('Looking for transaction code: ' + transactionCode);
+                                isValidTransaction = true;
+                            }
 
-                                                   if (data.status === 200) {
-                                                       updatePaymentStatus('success', 'Thanh toán thành công!');
-                                                       clearInterval(paymentCheckInterval);
+                            if (isValidTransaction && amount >= expectedAmount) {
+                                console.log('Valid transaction found! Amount: ' + amount + ', Expected: ' + expectedAmount);
+                                clearInterval(paymentCheckInterval);
+                                checkPaymentStatus(amount);
+                            } else if (isValidTransaction) {
+                                console.log('Transaction code found but amount insufficient. Amount: ' + amount + ', Expected: ' + expectedAmount);
+                            }
+                        });
+                    }
+                } catch (error) {
+                    console.error('Google Sheets check error:', error);
+                }
+            }
 
-                                                       setTimeout(() => {
-                                                           window.location = '/CES/homepageservlet';
-                                                       }, 2000);
-                                                   } else if (data.status !== 200) {
-                                                       updatePaymentStatus('error', 'Thanh toán thất bại');
-                                                       clearInterval(paymentCheckInterval);
-                                                   }
-                                               }
-                                           } catch (error) {
-                                               console.error('Lỗi kiểm tra thanh toán:', error);
-                                           }
-                                       }
+            // Initialize
+            document.addEventListener('DOMContentLoaded', function () {
+                updatePaymentStatus('pending', 'Waiting for payment');
+                // Start payment checking
+                paymentCheckInterval = setInterval(checkGoogleSheets, 3000);
 
-                                       // Google Sheets Integration (Alternative approach)
-                                       async function checkGoogleSheets() {
-                                           const HEAD_URL = "https://docs.google.com/spreadsheets/d/";
-                                           const SHEET_ID = "1eBH93hAdhslmqjEsqEj2KCHVHdSjy553BZs_ZJ6ZEr4";
-                                           const GID_STRING = "gviz/tq?sheet=trans";
-                                           const sizeOfCell = 10;
-                                           try {
-                                               let sheet_range = "A2:F" + (sizeOfCell + 1);
-                                               let full_link = HEAD_URL + SHEET_ID + "/" + GID_STRING + "&range=" + sheet_range;
+                // Auto-timeout after 10 minutes
+                setTimeout(() => {
+                    if (paymentCheckInterval) {
+                        clearInterval(paymentCheckInterval);
+                        updatePaymentStatus('error', 'Payment timeout');
+                    }
+                }, 600000);
+            });
 
-                                               const response = await fetch(full_link);
-                                               const dataText = await response.text();
-                                               const data = JSON.parse(dataText.substr(47).slice(0, -2)).table.rows;
-                                               console.log(data);
-                                               if (data) {
-                                                   data.forEach(row => {
-                                                       const amount = parseFloat(row.c[2].v);
-                                                       console.log(amount);
-                                                       const description = row.c[1].v;
-
-                                                       if (description === '${transaction.transactionCode}') {
-                                                           console.log("di qua day");
-                                                           if (amount >= ${transaction.totalAmount} * 0.99) {
-//                                                               updatePaymentStatus('success', 'Thanh toán thành công!');
-                                                               clearInterval(paymentCheckInterval);
-                                                               checkPaymentStatus(amount);
-                                                               setTimeout(() => {
-//                                                                   document.getElementById('redirectForm').submit();
-                                                               }, 2000);
-                                                           }
-                                                       }
-                                                   });
-                                               }
-                                           } catch (error) {
-                                               console.error('Lỗi kiểm tra Google Sheets:', error);
-                                           }
-                                       }
-
-                                       // Show loading
-                                       function showLoading() {
-                                           document.getElementById('loadingSpinner').style.display = 'block';
-                                       }
-
-                                       function hideLoading() {
-                                           document.getElementById('loadingSpinner').style.display = 'none';
-                                       }
-
-                                       // Initialize
-                                       document.addEventListener('DOMContentLoaded', function () {
-                                           initializeTheme();
-                                           updatePaymentStatus('pending', 'Chờ thanh toán');
-
-                                           // Start payment checking
-                                           paymentCheckInterval = setInterval(checkGoogleSheets, 3000);
-
-                                           // Auto-timeout after 10 minutes
-                                           setTimeout(() => {
-                                               if (paymentCheckInterval) {
-                                                   clearInterval(paymentCheckInterval);
-                                                   updatePaymentStatus('error', 'Hết thời gian thanh toán');
-                                               }
-                                           }, 600000);
-                                       });
-
-                                       // Handle page visibility change
-                                       document.addEventListener('visibilitychange', function () {
-                                           if (document.hidden) {
-                                               if (paymentCheckInterval) {
-                                                   clearInterval(paymentCheckInterval);
-                                               }
-                                           } else {
-                                               if (!paymentCheckInterval) {
-                                                   paymentCheckInterval = setInterval(checkGoogleSheets, 3000);
-                                               }
-                                           }
-                                       });
+            // Handle page visibility change
+            document.addEventListener('visibilitychange', function () {
+                if (document.hidden) {
+                    if (paymentCheckInterval) {
+                        clearInterval(paymentCheckInterval);
+                    }
+                } else {
+                    if (!paymentCheckInterval) {
+                        paymentCheckInterval = setInterval(checkGoogleSheets, 3000);
+                    }
+                }
+            });
         </script>
     </body>
 </html>

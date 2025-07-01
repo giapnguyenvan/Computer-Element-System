@@ -250,18 +250,46 @@ public class BlogControl extends HttpServlet {
         }
     }
 
-    private void deleteBlog(HttpServletRequest request, HttpServletResponse response)
+    public void deleteBlog(HttpServletRequest request, HttpServletResponse response)
     throws ServletException, IOException {
         try {
             int id = Integer.parseInt(request.getParameter("id"));
             int customerId = Integer.parseInt(request.getParameter("customer_id"));
-            
+
+            // Fetch all images before deleting the blog
+            dal.BlogImageDAO blogImageDAO = new dal.BlogImageDAO();
+            java.util.Vector<model.BlogImage> images = blogImageDAO.getImagesByBlogId(id);
+
+            // Delete blog (and images in DB)
             blogDAO.deleteBlog(id, customerId);
+
+            // Delete physical files after DB delete
+            for (model.BlogImage img : images) {
+                if (img.getImage_url() != null && img.getImage_url().startsWith("/uploads/blog/")) {
+                    String realPath = getServletContext().getRealPath(img.getImage_url());
+                    java.io.File file = new java.io.File(realPath);
+                    if (file.exists()) file.delete();
+                }
+            }
             request.getSession().setAttribute("success", "Blog deleted successfully!");
             response.sendRedirect(request.getContextPath() + "/viewblogs");
         } catch (NumberFormatException e) {
             request.getSession().setAttribute("error", "Invalid ID format.");
             response.sendRedirect(request.getContextPath() + "/viewblogs");
+        }
+    }
+
+    public static void deleteBlogAndImages(int blogId, int customerId, javax.servlet.ServletContext context) {
+        dal.BlogImageDAO blogImageDAO = new dal.BlogImageDAO();
+        java.util.Vector<model.BlogImage> images = blogImageDAO.getImagesByBlogId(blogId);
+        BlogDAO blogDAO = new BlogDAO();
+        blogDAO.deleteBlog(blogId, customerId);
+        for (model.BlogImage img : images) {
+            if (img.getImage_url() != null && img.getImage_url().startsWith("/uploads/blog/")) {
+                String realPath = context.getRealPath(img.getImage_url());
+                java.io.File file = new java.io.File(realPath);
+                if (file.exists()) file.delete();
+            }
         }
     }
 

@@ -2,15 +2,15 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ page import="model.User" %>
 <%
-    // Check if user is logged in and is an admin
+    // Check if user is logged in and is a staff
     User user = (User) session.getAttribute("userAuth");
     if (user == null) {
         response.sendRedirect(request.getContextPath() + "/login");
         return;
     }
     
-    // Check if user is admin (không phân biệt hoa thường)
-    if (!"admin".equalsIgnoreCase(user.getRole())) {
+    // Check if user is staff (không phân biệt hoa thường)
+    if (!"staff".equalsIgnoreCase(user.getRole())) {
         response.sendRedirect(request.getContextPath() + "/homepageservlet");
         return;
     }
@@ -20,7 +20,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Admin Dashboard - Account Management</title>
+    <title>Staff Dashboard - Management</title>
     <!-- Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <!-- Font Awesome -->
@@ -35,7 +35,7 @@
 
         .sidebar {
             min-height: 100vh;
-            background-color: #343a40;
+            background-color: #2c3e50;
             padding-top: 20px;
         }
 
@@ -47,29 +47,29 @@
             margin: 0;
         }
 
-        .admin-profile {
+        .staff-profile {
             padding: 15px 20px;
             border-bottom: 1px solid rgba(255,255,255,0.1);
             margin-bottom: 15px;
         }
 
-        .admin-profile img {
+        .staff-profile img {
             width: 50px;
             height: 50px;
             border-radius: 50%;
             margin-right: 10px;
         }
 
-        .admin-profile .admin-info {
+        .staff-profile .staff-info {
             color: #fff;
         }
 
-        .admin-profile .admin-info h6 {
+        .staff-profile .staff-info h6 {
             margin: 0;
             font-weight: 600;
         }
 
-        .admin-profile .admin-info small {
+        .staff-profile .staff-info small {
             color: rgba(255,255,255,0.7);
         }
 
@@ -81,11 +81,11 @@
         }
 
         .sidebar a:hover {
-            background-color: #495057;
+            background-color: #34495e;
         }
 
         .sidebar a.active {
-            background-color: #495057;
+            background-color: #34495e;
         }
 
         .main-content {
@@ -131,11 +131,11 @@
     <div class="container-fluid">
         <div class="row">
             <!-- Sidebar -->
-            <jsp:include page="sidebar.jsp" />
+            <jsp:include page="staffSidebar.jsp" />
             
             <!-- Main Content -->
             <div class="col-md-9 col-lg-10 main-content">
-                <iframe id="mainFrame" name="mainFrame" src="${pageContext.request.contextPath}/adminHome.jsp"></iframe>
+                <iframe id="mainFrame" name="mainFrame" src="${pageContext.request.contextPath}/staffHome.jsp"></iframe>
             </div>
         </div>
     </div>

@@ -1,16 +1,16 @@
 <%-- 
     Document   : checkout
-    Created on : Jun 25, 2025, 6:37:27 PM
+    Created on : Jun 25, 2025, 6:37:27 PM
     Author     : admin
 --%>
 
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <!DOCTYPE html>
-<html lang="vi">
+<html lang="en">
     <head>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>Checkout - Thanh toán</title>
+        <title>Checkout - Payment</title>
         <!-- Bootstrap CSS -->
         <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
         <!-- Font Awesome -->
@@ -113,6 +113,84 @@
                 outline: none;
                 border-color: #667eea;
                 box-shadow: 0 5px 15px rgba(102, 126, 234, 0.2);
+            }
+
+            .payment-options {
+                display: flex;
+                gap: 15px;
+                margin-top: 10px;
+                flex-wrap: wrap;
+            }
+
+            .payment-option {
+                flex: 1;
+                min-width: 200px;
+            }
+
+            .payment-option input[type="radio"] {
+                display: none;
+            }
+
+            .payment-option label {
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                padding: 12px 16px;
+                border: 2px solid #e1e5e9;
+                border-radius: 15px;
+                background: linear-gradient(145deg, #ffffff, #f8f9fa);
+                cursor: pointer;
+                transition: all 0.3s ease;
+                font-weight: 500;
+                text-align: center;
+                color: #2d3436;
+            }
+
+            .payment-option label i {
+                margin-right: 8px;
+                font-size: 1.1rem;
+            }
+
+            .payment-option input[type="radio"]:checked + label {
+                background: linear-gradient(145deg, #f0f4ff, #e8f2ff);
+                border-color: #667eea;
+                color: #667eea;
+                font-weight: 600;
+                transform: translateY(-2px);
+                box-shadow: 0 5px 15px rgba(102, 126, 234, 0.3);
+            }
+
+            .payment-option label:hover {
+                background: linear-gradient(145deg, #f8f9fa, #f0f4ff);
+                border-color: #b3c5ff;
+                transform: translateY(-1px);
+                box-shadow: 0 3px 10px rgba(102, 126, 234, 0.2);
+            }
+
+            .payment-option input[type="radio"]:checked + label i {
+                color: #667eea;
+            }
+
+            .payment-option:first-child label i {
+                color: #28a745;
+            }
+
+            .payment-option:last-child label i {
+                color: #007bff;
+            }
+
+            .payment-option input[type="radio"]:checked + label:first-child i,
+            .payment-option input[type="radio"]:checked + label:last-child i {
+                color: #667eea;
+            }
+
+            @media (max-width: 600px) {
+                .payment-options {
+                    flex-direction: column;
+                }
+                .payment-option {
+                    min-width: auto;
+                }
             }
 
             .cart-items {
@@ -282,25 +360,25 @@
         <jsp:include page="header.jsp"/>
         <div class="container">
             <div class="checkout-header">
-                <h1>Thanh toán đơn hàng</h1>
-                <p>Vui lòng kiểm tra thông tin và hoàn tất đơn hàng</p>
+                <h1>Order Checkout</h1>
+                <p>Please review your information and complete your order</p>
             </div>
 
             <div class="checkout-content">
                 <div class="checkout-form">
-                    <h2>Thông tin giao hàng</h2>
+                    <h2>Shipping Information</h2>
 
                     <div class="error-message" id="errorMessage"></div>
                     <div class="success-message" id="successMessage"></div>
 
                     <form id="checkoutForm">
                         <div class="form-group">
-                            <label for="fullName">Họ và tên *</label>
+                            <label for="fullName">Full Name *</label>
                             <input type="text" id="fullName" name="fullName" required>
                         </div>
 
                         <div class="form-group">
-                            <label for="phone">Số điện thoại *</label>
+                            <label for="phone">Phone Number *</label>
                             <input type="tel" id="phone" name="phone" required onchange="validatePhone()">
                         </div>
 
@@ -310,38 +388,49 @@
                         </div>
 
                         <div class="form-group">
-                            <label for="address">Địa chỉ giao hàng *</label>
+                            <label for="address">Shipping Address *</label>
                             <textarea id="address" name="address" rows="3" required 
-                                      placeholder="Số nhà, tên đường, phường/xã, quận/huyện, tỉnh/thành phố"></textarea>
+                                      placeholder="House number, street name, ward/commune, district, province/city"></textarea>
                         </div>
 
                         <div class="form-group">
-                            <label for="paymentMethod">Phương thức thanh toán *</label>
-                            <select id="paymentMethod" name="paymentMethod" required>
-                                <option value="">Chọn phương thức thanh toán</option>
-                                <option value="1">Thanh toán khi nhận hàng (COD)</option>
-                                <option value="2">Chuyển khoản ngân hàng</option>
-                            </select>
+                            <label>Payment Method *</label>
+                            <div class="payment-options">
+                                <div class="payment-option">
+                                    <input type="radio" id="cod" name="paymentMethod" value="1" required>
+                                    <label for="cod">
+                                        <i class="fas fa-truck"></i>
+                                        Cash on Delivery (COD)
+                                    </label>
+                                </div>
+                                <div class="payment-option">
+                                    <input type="radio" id="bankTransfer" name="paymentMethod" value="2" required>
+                                    <label for="bankTransfer">
+                                        <i class="fas fa-university"></i>
+                                        Bank Transfer
+                                    </label>
+                                </div>
+                            </div>
                         </div>
 
                         <div class="form-group">
-                            <label for="notes">Ghi chú đơn hàng</label>
+                            <label for="notes">Order Notes</label>
                             <textarea id="notes" name="notes" rows="2" 
-                                      placeholder="Ghi chú thêm về đơn hàng (tùy chọn)"></textarea>
+                                      placeholder="Additional notes about your order (optional)"></textarea>
                         </div>
                     </form>
                 </div>
 
                 <div class="order-summary">
-                    <h2>Đơn hàng của bạn</h2>
+                    <h2>Your Order</h2>
 
                     <div id="loading-container" class="loading">
-                        <p>Đang tải giỏ hàng...</p>
+                        <p>Loading cart...</p>
                     </div>
 
                     <div id="empty-cart" class="empty-cart" style="display: none;">
                         <i class="fas fa-shopping-cart"></i>
-                        <p>Giỏ hàng trống</p>
+                        <p>Cart is empty</p>
                     </div>
 
                     <div id="cart-items-container" class="cart-items">
@@ -350,21 +439,21 @@
 
                     <div id="cart-summary" class="order-total">
                         <div class="total-row">
-                            <span>Tạm tính:</span>
+                            <span>Subtotal:</span>
                             <span id="subtotal">0₫</span>
                         </div>
                         <div class="total-row">
-                            <span>Phí vận chuyển:</span>
-                            <span>Miễn phí</span>
+                            <span>Shipping:</span>
+                            <span>Free</span>
                         </div>
                         <div class="total-row final">
-                            <span>Tổng cộng:</span>
+                            <span>Total:</span>
                             <span id="total">0₫</span>
                         </div>
                     </div>
 
                     <button type="button" onclick="processCheckout()" form="checkoutForm" class="checkout-btn" id="checkoutButton">
-                        Thanh toán
+                        Checkout
                     </button>
                 </div>
             </div>
@@ -385,7 +474,7 @@
             // Initialize page
             document.addEventListener('DOMContentLoaded', function () {
                 loadCartItems();
-                loadUserInfo(); // Tự động điền thông tin user
+                loadUserInfo(); // Automatically fill user information
             });
 
             // API Functions
@@ -425,7 +514,7 @@
                     cartItems = response.data || [];
                     renderCartItems();
                 } catch (error) {
-                    showMessage('Lỗi khi tải giỏ hàng: ' + error.message, 'error');
+                    showMessage('Error loading cart: ' + error.message, 'error');
                 } finally {
                     setLoading(false);
                 }
@@ -464,8 +553,8 @@
                             'class="item-image">' +
                             '<div class="item-info">' +
                             '<h4>' + item.product.name + '</h4>' +
-                            '<div class="quantity">Số lượng: ' + item.quantity + '</div>' +
-                            '<div class="description">' + (item.product.description || 'Sản phẩm chất lượng cao') + '</div>' +
+                            '<div class="quantity">Quantity: ' + item.quantity + '</div>' +
+                            '<div class="description">' + (item.product.description || 'High quality product') + '</div>' +
                             '<div class="item-price">' + formatPrice(itemTotal) + '₫</div>' +
                             '</div>' +
                             '</div>';
@@ -511,15 +600,15 @@
             // Process checkout
             async function processCheckout() {
                 if (cartItems.length === 0) {
-                    showError('Giỏ hàng của bạn đang trống');
+                    showError('Your cart is empty');
                     return;
                 }
                 if (!validatePhone()) {
-                    showError('Số điện thoại không hợp lệ!');
+                    showError('Invalid phone number!');
                     return;
                 }
                 if (!validateEmail()) {
-                    showError('Email không hợp lệ!');
+                    showError('Invalid email!');
                     return;
                 }
                 // Validate form
@@ -532,7 +621,7 @@
                 try {
                     const checkoutBtn = document.getElementById('checkoutButton');
                     checkoutBtn.disabled = true;
-                    checkoutBtn.textContent = 'Đang xử lý...';
+                    checkoutBtn.textContent = 'Processing...';
 
                     // Prepare order data
                     const formData = new FormData(form);
@@ -578,7 +667,7 @@
                     const result = await response.json();
 
                     if (result.success) {
-                        showSuccess('Đặt hàng thành công! Vui lòng thanh toán.');
+                        showSuccess('Order placed successfully! Please proceed to payment.');
                         // Clear form
                         form.reset();
                         // Reload cart (should be empty now)
@@ -587,15 +676,15 @@
                             window.location = "payment-servlet?orderId=" + result.orderId;
                         }, 4000);
                     } else {
-                        showError('Đặt hàng thất bại: ' + (result.message || 'Lỗi không xác định'));
+                        showError('Order failed: ' + (result.message || 'Unknown error'));
                     }
                 } catch (error) {
                     console.error('Checkout error:', error);
-                    showError('Có lỗi xảy ra khi đặt hàng: ' + error.message);
+                    showError('An error occurred while placing order: ' + error.message);
                 } finally {
                     const checkoutBtn = document.getElementById('checkoutButton');
                     checkoutBtn.disabled = false;
-                    checkoutBtn.textContent = 'Đặt hàng';
+                    checkoutBtn.textContent = 'Place Order';
                 }
             }
 
@@ -671,7 +760,7 @@
                         document.getElementById('address').value = userInfo.address || '';
                     }
                 } catch (error) {
-                    // Không hiển thị lỗi vì user có thể chưa đăng nhập
+                    // Don't show error as user might not be logged in
                 }
             }
         </script>

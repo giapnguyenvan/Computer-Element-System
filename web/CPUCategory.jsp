@@ -260,6 +260,10 @@
 
                         // Update cart count
                         updateCartCount();
+                        // Update header cart count if function exists
+                        if (typeof updateHeaderCartCount === 'function') {
+                            updateHeaderCartCount();
+                        }
 
                         // Add visual feedback
                         addButton.classList.add('btn-success');

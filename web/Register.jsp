@@ -621,7 +621,7 @@
     <script>
         function validateEmail(email) {
             const re = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
-            return re.test(email);
+            return re.test(email) && email.length <= 100;
         }
 
         function validatePassword(password) {
@@ -630,33 +630,35 @@
         }
 
         function validateVietnamesePhone(phone) {
-            // Vietnamese phone number format: 0xxxxxxxxx (10 digits starting with 0)
-            const re = /^0[0-9]{9}$/;
+            // Vietnamese phone number format: 0xxxxxxxxx (10 digits starting with 0) or +84...
+            const re = /^(0|\+84)(3[2-9]|5[6|8|9]|7[0|6-9]|8[1-5]|9[0-9])[0-9]{7}$/;
             return re.test(phone);
+        }
+
+        function validateFullName(name) {
+            if (!name || name.trim() === '') return false;
+            if (name.length > 50) return false;
+            return true;
         }
 
         function validateAddressField(fieldValue) {
             if (!fieldValue || fieldValue.trim() === '') {
                 return "This field is required.";
             }
-            
             if (fieldValue.length < 2 || fieldValue.length > 100) {
                 return "Length must be between 2 and 100 characters.";
             }
-            
             // Check for dangerous characters
-            const dangerousChars = /[<>{}[\]\\$%]/;
+            const dangerousChars = /[<>{}[]\\$%]/;
             if (dangerousChars.test(fieldValue)) {
                 return "Contains invalid characters (<, >, {, }, [, ], \\, $, %).";
             }
-            
             return null; // Valid
         }
 
         function showFieldError(fieldId, errorMessage) {
             const field = document.getElementById(fieldId);
             const errorDiv = document.getElementById(fieldId + 'Error');
-            
             field.classList.add('is-invalid');
             errorDiv.textContent = errorMessage;
             errorDiv.style.display = 'block';
@@ -665,7 +667,6 @@
         function clearFieldError(fieldId) {
             const field = document.getElementById(fieldId);
             const errorDiv = document.getElementById(fieldId + 'Error');
-            
             field.classList.remove('is-invalid');
             errorDiv.style.display = 'none';
         }
@@ -673,6 +674,7 @@
         const registerForm = document.getElementById('registerForm');
         if (registerForm) {
             registerForm.addEventListener('submit', function (event) {
+                const fullname = document.getElementById('fullname').value;
                 const email = document.getElementById('email').value;
                 const password = document.getElementById('password').value;
                 const confirmPassword = document.getElementById('confirmPassword').value;
@@ -681,11 +683,11 @@
                 const ward = document.getElementById('ward').value;
                 const district = document.getElementById('district').value;
                 const province = document.getElementById('province').value;
-                
                 const errorDiv = document.getElementById('clientError');
                 let hasFieldErrors = false;
 
                 // Clear all field errors first
+                clearFieldError('fullname');
                 clearFieldError('email');
                 clearFieldError('password');
                 clearFieldError('confirmPassword');
@@ -695,9 +697,15 @@
                 clearFieldError('district');
                 clearFieldError('province');
 
+                // Validate fullname
+                if (!validateFullName(fullname)) {
+                    showFieldError('fullname', 'Full Name is required and must not exceed 50 characters.');
+                    hasFieldErrors = true;
+                }
+
                 // Validate email
                 if (!validateEmail(email)) {
-                    showFieldError('email', 'Invalid email. Please enter a valid email address.');
+                    showFieldError('email', 'Invalid email. Please enter a valid email address (max 100 characters).');
                     hasFieldErrors = true;
                 }
 
@@ -715,7 +723,7 @@
 
                 // Validate phone number
                 if (!validateVietnamesePhone(phone)) {
-                    showFieldError('phone', 'Please enter a valid Vietnamese phone number (10 digits starting with 0).');
+                    showFieldError('phone', 'Please enter a valid Vietnamese phone number.');
                     hasFieldErrors = true;
                 }
 
@@ -727,7 +735,7 @@
                     } else {
                         const dangerousChars = /[<>{}[\\]$%]/;
                         if (dangerousChars.test(addressDetail)) {
-                            showFieldError('addressDetail', 'Contains invalid characters (<, >, {, }, [, ], \, $, %).');
+                            showFieldError('addressDetail', 'Contains invalid characters (<, >, {, }, [, ], \\, $, %).');
                             hasFieldErrors = true;
                         }
                     }

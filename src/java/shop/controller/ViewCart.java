@@ -13,6 +13,9 @@ import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import shop.anotation.AccessRoles;
+import dal.MenuItemDAO;
+import model.MenuItem;
+import java.util.List;
 
 /**
  *
@@ -62,6 +65,10 @@ public class ViewCart extends HttpServlet {
 //    @AccessRoles(roles = {"customer"})
     public void doGet(HttpServletRequest request, HttpServletResponse response)
     throws ServletException, IOException {
+        // Lấy menu động
+        List<MenuItem> menuItems = MenuItemDAO.getAllMenuItems();
+        request.setAttribute("menuItems", menuItems);
+        
         request.getRequestDispatcher("view-cart.jsp").forward(request, response);
     } 
 

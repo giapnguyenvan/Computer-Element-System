@@ -19,6 +19,8 @@ public class Products {
     private String brandName; // From brand table
     private String componentTypeName; // from componenttype table
     private String categoryName; // To be compatible with old code
+    private String seriesName; // From series table
+    private String modelName; // From model table
 
 
     public Products() {
@@ -194,6 +196,22 @@ public class Products {
 
     public void setComponentTypeName(String componentTypeName) {
         this.componentTypeName = componentTypeName;
+    }
+    
+    public String getSeriesName() {
+        return seriesName;
+    }
+
+    public void setSeriesName(String seriesName) {
+        this.seriesName = seriesName;
+    }
+
+    public String getModelName() {
+        return modelName;
+    }
+
+    public void setModelName(String modelName) {
+        this.modelName = modelName;
     }
     
     // Kept for backward compatibility

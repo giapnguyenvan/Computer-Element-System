@@ -2,6 +2,8 @@ package controller;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.Map;
+import java.util.HashMap;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
@@ -9,38 +11,187 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import model.PCComponent;
 import dal.PCComponentDAO;
+import dal.ProductDAO;
+import model.Products;
+import com.google.gson.Gson;
+import java.util.Vector;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import dal.DBContext;
 
 @WebServlet(name = "PCBuilderServlet", urlPatterns = {"/PCBuilderServlet"})
 public class PCBuilderServlet extends HttpServlet {
 
     private PCComponentDAO pcComponentDAO;
+    private ProductDAO productDAO;
 
     @Override
     public void init() throws ServletException {
         pcComponentDAO = new PCComponentDAO();
+        productDAO = new ProductDAO();
     }
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        // Load all component lists
-        List<PCComponent> cpuList = pcComponentDAO.getComponentsByType("CPU");
-        List<PCComponent> gpuList = pcComponentDAO.getComponentsByType("GPU");
-        List<PCComponent> ramList = pcComponentDAO.getComponentsByType("RAM");
-        List<PCComponent> motherboardList = pcComponentDAO.getComponentsByType("Motherboard");
-        List<PCComponent> storageList = pcComponentDAO.getComponentsByType("Storage");
-        List<PCComponent> psuList = pcComponentDAO.getComponentsByType("PSU");
+        
+        try {
+            // Check if this is an API call for products
+            String action = request.getParameter("action");
+            if ("getProducts".equals(action)) {
+                handleGetProducts(request, response);
+                return;
+            }
+            
+            // Load all component lists
+            List<PCComponent> cpuList = pcComponentDAO.getComponentsByType("CPU");
+            List<PCComponent> gpuList = pcComponentDAO.getComponentsByType("GPU");
+            List<PCComponent> ramList = pcComponentDAO.getComponentsByType("RAM");
+            List<PCComponent> motherboardList = pcComponentDAO.getComponentsByType("Motherboard");
+            List<PCComponent> storageList = pcComponentDAO.getComponentsByType("Storage");
+            List<PCComponent> psuList = pcComponentDAO.getComponentsByType("PSU");
 
-        // Set attributes for JSP
-        request.setAttribute("cpuList", cpuList);
-        request.setAttribute("gpuList", gpuList);
-        request.setAttribute("ramList", ramList);
-        request.setAttribute("motherboardList", motherboardList);
-        request.setAttribute("storageList", storageList);
-        request.setAttribute("psuList", psuList);
+            // Load products by component type from database
+            Vector<Products> cpuProducts = productDAO.getProductsByComponentType(1); // CPU
+            Vector<Products> mainboardProducts = productDAO.getProductsByComponentType(2); // Mainboard  
+            Vector<Products> ramProducts = productDAO.getProductsByComponentType(3); // RAM
+            Vector<Products> gpuProducts = productDAO.getProductsByComponentType(4); // GPU
+            Vector<Products> storageProducts = productDAO.getProductsByComponentType(5); // Storage
+            Vector<Products> psuProducts = productDAO.getProductsByComponentType(6); // PSU
+            Vector<Products> caseProducts = productDAO.getProductsByComponentType(7); // Case
+            Vector<Products> coolerProducts = productDAO.getProductsByComponentType(8); // Cooler
 
-        // Forward to PC Builder page
-        request.getRequestDispatcher("pcBuilder.jsp").forward(request, response);
+            // Chỉ truyền brands và series cho từng component type
+            Map<String, Vector<String>> brandsMap = new HashMap<>();
+            Map<String, Vector<String>> seriesMap = new HashMap<>();
+            String[] types = {"CPU", "Mainboard", "RAM", "GPU", "Storage", "PSU", "Case", "Cooler"};
+            int[] typeIds = {1, 2, 3, 4, 5, 6, 7, 8}; // mapping đúng với DB
+            for (int i = 0; i < types.length; i++) {
+                brandsMap.put(types[i], productDAO.getBrandsByComponentType(typeIds[i]));
+                seriesMap.put(types[i], productDAO.getSeriesByComponentType(typeIds[i]));
+            }
+            request.setAttribute("brandsMap", brandsMap);
+            request.setAttribute("seriesMap", seriesMap);
+
+            // Thêm: truyền model cho từng componenttype (không còn bảng model, lấy trực tiếp từ product)
+            Map<Integer, Vector<String>> allModelMap = new HashMap<>();
+            for (int i = 1; i <= 8; i++) {
+                allModelMap.put(i, productDAO.getModelStringByComponentType(i));
+            }
+            request.setAttribute("allModelMap", allModelMap);
+
+            // Truyền series cho từng componenttype (bảng series vẫn còn)
+            Map<Integer, Vector<String>> allSeriesMap = new HashMap<>();
+            for (int i = 1; i <= 8; i++) {
+                allSeriesMap.put(i, productDAO.getSeriesByComponentType(i));
+            }
+            request.setAttribute("allSeriesMap", allSeriesMap);
+
+            // Set attributes for JSP
+            request.setAttribute("cpuList", cpuList);
+            request.setAttribute("gpuList", gpuList);
+            request.setAttribute("ramList", ramList);
+            request.setAttribute("motherboardList", motherboardList);
+            request.setAttribute("storageList", storageList);
+            request.setAttribute("psuList", psuList);
+
+            // Set product attributes
+            request.setAttribute("cpuProducts", cpuProducts);
+            request.setAttribute("mainboardProducts", mainboardProducts);
+            request.setAttribute("ramProducts", ramProducts);
+            request.setAttribute("gpuProducts", gpuProducts);
+            request.setAttribute("storageProducts", storageProducts);
+            request.setAttribute("psuProducts", psuProducts);
+            request.setAttribute("caseProducts", caseProducts);
+            request.setAttribute("coolerProducts", coolerProducts);
+
+            // Forward to PC Builder page
+            request.getRequestDispatcher("pcBuilder.jsp").forward(request, response);
+            
+        } catch (Exception e) {
+            System.err.println("Error in PCBuilderServlet: " + e.getMessage());
+            e.printStackTrace();
+            request.setAttribute("error", "An error occurred while loading the PC Builder page: " + e.getMessage());
+            if (!response.isCommitted()) {
+                request.getRequestDispatcher("error.jsp").forward(request, response);
+            }
+        }
+    }
+
+    private void handleGetProducts(HttpServletRequest request, HttpServletResponse response) 
+            throws ServletException, IOException {
+        response.setContentType("application/json");
+        response.setCharacterEncoding("UTF-8");
+        
+        String componentType = request.getParameter("componentType");
+        String brandFilter = request.getParameter("brand");
+        String seriesFilter = request.getParameter("series");
+        
+        Vector<Products> products = new Vector<>();
+        
+        // Get products based on component type
+        switch (componentType.toLowerCase()) {
+            case "cpu":
+                products = productDAO.getProductsByComponentType(1);
+                break;
+            case "mainboard":
+                products = productDAO.getProductsByComponentType(2);
+                break;
+            case "ram":
+                products = productDAO.getProductsByComponentType(3);
+                break;
+            case "gpu":
+                products = productDAO.getProductsByComponentType(4);
+                break;
+            case "storage":
+                products = productDAO.getProductsByComponentType(5);
+                break;
+            case "psu":
+                products = productDAO.getProductsByComponentType(6);
+                break;
+            case "case":
+                products = productDAO.getProductsByComponentType(7);
+                break;
+            case "cooler":
+                products = productDAO.getProductsByComponentType(8);
+                break;
+        }
+        
+        // Filter by brand if specified
+        if (brandFilter != null && !brandFilter.isEmpty()) {
+            products = filterProductsByBrand(products, brandFilter);
+        }
+        
+        // Filter by series if specified
+        if (seriesFilter != null && !seriesFilter.isEmpty()) {
+            products = filterProductsBySeries(products, seriesFilter);
+        }
+        
+        // Convert to JSON and send response
+        Gson gson = new Gson();
+        String jsonResponse = gson.toJson(products);
+        response.getWriter().write(jsonResponse);
+    }
+    
+    private Vector<Products> filterProductsByBrand(Vector<Products> products, String brand) {
+        Vector<Products> filtered = new Vector<>();
+        for (Products product : products) {
+            if (brand.equalsIgnoreCase(product.getBrandName())) {
+                filtered.add(product);
+            }
+        }
+        return filtered;
+    }
+    
+    private Vector<Products> filterProductsBySeries(Vector<Products> products, String series) {
+        Vector<Products> filtered = new Vector<>();
+        for (Products product : products) {
+            if (product.getName().toLowerCase().contains(series.toLowerCase())) {
+                filtered.add(product);
+            }
+        }
+        return filtered;
     }
 
     @Override

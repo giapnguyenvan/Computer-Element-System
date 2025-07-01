@@ -1,5 +1,6 @@
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 <!DOCTYPE html>
 <html>
     <head>
@@ -303,11 +304,25 @@
                 z-index: 2;
                 position: relative;
             }
+            .btn-pcbuilder-white {
+                background: #fff !important;
+                color: #0d6efd !important;
+                border: 2px solid #0d6efd !important;
+                font-weight: 600;
+                box-shadow: 0 2px 8px rgba(13,110,253,0.08);
+                transition: background 0.2s, color 0.2s, box-shadow 0.2s;
+            }
+            .btn-pcbuilder-white:hover, .btn-pcbuilder-white:focus {
+                background: #0d6efd !important;
+                color: #fff !important;
+                box-shadow: 0 4px 16px rgba(13,110,253,0.15);
+            }
         </style>
     </head>
     <body>
         <jsp:include page="header.jsp"/>
         <div class="container-fluid py-4">
+            
             <form action="PCBuilderServlet" method="post">
                 <div class="row equal-height">
                     <!-- Sidebar Megamenu -->
@@ -315,156 +330,185 @@
                         <div class="sidebar-section mb-4">
                             <h5 class="mb-3">Build Case PC</h5>
                             <ul class="sidebar-menu">
+                                <!-- CPU Section -->
                                 <li class="menu-item has-submenu">
                                     <a href="#"><i class="fas fa-microchip fa-fw me-2"></i> CPU</a>
                                     <div class="submenu">
                                         <div class="submenu-col">
                                             <h6>Brand</h6>
                                             <ul>
-                                                <li><a href="#">Intel</a></li>
-                                                <li><a href="#">AMD</a></li>
+                                                <c:forEach var="brand" items="${brandsMap['CPU']}">
+                                                    <li><a href="#" data-component="cpu" data-brand="${brand}">${brand}</a></li>
+                                                </c:forEach>
                                             </ul>
                                         </div>
                                         <div class="submenu-col">
-                                            <h6>Type</h6>
+                                            <h6>Series</h6>
                                             <ul>
-                                                <li><a href="#">Desktop</a></li>
-                                                <li><a href="#">Workstation</a></li>
+                                                <c:forEach var="series" items="${seriesMap['CPU']}">
+                                                    <li><a href="#" data-component="cpu" data-series="${series}">${series}</a></li>
+                                                </c:forEach>
                                             </ul>
                                         </div>
                                     </div>
                                 </li>
+                                
+                                <!-- Mainboard Section -->
                                 <li class="menu-item has-submenu">
-                                    <a href="#"><i class="fas fa-microchip fa-fw me-2"></i> Mainboard</a>
+                                    <a href="#"><i class="fas fa-server fa-fw me-2"></i> Mainboard</a>
                                     <div class="submenu">
                                         <div class="submenu-col">
                                             <h6>Brand</h6>
                                             <ul>
-                                                <li><a href="#">ASUS</a></li>
-                                                <li><a href="#">MSI</a></li>
-                                                <li><a href="#">Gigabyte</a></li>
+                                                <c:forEach var="brand" items="${brandsMap['Mainboard']}">
+                                                    <li><a href="#" data-component="mainboard" data-brand="${brand}">${brand}</a></li>
+                                                </c:forEach>
                                             </ul>
                                         </div>
                                         <div class="submenu-col">
-                                            <h6>Type</h6>
+                                            <h6>Series</h6>
                                             <ul>
-                                                <li><a href="#">ATX</a></li>
-                                                <li><a href="#">Micro ATX</a></li>
-                                                <li><a href="#">Mini ITX</a></li>
+                                                <c:forEach var="series" items="${seriesMap['Mainboard']}">
+                                                    <li><a href="#" data-component="mainboard" data-series="${series}">${series}</a></li>
+                                                </c:forEach>
                                             </ul>
                                         </div>
                                     </div>
                                 </li>
+                                
+                                <!-- RAM Section -->
                                 <li class="menu-item has-submenu">
                                     <a href="#"><i class="fas fa-memory fa-fw me-2"></i> RAM</a>
                                     <div class="submenu">
                                         <div class="submenu-col">
                                             <h6>Brand</h6>
                                             <ul>
-                                                <li><a href="#">Corsair</a></li>
-                                                <li><a href="#">Kingston</a></li>
+                                                <c:forEach var="brand" items="${brandsMap['RAM']}">
+                                                    <li><a href="#" data-component="ram" data-brand="${brand}">${brand}</a></li>
+                                                </c:forEach>
                                             </ul>
                                         </div>
                                         <div class="submenu-col">
-                                            <h6>Type</h6>
+                                            <h6>Series</h6>
                                             <ul>
-                                                <li><a href="#">DDR4</a></li>
-                                                <li><a href="#">DDR5</a></li>
+                                                <c:forEach var="series" items="${seriesMap['RAM']}">
+                                                    <li><a href="#" data-component="ram" data-series="${series}">${series}</a></li>
+                                                </c:forEach>
                                             </ul>
                                         </div>
                                     </div>
                                 </li>
+                                
+                                <!-- GPU Section -->
                                 <li class="menu-item has-submenu">
                                     <a href="#"><i class="fas fa-video fa-fw me-2"></i> GPU</a>
                                     <div class="submenu">
                                         <div class="submenu-col">
                                             <h6>Brand</h6>
                                             <ul>
-                                                <li><a href="#">NVIDIA</a></li>
-                                                <li><a href="#">AMD</a></li>
+                                                <c:forEach var="brand" items="${brandsMap['GPU']}">
+                                                    <li><a href="#" data-component="gpu" data-brand="${brand}">${brand}</a></li>
+                                                </c:forEach>
                                             </ul>
                                         </div>
                                         <div class="submenu-col">
-                                            <h6>Type</h6>
+                                            <h6>Series</h6>
                                             <ul>
-                                                <li><a href="#">RTX Series</a></li>
-                                                <li><a href="#">GTX Series</a></li>
+                                                <c:forEach var="series" items="${seriesMap['GPU']}">
+                                                    <li><a href="#" data-component="gpu" data-series="${series}">${series}</a></li>
+                                                </c:forEach>
                                             </ul>
                                         </div>
                                     </div>
                                 </li>
+                                
+                                <!-- Storage Section -->
                                 <li class="menu-item has-submenu">
                                     <a href="#"><i class="fas fa-hdd fa-fw me-2"></i> Storage</a>
                                     <div class="submenu">
                                         <div class="submenu-col">
-                                            <h6>Type</h6>
+                                            <h6>Brand</h6>
                                             <ul>
-                                                <li><a href="#">SSD</a></li>
-                                                <li><a href="#">HDD</a></li>
+                                                <c:forEach var="brand" items="${brandsMap['Storage']}">
+                                                    <li><a href="#" data-component="storage" data-brand="${brand}">${brand}</a></li>
+                                                </c:forEach>
                                             </ul>
                                         </div>
                                         <div class="submenu-col">
-                                            <h6>Brand</h6>
+                                            <h6>Series</h6>
                                             <ul>
-                                                <li><a href="#">Samsung</a></li>
-                                                <li><a href="#">Western Digital</a></li>
+                                                <c:forEach var="series" items="${seriesMap['Storage']}">
+                                                    <li><a href="#" data-component="storage" data-series="${series}">${series}</a></li>
+                                                </c:forEach>
                                             </ul>
                                         </div>
                                     </div>
                                 </li>
+                                
+                                <!-- PSU Section -->
                                 <li class="menu-item has-submenu">
-                                    <a href="#"><i class="fas fa-server fa-fw me-2"></i> PSU</a>
+                                    <a href="#"><i class="fas fa-plug fa-fw me-2"></i> PSU</a>
                                     <div class="submenu">
                                         <div class="submenu-col">
                                             <h6>Brand</h6>
                                             <ul>
-                                                <li><a href="#">Corsair</a></li>
-                                                <li><a href="#">Cooler Master</a></li>
+                                                <c:forEach var="brand" items="${brandsMap['PSU']}">
+                                                    <li><a href="#" data-component="psu" data-brand="${brand}">${brand}</a></li>
+                                                </c:forEach>
                                             </ul>
                                         </div>
                                         <div class="submenu-col">
-                                            <h6>Type</h6>
+                                            <h6>Series</h6>
                                             <ul>
-                                                <li><a href="#">Modular</a></li>
-                                                <li><a href="#">Non-Modular</a></li>
+                                                <c:forEach var="series" items="${seriesMap['PSU']}">
+                                                    <li><a href="#" data-component="psu" data-series="${series}">${series}</a></li>
+                                                </c:forEach>
                                             </ul>
                                         </div>
                                     </div>
                                 </li>
+                                
+                                <!-- Case Section -->
                                 <li class="menu-item has-submenu">
                                     <a href="#"><i class="fas fa-desktop fa-fw me-2"></i> Case</a>
                                     <div class="submenu">
                                         <div class="submenu-col">
                                             <h6>Brand</h6>
                                             <ul>
-                                                <li><a href="#">NZXT</a></li>
-                                                <li><a href="#">Corsair</a></li>
+                                                <c:forEach var="brand" items="${brandsMap['Case']}">
+                                                    <li><a href="#" data-component="case" data-brand="${brand}">${brand}</a></li>
+                                                </c:forEach>
                                             </ul>
                                         </div>
                                         <div class="submenu-col">
-                                            <h6>Type</h6>
+                                            <h6>Series</h6>
                                             <ul>
-                                                <li><a href="#">Mid Tower</a></li>
-                                                <li><a href="#">Full Tower</a></li>
+                                                <c:forEach var="series" items="${seriesMap['Case']}">
+                                                    <li><a href="#" data-component="case" data-series="${series}">${series}</a></li>
+                                                </c:forEach>
                                             </ul>
                                         </div>
                                     </div>
                                 </li>
+                                
+                                <!-- Cooler Section -->
                                 <li class="menu-item has-submenu">
                                     <a href="#"><i class="fas fa-fan fa-fw me-2"></i> Cooler</a>
                                     <div class="submenu">
                                         <div class="submenu-col">
                                             <h6>Brand</h6>
                                             <ul>
-                                                <li><a href="#">Corsair</a></li>
-                                                <li><a href="#">Cooler Master</a></li>
+                                                <c:forEach var="brand" items="${brandsMap['Cooler']}">
+                                                    <li><a href="#" data-component="cooler" data-brand="${brand}">${brand}</a></li>
+                                                </c:forEach>
                                             </ul>
                                         </div>
                                         <div class="submenu-col">
-                                            <h6>Type</h6>
+                                            <h6>Series</h6>
                                             <ul>
-                                                <li><a href="#">Air Cooler</a></li>
-                                                <li><a href="#">Liquid Cooler</a></li>
+                                                <c:forEach var="series" items="${seriesMap['Cooler']}">
+                                                    <li><a href="#" data-component="cooler" data-series="${series}">${series}</a></li>
+                                                </c:forEach>
                                             </ul>
                                         </div>
                                     </div>
@@ -623,17 +667,33 @@
                                     </div>
                                 </div>
                             </div>
-                            <h2 class="mb-3 position-relative">Chào mừng đến với PC Builder!</h2>
-                            <p class="lead position-relative">Hãy chọn các linh kiện phù hợp hoặc khám phá các chương trình khuyến mại hấp dẫn của chúng tôi.</p>
-                            <div class="component-card promotion-card d-flex flex-column flex-md-row align-items-center p-4 mb-4" style="background: transparent; box-shadow: none;">
-                                <img src="https://images.unsplash.com/photo-1517336714731-489689fd1ca8?auto=format&fit=crop&w=600&q=80"
-                                     alt="Khuyến mại lớn"
-                                     class="img-fluid rounded shadow mb-3 mb-md-0 me-md-4"
-                                     style="max-width: 260px; height: 160px; object-fit: cover; border-radius: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.08);">
-                                <div class="text-start">
-                                    <h4 class="mb-2 text-danger">Chương trình khuyến mại: "Mua PC - Tặng Chuột Gaming!"</h4>
-                                    <p class="mb-2">Khi mua bất kỳ bộ PC nào tại shop trong tháng này, bạn sẽ nhận ngay một chuột gaming cao cấp trị giá 500.000đ. Số lượng có hạn!</p>
-                                    <a href="PromotionDetailServlet?id=1" class="btn btn-primary">Xem chi tiết khuyến mại</a>
+                            <!-- Dãy nút chọn linh kiện tích hợp vào đây -->
+                            <div class="container mb-4">
+                                <div class="row mb-2 justify-content-center">
+                                    <div class="col-auto mb-2">
+                                        <button class="btn btn-pcbuilder-white btn-lg" onclick="selectComponent('cpu')"><i class="fas fa-microchip me-2"></i>Select CPU</button>
+                                    </div>
+                                    <div class="col-auto mb-2">
+                                        <button class="btn btn-pcbuilder-white btn-lg" onclick="selectComponent('mainboard')"><i class="fas fa-server me-2"></i>Select Mainboard</button>
+                                    </div>
+                                    <div class="col-auto mb-2">
+                                        <button class="btn btn-pcbuilder-white btn-lg" onclick="selectComponent('ram')"><i class="fas fa-memory me-2"></i>Select RAM</button>
+                                    </div>
+                                    <div class="col-auto mb-2">
+                                        <button class="btn btn-pcbuilder-white btn-lg" onclick="selectComponent('gpu')"><i class="fas fa-video me-2"></i>Select GPU</button>
+                                    </div>
+                                    <div class="col-auto mb-2">
+                                        <button class="btn btn-pcbuilder-white btn-lg" onclick="selectComponent('storage')"><i class="fas fa-hdd me-2"></i>Select Storage</button>
+                                    </div>
+                                    <div class="col-auto mb-2">
+                                        <button class="btn btn-pcbuilder-white btn-lg" onclick="selectComponent('psu')"><i class="fas fa-plug me-2"></i>Select PSU</button>
+                                    </div>
+                                    <div class="col-auto mb-2">
+                                        <button class="btn btn-pcbuilder-white btn-lg" onclick="selectComponent('case')"><i class="fas fa-desktop me-2"></i>Select Case</button>
+                                    </div>
+                                    <div class="col-auto mb-2">
+                                        <button class="btn btn-pcbuilder-white btn-lg" onclick="selectComponent('cooler')"><i class="fas fa-fan me-2"></i>Select Cooler</button>
+                                    </div>
                                 </div>
                             </div>
                             <!-- Vùng hiển thị sản phẩm động -->
@@ -647,8 +707,38 @@
                 <h4>Total Price: $<span id="totalPrice">0.00</span></h4>
             </div>
         </div>
+        <div class="container mt-5">
+            <h3 class="mb-4">Danh sách Series và Model theo từng loại linh kiện</h3>
+            <div class="row">
+                <c:set var="typeNames" value="CPU,Mainboard,RAM,GPU,Storage,PSU,Case,Cooler" />
+                <c:forEach var="typeId" begin="1" end="8" varStatus="status">
+                    <div class="col-md-3 mb-4">
+                        <div class="card h-100 shadow-sm">
+                            <div class="card-header bg-primary text-white">
+                                <strong>
+                                    <c:out value="${fn:split(typeNames, ',')[typeId-1]}" />
+                                </strong>
+                            </div>
+                            <div class="card-body">
+                                <strong>Series:</strong>
+                                <ul class="mb-2" style="font-size:0.97em;">
+                                    <c:forEach var="series" items="${allSeriesMap[typeId]}">
+                                        <li>${series}</li>
+                                    </c:forEach>
+                                </ul>
+                                <strong>Model:</strong>
+                                <ul style="font-size:0.97em;">
+                                    <c:forEach var="model" items="${allModelMap[typeId]}">
+                                        <li>${model}</li>
+                                    </c:forEach>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </c:forEach>
+            </div>
+        </div>
         <jsp:include page="footer.jsp"/>
-        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
         <script>
             // Add JavaScript to calculate total price when components are selected
             document.querySelectorAll('select').forEach(select => {
@@ -730,34 +820,59 @@
             // Hiển thị sản phẩm khi bấm submenu (giống GearVN)
             const typeMap = {
                 "CPU": 1,
-                "GPU": 2,
-                "Mainboard": 3,
-                "RAM": 4
-                // Thêm các loại khác nếu có
+                "GPU": 4,
+                "Mainboard": 2,
+                "RAM": 3,
+                "Storage": 5,
+                "PSU": 6,
+                "Case": 7,
+                "Cooler": 8
             };
+            
             document.querySelectorAll('.submenu-col ul li a').forEach(link => {
                 link.addEventListener('click', function(e) {
                     e.preventDefault();
-                    const subCategory = this.textContent.trim();
-                    console.log('Đã click vào:', subCategory);
-                    const typeId = typeMap[subCategory];
-                    if (typeId) {
-                        fetch('/Project_G2/api/products?type_id=' + typeId)
+                    const component = this.getAttribute('data-component');
+                    const brand = this.getAttribute('data-brand');
+                    const series = this.getAttribute('data-series');
+                    
+                    console.log('Đã click vào:', component, brand, series);
+                    
+                    if (component) {
+                        let url = `PCBuilderServlet?action=getProducts&componentType=${component}`;
+                        if (brand) url += `&brand=${encodeURIComponent(brand)}`;
+                        if (series) url += `&series=${encodeURIComponent(series)}`;
+                        
+                        fetch(url)
                             .then(res => res.json())
                             .then(products => {
-                                let html = `<h4 class=\"mb-3\">Sản phẩm: ${subCategory}</h4>`;
+                                let html = `<h4 class="mb-3">Products: ${component.toUpperCase()}`;
+                                if (brand) html += ` - ${brand}`;
+                                if (series) html += ` - ${series}`;
+                                html += `</h4>`;
+                                
                                 if (products.length > 0) {
                                     html += '<div class="row">';
                                     products.forEach(p => {
                                         html += `
-                                            <div class=\"col-md-4 mb-3\">
-                                                <div class=\"card\">
-                                                    <img src=\"${p.image_url || 'default.jpg'}\" class=\"card-img-top\" alt=\"${p.name}\">
-                                                    <div class=\"card-body\">
-                                                        <h5 class=\"card-title\">${p.name}</h5>
-                                                        <p class=\"card-text\">${p.price} USD</p>
-                                                        <p class=\"card-text\">${p.description || ''}</p>
-                                                        <button class=\"btn btn-primary\">Chọn mua</button>
+                                            <div class="col-md-4 mb-3">
+                                                <div class="card component-card">
+                                                    <img src="${p.image_url || 'assets/images/default-product.jpg'}" 
+                                                         class="card-img-top" alt="${p.name}" 
+                                                         style="height: 200px; object-fit: cover;">
+                                                    <div class="card-body">
+                                                        <h5 class="card-title">${p.name}</h5>
+                                                        <p class="card-text">
+                                                            <strong>Brand:</strong> ${p.brandName}<br>
+                                                            <strong>Series:</strong> ${p.seriesName || 'N/A'}<br>
+                                                            <strong>Model:</strong> ${p.modelName || 'N/A'}<br>
+                                                            <strong>Price:</strong> $${p.price}<br>
+                                                            <strong>Stock:</strong> ${p.stock}
+                                                        </p>
+                                                        <p class="card-text">${p.description || ''}</p>
+                                                        <button class="btn btn-primary" onclick="selectComponent(componentType, ${p.product_id}, '${p.name}', ${p.price})">
+                                                            Select ${component.toUpperCase()}
+                                                        </button>
                                                     </div>
                                                 </div>
                                             </div>
@@ -765,15 +880,146 @@
                                     });
                                     html += '</div>';
                                 } else {
-                                    html += '<p>Không có sản phẩm.</p>';
+                                    html += '<p>No products found.</p>';
                                 }
                                 document.getElementById('productList').innerHTML = html;
+                            })
+                            .catch(error => {
+                                console.error('Error fetching products:', error);
+                                document.getElementById('productList').innerHTML = '<p>Error loading products.</p>';
                             });
                     } else {
-                        document.getElementById('productList').innerHTML = '<p>Chưa hỗ trợ danh mục này.</p>';
+                        document.getElementById('productList').innerHTML = '<p>Component type not supported.</p>';
                     }
                 });
             });
+            
+            // Function to select a component and update progress
+            function selectComponent(componentType) {
+                const url = `PCBuilderServlet?action=getProducts&componentType=${componentType}`;
+                fetch(url)
+                    .then(res => res.json())
+                    .then(products => {
+                        let html = `<div class='row'>`;
+                        products.forEach(p => {
+                            html += `
+                                <div class="col-md-4 mb-4">
+                                    <div class="card component-card h-100">
+                                        <img src="${p.image_url || 'assets/images/default-product.jpg'}" class="card-img-top" alt="${p.name}" style="height: 200px; object-fit: cover;">
+                                        <div class="card-body d-flex flex-column justify-content-between">
+                                            <div>
+                                                <h5 class="card-title">${p.name}</h5>
+                                                <p class="card-text mb-2">
+                                                    <strong>Brand:</strong> ${p.brandName}<br>
+                                                    <strong>Series:</strong> ${p.seriesName || 'N/A'}<br>
+                                                    <strong>Model:</strong> ${p.modelName || 'N/A'}<br>
+                                                    <strong>Price:</strong> $${p.price}<br>
+                                                    <strong>Stock:</strong> ${p.stock}
+                                                </p>
+                                                <p class="card-text small text-muted">${p.description || ''}</p>
+                                            </div>
+                                            <button class="btn btn-primary mt-2" onclick="confirmSelectComponent('${componentType}', ${p.product_id}, '${p.name}', ${p.price})">Add to configuration</button>
+                                        </div>
+                                    </div>
+                                </div>
+                            `;
+                        });
+                        html += '</div>';
+                        document.getElementById('componentModalContent').innerHTML = html;
+                        // Hiển thị modal
+                        const modal = new bootstrap.Modal(document.getElementById('componentModal'));
+                        modal.show();
+                    })
+                    .catch(error => {
+                        document.getElementById('componentModalContent').innerHTML = '<p>Lỗi khi tải sản phẩm.</p>';
+                        const modal = new bootstrap.Modal(document.getElementById('componentModal'));
+                        modal.show();
+                    });
+            }
+            
+            // Function to update progress bar
+            function updateProgressBar() {
+                const components = ['cpu', 'mainboard', 'ram', 'gpu', 'storage', 'psu', 'case', 'cooler'];
+                let selectedCount = 0;
+                
+                components.forEach(component => {
+                    const selected = sessionStorage.getItem(`selected_${component}`);
+                    if (selected) {
+                        selectedCount++;
+                    }
+                });
+                
+                const progressPercentage = (selectedCount / components.length) * 100;
+                const progressBar = document.getElementById('build-progress-bar');
+                if (progressBar) {
+                    progressBar.style.width = progressPercentage + '%';
+                    progressBar.setAttribute('aria-valuenow', progressPercentage);
+                }
+            }
+            
+            // Function to show notifications
+            function showNotification(message, type = 'info') {
+                const notification = document.createElement('div');
+                notification.className = `alert alert-${type} alert-dismissible fade show position-fixed`;
+                notification.style.cssText = 'top: 20px; right: 20px; z-index: 9999; min-width: 300px;';
+                notification.innerHTML = `
+                    ${message}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                `;
+                document.body.appendChild(notification);
+                
+                // Auto remove after 3 seconds
+                setTimeout(() => {
+                    if (notification.parentNode) {
+                        notification.remove();
+                    }
+                }, 3000);
+            }
+            
+            // Hàm xác nhận chọn linh kiện trong modal
+            function confirmSelectComponent(componentType, productId, productName, price) {
+                // Đóng modal
+                const modal = bootstrap.Modal.getInstance(document.getElementById('componentModal'));
+                if (modal) modal.hide();
+                // Cập nhật cấu hình như cũ
+                const stepElement = document.getElementById(`step-${componentType.toLowerCase()}`);
+                const selectedElement = document.getElementById(`selected-${componentType.toLowerCase()}`);
+                if (stepElement && selectedElement) {
+                    stepElement.classList.add('selected');
+                    selectedElement.textContent = productName;
+                    selectedElement.style.color = '#28a745';
+                }
+                updateProgressBar();
+                const selection = {
+                    productId: productId,
+                    productName: productName,
+                    price: price,
+                    componentType: componentType
+                };
+                sessionStorage.setItem(`selected_${componentType}`, JSON.stringify(selection));
+                showNotification(`Đã chọn ${componentType.toUpperCase()}: ${productName}`, 'success');
+            }
+            
+            // Load saved selections on page load
+            window.addEventListener('load', function() {
+                updateProgressBar();
+            });
         </script>
+        <!-- Modal chọn linh kiện -->
+        <div class="modal fade" id="componentModal" tabindex="-1" aria-labelledby="componentModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-xl">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="componentModalLabel">Select component</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <div id="componentModalContent">
+                            <!-- Sản phẩm sẽ được render ở đây -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
     </body>
 </html> 
