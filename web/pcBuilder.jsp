@@ -606,10 +606,7 @@
                     <!-- Content chọn linh kiện -->
                     <div class="col-md-9 content-col">
                         <div class="container mt-3">
-                            <pre>
-                                allSeriesMap: ${allSeriesMap}
-                                allModelMap: ${allModelMap}
-                            </pre>
+                            
                         </div>
                         <div class="pc-builder-bg component-card text-center p-4 mb-4" style="position: relative;">
                             <div class="bg-overlay" style="background: none; position: static; z-index: auto; height: auto; width: auto;">
