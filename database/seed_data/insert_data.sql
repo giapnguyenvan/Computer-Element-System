@@ -36,7 +36,19 @@ INSERT INTO brand (brand_id, name) VALUES
 (17, 'LG'),
 (18, 'Secretlab'),
 (19, 'Herman Miller'),
-(20, 'IKEA');
+(20, 'IKEA'),
+(21, 'Kingston'),
+(22, 'Crucial'),
+(23, 'Team Group'),
+(24, 'Patriot'),
+(25, 'ADATA'),
+(26, 'ASRock'),
+(27, 'EVGA'),
+(28, 'Zotac'),
+(29, 'Palit'),
+(30, 'PowerColor'),
+(31, 'Sapphire'),
+(32, 'XFX');
 
 -- SERIES
 INSERT INTO series (series_id, brand_id, name) VALUES
@@ -67,22 +79,74 @@ INSERT INTO series (series_id, brand_id, name) VALUES
 (25, 18, 'Titan Evo'), -- Secretlab
 (26, 19, 'Sayl'), -- Herman Miller
 (27, 20, 'UPPSTÅ'), -- IKEA
-(28, 20, 'LAGKAPTEN');
+(28, 20, 'LAGKAPTEN'),
+(29, 21, 'Fury Beast'), -- Kingston
+(30, 21, 'Fury Renegade'), -- Kingston
+(31, 22, 'Ballistix'), -- Crucial
+(32, 23, 'T-Force'), -- Team Group
+(33, 24, 'Viper'), -- Patriot
+(34, 25, 'XPG'), -- ADATA
+(35, 2, 'Core i9-14000'), -- Intel
+(36, 2, 'Core i7-14000'), -- Intel
+(37, 2, 'Core i5-14000'), -- Intel
+(38, 1, 'Ryzen 7 8000'), -- AMD
+(39, 1, 'Ryzen 5 8000'), -- AMD
+(40, 6, 'GeForce RTX 40'), -- NVIDIA
+(41, 1, 'Radeon RX 8000'), -- AMD
+(42, 27, 'GeForce RTX'), -- EVGA
+(43, 28, 'GeForce RTX'), -- Zotac
+(44, 29, 'GeForce RTX'), -- Palit
+(45, 30, 'Radeon RX'), -- PowerColor
+(46, 31, 'Radeon RX'), -- Sapphire
+(47, 32, 'Radeon RX'); -- XFX
 
 -- PRODUCT
 INSERT INTO product (name, component_type_id, brand_id, model, price, import_price, stock, description, status, created_at) VALUES
+-- CPU Products (existing + new)
 ('AMD Ryzen 7 9800X3D', 1, 1, '9800X3D', 480.00, 384.00, 50, '8-core CPU with 3D V-Cache', 'Active', NOW()),
 ('AMD Ryzen 9 9700X', 1, 1, '9700X', 400.00, 320.00, 40, '8-core high-performance CPU', 'Active', NOW()),
 ('Intel Core Ultra 7 265K', 1, 2, '265K', 400.00, 320.00, 45, 'High-clock CPU for gaming', 'Active', NOW()),
-('ASUS ROG Strix X870-F', 2, 3, 'X870-F', 350.00, 280.00, 30, 'AM5 motherboard with Wi-Fi 6E', 'Active', NOW()),
-('ASUS ROG Strix B650-E', 2, 3, 'B650-E', 300.00, 240.00, 35, 'B650 chipset with PCIe 5.0', 'Active', NOW()),
-('Gigabyte B650 Aorus Elite AX', 2, 5, 'B650 AX', 250.00, 200.00, 50, 'Budget AM5 board with Wi-Fi', 'Active', NOW()),
+-- New CPU Products
+('Intel Core i9-14900K', 1, 2, '14900K', 580.00, 464.00, 25, '24-core flagship CPU for extreme performance', 'Active', NOW()),
+('Intel Core i7-14700K', 1, 2, '14700K', 420.00, 336.00, 35, '20-core CPU with hybrid architecture', 'Active', NOW()),
+('Intel Core i5-14600K', 1, 2, '14600K', 320.00, 256.00, 50, '14-core CPU perfect for gaming', 'Active', NOW()),
+('AMD Ryzen 7 8700X', 1, 1, '8700X', 350.00, 280.00, 40, '8-core Zen 4 CPU with excellent efficiency', 'Active', NOW()),
+('AMD Ryzen 5 8600X', 1, 1, '8600X', 280.00, 224.00, 60, '6-core CPU ideal for gaming and productivity', 'Active', NOW()),
+('AMD Ryzen 9 7950X3D', 1, 1, '7950X3D', 700.00, 560.00, 15, '16-core CPU with 3D V-Cache technology', 'Active', NOW()),
+('Intel Core i9-13900KS', 1, 2, '13900KS', 650.00, 520.00, 20, 'Special edition CPU with higher clock speeds', 'Active', NOW()),
+
+-- RAM Products (existing + new)
 ('Corsair Vengeance LPX DDR5-6000 32GB', 3, 7, 'LPX DDR5-6000', 120.00, 96.00, 100, '32GB DDR5 dual-channel RAM', 'Active', NOW()),
 ('Corsair Vengeance RGB DDR5-6400 32GB', 3, 7, 'RGB DDR5-6400', 140.00, 112.00, 80, 'RGB DDR5 RAM, 32GB', 'Active', NOW()),
 ('G.Skill Trident Z5 DDR5-6000 32GB', 3, 8, 'Z5 DDR5-6000', 130.00, 104.00, 90, 'High-speed DDR5 with RGB', 'Active', NOW()),
+-- New RAM Products
+('Kingston Fury Beast DDR5-5600 32GB', 3, 21, 'Fury Beast DDR5-5600', 110.00, 88.00, 120, '32GB DDR5 RAM with aggressive styling', 'Active', NOW()),
+('Kingston Fury Renegade DDR5-6400 32GB', 3, 21, 'Fury Renegade DDR5-6400', 150.00, 120.00, 70, 'High-performance DDR5 with RGB lighting', 'Active', NOW()),
+('Crucial Ballistix DDR5-6000 32GB', 3, 22, 'Ballistix DDR5-6000', 125.00, 100.00, 85, 'Reliable DDR5 RAM with excellent compatibility', 'Active', NOW()),
+('Team Group T-Force Delta DDR5-6400 32GB', 3, 23, 'T-Force Delta DDR5-6400', 135.00, 108.00, 75, 'RGB DDR5 RAM with unique design', 'Active', NOW()),
+('Patriot Viper DDR5-6000 32GB', 3, 24, 'Viper DDR5-6000', 115.00, 92.00, 95, '32GB DDR5 RAM with heat spreader', 'Active', NOW()),
+('ADATA XPG Lancer DDR5-6400 32GB', 3, 25, 'XPG Lancer DDR5-6400', 145.00, 116.00, 65, 'Premium DDR5 RAM with RGB effects', 'Active', NOW()),
+('Corsair Dominator Platinum DDR5-7200 32GB', 3, 7, 'Dominator Platinum DDR5-7200', 180.00, 144.00, 40, 'Ultra-high-speed DDR5 RAM', 'Active', NOW()),
+
+-- GPU Products (existing + new)
 ('NVIDIA GeForce RTX 5090', 4, 6, '5090', 1500.00, 1200.00, 20, 'Top-tier GPU for 4K gaming', 'Active', NOW()),
 ('NVIDIA GeForce RTX 5080', 4, 6, '5080', 1000.00, 800.00, 25, 'High-end GPU for 1440p', 'Active', NOW()),
 ('MSI Radeon RX 9070 XT', 4, 4, '9070 XT', 800.00, 640.00, 30, 'AMD GPU with ray tracing', 'Active', NOW()),
+-- New GPU Products
+('NVIDIA GeForce RTX 4090', 4, 6, '4090', 1600.00, 1280.00, 15, 'Previous generation flagship GPU', 'Active', NOW()),
+('NVIDIA GeForce RTX 4080', 4, 6, '4080', 1200.00, 960.00, 20, 'High-end RTX 40 series GPU', 'Active', NOW()),
+('NVIDIA GeForce RTX 4070 Ti', 4, 6, '4070 Ti', 800.00, 640.00, 35, 'Mid-high range GPU with excellent performance', 'Active', NOW()),
+('AMD Radeon RX 7900 XTX', 4, 1, '7900 XTX', 1000.00, 800.00, 25, 'AMD flagship GPU with 24GB VRAM', 'Active', NOW()),
+('AMD Radeon RX 7900 XT', 4, 1, '7900 XT', 900.00, 720.00, 30, 'High-end AMD GPU for 4K gaming', 'Active', NOW()),
+('AMD Radeon RX 7800 XT', 4, 1, '7800 XT', 550.00, 440.00, 40, 'Mid-range AMD GPU with great value', 'Active', NOW()),
+('EVGA GeForce RTX 4070', 4, 27, '4070', 600.00, 480.00, 45, 'EVGA RTX 4070 with excellent cooling', 'Active', NOW()),
+('Zotac GeForce RTX 4060 Ti', 4, 28, '4060 Ti', 400.00, 320.00, 60, 'Compact RTX 4060 Ti for small builds', 'Active', NOW()),
+('Sapphire Radeon RX 7700 XT', 4, 31, '7700 XT', 450.00, 360.00, 50, 'Sapphire RX 7700 XT with Nitro cooling', 'Active', NOW()),
+
+-- Other existing products
+('ASUS ROG Strix X870-F', 2, 3, 'X870-F', 350.00, 280.00, 30, 'AM5 motherboard with Wi-Fi 6E', 'Active', NOW()),
+('ASUS ROG Strix B650-E', 2, 3, 'B650-E', 300.00, 240.00, 35, 'B650 chipset with PCIe 5.0', 'Active', NOW()),
+('Gigabyte B650 Aorus Elite AX', 2, 5, 'B650 AX', 250.00, 200.00, 50, 'Budget AM5 board with Wi-Fi', 'Active', NOW()),
 ('WD Black SN850X 2TB', 5, 9, '2TB', 180.00, 144.00, 80, 'High-speed M.2 SSD, 7300MB/s', 'Active', NOW()),
 ('WD Black SN850X 1TB', 5, 9, '1TB', 100.00, 80.00, 100, '1TB NVMe SSD for gaming', 'Active', NOW()),
 ('Samsung 970 EVO Plus 2TB', 5, 10, '2TB NVMe', 200.00, 160.00, 70, 'Reliable 2TB NVMe SSD', 'Active', NOW()),
