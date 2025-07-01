@@ -117,6 +117,22 @@
 
         <!-- Custom JavaScript -->
         <script>
+            // Global variables
+            let currentUserId = 0;
+            
+            // Get current user ID from session
+            <c:choose>
+                <c:when test="${not empty sessionScope.customerAuth}">
+                    currentUserId = ${sessionScope.customerAuth.customer_id};
+                </c:when>
+                <c:when test="${not empty sessionScope.userAuth}">
+                    currentUserId = ${sessionScope.userAuth.id};
+                </c:when>
+                <c:otherwise>
+                    currentUserId = 0;
+                </c:otherwise>
+            </c:choose>
+
                                 // Function to load page content using AJAX
                                 function loadRAMPage(pageNumber) {
                                     // Prevent loading if it's a disabled button or current page
@@ -204,6 +220,15 @@
 
 
                                 async function addToCart(productId, productName, productPrice) {
+                                    // Check if user is logged in
+                                    if (currentUserId === 0) {
+                                        Swal.fire({
+                                            icon: 'warning',
+                                            title: 'Please Login',
+                                            text: 'You need to login to add products to cart'
+                                        });
+                                        return;
+                                    }
 
                                     const addButton = document.getElementById('addBtn_' + productId);
 
@@ -218,7 +243,7 @@
                                                 'Content-Type': 'application/json'
                                             },
                                             body: JSON.stringify({
-                                                userId: currentUserId,
+                                                customerId: currentUserId,
                                                 productId: productId,
                                                 quantity: 1
                                             })
@@ -240,6 +265,11 @@
                                             addButton.classList.add('btn-success');
                                             addButton.innerHTML = '<i class="fas fa-check me-2"></i>Added!';
 
+                                            // Update header cart count if function exists
+                                            if (typeof updateHeaderCartCount === 'function') {
+                                                updateHeaderCartCount();
+                                            }
+                                            
                                             setTimeout(() => {
                                                 addButton.classList.remove('btn-success');
                                                 addButton.innerHTML = '<i class="fas fa-shopping-cart me-2"></i>Add to Cart';

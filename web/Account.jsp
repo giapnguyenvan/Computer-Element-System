@@ -513,7 +513,7 @@
                             <label class="form-label">Role</label>
                             <select class="form-select" name="role" required>
                                 <option value="staff">Staff</option>
-                                <option value="admin">Admin</option>
+                                <option value="customer">Customer</option>
                             </select>
                         </div>
                     </div>
@@ -774,31 +774,54 @@
         // --- Validation ---
         function validateEmail(email) {
             const re = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
-            return re.test(email);
+            return re.test(email) && email.length <= 100;
         }
-
-        function validatePassword(password) {
-            const re = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
-            return re.test(password);
+        function validateUsername(username) {
+            return username && username.trim() !== '' && username.length <= 50;
+        }
+        function validatePhone(phone) {
+            const re = /^(0|\+84)(3[2-9]|5[6|8|9]|7[0|6-9]|8[1-5]|9[0-9])[0-9]{7}$/;
+            return re.test(phone);
+        }
+        function validateAddressDetail(address) {
+            if (!address || address.length > 100) return false;
+            const dangerousChars = /[<>{}\[\]$%]/;
+            return !dangerousChars.test(address);
         }
 
         // Add Account Form
         const addAccountForm = document.getElementById('addAccountForm');
         if(addAccountForm) {
             addAccountForm.addEventListener('submit', function (event) {
+                const username = this.querySelector('input[name="username"]').value;
                 const email = this.querySelector('input[name="email"]').value;
                 const password = this.querySelector('input[name="password"]').value;
+                const role = this.querySelector('select[name="role"]').value;
                 const errorDiv = document.getElementById('addAccountError');
                 let errors = [];
 
-                if (!validateEmail(email)) {
-                    errors.push("Email không hợp lệ. Vui lòng nhập lại.");
+                if (!validateUsername(username)) {
+                    errors.push("Username không được để trống và tối đa 50 ký tự.");
                 }
-
+                if (!validateEmail(email)) {
+                    errors.push("Email không hợp lệ hoặc quá dài (tối đa 100 ký tự). Vui lòng nhập lại.");
+                }
                 if (!validatePassword(password)) {
                     errors.push("Mật khẩu phải có ít nhất 8 ký tự, gồm chữ hoa, chữ thường, số và ký tự đặc biệt.");
                 }
-
+                // Role chỉ cho phép staff hoặc customer
+                if (role !== 'staff' && role !== 'customer') {
+                    errors.push("Chỉ được phép thêm tài khoản với quyền Staff hoặc Customer.");
+                }
+                // Nếu có phone hoặc address detail thì validate luôn
+                const phoneInput = this.querySelector('input[name="phone"]');
+                if (phoneInput && phoneInput.value && !validatePhone(phoneInput.value)) {
+                    errors.push("Số điện thoại không hợp lệ.");
+                }
+                const addressInput = this.querySelector('input[name="shipping_address"]');
+                if (addressInput && addressInput.value && !validateAddressDetail(addressInput.value)) {
+                    errors.push("Địa chỉ không hợp lệ hoặc quá dài (tối đa 100 ký tự, không chứa ký tự đặc biệt nguy hiểm).");
+                }
                 if (errors.length > 0) {
                     event.preventDefault();
                     errorDiv.innerHTML = errors.join('<br>');
@@ -813,14 +836,17 @@
         const editAccountForm = document.getElementById('editAccountForm');
         if(editAccountForm) {
             editAccountForm.addEventListener('submit', function (event) {
+                const username = this.querySelector('input[name="username"]').value;
                 const email = this.querySelector('input[name="email"]').value;
                 const errorDiv = document.getElementById('editAccountError');
                 let errors = [];
 
-                if (!validateEmail(email)) {
-                    errors.push("Email không hợp lệ. Vui lòng nhập lại.");
+                if (!validateUsername(username)) {
+                    errors.push("Username không được để trống và tối đa 50 ký tự.");
                 }
-
+                if (!validateEmail(email)) {
+                    errors.push("Email không hợp lệ hoặc quá dài (tối đa 100 ký tự). Vui lòng nhập lại.");
+                }
                 if (errors.length > 0) {
                     event.preventDefault();
                     errorDiv.innerHTML = errors.join('<br>');
@@ -862,14 +888,25 @@
         const editCustomerForm = document.getElementById('editCustomerForm');
         if(editCustomerForm) {
             editCustomerForm.addEventListener('submit', function (event) {
+                const name = this.querySelector('input[name="name"]').value;
                 const email = this.querySelector('input[name="email"]').value;
+                const phone = this.querySelector('input[name="phone"]').value;
+                const address = this.querySelector('input[name="shipping_address"]').value;
                 const errorDiv = document.getElementById('editCustomerError');
                 let errors = [];
 
-                if (!validateEmail(email)) {
-                    errors.push("Email không hợp lệ. Vui lòng nhập lại.");
+                if (!validateUsername(name)) {
+                    errors.push("Tên không được để trống và tối đa 50 ký tự.");
                 }
-
+                if (!validateEmail(email)) {
+                    errors.push("Email không hợp lệ hoặc quá dài (tối đa 100 ký tự). Vui lòng nhập lại.");
+                }
+                if (!validatePhone(phone)) {
+                    errors.push("Số điện thoại không hợp lệ.");
+                }
+                if (!validateAddressDetail(address)) {
+                    errors.push("Địa chỉ không hợp lệ hoặc quá dài (tối đa 100 ký tự, không chứa ký tự đặc biệt nguy hiểm).");
+                }
                 if (errors.length > 0) {
                     event.preventDefault();
                     errorDiv.innerHTML = errors.join('<br>');
