@@ -513,7 +513,7 @@
                             <label class="form-label">Role</label>
                             <select class="form-select" name="role" required>
                                 <option value="staff">Staff</option>
-                                <option value="admin">Admin</option>
+                                <option value="customer">Customer</option>
                             </select>
                         </div>
                     </div>
@@ -796,6 +796,7 @@
                 const username = this.querySelector('input[name="username"]').value;
                 const email = this.querySelector('input[name="email"]').value;
                 const password = this.querySelector('input[name="password"]').value;
+                const role = this.querySelector('select[name="role"]').value;
                 const errorDiv = document.getElementById('addAccountError');
                 let errors = [];
 
@@ -807,6 +808,10 @@
                 }
                 if (!validatePassword(password)) {
                     errors.push("Mật khẩu phải có ít nhất 8 ký tự, gồm chữ hoa, chữ thường, số và ký tự đặc biệt.");
+                }
+                // Role chỉ cho phép staff hoặc customer
+                if (role !== 'staff' && role !== 'customer') {
+                    errors.push("Chỉ được phép thêm tài khoản với quyền Staff hoặc Customer.");
                 }
                 // Nếu có phone hoặc address detail thì validate luôn
                 const phoneInput = this.querySelector('input[name="phone"]');
