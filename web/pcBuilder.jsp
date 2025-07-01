@@ -342,7 +342,7 @@
                                 
                                 <!-- Mainboard Section -->
                                 <li class="menu-item has-submenu">
-                                    <a href="#"><i class="fas fa-microchip fa-fw me-2"></i> Mainboard</a>
+                                    <a href="#"><i class="fas fa-server fa-fw me-2"></i> Mainboard</a>
                                     <div class="submenu">
                                         <div class="submenu-col">
                                             <h6>Brand</h6>
