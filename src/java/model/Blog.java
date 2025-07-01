@@ -8,15 +8,15 @@ public class Blog {
     private int blog_id;
     private String title;
     private String content;
-    private int customer_id;
+    private int user_id;
     private Timestamp created_at;
     private List<BlogImage> images;
 
-    public Blog(int blog_id, String title, String content, int customer_id, Timestamp created_at) {
+    public Blog(int blog_id, String title, String content, int user_id, Timestamp created_at) {
         this.blog_id = blog_id;
         this.title = title;
         this.content = content;
-        this.customer_id = customer_id;
+        this.user_id = user_id;
         this.created_at = created_at;
         this.images = new ArrayList<>();
     }
@@ -34,8 +34,8 @@ public class Blog {
         return content;
     }
 
-    public int getCustomer_id() {
-        return customer_id;
+    public int getUser_id() {
+        return user_id;
     }
 
     public Timestamp getCreated_at() {
@@ -59,8 +59,8 @@ public class Blog {
         this.content = content;
     }
 
-    public void setCustomer_id(int customer_id) {
-        this.customer_id = customer_id;
+    public void setUser_id(int user_id) {
+        this.user_id = user_id;
     }
 
     public void setCreated_at(Timestamp created_at) {
@@ -108,7 +108,7 @@ public class Blog {
     @Override
     public String toString() {
         return "Blog{" + "blog_id=" + blog_id + ", title=" + title + ", content=" + content + 
-               ", customer_id=" + customer_id + ", created_at=" + created_at + 
+               ", user_id=" + user_id + ", created_at=" + created_at + 
                ", images_count=" + (images != null ? images.size() : 0) + '}';
     }
 } 

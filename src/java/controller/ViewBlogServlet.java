@@ -26,6 +26,8 @@ import java.util.HashMap;
 import java.util.Map;
 import dal.MenuItemDAO;
 import model.MenuItem;
+import dal.UserDAO;
+import model.User;
 
 /**
  *
@@ -41,11 +43,11 @@ public class ViewBlogServlet extends HttpServlet {
    
     private static final int PAGE_SIZE = 10; // Number of blogs per page
     private final BlogDAO blogDAO;
-    private final CustomerDAO customerDAO;
+    private final UserDAO userDAO;
 
     public ViewBlogServlet() {
         blogDAO = new BlogDAO();
-        customerDAO = new CustomerDAO();
+        userDAO = UserDAO.getInstance();
     }
 
     /** 
@@ -63,36 +65,29 @@ public class ViewBlogServlet extends HttpServlet {
             // Get all blogs first (we'll filter and sort them in memory)
             Vector<Blog> allBlogs = blogDAO.getAllBlogs(1, Integer.MAX_VALUE);
             
-            // Create a map to store customer information
-            Map<Integer, String> customerNames = new HashMap<>();
+            // Create a map to store user information
+            Map<Integer, String> userNames = new HashMap<>();
             
-            // Get all customers for lookup
-            List<Customer> customerList = customerDAO.getAllCustomers();
-            
-            // Fetch customer information for each blog
+            // Fetch user information for each blog
             for (Blog blog : allBlogs) {
                 try {
-                    int customerId = blog.getCustomer_id();
-                    // Get customer by ID and store their name
-                    Customer customer = customerList.stream()
-                        .filter(c -> c.getCustomer_id() == customerId)
-                        .findFirst()
-                        .orElse(null);
-                    if (customer != null) {
-                        customerNames.put(customerId, customer.getName());
+                    int userId = blog.getUser_id();
+                    User user = userDAO.getUserById(userId);
+                    String fullName = user != null ? userDAO.getFullname(userId, user.getRole()) : null;
+                    if (fullName != null && !fullName.isEmpty()) {
+                        userNames.put(userId, fullName);
+                    } else if (user != null) {
+                        userNames.put(userId, user.getUsername());
                     } else {
-                        customerNames.put(customerId, "Unknown Customer");
+                        userNames.put(userId, "Unknown User");
                     }
                 } catch (Exception e) {
-                    customerNames.put(blog.getCustomer_id(), "Unknown Customer");
+                    userNames.put(blog.getUser_id(), "Unknown User");
                 }
             }
             
-            // Store the customer names map in request
-            request.setAttribute("customerNames", customerNames);
-            
-            // Store the full customer list for the add blog form
-            request.setAttribute("customerList", customerList);
+            // Store the user names map in request
+            request.setAttribute("userNames", userNames);
             
             // Apply search filter if specified
             String search = request.getParameter("search");
@@ -100,10 +95,10 @@ public class ViewBlogServlet extends HttpServlet {
                 Vector<Blog> searchedList = new Vector<>();
                 search = search.toLowerCase();
                 for (Blog b : allBlogs) {
-                    String customerName = customerNames.get(b.getCustomer_id());
+                    String userName = userNames.get(b.getUser_id());
                     if (b.getTitle().toLowerCase().contains(search) || 
                         b.getContent().toLowerCase().contains(search) ||
-                        (customerName != null && customerName.toLowerCase().contains(search))) {
+                        (userName != null && userName.toLowerCase().contains(search))) {
                         searchedList.add(b);
                     }
                 }
@@ -132,8 +127,8 @@ public class ViewBlogServlet extends HttpServlet {
                         break;
                     case "author":
                         Collections.sort(allBlogs, (b1, b2) -> {
-                            String name1 = customerNames.get(b1.getCustomer_id());
-                            String name2 = customerNames.get(b2.getCustomer_id());
+                            String name1 = userNames.get(b1.getUser_id());
+                            String name2 = userNames.get(b2.getUser_id());
                             return name1.compareToIgnoreCase(name2);
                         });
                         break;
@@ -226,66 +221,7 @@ public class ViewBlogServlet extends HttpServlet {
     @Override
     public void doPost(HttpServletRequest request, HttpServletResponse response)
     throws ServletException, IOException {
-        String action = request.getParameter("action");
-        try {
-            if ("add".equals(action)) {
-                addBlog(request, response);
-            } else if ("delete".equals(action)) {
-                Object authObj = request.getSession().getAttribute("customerAuth");
-                if (authObj == null) {
-                    request.getSession().setAttribute("error", "You must be logged in to delete a blog.");
-                    response.sendRedirect("viewblogs");
-                    return;
-                }
-                int blogId = Integer.parseInt(request.getParameter("blog_id"));
-                int customerId = ((model.Customer)authObj).getCustomer_id();
-                dal.BlogImageDAO blogImageDAO = new dal.BlogImageDAO();
-                java.util.Vector<model.BlogImage> images = blogImageDAO.getImagesByBlogId(blogId);
-                // Delete image files and DB records first
-                for (model.BlogImage img : images) {
-                    if (img.getImage_url() != null && img.getImage_url().startsWith("/img/blog/")) {
-                        String realPath = getServletContext().getRealPath(img.getImage_url());
-                        java.io.File file = new java.io.File(realPath);
-                        if (file.exists()) file.delete();
-                    }
-                    blogImageDAO.deleteBlogImage(img.getImage_id());
-                }
-                // Then delete the blog
-                blogDAO.deleteBlog(blogId, customerId);
-                request.getSession().setAttribute("success", "Blog deleted successfully!");
-                response.sendRedirect("viewblogs");
-                return;
-            } else if ("update".equals(action)) {
-                // Xử lý cập nhật blog
-                Object authObj = request.getSession().getAttribute("customerAuth");
-                if (authObj == null) {
-                    request.getSession().setAttribute("error", "You must be logged in to update a blog.");
-                    response.sendRedirect("viewblogs");
-                    return;
-                }
-                int blogId = Integer.parseInt(request.getParameter("blog_id"));
-                int customerId = ((model.Customer)authObj).getCustomer_id();
-                String title = request.getParameter("title");
-                String content = request.getParameter("content");
-                // Kiểm tra quyền sở hữu
-                model.Blog blog = blogDAO.getBlogById(blogId);
-                if (blog == null || blog.getCustomer_id() != customerId) {
-                    request.getSession().setAttribute("error", "You can only update your own blogs.");
-                    response.sendRedirect("viewblogs");
-                    return;
-                }
-                blog.setTitle(title);
-                blog.setContent(content);
-                blogDAO.updateBlog(blog);
-                request.getSession().setAttribute("success", "Blog updated successfully!");
-                response.sendRedirect("viewblogs");
-            } else {
-                processRequest(request, response);
-            }
-        } catch (Exception ex) {
-            request.getSession().setAttribute("error", "Error: " + ex.getMessage());
-            response.sendRedirect("viewblogs");
-        }
+        processRequest(request, response);
     }
 
     /** 
@@ -309,14 +245,11 @@ public class ViewBlogServlet extends HttpServlet {
             Blog blog = blogDAO.getBlogById(blogId);
             
             if (blog != null) {
-                // Get customer information
-                List<Customer> customers = customerDAO.getAllCustomers();
-                Customer customer = customers.stream()
-                    .filter(c -> c.getCustomer_id() == blog.getCustomer_id())
-                    .findFirst()
-                    .orElse(null);
+                User user = userDAO.getUserById(blog.getUser_id());
+                String fullName = user != null ? userDAO.getFullname(blog.getUser_id(), user.getRole()) : null;
+                String author = (fullName != null && !fullName.isEmpty()) ? fullName : (user != null ? user.getUsername() : "Unknown User");
                 request.setAttribute("blog", blog);
-                request.setAttribute("author", customer != null ? customer.getName() : "Unknown Customer");
+                request.setAttribute("author", author);
                 
                 // Forward to the view blog page
                 request.getRequestDispatcher("viewblogs.jsp").forward(request, response);
@@ -330,106 +263,5 @@ public class ViewBlogServlet extends HttpServlet {
         }
     }
 
-    private void addBlog(HttpServletRequest request, HttpServletResponse response)
-    throws ServletException, IOException {
-        String title = request.getParameter("title");
-        String content = request.getParameter("content");
-        String customerIdStr = request.getParameter("customer_id");
-        
-        // Validate input
-        StringBuilder errors = new StringBuilder();
-        if (title == null || title.trim().isEmpty()) errors.append("Title is required. ");
-        if (content == null || content.trim().isEmpty()) errors.append("Content is required. ");
-        if (customerIdStr == null || customerIdStr.trim().isEmpty()) errors.append("Customer ID is required. ");
-        
-        if (errors.length() > 0) {
-            request.getSession().setAttribute("error", errors.toString());
-            response.sendRedirect("viewblogs");
-            return;
-        }
-        
-        try {
-            int customerId = Integer.parseInt(customerIdStr);
-            Blog blog = new Blog(0, title.trim(), content.trim(), customerId, null);
-            
-            // Handle image uploads
-            List<Part> fileParts = request.getParts().stream()
-                .filter(part -> "images".equals(part.getName()) && part.getSize() > 0)
-                .collect(java.util.stream.Collectors.toList());
-            
-            // Add uploaded images to blog
-            for (int i = 0; i < fileParts.size(); i++) {
-                Part filePart = fileParts.get(i);
-                String fileName = getSubmittedFileName(filePart);
-                
-                if (fileName != null && !fileName.isEmpty()) {
-                    // Generate unique filename
-                    String uniqueFileName = System.currentTimeMillis() + "_" + fileName;
-                    String uploadPath = getServletContext().getRealPath("/img/blog/");
-                    
-                    // Create directory if it doesn't exist
-                    java.io.File uploadDir = new java.io.File(uploadPath);
-                    if (!uploadDir.exists()) {
-                        uploadDir.mkdirs();
-                    }
-                    
-                    // Save file
-                    String filePath = uploadPath + uniqueFileName;
-                    filePart.write(filePath);
-                    
-                    // Create BlogImage object
-                    String imageUrl = "/img/blog/" + uniqueFileName;
-                    String imageAlt = request.getParameter("image_alts[" + i + "]");
-                    if (imageAlt == null || imageAlt.trim().isEmpty()) {
-                        imageAlt = fileName;
-                    }
-                    
-                    BlogImage image = new BlogImage(0, 0, imageUrl, imageAlt, i + 1, null);
-                    blog.addImage(image);
-                }
-            }
-            
-            // Insert blog with images
-            int blogId = blogDAO.insertBlog(blog);
-            
-            if (blogId > 0) {
-                request.getSession().setAttribute("success", "Blog created successfully with " + blog.getImages().size() + " image(s)!");
-            } else {
-                request.getSession().setAttribute("success", "Blog created successfully!");
-            }
-            
-            response.sendRedirect("viewblogs");
-        } catch (NumberFormatException e) {
-            request.getSession().setAttribute("error", "Invalid customer ID format.");
-            response.sendRedirect("viewblogs");
-        } catch (Exception e) {
-            request.getSession().setAttribute("error", "Error creating blog: " + e.getMessage());
-            response.sendRedirect("viewblogs");
-        }
-    }
 
-    private void updateBlog(HttpServletRequest request, HttpServletResponse response)
-    throws ServletException, IOException {
-        // This method is not used in view mode
-        response.sendRedirect("viewblogs");
-    }
-
-    private void deleteBlog(HttpServletRequest request, HttpServletResponse response)
-    throws ServletException, IOException {
-        // This method is not used in view mode
-        response.sendRedirect("viewblogs");
-    }
-    
-    // Helper method to get submitted filename
-    private String getSubmittedFileName(Part part) {
-        String header = part.getHeader("content-disposition");
-        if (header == null) return null;
-        
-        for (String headerPart : header.split(";")) {
-            if (headerPart.trim().startsWith("filename")) {
-                return headerPart.substring(headerPart.indexOf('=') + 1).trim().replace("\"", "");
-            }
-        }
-        return null;
-    }
 }

@@ -1,4 +1,3 @@
-
 -- Create and use database
 DROP DATABASE IF EXISTS project_g2;
 CREATE DATABASE IF NOT EXISTS project_g2;
@@ -242,11 +241,11 @@ CREATE TABLE `blog` (
   `blog_id` INT NOT NULL AUTO_INCREMENT,
   `title` VARCHAR(200) NOT NULL,
   `content` TEXT NOT NULL,
-  `customer_id` INT NOT NULL,
+  `user_id` INT NOT NULL,
   `created_at` DATETIME DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (`blog_id`),
-  KEY `customer_id` (`customer_id`),
-  CONSTRAINT `blog_ibfk_1` FOREIGN KEY (`customer_id`) REFERENCES `customer` (`customer_id`)
+  KEY `user_id` (`user_id`),
+  CONSTRAINT `blog_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `user` (`user_id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 CREATE TABLE `blog_image` (

@@ -222,6 +222,11 @@ INSERT INTO menu_attribute_value (value_id, attribute_id, value, url, status) VA
 (15, 7, 'Cấu hình hệ thống', '/admin/settings/system', 'Activate'),
 (16, 7, 'Cấu hình email', '/admin/settings/email', 'Activate');
 
+-- BLOG
+INSERT INTO blog (title, content, user_id, created_at) VALUES
+('Welcome to the PC Store', 'This is our first blog post by staff.', 1, NOW()),
+('Admin Announcement', 'This is an announcement from the admin.', 2, NOW());
+
 -- Select all data from tables
 SELECT * FROM admin;
 SELECT * FROM blog;

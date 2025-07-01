@@ -29,7 +29,7 @@ public class BlogDAO {
                     rs.getInt("blog_id"),
                     rs.getString("title"),
                     rs.getString("content"),
-                    rs.getInt("customer_id"),
+                    rs.getInt("user_id"),
                     rs.getTimestamp("created_at")
                 );
                 // Load images for this blog
@@ -56,7 +56,7 @@ public class BlogDAO {
                     rs.getInt("blog_id"),
                     rs.getString("title"),
                     rs.getString("content"),
-                    rs.getInt("customer_id"),
+                    rs.getInt("user_id"),
                     rs.getTimestamp("created_at")
                 );
                 // Load images for this blog
@@ -70,21 +70,21 @@ public class BlogDAO {
         return null;
     }
 
-    // Get blogs by customer ID with images
-    public Vector<Blog> getBlogsByCustomer(int customerId) {
+    // Get blogs by user ID with images
+    public Vector<Blog> getBlogsByUser(int userId) {
         DBContext db = DBContext.getInstance();
         Vector<Blog> listBlogs = new Vector<>();
-        String sql = "SELECT * FROM blog WHERE customer_id = ? ORDER BY created_at DESC";
+        String sql = "SELECT * FROM blog WHERE user_id = ? ORDER BY created_at DESC";
         try {
             PreparedStatement ptm = db.getConnection().prepareStatement(sql);
-            ptm.setInt(1, customerId);
+            ptm.setInt(1, userId);
             ResultSet rs = ptm.executeQuery();
             while (rs.next()) {
                 Blog b = new Blog(
                     rs.getInt("blog_id"),
                     rs.getString("title"),
                     rs.getString("content"),
-                    rs.getInt("customer_id"),
+                    rs.getInt("user_id"),
                     rs.getTimestamp("created_at")
                 );
                 // Load images for this blog
@@ -101,12 +101,12 @@ public class BlogDAO {
     // Insert new blog with images
     public int insertBlog(Blog b) {
         DBContext db = DBContext.getInstance();
-        String sql = "INSERT INTO blog (title, content, customer_id) VALUES (?, ?, ?)";
+        String sql = "INSERT INTO blog (title, content, user_id) VALUES (?, ?, ?)";
         try {
             PreparedStatement ptm = db.getConnection().prepareStatement(sql, PreparedStatement.RETURN_GENERATED_KEYS);
             ptm.setString(1, b.getTitle());
             ptm.setString(2, b.getContent());
-            ptm.setInt(3, b.getCustomer_id());
+            ptm.setInt(3, b.getUser_id());
             ptm.executeUpdate();
             
             // Get the generated blog ID
@@ -136,13 +136,13 @@ public class BlogDAO {
     // Update existing blog with images
     public void updateBlog(Blog b) {
         DBContext db = DBContext.getInstance();
-        String sql = "UPDATE blog SET title = ?, content = ? WHERE blog_id = ? AND customer_id = ?";
+        String sql = "UPDATE blog SET title = ?, content = ? WHERE blog_id = ? AND user_id = ?";
         try {
             PreparedStatement ptm = db.getConnection().prepareStatement(sql);
             ptm.setString(1, b.getTitle());
             ptm.setString(2, b.getContent());
             ptm.setInt(3, b.getBlog_id());
-            ptm.setInt(4, b.getCustomer_id());
+            ptm.setInt(4, b.getUser_id());
             ptm.executeUpdate();
             
             // Update images if provided
@@ -165,13 +165,13 @@ public class BlogDAO {
     }
 
     // Delete blog and its images
-    public void deleteBlog(int blogId, int customerId) {
+    public void deleteBlog(int blogId, int userId) {
         DBContext db = DBContext.getInstance();
-        String sql = "DELETE FROM blog WHERE blog_id = ? AND customer_id = ?";
+        String sql = "DELETE FROM blog WHERE blog_id = ? AND user_id = ?";
         try {
             PreparedStatement ptm = db.getConnection().prepareStatement(sql);
             ptm.setInt(1, blogId);
-            ptm.setInt(2, customerId);
+            ptm.setInt(2, userId);
             ptm.executeUpdate();
             
             // Delete associated images (CASCADE should handle this, but we'll do it explicitly)
@@ -213,7 +213,7 @@ public class BlogDAO {
                     rs.getInt("blog_id"),
                     rs.getString("title"),
                     rs.getString("content"),
-                    rs.getInt("customer_id"),
+                    rs.getInt("user_id"),
                     rs.getTimestamp("created_at")
                 );
                 // Load images for this blog
@@ -227,14 +227,14 @@ public class BlogDAO {
         return listBlogs;
     }
 
-    // Xóa blog theo blogId và customerId
-    public boolean deleteBlogById(int blogId, int customerId) {
+    // Delete blog by blogId and userId
+    public boolean deleteBlogById(int blogId, int userId) {
         DBContext db = DBContext.getInstance();
-        String sql = "DELETE FROM blog WHERE blog_id = ? AND customer_id = ?";
+        String sql = "DELETE FROM blog WHERE blog_id = ? AND user_id = ?";
         try {
             PreparedStatement ptm = db.getConnection().prepareStatement(sql);
             ptm.setInt(1, blogId);
-            ptm.setInt(2, customerId);
+            ptm.setInt(2, userId);
             int affected = ptm.executeUpdate();
             
             if (affected > 0) {
@@ -276,8 +276,8 @@ public class BlogDAO {
         Blog newBlog = new Blog(0, "Test Blog with Images", "This is a test blog content with images", 1, null);
         
         // Add some test images
-        newBlog.addImage(new BlogImage(0, 0, "/assets/images/blog/test1.jpg", "Test Image 1", 1, null));
-        newBlog.addImage(new BlogImage(0, 0, "/assets/images/blog/test2.jpg", "Test Image 2", 2, null));
+        newBlog.addImage(new BlogImage(0, 0, "/assets/assets/images/blog/test1.jpg", "Test Image 1", 1, null));
+        newBlog.addImage(new BlogImage(0, 0, "/assets/assets/images/blog/test2.jpg", "Test Image 2", 2, null));
         
         int blogId = dao.insertBlog(newBlog);
         System.out.println("Blog inserted with ID: " + blogId);
@@ -315,11 +315,11 @@ public class BlogDAO {
             System.out.println();
         }
         
-        // Test 5: Get blogs by customer
-        System.out.println("Test 5: Getting blogs by customer ID 1");
-        Vector<Blog> customerBlogs = dao.getBlogsByCustomer(1);
-        System.out.println("Customer has " + customerBlogs.size() + " blogs");
-        for (Blog b : customerBlogs) {
+        // Test 5: Get blogs by user
+        System.out.println("Test 5: Getting blogs by user ID 1");
+        Vector<Blog> userBlogs = dao.getBlogsByUser(1);
+        System.out.println("User has " + userBlogs.size() + " blogs");
+        for (Blog b : userBlogs) {
             System.out.println("- " + b.getTitle() + " (Images: " + b.getImages().size() + ")");
         }
         System.out.println();
