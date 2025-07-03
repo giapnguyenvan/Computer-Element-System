@@ -38,18 +38,10 @@
         .text-danger:hover { color: #dc3545 !important; }
         .page-info { display: inline-block; padding: 0.375rem 0.75rem; background-color: #0d6efd; color: white; border-radius: 0.25rem; margin: 0 5px; font-weight: 500; }
         .table thead th { font-weight: 600; color: #343a40; }
-        .management-title {
-            font-size: 2.5rem;
-            font-weight: bold;
-            color: #2c3e50;
-            margin-bottom: 1.5rem;
-            text-align: center;
-        }
     </style>
 </head>
 <body class="bg-light">
 <div class="container my-5">
-    <h1 class="management-title">Menu Management</h1>
     <div class="table-wrapper">
         <div class="d-flex justify-content-between align-items-center mb-4">
             <h4 class="mb-0">Menu (Level 1)</h4>
