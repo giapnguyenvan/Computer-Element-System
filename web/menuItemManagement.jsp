@@ -22,32 +22,43 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Menu Item Management</title>
+    <title>Menu Management</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <style>
         body { background-color: #f0f2f5; }
-        .management-header, .table-wrapper {
+        .table-wrapper {
             background-color: white;
             padding: 1.5rem;
             border-radius: .5rem;
             box-shadow: 0 2px 4px rgba(0,0,0,.1);
         }
-        .management-header { margin-bottom: 2rem; }
         .btn-action { background: none; border: none; padding: 0; margin: 0 8px; color: #6c757d; font-size: 1.1rem; }
         .btn-action:hover { color: #0d6efd; }
         .text-danger:hover { color: #dc3545 !important; }
         .page-info { display: inline-block; padding: 0.375rem 0.75rem; background-color: #0d6efd; color: white; border-radius: 0.25rem; margin: 0 5px; font-weight: 500; }
         .table thead th { font-weight: 600; color: #343a40; }
+        .management-title {
+            font-size: 2.5rem;
+            font-weight: bold;
+            color: #2c3e50;
+            margin-bottom: 1.5rem;
+            text-align: center;
+        }
     </style>
 </head>
 <body class="bg-light">
 <div class="container my-5">
-    <div class="management-header">
-        <h4 class="mb-4">Menu Management</h4>
-        <div class="row g-3 align-items-center">
+    <h1 class="management-title">Menu Management</h1>
+    <div class="table-wrapper">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h4 class="mb-0">Menu (Level 1)</h4>
+            <span class="text-muted">Total Items: <%= request.getAttribute("totalMenuItems") != null ? request.getAttribute("totalMenuItems") : "N/A" %></span>
+        </div>
+
+        <div class="row g-3 align-items-center mb-4">
             <div class="col-md-3">
-                <select class="form-select" id="sortControl" onchange="window.location.href = this.value;">
+                <select class="form-select" id="sortControl" onchange="window.location.href=this.value">
                     <option value="<%= defaultUrl %>" <%= "default".equals(currentSort) ? "selected" : "" %>>Sort by ID</option>
                     <option value="<%= ascUrl %>" <%= "asc".equals(currentSort) ? "selected" : "" %>>Name A-Z</option>
                     <option value="<%= descUrl %>" <%= "desc".equals(currentSort) ? "selected" : "" %>>Name Z-A</option>
@@ -56,9 +67,9 @@
             <div class="col-md-6">
                 <form action="<%= ctx %>/menuItemManagement" method="get">
                     <div class="input-group">
-                        <input type="text" name="search" class="form-control" placeholder="Search by name or url..." value="<%= search != null ? search : "" %>"/>
+                        <input type="text" name="search" class="form-control" placeholder="Search by name or url..." value="<%= search != null ? search : "" %>">
                         <% if (sortOrder != null) { %>
-                        <input type="hidden" name="sort" value="<%= sortOrder %>"/>
+                        <input type="hidden" name="sort" value="<%= sortOrder %>">
                         <% } %>
                         <button type="submit" class="btn btn-primary"><i class="fas fa-search"></i></button>
                     </div>
@@ -70,12 +81,7 @@
                 </button>
             </div>
         </div>
-    </div>
-    <div class="table-wrapper">
-        <div class="d-flex justify-content-between align-items-center mb-3">
-            <h4 class="mb-0">Menu (Level 1)</h4>
-            <span class="text-muted">Total Items: <%= request.getAttribute("totalMenuItems") != null ? request.getAttribute("totalMenuItems") : "N/A" %></span>
-        </div>
+
         <div class="table-responsive">
             <table class="table table-hover align-middle">
                 <thead>
@@ -92,28 +98,30 @@
                 </tr>
                 </thead>
                 <tbody>
-                <% if (list != null && !list.isEmpty()) {
+                <% if (list != null) { 
                     for (MenuItem item : list) { %>
                 <tr>
-                    <td><strong><%= item.getMenuItemId() %></strong></td>
+                    <td><%= item.getId() %></td>
                     <td><%= item.getName() %></td>
-                    <td><%= item.getIcon() %></td>
+                    <td><i class="<%= item.getIcon() %>"></i></td>
                     <td><%= item.getUrl() %></td>
-                    <td><%= item.getParentId() != null ? item.getParentId() : "" %></td>
+                    <td><%= item.getParentId() != null ? item.getParentId() : "N/A" %></td>
                     <td><%= item.getStatus() %></td>
                     <td class="text-center">
-                        <button class="btn-action" onclick="editMenuItem(<%= item.getMenuItemId() %>, '<%= item.getName().replace("'", "\\'") %>', '<%= item.getIcon() != null ? item.getIcon().replace("'", "\\'") : "" %>', '<%= item.getUrl() != null ? item.getUrl().replace("'", "\\'") : "" %>', <%= item.getParentId() != null ? item.getParentId() : "null" %>, '<%= item.getStatus() %>')" data-bs-toggle="modal" data-bs-target="#editMenuItemModal" title="Edit">
+                        <button class="btn-action" onclick="editMenuItem(<%= item.getId() %>)" title="Edit">
                             <i class="fas fa-edit"></i>
+                        </button>
+                        <button class="btn-action text-danger" onclick="deleteMenuItem(<%= item.getId() %>)" title="Delete">
+                            <i class="fas fa-trash"></i>
                         </button>
                     </td>
                 </tr>
-                <%  }
-                } else { %>
-                <tr><td colspan="7" class="text-center py-5">No menu items found.</td></tr>
-                <% } %>
+                <% }
+                } %>
                 </tbody>
             </table>
         </div>
+
         <% if (totalPages != null && totalPages > 1) { %>
         <nav aria-label="Page navigation" class="mt-4 d-flex justify-content-end align-items-center">
             <% String prevLink = ctx + "/menuItemManagement?page=" + (currentPage - 1) + searchParam + sortParam; %>
@@ -134,7 +142,7 @@
                 <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
             </div>
             <div class="modal-body">
-                <form action="<%= ctx %>/menuItemManagement" method="post">
+                <form action="${pageContext.request.contextPath}/menuItemManagement" method="post">
                     <input type="hidden" name="action" value="add" />
                     <div class="mb-3">
                         <label for="name" class="form-label">Name</label>
@@ -185,7 +193,7 @@
                 <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
             </div>
             <div class="modal-body">
-                <form action="<%= ctx %>/menuItemManagement" method="post">
+                <form action="${pageContext.request.contextPath}/menuItemManagement" method="post">
                     <input type="hidden" name="action" value="update" />
                     <input type="hidden" name="id" id="editId">
                     <div class="mb-3">
@@ -228,8 +236,7 @@
         </div>
     </div>
 </div>
-<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 <script>
     // Chọn icon cho modal Add
     document.querySelectorAll('#iconListAdd input[type=radio]').forEach(function(radio) {
@@ -244,44 +251,15 @@
         });
     });
     // Khi mở modal Edit, tự động tick vào icon hiện tại nếu có
-    function editMenuItem(id, name, icon, url, parentId, status) {
-        document.getElementById('editId').value = id;
-        document.getElementById('editName').value = name;
-        document.getElementById('iconEdit').value = icon;
-        document.getElementById('editUrl').value = url;
-        document.getElementById('editParentId').value = parentId !== null ? parentId : '';
-        document.getElementById('editStatus').value = status;
-        // Tick icon radio
-        document.querySelectorAll('#iconListEdit input[type=radio]').forEach(function(radio) {
-            radio.checked = (radio.value === icon);
-        });
+    function editMenuItem(id) {
+        // Implement edit functionality
     }
-    function validateMenuForm(isEdit) {
-        let name = isEdit ? document.getElementById('editName').value.trim() : document.getElementById('name').value.trim();
-        let icon = isEdit ? document.getElementById('iconEdit').value.trim() : document.getElementById('iconAdd').value.trim();
-        let url = isEdit ? document.getElementById('editUrl').value.trim() : document.getElementById('url').value.trim();
-        let errors = [];
-        if (name.length === 0 || name.length > 100) {
-            errors.push("Tên menu phải từ 1 đến 100 ký tự và không được để trống.");
+    
+    function deleteMenuItem(id) {
+        if (confirm('Are you sure you want to delete this menu item?')) {
+            // Implement delete functionality
         }
-        if (icon.length === 0 || icon.length > 255) {
-            errors.push("Icon là bắt buộc và không được vượt quá 255 ký tự.");
-        }
-        if (url.length === 0 || url.length > 255) {
-            errors.push("URL là bắt buộc và không được vượt quá 255 ký tự.");
-        }
-        if (errors.length > 0) {
-            alert(errors.join('\n'));
-            return false;
-        }
-        return true;
     }
-    document.querySelector('#addMenuItemModal form').onsubmit = function() {
-        return validateMenuForm(false);
-    };
-    document.querySelector('#editMenuItemModal form').onsubmit = function() {
-        return validateMenuForm(true);
-    };
 </script>
 </body>
 </html> 
