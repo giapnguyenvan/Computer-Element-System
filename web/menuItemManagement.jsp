@@ -44,7 +44,7 @@
 <body class="bg-light">
 <div class="container my-5">
     <div class="management-header">
-        <h4 class="mb-4">Menu Item Management</h4>
+        <h4 class="mb-4">Menu Management</h4>
         <div class="row g-3 align-items-center">
             <div class="col-md-3">
                 <select class="form-select" id="sortControl" onchange="window.location.href = this.value;">
@@ -73,7 +73,7 @@
     </div>
     <div class="table-wrapper">
         <div class="d-flex justify-content-between align-items-center mb-3">
-            <h4 class="mb-0">Menu Items</h4>
+            <h4 class="mb-0">Menu (Level 1)</h4>
             <span class="text-muted">Total Items: <%= request.getAttribute("totalMenuItems") != null ? request.getAttribute("totalMenuItems") : "N/A" %></span>
         </div>
         <div class="table-responsive">
@@ -85,7 +85,9 @@
                     <th>Icon</th>
                     <th>URL</th>
                     <th>Parent ID</th>
-                    <th>Status</th>
+                    <th>Status <a href="<%= ctx %>/menuItemManagement?sort=<%= "status".equals(currentSort) ? "status_desc" : "status" %><%= searchParam %>" class="ms-1" title="Sort by Status">
+                        <i class="fas fa-sort<%= "status".equals(currentSort) ? "-up" : ("status_desc".equals(currentSort) ? "-down" : "") %>"></i>
+                    </a></th>
                     <th class="text-center">Actions</th>
                 </tr>
                 </thead>
@@ -103,9 +105,6 @@
                         <button class="btn-action" onclick="editMenuItem(<%= item.getMenuItemId() %>, '<%= item.getName().replace("'", "\\'") %>', '<%= item.getIcon() != null ? item.getIcon().replace("'", "\\'") : "" %>', '<%= item.getUrl() != null ? item.getUrl().replace("'", "\\'") : "" %>', <%= item.getParentId() != null ? item.getParentId() : "null" %>, '<%= item.getStatus() %>')" data-bs-toggle="modal" data-bs-target="#editMenuItemModal" title="Edit">
                             <i class="fas fa-edit"></i>
                         </button>
-                        <a href="<%= ctx %>/menuItemManagement?action=delete&id=<%= item.getMenuItemId() %>" class="btn-action text-danger" onclick="return confirm('Bạn có chắc chắn muốn xóa menu item này?');" title="Delete">
-                            <i class="fas fa-trash-alt"></i>
-                        </a>
                     </td>
                 </tr>
                 <%  }
@@ -151,11 +150,11 @@
                                 </label>
                             <% } %>
                         </div>
-                        <input type="text" class="form-control mt-2" id="iconAdd" name="icon" placeholder="Để lấy icon hãy vào fontawesome.com">
+                        <input type="text" class="form-control mt-2" id="iconAdd" name="icon" required>
                     </div>
                     <div class="mb-3">
                         <label for="url" class="form-label">URL</label>
-                        <input type="text" class="form-control" id="url" name="url">
+                        <input type="text" class="form-control" id="url" name="url" required>
                     </div>
                     <div class="mb-3">
                         <label for="parentId" class="form-label">Parent ID</label>
@@ -203,7 +202,7 @@
                                 </label>
                             <% } %>
                         </div>
-                        <input type="text" class="form-control mt-2" id="iconEdit" name="icon" placeholder="Để lấy icon hãy vào fontawesome.com">
+                        <input type="text" class="form-control mt-2" id="iconEdit" name="icon">
                     </div>
                     <div class="mb-3">
                         <label for="editUrl" class="form-label">URL</label>
@@ -257,6 +256,32 @@
             radio.checked = (radio.value === icon);
         });
     }
+    function validateMenuForm(isEdit) {
+        let name = isEdit ? document.getElementById('editName').value.trim() : document.getElementById('name').value.trim();
+        let icon = isEdit ? document.getElementById('iconEdit').value.trim() : document.getElementById('iconAdd').value.trim();
+        let url = isEdit ? document.getElementById('editUrl').value.trim() : document.getElementById('url').value.trim();
+        let errors = [];
+        if (name.length === 0 || name.length > 100) {
+            errors.push("Tên menu phải từ 1 đến 100 ký tự và không được để trống.");
+        }
+        if (icon.length === 0 || icon.length > 255) {
+            errors.push("Icon là bắt buộc và không được vượt quá 255 ký tự.");
+        }
+        if (url.length === 0 || url.length > 255) {
+            errors.push("URL là bắt buộc và không được vượt quá 255 ký tự.");
+        }
+        if (errors.length > 0) {
+            alert(errors.join('\n'));
+            return false;
+        }
+        return true;
+    }
+    document.querySelector('#addMenuItemModal form').onsubmit = function() {
+        return validateMenuForm(false);
+    };
+    document.querySelector('#editMenuItemModal form').onsubmit = function() {
+        return validateMenuForm(true);
+    };
 </script>
 </body>
 </html> 

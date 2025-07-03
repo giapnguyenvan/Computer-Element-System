@@ -119,6 +119,8 @@ public class MenuItemDAO {
         if (sort != null) {
             if ("asc".equals(sort)) sql.append(" ORDER BY name ASC");
             else if ("desc".equals(sort)) sql.append(" ORDER BY name DESC");
+            else if ("status".equals(sort)) sql.append(" ORDER BY status ASC");
+            else if ("status_desc".equals(sort)) sql.append(" ORDER BY status DESC");
             else sql.append(" ORDER BY menu_item_id ASC");
         } else {
             sql.append(" ORDER BY menu_item_id ASC");
