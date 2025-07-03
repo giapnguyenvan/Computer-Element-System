@@ -10,7 +10,8 @@ GO
 -- Bảng brand
 CREATE TABLE brand (
     brand_id INT IDENTITY(1,1) PRIMARY KEY,
-    name NVARCHAR(100) NOT NULL
+    name NVARCHAR(100) NOT NULL,
+    description NVARCHAR(MAX)
 );
 
 -- Bảng componenttype
@@ -45,15 +46,10 @@ CREATE TABLE series (
     series_id INT IDENTITY(1,1) PRIMARY KEY,
     brand_id INT NOT NULL,
     name NVARCHAR(100),
-    FOREIGN KEY (brand_id) REFERENCES brand(brand_id)
-);
-
--- Bảng model
-CREATE TABLE model (
-    model_id INT IDENTITY(1,1) PRIMARY KEY,
-    series_id INT NOT NULL,
-    name NVARCHAR(100),
-    FOREIGN KEY (series_id) REFERENCES series(series_id)
+    component_type_id INT NOT NULL,
+    description NVARCHAR(MAX),
+    FOREIGN KEY (brand_id) REFERENCES brand(brand_id),
+    FOREIGN KEY (component_type_id) REFERENCES componenttype(type_id)
 );
 
 -- Bảng customer
@@ -102,16 +98,18 @@ CREATE TABLE product (
     name NVARCHAR(255),
     component_type_id INT NOT NULL,
     brand_id INT NOT NULL,
-    model_id INT,
+    series_id INT,
+    model NVARCHAR(100),
     price DECIMAL(18,2),
     import_price DECIMAL(18,2),
     stock INT NOT NULL DEFAULT 0,
+    sku NVARCHAR(50) UNIQUE NOT NULL,
     description NVARCHAR(MAX),
     status NVARCHAR(20) NOT NULL DEFAULT 'Active',
     created_at DATETIME DEFAULT GETDATE(),
     FOREIGN KEY (component_type_id) REFERENCES componenttype(type_id),
     FOREIGN KEY (brand_id) REFERENCES brand(brand_id),
-    FOREIGN KEY (model_id) REFERENCES model(model_id)
+    FOREIGN KEY (series_id) REFERENCES series(series_id)
 );
 
 -- Bảng cartitem
@@ -154,6 +152,8 @@ CREATE TABLE productimage (
     image_id INT IDENTITY(1,1) PRIMARY KEY,
     product_id INT NOT NULL,
     image_url NVARCHAR(255),
+    alt_text NVARCHAR(255),
+    is_primary BIT DEFAULT 0,
     FOREIGN KEY (product_id) REFERENCES product(product_id)
 );
 
@@ -205,9 +205,9 @@ CREATE TABLE blog (
     blog_id INT IDENTITY(1,1) PRIMARY KEY,
     title NVARCHAR(200) NOT NULL,
     content NVARCHAR(MAX) NOT NULL,
-    customer_id INT NOT NULL,
+    user_id INT NOT NULL,
     created_at DATETIME DEFAULT GETDATE(),
-    FOREIGN KEY (customer_id) REFERENCES customer(customer_id)
+    FOREIGN KEY (user_id) REFERENCES [user](user_id)
 );
 
 -- Bảng blog_image
