@@ -16,167 +16,167 @@ INSERT INTO componenttype (type_id, name, description) VALUES
 (14, 'Desk', 'Bàn');
 
 -- BRAND
-INSERT INTO brand (brand_id, name) VALUES
-(1, 'AMD'),
-(2, 'Intel'),
-(3, 'ASUS'),
-(4, 'MSI'),
-(5, 'Gigabyte'),
-(6, 'NVIDIA'),
-(7, 'Corsair'),
-(8, 'G.Skill'),
-(9, 'WD'),
-(10, 'Samsung'),
-(11, 'Noctua'),
-(12, 'Arctic'),
-(13, 'Logitech'),
-(14, 'Razer'),
-(15, 'Beyerdynamic'),
-(16, 'SteelSeries'),
-(17, 'LG'),
-(18, 'Secretlab'),
-(19, 'Herman Miller'),
-(20, 'IKEA'),
-(21, 'Kingston'),
-(22, 'Crucial'),
-(23, 'Team Group'),
-(24, 'Patriot'),
-(25, 'ADATA'),
-(26, 'ASRock'),
-(27, 'EVGA'),
-(28, 'Zotac'),
-(29, 'Palit'),
-(30, 'PowerColor'),
-(31, 'Sapphire'),
-(32, 'XFX');
+INSERT INTO brand (brand_id, name, description) VALUES
+(1, 'AMD', 'Advanced Micro Devices - Nhà sản xuất CPU và GPU hàng đầu'),
+(2, 'Intel', 'Nhà sản xuất CPU số 1 thế giới'),
+(3, 'ASUS', 'Nhà sản xuất phần cứng và thiết bị điện tử đa dạng'),
+(4, 'MSI', 'Micro-Star International - Chuyên sản xuất phần cứng gaming'),
+(5, 'Gigabyte', 'Nhà sản xuất bo mạch chủ và card đồ họa chất lượng cao'),
+(6, 'NVIDIA', 'Nhà sản xuất GPU hàng đầu thế giới'),
+(7, 'Corsair', 'Chuyên các thiết bị gaming và PC cao cấp'),
+(8, 'G.Skill', 'Nhà sản xuất RAM hiệu năng cao'),
+(9, 'WD', 'Western Digital - Giải pháp lưu trữ chuyên nghiệp'),
+(10, 'Samsung', 'Tập đoàn công nghệ đa quốc gia'),
+(11, 'Noctua', 'Chuyên giải pháp tản nhiệt cao cấp'),
+(12, 'Arctic', 'Giải pháp làm mát chuyên nghiệp'),
+(13, 'Logitech', 'Thiết bị ngoại vi và gaming gear cao cấp'),
+(14, 'Razer', 'Thương hiệu gaming gear hàng đầu'),
+(15, 'Beyerdynamic', 'Âm thanh chuyên nghiệp từ Đức'),
+(16, 'SteelSeries', 'Gaming gear cao cấp'),
+(17, 'LG', 'Màn hình và thiết bị điện tử chất lượng cao'),
+(18, 'Secretlab', 'Ghế gaming cao cấp'),
+(19, 'Herman Miller', 'Ghế văn phòng chuyên nghiệp'),
+(20, 'IKEA', 'Nội thất và thiết bị văn phòng'),
+(21, 'Kingston', 'Giải pháp bộ nhớ và lưu trữ tin cậy'),
+(22, 'Crucial', 'Bộ nhớ và lưu trữ hiệu năng cao'),
+(23, 'Team Group', 'Nhà sản xuất RAM và SSD'),
+(24, 'Patriot', 'Thiết bị lưu trữ và RAM gaming'),
+(25, 'ADATA', 'Giải pháp lưu trữ và RAM đa dạng'),
+(26, 'ASRock', 'Bo mạch chủ và card đồ họa giá tốt'),
+(27, 'EVGA', 'Phần cứng gaming cao cấp'),
+(28, 'Zotac', 'Card đồ họa nhỏ gọn'),
+(29, 'Palit', 'Nhà sản xuất GPU giá tốt'),
+(30, 'PowerColor', 'Card đồ họa AMD chuyên nghiệp'),
+(31, 'Sapphire', 'Card đồ họa AMD cao cấp'),
+(32, 'XFX', 'Thiết bị gaming chất lượng cao');
 
 -- SERIES
-INSERT INTO series (series_id, brand_id, name) VALUES
-(1, 1, 'Ryzen 9000'), -- AMD
-(2, 2, 'Core Ultra 200'), -- Intel
-(3, 3, 'ROG Strix'), -- ASUS
-(4, 5, 'Aorus Elite'), -- Gigabyte
-(5, 7, 'Vengeance'), -- Corsair
-(6, 8, 'Trident Z5'), -- G.Skill
-(7, 6, 'GeForce RTX 50'), -- NVIDIA
-(8, 4, 'Radeon RX 9000'), -- MSI
-(9, 9, 'Black SN850X'), -- WD
-(10, 10, '970 EVO Plus'), -- Samsung
-(11, 7, 'RMx'), -- Corsair
-(12, 4, 'MPG'), -- MSI
-(13, 3, 'Lancool'), -- ASUS
-(14, 5, 'Aorus C'), -- Gigabyte
-(15, 12, 'Liquid Freezer III'), -- Arctic
-(16, 11, 'NH-U'), -- Noctua
-(17, 13, 'G Pro'), -- Logitech
-(18, 14, 'DeathAdder'), -- Razer
-(19, 13, 'Ornata'), -- Logitech
-(20, 14, 'BlackWidow'), -- Razer
-(21, 15, 'DT 990'), -- Beyerdynamic
-(22, 16, 'Arctis'), -- SteelSeries
-(23, 17, 'Odyssey'), -- LG
-(24, 4, 'Optix'), -- MSI
-(25, 18, 'Titan Evo'), -- Secretlab
-(26, 19, 'Sayl'), -- Herman Miller
-(27, 20, 'UPPSTÅ'), -- IKEA
-(28, 20, 'LAGKAPTEN'),
-(29, 21, 'Fury Beast'), -- Kingston
-(30, 21, 'Fury Renegade'), -- Kingston
-(31, 22, 'Ballistix'), -- Crucial
-(32, 23, 'T-Force'), -- Team Group
-(33, 24, 'Viper'), -- Patriot
-(34, 25, 'XPG'), -- ADATA
-(35, 2, 'Core i9-14000'), -- Intel
-(36, 2, 'Core i7-14000'), -- Intel
-(37, 2, 'Core i5-14000'), -- Intel
-(38, 1, 'Ryzen 7 8000'), -- AMD
-(39, 1, 'Ryzen 5 8000'), -- AMD
-(40, 6, 'GeForce RTX 40'), -- NVIDIA
-(41, 1, 'Radeon RX 8000'), -- AMD
-(42, 27, 'GeForce RTX'), -- EVGA
-(43, 28, 'GeForce RTX'), -- Zotac
-(44, 29, 'GeForce RTX'), -- Palit
-(45, 30, 'Radeon RX'), -- PowerColor
-(46, 31, 'Radeon RX'), -- Sapphire
-(47, 32, 'Radeon RX'); -- XFX
+INSERT INTO series (series_id, brand_id, name, component_type_id, description) VALUES
+(1, 1, 'Ryzen 9000', 1, 'Dòng CPU cao cấp mới nhất của AMD'),
+(2, 2, 'Core Ultra 200', 1, 'CPU thế hệ mới với công nghệ hybrid'),
+(3, 3, 'ROG Strix', 2, 'Dòng bo mạch chủ cao cấp của ASUS'),
+(4, 5, 'Aorus Elite', 2, 'Bo mạch chủ gaming của Gigabyte'),
+(5, 7, 'Vengeance', 3, 'RAM hiệu năng cao của Corsair'),
+(6, 8, 'Trident Z5', 3, 'RAM DDR5 cao cấp của G.Skill'),
+(7, 6, 'GeForce RTX 50', 4, 'GPU thế hệ mới nhất của NVIDIA'),
+(8, 4, 'Radeon RX 9000', 4, 'GPU AMD do MSI sản xuất'),
+(9, 9, 'Black SN850X', 5, 'SSD NVMe hiệu năng cao'),
+(10, 10, '970 EVO Plus', 5, 'SSD NVMe đáng tin cậy'),
+(11, 7, 'RMx', 6, 'Nguồn modular cao cấp'),
+(12, 4, 'MPG', 6, 'Nguồn gaming của MSI'),
+(13, 3, 'Lancool', 7, 'Case tối ưu airflow'),
+(14, 5, 'Aorus C', 7, 'Case gaming cao cấp'),
+(15, 12, 'Liquid Freezer III', 8, 'Tản nhiệt nước All-in-one'),
+(16, 11, 'NH-U', 8, 'Tản nhiệt khí cao cấp'),
+(17, 13, 'G Pro', 9, 'Chuột gaming không dây'),
+(18, 14, 'DeathAdder', 9, 'Chuột gaming ergonomic'),
+(19, 13, 'Ornata', 10, 'Bàn phím cơ membrane'),
+(20, 14, 'BlackWidow', 10, 'Bàn phím cơ gaming'),
+(21, 15, 'DT 990', 11, 'Tai nghe studio open-back'),
+(22, 16, 'Arctis', 11, 'Tai nghe gaming không dây'),
+(23, 17, 'Odyssey', 12, 'Màn hình gaming cao cấp'),
+(24, 4, 'Optix', 12, 'Màn hình gaming MSI'),
+(25, 18, 'Titan Evo', 13, 'Ghế gaming cao cấp'),
+(26, 19, 'Sayl', 13, 'Ghế văn phòng ergonomic'),
+(27, 20, 'UPPSTÅ', 14, 'Bàn điều chỉnh độ cao'),
+(28, 20, 'LAGKAPTEN', 14, 'Bàn làm việc đa năng'),
+(29, 21, 'Fury Beast', 3, 'RAM DDR5 hiệu năng cao'),
+(30, 21, 'Fury Renegade', 3, 'RAM gaming cao cấp'),
+(31, 22, 'Ballistix', 3, 'RAM tối ưu cho gaming'),
+(32, 23, 'T-Force', 3, 'RAM RGB hiệu năng cao'),
+(33, 24, 'Viper', 3, 'RAM gaming tốc độ cao'),
+(34, 25, 'XPG', 3, 'RAM và SSD cao cấp'),
+(35, 2, 'Core i9-14000', 1, 'CPU Intel thế hệ 14'),
+(36, 2, 'Core i7-14000', 1, 'CPU Intel hiệu năng cao'),
+(37, 2, 'Core i5-14000', 1, 'CPU Intel giá/hiệu năng tốt'),
+(38, 1, 'Ryzen 7 8000', 1, 'CPU AMD 8 nhân mạnh mẽ'),
+(39, 1, 'Ryzen 5 8000', 1, 'CPU AMD phổ thông'),
+(40, 6, 'GeForce RTX 40', 4, 'GPU NVIDIA thế hệ trước'),
+(41, 1, 'Radeon RX 8000', 4, 'GPU AMD mới nhất'),
+(42, 27, 'GeForce RTX', 4, 'GPU NVIDIA by EVGA'),
+(43, 28, 'GeForce RTX', 4, 'GPU NVIDIA by Zotac'),
+(44, 29, 'GeForce RTX', 4, 'GPU NVIDIA by Palit'),
+(45, 30, 'Radeon RX', 4, 'GPU AMD by PowerColor'),
+(46, 31, 'Radeon RX', 4, 'GPU AMD by Sapphire'),
+(47, 32, 'Radeon RX', 4, 'GPU AMD by XFX');
 
 -- PRODUCT
-INSERT INTO product (name, component_type_id, brand_id, model, price, import_price, stock, description, status, created_at) VALUES
+INSERT INTO product (name, component_type_id, brand_id, series_id, model, price, import_price, stock, sku, description, status, created_at) VALUES
 -- CPU Products (existing + new)
-('AMD Ryzen 7 9800X3D', 1, 1, '9800X3D', 480.00, 384.00, 50, '8-core CPU with 3D V-Cache', 'Active', NOW()),
-('AMD Ryzen 9 9700X', 1, 1, '9700X', 400.00, 320.00, 40, '8-core high-performance CPU', 'Active', NOW()),
-('Intel Core Ultra 7 265K', 1, 2, '265K', 400.00, 320.00, 45, 'High-clock CPU for gaming', 'Active', NOW()),
+('AMD Ryzen 7 9800X3D', 1, 1, 1, '9800X3D', 480.00, 384.00, 50, 'CPU-AMD-R7-9800X3D', '8-core CPU with 3D V-Cache', 'Active', NOW()),
+('AMD Ryzen 9 9700X', 1, 1, 1, '9700X', 400.00, 320.00, 40, 'CPU-AMD-R9-9700X', '8-core high-performance CPU', 'Active', NOW()),
+('Intel Core Ultra 7 265K', 1, 2, 2, '265K', 400.00, 320.00, 45, 'CPU-INTEL-265K', 'High-clock CPU for gaming', 'Active', NOW()),
 -- New CPU Products
-('Intel Core i9-14900K', 1, 2, '14900K', 580.00, 464.00, 25, '24-core flagship CPU for extreme performance', 'Active', NOW()),
-('Intel Core i7-14700K', 1, 2, '14700K', 420.00, 336.00, 35, '20-core CPU with hybrid architecture', 'Active', NOW()),
-('Intel Core i5-14600K', 1, 2, '14600K', 320.00, 256.00, 50, '14-core CPU perfect for gaming', 'Active', NOW()),
-('AMD Ryzen 7 8700X', 1, 1, '8700X', 350.00, 280.00, 40, '8-core Zen 4 CPU with excellent efficiency', 'Active', NOW()),
-('AMD Ryzen 5 8600X', 1, 1, '8600X', 280.00, 224.00, 60, '6-core CPU ideal for gaming and productivity', 'Active', NOW()),
-('AMD Ryzen 9 7950X3D', 1, 1, '7950X3D', 700.00, 560.00, 15, '16-core CPU with 3D V-Cache technology', 'Active', NOW()),
-('Intel Core i9-13900KS', 1, 2, '13900KS', 650.00, 520.00, 20, 'Special edition CPU with higher clock speeds', 'Active', NOW()),
+('Intel Core i9-14900K', 1, 2, 2, '14900K', 580.00, 464.00, 25, 'CPU-INTEL-14900K', '24-core flagship CPU for extreme performance', 'Active', NOW()),
+('Intel Core i7-14700K', 1, 2, 2, '14700K', 420.00, 336.00, 35, 'CPU-INTEL-14700K', '20-core CPU with hybrid architecture', 'Active', NOW()),
+('Intel Core i5-14600K', 1, 2, 2, '14600K', 320.00, 256.00, 50, 'CPU-INTEL-14600K', '14-core CPU perfect for gaming', 'Active', NOW()),
+('AMD Ryzen 7 8700X', 1, 1, 1, '8700X', 350.00, 280.00, 40, 'CPU-AMD-R7-8700X', '8-core Zen 4 CPU with excellent efficiency', 'Active', NOW()),
+('AMD Ryzen 5 8600X', 1, 1, 1, '8600X', 280.00, 224.00, 60, 'CPU-AMD-R5-8600X', '6-core CPU ideal for gaming and productivity', 'Active', NOW()),
+('AMD Ryzen 9 7950X3D', 1, 1, 1, '7950X3D', 700.00, 560.00, 15, 'CPU-AMD-R9-7950X3D', '16-core CPU with 3D V-Cache technology', 'Active', NOW()),
+('Intel Core i9-13900KS', 1, 2, 2, '13900KS', 650.00, 520.00, 20, 'CPU-INTEL-13900KS', 'Special edition CPU with higher clock speeds', 'Active', NOW()),
 
 -- RAM Products (existing + new)
-('Corsair Vengeance LPX DDR5-6000 32GB', 3, 7, 'LPX DDR5-6000', 120.00, 96.00, 100, '32GB DDR5 dual-channel RAM', 'Active', NOW()),
-('Corsair Vengeance RGB DDR5-6400 32GB', 3, 7, 'RGB DDR5-6400', 140.00, 112.00, 80, 'RGB DDR5 RAM, 32GB', 'Active', NOW()),
-('G.Skill Trident Z5 DDR5-6000 32GB', 3, 8, 'Z5 DDR5-6000', 130.00, 104.00, 90, 'High-speed DDR5 with RGB', 'Active', NOW()),
+('Corsair Vengeance LPX DDR5-6000 32GB', 3, 7, 5, 'LPX DDR5-6000', 120.00, 96.00, 100, 'RAM-Corsair-LPX-DDR5-6000', '32GB DDR5 dual-channel RAM', 'Active', NOW()),
+('Corsair Vengeance RGB DDR5-6400 32GB', 3, 7, 5, 'RGB DDR5-6400', 140.00, 112.00, 80, 'RAM-Corsair-RGB-DDR5-6400', 'RGB DDR5 RAM, 32GB', 'Active', NOW()),
+('G.Skill Trident Z5 DDR5-6000 32GB', 3, 8, 6, 'Z5 DDR5-6000', 130.00, 104.00, 90, 'RAM-G.Skill-Z5-DDR5-6000', 'High-speed DDR5 with RGB', 'Active', NOW()),
 -- New RAM Products
-('Kingston Fury Beast DDR5-5600 32GB', 3, 21, 'Fury Beast DDR5-5600', 110.00, 88.00, 120, '32GB DDR5 RAM with aggressive styling', 'Active', NOW()),
-('Kingston Fury Renegade DDR5-6400 32GB', 3, 21, 'Fury Renegade DDR5-6400', 150.00, 120.00, 70, 'High-performance DDR5 with RGB lighting', 'Active', NOW()),
-('Crucial Ballistix DDR5-6000 32GB', 3, 22, 'Ballistix DDR5-6000', 125.00, 100.00, 85, 'Reliable DDR5 RAM with excellent compatibility', 'Active', NOW()),
-('Team Group T-Force Delta DDR5-6400 32GB', 3, 23, 'T-Force Delta DDR5-6400', 135.00, 108.00, 75, 'RGB DDR5 RAM with unique design', 'Active', NOW()),
-('Patriot Viper DDR5-6000 32GB', 3, 24, 'Viper DDR5-6000', 115.00, 92.00, 95, '32GB DDR5 RAM with heat spreader', 'Active', NOW()),
-('ADATA XPG Lancer DDR5-6400 32GB', 3, 25, 'XPG Lancer DDR5-6400', 145.00, 116.00, 65, 'Premium DDR5 RAM with RGB effects', 'Active', NOW()),
-('Corsair Dominator Platinum DDR5-7200 32GB', 3, 7, 'Dominator Platinum DDR5-7200', 180.00, 144.00, 40, 'Ultra-high-speed DDR5 RAM', 'Active', NOW()),
+('Kingston Fury Beast DDR5-5600 32GB', 3, 21, 29, 'Fury Beast DDR5-5600', 110.00, 88.00, 120, 'RAM-Kingston-Fury-Beast-DDR5-5600', '32GB DDR5 RAM with aggressive styling', 'Active', NOW()),
+('Kingston Fury Renegade DDR5-6400 32GB', 3, 21, 29, 'Fury Renegade DDR5-6400', 150.00, 120.00, 70, 'RAM-Kingston-Fury-Renegade-DDR5-6400', 'High-performance DDR5 with RGB lighting', 'Active', NOW()),
+('Crucial Ballistix DDR5-6000 32GB', 3, 22, 30, 'Ballistix DDR5-6000', 125.00, 100.00, 85, 'RAM-Crucial-Ballistix-DDR5-6000', 'Reliable DDR5 RAM with excellent compatibility', 'Active', NOW()),
+('Team Group T-Force Delta DDR5-6400 32GB', 3, 23, 31, 'T-Force Delta DDR5-6400', 135.00, 108.00, 75, 'RAM-Team-Group-T-Force-Delta-DDR5-6400', 'RGB DDR5 RAM with unique design', 'Active', NOW()),
+('Patriot Viper DDR5-6000 32GB', 3, 24, 32, 'Viper DDR5-6000', 115.00, 92.00, 95, 'RAM-Patriot-Viper-DDR5-6000', '32GB DDR5 RAM with heat spreader', 'Active', NOW()),
+('ADATA XPG Lancer DDR5-6400 32GB', 3, 25, 33, 'XPG Lancer DDR5-6400', 145.00, 116.00, 65, 'RAM-ADATA-XPG-Lancer-DDR5-6400', 'Premium DDR5 RAM with RGB effects', 'Active', NOW()),
+('Corsair Dominator Platinum DDR5-7200 32GB', 3, 7, 34, 'Dominator Platinum DDR5-7200', 180.00, 144.00, 40, 'RAM-Corsair-Dominator-Platinum-DDR5-7200', 'Ultra-high-speed DDR5 RAM', 'Active', NOW()),
 
 -- GPU Products (existing + new)
-('NVIDIA GeForce RTX 5090', 4, 6, '5090', 1500.00, 1200.00, 20, 'Top-tier GPU for 4K gaming', 'Active', NOW()),
-('NVIDIA GeForce RTX 5080', 4, 6, '5080', 1000.00, 800.00, 25, 'High-end GPU for 1440p', 'Active', NOW()),
-('MSI Radeon RX 9070 XT', 4, 4, '9070 XT', 800.00, 640.00, 30, 'AMD GPU with ray tracing', 'Active', NOW()),
+('NVIDIA GeForce RTX 5090', 4, 6, 7, '5090', 1500.00, 1200.00, 20, 'GPU-NVIDIA-5090', 'Top-tier GPU for 4K gaming', 'Active', NOW()),
+('NVIDIA GeForce RTX 5080', 4, 6, 7, '5080', 1000.00, 800.00, 25, 'GPU-NVIDIA-5080', 'High-end GPU for 1440p', 'Active', NOW()),
+('MSI Radeon RX 9070 XT', 4, 4, 8, '9070 XT', 800.00, 640.00, 30, 'GPU-MSI-9070-XT', 'AMD GPU with ray tracing', 'Active', NOW()),
 -- New GPU Products
-('NVIDIA GeForce RTX 4090', 4, 6, '4090', 1600.00, 1280.00, 15, 'Previous generation flagship GPU', 'Active', NOW()),
-('NVIDIA GeForce RTX 4080', 4, 6, '4080', 1200.00, 960.00, 20, 'High-end RTX 40 series GPU', 'Active', NOW()),
-('NVIDIA GeForce RTX 4070 Ti', 4, 6, '4070 Ti', 800.00, 640.00, 35, 'Mid-high range GPU with excellent performance', 'Active', NOW()),
-('AMD Radeon RX 7900 XTX', 4, 1, '7900 XTX', 1000.00, 800.00, 25, 'AMD flagship GPU with 24GB VRAM', 'Active', NOW()),
-('AMD Radeon RX 7900 XT', 4, 1, '7900 XT', 900.00, 720.00, 30, 'High-end AMD GPU for 4K gaming', 'Active', NOW()),
-('AMD Radeon RX 7800 XT', 4, 1, '7800 XT', 550.00, 440.00, 40, 'Mid-range AMD GPU with great value', 'Active', NOW()),
-('EVGA GeForce RTX 4070', 4, 27, '4070', 600.00, 480.00, 45, 'EVGA RTX 4070 with excellent cooling', 'Active', NOW()),
-('Zotac GeForce RTX 4060 Ti', 4, 28, '4060 Ti', 400.00, 320.00, 60, 'Compact RTX 4060 Ti for small builds', 'Active', NOW()),
-('Sapphire Radeon RX 7700 XT', 4, 31, '7700 XT', 450.00, 360.00, 50, 'Sapphire RX 7700 XT with Nitro cooling', 'Active', NOW()),
+('NVIDIA GeForce RTX 4090', 4, 6, 7, '4090', 1600.00, 1280.00, 15, 'GPU-NVIDIA-4090', 'Previous generation flagship GPU', 'Active', NOW()),
+('NVIDIA GeForce RTX 4080', 4, 6, 7, '4080', 1200.00, 960.00, 20, 'GPU-NVIDIA-4080', 'High-end RTX 40 series GPU', 'Active', NOW()),
+('NVIDIA GeForce RTX 4070 Ti', 4, 6, 7, '4070 Ti', 800.00, 640.00, 35, 'GPU-NVIDIA-4070-Ti', 'Mid-high range GPU with excellent performance', 'Active', NOW()),
+('AMD Radeon RX 7900 XTX', 4, 1, 9, '7900 XTX', 1000.00, 800.00, 25, 'GPU-AMD-7900-XTX', 'AMD flagship GPU with 24GB VRAM', 'Active', NOW()),
+('AMD Radeon RX 7900 XT', 4, 1, 9, '7900 XT', 900.00, 720.00, 30, 'GPU-AMD-7900-XT', 'High-end AMD GPU for 4K gaming', 'Active', NOW()),
+('AMD Radeon RX 7800 XT', 4, 1, 9, '7800 XT', 550.00, 440.00, 40, 'GPU-AMD-7800-XT', 'Mid-range AMD GPU with great value', 'Active', NOW()),
+('EVGA GeForce RTX 4070', 4, 27, 10, '4070', 600.00, 480.00, 45, 'GPU-EVGA-4070', 'EVGA RTX 4070 with excellent cooling', 'Active', NOW()),
+('Zotac GeForce RTX 4060 Ti', 4, 28, 11, '4060 Ti', 400.00, 320.00, 60, 'GPU-Zotac-4060-Ti', 'Compact RTX 4060 Ti for small builds', 'Active', NOW()),
+('Sapphire Radeon RX 7700 XT', 4, 31, 12, '7700 XT', 450.00, 360.00, 50, 'GPU-Sapphire-7700-XT', 'Sapphire RX 7700 XT with Nitro cooling', 'Active', NOW()),
 
 -- Other existing products
-('ASUS ROG Strix X870-F', 2, 3, 'X870-F', 350.00, 280.00, 30, 'AM5 motherboard with Wi-Fi 6E', 'Active', NOW()),
-('ASUS ROG Strix B650-E', 2, 3, 'B650-E', 300.00, 240.00, 35, 'B650 chipset with PCIe 5.0', 'Active', NOW()),
-('Gigabyte B650 Aorus Elite AX', 2, 5, 'B650 AX', 250.00, 200.00, 50, 'Budget AM5 board with Wi-Fi', 'Active', NOW()),
-('WD Black SN850X 2TB', 5, 9, '2TB', 180.00, 144.00, 80, 'High-speed M.2 SSD, 7300MB/s', 'Active', NOW()),
-('WD Black SN850X 1TB', 5, 9, '1TB', 100.00, 80.00, 100, '1TB NVMe SSD for gaming', 'Active', NOW()),
-('Samsung 970 EVO Plus 2TB', 5, 10, '2TB NVMe', 200.00, 160.00, 70, 'Reliable 2TB NVMe SSD', 'Active', NOW()),
-('Corsair RM850e 80+ Gold', 6, 7, '850e', 130.00, 104.00, 40, 'Fully modular 850W PSU', 'Active', NOW()),
-('Corsair RM1000e 80+ Gold', 6, 7, '1000e', 160.00, 128.00, 35, '1000W PSU for high-end builds', 'Active', NOW()),
-('MSI MPG A850G', 6, 4, 'A850G', 140.00, 112.00, 50, '80+ Gold PSU, modular', 'Active', NOW()),
-('ASUS Lancool 216', 7, 3, '216', 100.00, 80.00, 60, 'ATX case with excellent airflow', 'Active', NOW()),
-('ASUS Lancool 205', 7, 3, '205', 90.00, 72.00, 70, 'Mid-tower case with RGB', 'Active', NOW()),
-('Gigabyte Aorus C700', 7, 5, '700', 200.00, 160.00, 20, 'Premium ATX case', 'Active', NOW()),
-('Arctic Liquid Freezer III 360mm', 8, 12, '360mm AIO', 120.00, 96.00, 60, 'High-performance AIO cooler', 'Active', NOW()),
-('Arctic Liquid Freezer III 280mm', 8, 12, '280mm AIO', 100.00, 80.00, 65, '280mm AIO for compact builds', 'Active', NOW()),
-('Noctua NH-U12S', 8, 11, 'U12S', 50.00, 40.00, 80, 'Air cooler with low noise', 'Active', NOW()),
-('Logitech G Pro X Superlight 2', 9, 13, 'X Superlight 2', 100.00, 80.00, 70, 'Lightweight wireless mouse', 'Active', NOW()),
-('Logitech G305', 9, 13, 'G305', 50.00, 40.00, 90, 'Budget wireless gaming mouse', 'Active', NOW()),
-('Razer DeathAdder V3', 9, 14, 'V3', 80.00, 64.00, 60, 'Ergonomic wired mouse', 'Active', NOW()),
-('Razer Ornata V4 Pro', 10, 14, 'V4 Pro', 150.00, 120.00, 40, 'Hybrid mechanical keyboard', 'Active', NOW()),
-('Razer Ornata Chroma', 10, 14, 'Chroma', 100.00, 80.00, 50, 'RGB membrane keyboard', 'Active', NOW()),
-('Logitech BlackWidow V3', 10, 13, 'V3', 130.00, 104.00, 45, 'Mechanical RGB keyboard', 'Active', NOW()),
-('Beyerdynamic DT 990 Pro 250ohm', 11, 15, 'Pro 250ohm', 150.00, 120.00, 25, 'Open-back headphones', 'Active', NOW()),
-('Beyerdynamic DT 990 Edition 600ohm', 11, 15, 'Edition 600ohm', 200.00, 160.00, 20, 'Premium open-back headphones', 'Active', NOW()),
-('SteelSeries Arctis Nova Pro', 11, 16, 'Nova Pro', 250.00, 200.00, 15, 'Wireless gaming headset', 'Active', NOW()),
-('LG Odyssey 27in QHD 240Hz', 12, 17, '27in QHD 240Hz', 400.00, 320.00, 15, '27-inch QHD monitor, 240Hz', 'Active', NOW()),
-('LG Odyssey 32in 4K', 12, 17, '32in 4K', 600.00, 480.00, 10, '32-inch 4K gaming monitor', 'Active', NOW()),
-('MSI Optix MPG 27', 12, 4, 'MPG 27', 350.00, 280.00, 20, '27-inch QHD gaming monitor', 'Active', NOW()),
-('Secretlab Titan Evo 2022', 13, 18, '2022', 500.00, 400.00, 10, 'Ergonomic gaming chair', 'Active', NOW()),
-('Secretlab Titan Evo 2024', 13, 18, '2024', 550.00, 440.00, 8, 'Updated ergonomic chair', 'Active', NOW()),
-('Herman Miller Sayl', 13, 19, 'Standard', 600.00, 480.00, 5, 'Minimalist ergonomic chair', 'Active', NOW()),
-('IKEA UPPSTÅ Standard', 14, 20, 'Standard', 200.00, 160.00, 30, 'Adjustable height desk', 'Active', NOW()),
-('IKEA UPPSTÅ Height-Adjustable', 14, 20, 'Height-Adjustable', 300.00, 240.00, 25, 'Motorized standing desk', 'Active', NOW()),
-('IKEA LAGKAPTEN 120x60', 14, 20, 'Standard 120x60', 150.00, 120.00, 40, 'Compact desk for small spaces', 'Active', NOW());
+('ASUS ROG Strix X870-F', 2, 3, 3, 'X870-F', 350.00, 280.00, 30, 'MB-ASUS-X870-F', 'AM5 motherboard with Wi-Fi 6E', 'Active', NOW()),
+('ASUS ROG Strix B650-E', 2, 3, 3, 'B650-E', 300.00, 240.00, 35, 'MB-ASUS-B650-E', 'B650 chipset with PCIe 5.0', 'Active', NOW()),
+('Gigabyte B650 Aorus Elite AX', 2, 5, 4, 'B650 AX', 250.00, 200.00, 50, 'MB-Gigabyte-B650-AX', 'Budget AM5 board with Wi-Fi', 'Active', NOW()),
+('WD Black SN850X 2TB', 5, 9, 9, '2TB', 180.00, 144.00, 80, 'SSD-WD-Black-SN850X-2TB', 'High-speed M.2 SSD, 7300MB/s', 'Active', NOW()),
+('WD Black SN850X 1TB', 5, 9, 9, '1TB', 100.00, 80.00, 100, 'SSD-WD-Black-SN850X-1TB', '1TB NVMe SSD for gaming', 'Active', NOW()),
+('Samsung 970 EVO Plus 2TB', 5, 10, 10, '2TB NVMe', 200.00, 160.00, 70, 'SSD-Samsung-970-EVO-Plus-2TB', 'Reliable 2TB NVMe SSD', 'Active', NOW()),
+('Corsair RM850e 80+ Gold', 6, 7, 11, '850e', 130.00, 104.00, 40, 'PSU-Corsair-RM850e-80+Gold', 'Fully modular 850W PSU', 'Active', NOW()),
+('Corsair RM1000e 80+ Gold', 6, 7, 11, '1000e', 160.00, 128.00, 35, 'PSU-Corsair-RM1000e-80+Gold', '1000W PSU for high-end builds', 'Active', NOW()),
+('MSI MPG A850G', 6, 4, 12, 'A850G', 140.00, 112.00, 50, 'PSU-MSI-MPG-A850G', '80+ Gold PSU, modular', 'Active', NOW()),
+('ASUS Lancool 216', 7, 3, 13, '216', 100.00, 80.00, 60, 'Case-ASUS-Lancool-216', 'ATX case with excellent airflow', 'Active', NOW()),
+('ASUS Lancool 205', 7, 3, 13, '205', 90.00, 72.00, 70, 'Case-ASUS-Lancool-205', 'Mid-tower case with RGB', 'Active', NOW()),
+('Gigabyte Aorus C700', 7, 5, 14, '700', 200.00, 160.00, 20, 'Case-Gigabyte-Aorus-C700', 'Premium ATX case', 'Active', NOW()),
+('Arctic Liquid Freezer III 360mm', 8, 12, 15, '360mm AIO', 120.00, 96.00, 60, 'Cooler-Arctic-Liquid-Freezer-III-360mm-AIO', 'High-performance AIO cooler', 'Active', NOW()),
+('Arctic Liquid Freezer III 280mm', 8, 12, 15, '280mm AIO', 100.00, 80.00, 65, 'Cooler-Arctic-Liquid-Freezer-III-280mm-AIO', '280mm AIO for compact builds', 'Active', NOW()),
+('Noctua NH-U12S', 8, 11, 16, 'U12S', 50.00, 40.00, 80, 'Cooler-Noctua-NH-U12S', 'Air cooler with low noise', 'Active', NOW()),
+('Logitech G Pro X Superlight 2', 9, 13, 17, 'X Superlight 2', 100.00, 80.00, 70, 'Mouse-Logitech-G-Pro-X-Superlight-2', 'Lightweight wireless mouse', 'Active', NOW()),
+('Logitech G305', 9, 13, 17, 'G305', 50.00, 40.00, 90, 'Mouse-Logitech-G305', 'Budget wireless gaming mouse', 'Active', NOW()),
+('Razer DeathAdder V3', 9, 14, 18, 'V3', 80.00, 64.00, 60, 'Mouse-Razer-DeathAdder-V3', 'Ergonomic wired mouse', 'Active', NOW()),
+('Razer Ornata V4 Pro', 10, 14, 19, 'V4 Pro', 150.00, 120.00, 40, 'Keyboard-Razer-Ornata-V4-Pro', 'Hybrid mechanical keyboard', 'Active', NOW()),
+('Razer Ornata Chroma', 10, 14, 19, 'Chroma', 100.00, 80.00, 50, 'Keyboard-Razer-Ornata-Chroma', 'RGB membrane keyboard', 'Active', NOW()),
+('Logitech BlackWidow V3', 10, 13, 20, 'V3', 130.00, 104.00, 45, 'Keyboard-Logitech-BlackWidow-V3', 'Mechanical RGB keyboard', 'Active', NOW()),
+('Beyerdynamic DT 990 Pro 250ohm', 11, 15, 21, 'Pro 250ohm', 150.00, 120.00, 25, 'Headphone-Beyerdynamic-DT-990-Pro-250ohm', 'Open-back headphones', 'Active', NOW()),
+('Beyerdynamic DT 990 Edition 600ohm', 11, 15, 21, 'Edition 600ohm', 200.00, 160.00, 20, 'Headphone-Beyerdynamic-DT-990-Edition-600ohm', 'Premium open-back headphones', 'Active', NOW()),
+('SteelSeries Arctis Nova Pro', 11, 16, 22, 'Nova Pro', 250.00, 200.00, 15, 'Headphone-SteelSeries-Arctis-Nova-Pro', 'Wireless gaming headset', 'Active', NOW()),
+('LG Odyssey 27in QHD 240Hz', 12, 17, 23, '27in QHD 240Hz', 400.00, 320.00, 15, 'Monitor-LG-Odyssey-27in-QHD-240Hz', '27-inch QHD monitor, 240Hz', 'Active', NOW()),
+('LG Odyssey 32in 4K', 12, 17, 23, '32in 4K', 600.00, 480.00, 10, 'Monitor-LG-Odyssey-32in-4K', '32-inch 4K gaming monitor', 'Active', NOW()),
+('MSI Optix MPG 27', 12, 4, 24, 'MPG 27', 350.00, 280.00, 20, 'Monitor-MSI-Optix-MPG-27', '27-inch QHD gaming monitor', 'Active', NOW()),
+('Secretlab Titan Evo 2022', 13, 18, 25, '2022', 500.00, 400.00, 10, 'Chair-Secretlab-Titan-Evo-2022', 'Ergonomic gaming chair', 'Active', NOW()),
+('Secretlab Titan Evo 2024', 13, 18, 25, '2024', 550.00, 440.00, 8, 'Chair-Secretlab-Titan-Evo-2024', 'Updated ergonomic chair', 'Active', NOW()),
+('Herman Miller Sayl', 13, 19, 26, 'Standard', 600.00, 480.00, 5, 'Chair-Herman-Miller-Sayl', 'Minimalist ergonomic chair', 'Active', NOW()),
+('IKEA UPPSTÅ Standard', 14, 20, 27, 'Standard', 200.00, 160.00, 30, 'Desk-IKEA-UPPSTÅ-Standard', 'Adjustable height desk', 'Active', NOW()),
+('IKEA UPPSTÅ Height-Adjustable', 14, 20, 27, 'Height-Adjustable', 300.00, 240.00, 25, 'Desk-IKEA-UPPSTÅ-Height-Adjustable', 'Motorized standing desk', 'Active', NOW()),
+('IKEA LAGKAPTEN 120x60', 14, 20, 28, 'Standard 120x60', 150.00, 120.00, 40, 'Desk-IKEA-LAGKAPTEN-120x60', 'Compact desk for small spaces', 'Active', NOW());
 
 -- USER
 INSERT INTO user (user_id, username, password, email, role, status, is_verified, verification_token) VALUES 
