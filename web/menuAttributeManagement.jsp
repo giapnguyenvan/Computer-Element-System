@@ -1,11 +1,22 @@
 <%@ page import="java.util.List" %>
 <%@ page import="model.MenuAttribute" %>
 <%@ page import="model.MenuItem" %>
+<%@ page import="dal.MenuAttributeDAO" %>
+<%@ page import="dal.MenuItemDAO" %>
 <%@ page contentType="text/html" pageEncoding="UTF-8" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%
     List<MenuAttribute> list = (List<MenuAttribute>) request.getAttribute("menuAttributes");
     List<MenuItem> menuItems = (List<MenuItem>) request.getAttribute("menuItems");
+    
+    // Xử lý khi truy cập trực tiếp JSP
+    if (list == null) {
+        list = MenuAttributeDAO.getAllMenuAttributes(null, null);
+    }
+    if (menuItems == null) {
+        menuItems = MenuItemDAO.getAllMenuItems();
+    }
+    
     String ctx = request.getContextPath();
     String sortOrder = (String) request.getAttribute("sortOrder");
     String currentSort = sortOrder != null ? sortOrder : "default";
@@ -74,7 +85,7 @@
 <div class="container my-5">
     <div class="table-wrapper">
         <div class="d-flex justify-content-between align-items-center mb-4">
-            <h4 class="mb-0">Menu (level 2)</h4>
+            <h4 class="mb-0">Menu (Level 2)</h4>
             <span class="text-muted">Total Attributes: <%= request.getAttribute("totalMenuAttributes") != null ? request.getAttribute("totalMenuAttributes") : "N/A" %></span>
         </div>
 
