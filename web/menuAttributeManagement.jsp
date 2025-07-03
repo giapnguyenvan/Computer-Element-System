@@ -85,7 +85,7 @@
 <div class="container my-5">
     <div class="table-wrapper">
         <div class="d-flex justify-content-between align-items-center mb-4">
-            <h4 class="mb-0">Menu (Level 2)</h4>
+            <h4 class="mb-0">Menu Attributes</h4>
             <span class="text-muted">Total Attributes: <%= request.getAttribute("totalMenuAttributes") != null ? request.getAttribute("totalMenuAttributes") : "N/A" %></span>
         </div>
 

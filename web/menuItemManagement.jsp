@@ -44,7 +44,7 @@
 <div class="container my-5">
     <div class="table-wrapper">
         <div class="d-flex justify-content-between align-items-center mb-4">
-            <h4 class="mb-0">Menu (Level 1)</h4>
+            <h4 class="mb-0">Menu Items</h4>
             <span class="text-muted">Total Items: <%= request.getAttribute("totalMenuItems") != null ? request.getAttribute("totalMenuItems") : "N/A" %></span>
         </div>
 
@@ -93,14 +93,14 @@
                 <% if (list != null) { 
                     for (MenuItem item : list) { %>
                 <tr>
-                    <td><%= item.getId() %></td>
+                    <td><%= item.getMenuItemId() %></td>
                     <td><%= item.getName() %></td>
                     <td><i class="<%= item.getIcon() %>"></i></td>
                     <td><%= item.getUrl() %></td>
                     <td><%= item.getParentId() != null ? item.getParentId() : "N/A" %></td>
                     <td><%= item.getStatus() %></td>
                     <td class="text-center">
-                        <button class="btn-action" onclick="editMenuItem(<%= item.getId() %>)" title="Edit">
+                        <button class="btn-action" onclick="editMenuItem(<%= item.getMenuItemId() %>)" title="Edit">
                             <i class="fas fa-edit"></i>
                         </button>
                     </td>
