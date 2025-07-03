@@ -77,6 +77,10 @@ public class ManageBlogServlet extends HttpServlet {
             // Store the user names map in request
             request.setAttribute("userNames", userNames);
             
+            // Add this: get all users for author dropdown
+            Vector<User> userList = userDAO.getAllUsers();
+            request.setAttribute("userList", userList);
+            
             // Apply search filter if specified
             String search = request.getParameter("search");
             if (search != null && !search.trim().isEmpty()) {
@@ -215,15 +219,15 @@ public class ManageBlogServlet extends HttpServlet {
                     break;
                 case "delete":
                     // Xử lý xóa blog
-                    Object authObj = request.getSession().getAttribute("customerAuth");
+                    Object authObj = request.getSession().getAttribute("userAuth");
                     if (authObj == null) {
                         request.getSession().setAttribute("error", "You must be logged in to delete a blog.");
                         response.sendRedirect("manageblogs");
                         return;
                     }
                     int blogId = Integer.parseInt(request.getParameter("blog_id"));
-                    int customerId = ((model.Customer)authObj).getCustomer_id();
-                    boolean deleted = blogDAO.deleteBlogById(blogId, customerId);
+                    int userId = ((model.User)authObj).getId();
+                    boolean deleted = blogDAO.deleteBlogById(blogId, userId);
                     if (deleted) {
                         request.getSession().setAttribute("success", "Blog deleted successfully!");
                     } else {
@@ -269,6 +273,15 @@ public class ManageBlogServlet extends HttpServlet {
         request.setAttribute("currentPage", page);
         request.setAttribute("totalPages", totalPages);
         request.setAttribute("totalBlogs", totalBlogs);
+        // Add this: get all users for author dropdown
+        try {
+            Vector<User> userList = userDAO.getAllUsers();
+            request.setAttribute("userList", userList);
+        } catch (java.sql.SQLException e) {
+            request.setAttribute("error", "Error loading user list: " + e.getMessage());
+            request.getRequestDispatcher("error.jsp").forward(request, response);
+            return;
+        }
         request.getRequestDispatcher("ManageBlog.jsp").forward(request, response);
     }
 
