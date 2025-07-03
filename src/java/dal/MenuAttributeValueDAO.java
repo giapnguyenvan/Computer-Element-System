@@ -5,6 +5,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.sql.Connection;
 
 public class MenuAttributeValueDAO {
 
@@ -200,5 +201,100 @@ public class MenuAttributeValueDAO {
             ex.printStackTrace();
         }
         return list;
+    }
+
+    // Get menu attribute values with pagination, sorting and searching
+    public static ArrayList<MenuAttributeValue> getMenuAttributeValues(String search, String sortOrder, int offset, int limit) {
+        ArrayList<MenuAttributeValue> list = new ArrayList<>();
+        StringBuilder sql = new StringBuilder();
+        sql.append("SELECT * FROM (");
+        sql.append("    SELECT ROW_NUMBER() OVER (");
+        
+        // Add sorting
+        if ("asc".equals(sortOrder)) {
+            sql.append("ORDER BY value ASC");
+        } else if ("desc".equals(sortOrder)) {
+            sql.append("ORDER BY value DESC");
+        } else if ("status_asc".equals(sortOrder)) {
+            sql.append("ORDER BY status ASC");
+        } else if ("status_desc".equals(sortOrder)) {
+            sql.append("ORDER BY status DESC");
+        } else {
+            sql.append("ORDER BY value_id ASC");
+        }
+        
+        sql.append(") AS RowNum, mav.*, ma.name as attribute_name ");
+        sql.append("FROM menu_attribute_value mav ");
+        sql.append("LEFT JOIN menu_attribute ma ON mav.attribute_id = ma.attribute_id ");
+        
+        // Add search condition if provided
+        if (search != null && !search.trim().isEmpty()) {
+            sql.append("WHERE mav.value LIKE ? OR mav.url LIKE ? OR ma.name LIKE ? ");
+        }
+        
+        sql.append(") AS ResultSet ");
+        sql.append("WHERE RowNum BETWEEN ? AND ?");
+        
+        try (Connection conn = DBContext.getInstance().getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql.toString())) {
+            
+            int paramIndex = 1;
+            // Set search parameters if search is provided
+            if (search != null && !search.trim().isEmpty()) {
+                String searchPattern = "%" + search + "%";
+                ps.setString(paramIndex++, searchPattern);
+                ps.setString(paramIndex++, searchPattern);
+                ps.setString(paramIndex++, searchPattern);
+            }
+            
+            // Set pagination parameters
+            ps.setInt(paramIndex++, offset + 1); // SQL Server starts from 1
+            ps.setInt(paramIndex, offset + limit);
+            
+            ResultSet rs = ps.executeQuery();
+            while (rs.next()) {
+                MenuAttributeValue menuAttributeValue = new MenuAttributeValue(
+                    rs.getInt("value_id"),
+                    rs.getInt("attribute_id"),
+                    rs.getString("value"),
+                    rs.getString("url"),
+                    rs.getString("status")
+                );
+                list.add(menuAttributeValue);
+            }
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+        }
+        return list;
+    }
+
+    // Count total menu attribute values with search
+    public static int countMenuAttributeValues(String search) {
+        int count = 0;
+        StringBuilder sql = new StringBuilder("SELECT COUNT(*) FROM menu_attribute_value mav ");
+        sql.append("LEFT JOIN menu_attribute ma ON mav.attribute_id = ma.attribute_id ");
+        
+        if (search != null && !search.trim().isEmpty()) {
+            sql.append("WHERE mav.value LIKE ? OR mav.url LIKE ? OR ma.name LIKE ? ");
+        }
+        
+        try (Connection conn = DBContext.getInstance().getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql.toString())) {
+            
+            if (search != null && !search.trim().isEmpty()) {
+                String searchPattern = "%" + search + "%";
+                ps.setString(1, searchPattern);
+                ps.setString(2, searchPattern);
+                ps.setString(3, searchPattern);
+            }
+            
+            ResultSet rs = ps.executeQuery();
+            if (rs.next()) {
+                count = rs.getInt(1);
+            }
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+        }
+        return count;
     }
 } 
