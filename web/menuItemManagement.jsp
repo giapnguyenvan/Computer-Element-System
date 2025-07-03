@@ -103,9 +103,6 @@
                         <button class="btn-action" onclick="editMenuItem(<%= item.getId() %>)" title="Edit">
                             <i class="fas fa-edit"></i>
                         </button>
-                        <button class="btn-action text-danger" onclick="deleteMenuItem(<%= item.getId() %>)" title="Delete">
-                            <i class="fas fa-trash"></i>
-                        </button>
                     </td>
                 </tr>
                 <% }
