@@ -237,4 +237,4 @@ public class PCBuilderServlet extends HttpServlet {
         // Forward to confirmation page
         request.getRequestDispatcher("pcBuilderConfirmation.jsp").forward(request, response);
     }
-} 
+}

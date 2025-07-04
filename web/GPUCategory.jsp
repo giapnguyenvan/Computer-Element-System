@@ -35,26 +35,20 @@
         <%
             ProductDAO productDAO = new ProductDAO();
 
-            // Số sản phẩm trên mỗi trang
             int productsPerPage = 4;
+            int componentTypeId = 4; // GPU
 
-            // Lấy trang hiện tại từ parameter, mặc định là trang 1
             int currentPage = 1;
             String pageStr = request.getParameter("page");
             if (pageStr != null && !pageStr.isEmpty()) {
                 currentPage = Integer.parseInt(pageStr);
             }
 
-            // Lấy tổng số sản phẩm GPU
-            int totalProducts = productDAO.getTotalGPUProducts();
-
-            // Tính tổng số trang
+            int totalProducts = productDAO.getTotalProductsByComponentType(componentTypeId);
             int totalPages = (int) Math.ceil((double) totalProducts / productsPerPage);
 
-            // Lấy danh sách sản phẩm cho trang hiện tại
-            List<Products> gpuProducts = productDAO.getGPUProductsWithPaging(currentPage, productsPerPage);
+            List<Products> gpuProducts = productDAO.getProductsWithPagingByComponentType(componentTypeId, currentPage, productsPerPage);
 
-            // Set attributes để sử dụng trong JSP
             request.setAttribute("gpuProducts", gpuProducts);
             request.setAttribute("currentPage", currentPage);
             request.setAttribute("totalPages", totalPages);
@@ -69,8 +63,8 @@
                 <div class="products-grid" id="gpuProductsContainer">
                     <c:forEach var="product" items="${gpuProducts}">
                         <div class="product-card">
-                            <a href="${pageContext.request.contextPath}/productservlet?service=productDetail&id=${product.id}" style="text-decoration: none; color: inherit; display: block;">
-                                <img src="${product.image_url}" class="product-image" alt="${product.name}">
+                            <a href="${pageContext.request.contextPath}/productservlet?service=productDetail&id=${product.productId}" style="text-decoration: none; color: inherit; display: block;">
+                                <img src="${product.imageUrl}" class="product-image" alt="${product.name}">
                                 <h5 class="product-title">${product.name}</h5>
                                 <p class="product-description">${product.description}</p>
                             </a>
@@ -79,8 +73,8 @@
                             </div>
                             <!-- Add to Cart Button -->
                             <button class="btn btn-primary add-to-cart-btn" 
-                                    onclick="addToCart('${product.id}', '${product.name}', '${product.price}')"
-                                    id="addBtn_${product.id}">
+                                    onclick="addToCart('${product.productId}', '${product.name}', '${product.price}')"
+                                    id="addBtn_${product.productId}">
                                 <i class="fas fa-shopping-cart me-2"></i>Add to Cart
                             </button>
                         </div>
@@ -318,4 +312,4 @@
                                 });
         </script>
     </body>
-</html> 
+</html>

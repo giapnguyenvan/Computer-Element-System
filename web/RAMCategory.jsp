@@ -35,26 +35,20 @@
         <%
             ProductDAO productDAO = new ProductDAO();
 
-            // Số sản phẩm trên mỗi trang
             int productsPerPage = 4;
+            int componentTypeId = 3; // RAM
 
-            // Lấy trang hiện tại từ parameter, mặc định là trang 1
             int currentPage = 1;
             String pageStr = request.getParameter("page");
             if (pageStr != null && !pageStr.isEmpty()) {
                 currentPage = Integer.parseInt(pageStr);
             }
 
-            // Lấy tổng số sản phẩm RAM
-            int totalProducts = productDAO.getTotalRAMProducts();
-
-            // Tính tổng số trang
+            int totalProducts = productDAO.getTotalProductsByComponentType(componentTypeId);
             int totalPages = (int) Math.ceil((double) totalProducts / productsPerPage);
 
-            // Lấy danh sách sản phẩm cho trang hiện tại
-            List<Products> ramProducts = productDAO.getRAMProductsWithPaging(currentPage, productsPerPage);
+            List<Products> ramProducts = productDAO.getProductsWithPagingByComponentType(componentTypeId, currentPage, productsPerPage);
 
-            // Set attributes để sử dụng trong JSP
             request.setAttribute("ramProducts", ramProducts);
             request.setAttribute("currentPage", currentPage);
             request.setAttribute("totalPages", totalPages);
@@ -69,8 +63,8 @@
                 <div class="products-grid" id="ramProductsContainer">
                     <c:forEach var="product" items="${ramProducts}">
                         <div class="product-card">
-                            <a href="${pageContext.request.contextPath}/productservlet?service=productDetail&id=${product.id}" style="text-decoration: none; color: inherit;">
-                                <img src="${product.image_url}" class="product-image" alt="${product.name}">
+                            <a href="${pageContext.request.contextPath}/productservlet?service=productDetail&id=${product.productId}" style="text-decoration: none; color: inherit;">
+                                <img src="${product.imageUrl}" class="product-image" alt="${product.name}">
                                 <h5 class="product-title">${product.name}</h5>
                                 <p class="product-description">${product.description}</p>
                             </a>
@@ -80,8 +74,8 @@
 
                             <!-- Add to Cart Button -->
                             <button class="btn btn-primary add-to-cart-btn" 
-                                    onclick="addToCart('${product.id}', '${product.name}', '${product.price}')"
-                                    id="addBtn_${product.id}">
+                                    onclick="addToCart('${product.productId}', '${product.name}', '${product.price}')"
+                                    id="addBtn_${product.productId}">
                                 <i class="fas fa-shopping-cart me-2"></i>Add to Cart
                             </button>
                         </div>
@@ -273,25 +267,23 @@
                                             setTimeout(() => {
                                                 addButton.classList.remove('btn-success');
                                                 addButton.innerHTML = '<i class="fas fa-shopping-cart me-2"></i>Add to Cart';
+                                                addButton.disabled = false;
                                             }, 2000);
                                         } else {
-                                            throw new Error(result.message || 'Failed to add to cart');
+                                            throw new Error(result.message || 'Unknown error');
                                         }
                                     } catch (error) {
                                         console.error('Error adding to cart:', error);
                                         Swal.fire({
                                             icon: 'error',
-                                            title: 'Error!',
-                                            text: error.message || 'Failed to add product to cart. Please try again.'
+                                            title: 'Error',
+                                            text: 'Failed to add product to cart. Please try again.'
                                         });
-                                    } finally {
-                                        // Re-enable button
+                                        // Re-enable button on error
                                         addButton.disabled = false;
-                                        if (!addButton.classList.contains('btn-success')) {
-                                            addButton.innerHTML = '<i class="fas fa-shopping-cart me-2"></i>Add to Cart';
-                                        }
+                                        addButton.innerHTML = '<i class="fas fa-shopping-cart me-2"></i>Add to Cart';
                                     }
                                 }
         </script>
     </body>
-</html> 
+</html>

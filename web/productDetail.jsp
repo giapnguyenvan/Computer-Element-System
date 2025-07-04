@@ -103,38 +103,40 @@
             <div class="row">
                 <!-- Product Image -->
                 <div class="col-md-5">
-                    <img src="${product.image_url}" alt="${product.name}" class="img-fluid rounded">
+                    <img src="${product.imageUrl}" alt="${product.name}" class="img-fluid rounded">
                 </div>
 
                 <!-- Product Info -->
                 <div class="col-md-7">
                     <h2 class="mb-3">${product.name}</h2>
-                    <h4 class="text-muted">${product.brand}</h4>
+                    <h4 class="text-muted">${product.brandName}</h4>
                     <h3 class="text-danger mb-3">$${product.price}</h3>
 
-                    <p><strong>Category ID:</strong> ${product.category_id}</p>
+                    <p><strong>Category:</strong> ${product.componentTypeName}</p>
                     <p><strong>Stock:</strong> 
                         <span id="stockDisplay">${product.stock}</span> available
                     </p>
+                    <p><strong>Status:</strong> ${product.status}</p>
+                    <p><strong>Model:</strong> ${product.model}</p>
+                    <p><strong>Series:</strong> ${product.seriesName}</p>
+                    <p><strong>SKU:</strong> ${product.sku}</p>
+                    <p><strong>Created At:</strong> ${product.createdAt}</p>
 
                     <hr>
 
                     <h5>Description</h5>
                     <p>${product.description}</p>
 
-                    <h5>Specifications</h5>
-                    <p>${product.spec_description}</p>
-
                     <c:if test="${product.stock > 0}">
                         <div class="d-flex align-items-center mt-4">
                             <div class="quantity-selector" style="width: 120px; margin-right: 15px;">
-                                <button type="button" class="qty-btn" onclick="changeQuantity(${product.id}, -1)">-</button>
-                                <input type="number" id="quantity_${product.id}" value="1" min="1" max="${product.stock}" class="qty-input" style="text-align:center;">
-                                <button type="button" class="qty-btn" onclick="changeQuantity(${product.id}, 1)">+</button>
+                                <button type="button" class="qty-btn" onclick="changeQuantity(${product.productId}, -1)">-</button>
+                                <input type="number" id="quantity_${product.productId}" value="1" min="1" max="${product.stock}" class="qty-input" style="text-align:center;">
+                                <button type="button" class="qty-btn" onclick="changeQuantity(${product.productId}, 1)">+</button>
                             </div>
                             <button class="btn btn-primary" 
-                                    onclick="addToCart(${product.id}, '${product.name}', ${product.price})"
-                                    id="addBtn_${product.id}">
+                                    onclick="addToCart(${product.productId}, '${product.name}', ${product.price})"
+                                    id="addBtn_${product.productId}">
                                 <i class="fas fa-cart-plus me-2"></i>Add to Cart
                             </button>
                         </div>
@@ -149,15 +151,15 @@
                 <h4 class="mt-5">Related Products</h4>
                 <div class="row">
                     <c:forEach var="p" items="${relatedProducts}">
-                        <c:if test="${p.id != product.id}">
+                        <c:if test="${p.productId != product.productId}">
                             <div class="col-md-3 mb-4">
                                 <div class="card h-100">
-                                    <img src="${p.image_url}" class="card-img-top" alt="${p.name}">
+                                    <img src="${p.imageUrl}" class="card-img-top" alt="${p.name}">
                                     <div class="card-body">
                                         <h5 class="card-title">${p.name}</h5>
-                                        <p class="card-text">${p.brand}</p>
+                                        <p class="card-text">${p.brandName}</p>
                                         <p class="card-text text-danger">$${p.price}</p>
-                                        <a href="${pageContext.request.contextPath}/productservlet?service=productDetail&id=${p.id}" class="btn btn-outline-primary btn-sm">View</a>
+                                        <a href="${pageContext.request.contextPath}/productservlet?service=productDetail&id=${p.productId}" class="btn btn-outline-primary btn-sm">View</a>
                                     </div>
                                 </div>
                             </div>
@@ -367,7 +369,7 @@
                         cartCount = totalItems;
                     }
                 } catch (error) {
-                    console.error('Error updating cart count:', error);
+                    // Ignore error
                 }
             }
 
@@ -376,11 +378,11 @@
                 updateCartCount();
 
                 // Add keyboard support for quantity input
-                const quantityInput = document.getElementById('quantity_${product.id}');
+                const quantityInput = document.getElementById('quantity_${product.productId}');
                 if (quantityInput) {
                     quantityInput.addEventListener('keypress', function(e) {
                         if (e.key === 'Enter') {
-                            addToCart(${product.id}, '${product.name}', ${product.price});
+                            addToCart(${product.productId}, '${product.name}', ${product.price});
                         }
                     });
 
