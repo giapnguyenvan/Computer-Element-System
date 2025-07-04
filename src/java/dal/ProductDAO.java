@@ -1,8 +1,5 @@
 package dal;
 
-import com.google.gson.Gson;
-import com.google.gson.reflect.TypeToken;
-
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -63,14 +60,8 @@ public class ProductDAO {
                         rs.getString("image_url"),
                         rs.getString("brand_name"),
                         rs.getString("component_type_name"),
-                        null // or your Map<String, String> for specDescription
+                        null // specDescription - can be set separately if needed
                 );
-                // If you have a specDescription column as JSON or text, parse it to Map and set:
-                String specJson = rs.getString("spec_description");
-                if (specJson != null) {
-                    Map<String, String> specMap = new Gson().fromJson(specJson, new TypeToken<Map<String, String>>(){}.getType());
-                    p.setSpecDescription(specMap);
-                }
                 listProduct.add(p);
             }
         } catch (SQLException ex) {
@@ -126,7 +117,8 @@ public class ProductDAO {
                         rs.getTimestamp("created_at"),
                         rs.getString("image_url"),
                         rs.getString("brand_name"),
-                        rs.getString("component_type_name")
+                        rs.getString("component_type_name"),
+                        null
                 );
                 list.add(p);
             }
@@ -183,7 +175,8 @@ public class ProductDAO {
                         rs.getTimestamp("created_at"),
                         rs.getString("image_url"),
                         rs.getString("brand_name"),
-                        rs.getString("component_type_name")
+                        rs.getString("component_type_name"),
+                        null
                 );
                 list.add(p);
             }
@@ -240,7 +233,8 @@ public class ProductDAO {
                         rs.getTimestamp("created_at"),
                         rs.getString("image_url"),
                         rs.getString("brand_name"),
-                        rs.getString("component_type_name")
+                        rs.getString("component_type_name"),
+                        null
                 );
                 list.add(p);
             }
@@ -253,24 +247,50 @@ public class ProductDAO {
     public Vector<Products> getProductByBrand(String brand) {
         DBContext db = DBContext.getInstance();
         Vector<Products> list = new Vector<>();
-        String sql = "SELECT * FROM products WHERE brand = ?";
+        String sql = """
+                     SELECT
+                         p.product_id,
+                         p.name,
+                         p.description,
+                         p.price,
+                         p.stock,
+                         p.status,
+                         p.import_price,
+                         p.created_at,
+                         p.component_type_id,
+                         p.brand_id,
+                         b.name as brand_name,
+                         ct.name as component_type_name,
+                         (SELECT image_url FROM ProductImage pi WHERE pi.product_id = p.product_id LIMIT 1) as image_url
+                     FROM
+                         Product p
+                     JOIN
+                         Brand b ON p.brand_id = b.brand_id
+                     JOIN
+                         ComponentType ct ON p.component_type_id = ct.type_id
+                     WHERE
+                         b.name = ?
+                     """;
         try {
             PreparedStatement ptm = db.getConnection().prepareStatement(sql);
             ptm.setString(1, brand);
             ResultSet rs = ptm.executeQuery();
             while (rs.next()) {
-                String jsonSpec = rs.getString("spec_description");
                 Products p = new Products(
-                        rs.getInt("id"),
+                        rs.getInt("product_id"),
                         rs.getString("name"),
-                        rs.getString("brand"),
-                        rs.getInt("category_id"),
+                        rs.getInt("component_type_id"),
+                        rs.getInt("brand_id"),
                         rs.getDouble("price"),
+                        rs.getDouble("import_price"),
                         rs.getInt("stock"),
-                        rs.getString("image_url"),
                         rs.getString("description"),
-                        jsonSpec,
-                        rs.getString("status")
+                        rs.getString("status"),
+                        rs.getTimestamp("created_at"),
+                        rs.getString("image_url"),
+                        rs.getString("brand_name"),
+                        rs.getString("component_type_name"),
+                        null
                 );
                 list.add(p);
             }
@@ -376,7 +396,8 @@ public class ProductDAO {
                         rs.getTimestamp("created_at"),
                         rs.getString("image_url"),
                         rs.getString("brand_name"),
-                        rs.getString("component_type_name")
+                        rs.getString("component_type_name"),
+                        null
                 );
                 list.add(p);
             }
@@ -421,7 +442,8 @@ public class ProductDAO {
                         rs.getTimestamp("created_at"),
                         rs.getString("image_url"),
                         rs.getString("brand_name"),
-                        rs.getString("component_type_name")
+                        rs.getString("component_type_name"),
+                        null
                 );
             }
             System.out.println("[DEBUG] ProductDAO - getProductById - Result: " + product);
@@ -546,7 +568,8 @@ public class ProductDAO {
                         rs.getTimestamp("created_at"),
                         rs.getString("image_url"),
                         rs.getString("brand_name"),
-                        rs.getString("component_type_name")
+                        rs.getString("component_type_name"),
+                        null
                 );
                 // Set additional series and model information
                 p.setSeriesName(rs.getString("series_name"));

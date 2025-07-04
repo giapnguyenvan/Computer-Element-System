@@ -133,6 +133,11 @@ public class Products {
         this.price = price;
     }
 
+    // Added for compatibility with ProductDAO
+    public double getPrice_double() {
+        return price != null ? price : 0.0;
+    }
+
     public Double getImport_price() {
         return import_price;
     }
