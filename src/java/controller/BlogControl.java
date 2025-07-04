@@ -189,13 +189,13 @@ public class BlogControl extends HttpServlet {
     throws ServletException, IOException {
         String title = request.getParameter("title");
         String content = request.getParameter("content");
-        String customerIdStr = request.getParameter("customer_id");
+        String userIdStr = request.getParameter("user_id");
         
         // Validate input
         StringBuilder errors = new StringBuilder();
         if (title == null || title.trim().isEmpty()) errors.append("Title is required. ");
         if (content == null || content.trim().isEmpty()) errors.append("Content is required. ");
-        if (customerIdStr == null || customerIdStr.trim().isEmpty()) errors.append("Customer ID is required. ");
+        if (userIdStr == null || userIdStr.trim().isEmpty()) errors.append("User ID is required. ");
         
         if (errors.length() > 0) {
             request.getSession().setAttribute("error", errors.toString());
@@ -204,14 +204,14 @@ public class BlogControl extends HttpServlet {
         }
         
         try {
-            int customerId = Integer.parseInt(customerIdStr);
-            Blog blog = new Blog(0, title.trim(), content.trim(), customerId, null);
+            int userId = Integer.parseInt(userIdStr);
+            Blog blog = new Blog(0, title.trim(), content.trim(), userId, null);
             blogDAO.insertBlog(blog);
             
             request.getSession().setAttribute("success", "Blog created successfully!");
             response.sendRedirect(request.getContextPath() + "/viewblogs");
         } catch (NumberFormatException e) {
-            request.getSession().setAttribute("error", "Invalid customer ID format.");
+            request.getSession().setAttribute("error", "Invalid user ID format.");
             response.sendRedirect(request.getContextPath() + "/viewblogs");
         }
     }
@@ -221,14 +221,14 @@ public class BlogControl extends HttpServlet {
         String idStr = request.getParameter("id");
         String title = request.getParameter("title");
         String content = request.getParameter("content");
-        String customerIdStr = request.getParameter("customer_id");
+        String userIdStr = request.getParameter("user_id");
         
         // Validate input
         StringBuilder errors = new StringBuilder();
         if (idStr == null || idStr.trim().isEmpty()) errors.append("Blog ID is required. ");
         if (title == null || title.trim().isEmpty()) errors.append("Title is required. ");
         if (content == null || content.trim().isEmpty()) errors.append("Content is required. ");
-        if (customerIdStr == null || customerIdStr.trim().isEmpty()) errors.append("Customer ID is required. ");
+        if (userIdStr == null || userIdStr.trim().isEmpty()) errors.append("User ID is required. ");
         
         if (errors.length() > 0) {
             request.getSession().setAttribute("error", errors.toString());
@@ -238,8 +238,8 @@ public class BlogControl extends HttpServlet {
         
         try {
             int id = Integer.parseInt(idStr);
-            int customerId = Integer.parseInt(customerIdStr);
-            Blog blog = new Blog(id, title.trim(), content.trim(), customerId, null);
+            int userId = Integer.parseInt(userIdStr);
+            Blog blog = new Blog(id, title.trim(), content.trim(), userId, null);
             blogDAO.updateBlog(blog);
             
             request.getSession().setAttribute("success", "Blog updated successfully!");
@@ -254,18 +254,18 @@ public class BlogControl extends HttpServlet {
     throws ServletException, IOException {
         try {
             int id = Integer.parseInt(request.getParameter("id"));
-            int customerId = Integer.parseInt(request.getParameter("customer_id"));
+            int userId = Integer.parseInt(request.getParameter("user_id"));
 
             // Fetch all images before deleting the blog
             dal.BlogImageDAO blogImageDAO = new dal.BlogImageDAO();
             java.util.Vector<model.BlogImage> images = blogImageDAO.getImagesByBlogId(id);
 
             // Delete blog (and images in DB)
-            blogDAO.deleteBlog(id, customerId);
+            blogDAO.deleteBlog(id, userId);
 
             // Delete physical files after DB delete
             for (model.BlogImage img : images) {
-                if (img.getImage_url() != null && img.getImage_url().startsWith("/uploads/blog/")) {
+                if (img.getImage_url() != null && img.getImage_url().startsWith("/assets/assets/images/blog/")) {
                     String realPath = getServletContext().getRealPath(img.getImage_url());
                     java.io.File file = new java.io.File(realPath);
                     if (file.exists()) file.delete();
@@ -279,13 +279,13 @@ public class BlogControl extends HttpServlet {
         }
     }
 
-    public static void deleteBlogAndImages(int blogId, int customerId, javax.servlet.ServletContext context) {
+    public static void deleteBlogAndImages(int blogId, int userId, javax.servlet.ServletContext context) {
         dal.BlogImageDAO blogImageDAO = new dal.BlogImageDAO();
         java.util.Vector<model.BlogImage> images = blogImageDAO.getImagesByBlogId(blogId);
         BlogDAO blogDAO = new BlogDAO();
-        blogDAO.deleteBlog(blogId, customerId);
+        blogDAO.deleteBlog(blogId, userId);
         for (model.BlogImage img : images) {
-            if (img.getImage_url() != null && img.getImage_url().startsWith("/uploads/blog/")) {
+            if (img.getImage_url() != null && img.getImage_url().startsWith("/assets/assets/images/blog/")) {
                 String realPath = context.getRealPath(img.getImage_url());
                 java.io.File file = new java.io.File(realPath);
                 if (file.exists()) file.delete();

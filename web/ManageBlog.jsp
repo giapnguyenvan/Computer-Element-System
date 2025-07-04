@@ -123,14 +123,14 @@
                                 <p class="card-text">${fn:substring(blog.content, 0, 200)}${fn:length(blog.content) > 200 ? '...' : ''}</p>
                             </div>
                             <div class="blog-meta">
-                                <small>Author: ${customerNames[blog.customer_id]}</small>
+                                <small>Author: ${userNames[blog.user_id]}</small>
                             </div>
                             <div class="mt-3">
                                 <button type="button" class="btn btn-sm btn-info" 
                                         onclick="showBlogContent(this)" 
                                         data-title="${fn:escapeXml(blog.title)}"
                                         data-content="${fn:escapeXml(blog.content)}"
-                                        data-author="${fn:escapeXml(customerNames[blog.customer_id])}"
+                                        data-author="${fn:escapeXml(userNames[blog.user_id])}"
                                         data-created="${blog.created_at}">
                                     View Details
                                 </button>
@@ -139,16 +139,23 @@
                                         data-id="${blog.blog_id}"
                                         data-title="${fn:escapeXml(blog.title)}"
                                         data-content="${fn:escapeXml(blog.content)}"
-                                        data-customer-id="${blog.customer_id}"
+                                        data-user-id="${blog.user_id}"
                                         data-bs-toggle="modal" 
                                         data-bs-target="#editBlogModal">
                                     Edit
                                 </button>
                                 <button type="button" class="btn btn-sm btn-danger" 
-                                        onclick="confirmDelete('${blog.blog_id}', '${blog.customer_id}')">
+                                        onclick="confirmDelete('${blog.blog_id}')">
                                     Delete
                                 </button>
                             </div>
+                            <c:if test="${not empty blog.images}">
+                                <div class="mt-3">
+                                    <c:forEach items="${blog.images}" var="img">
+                                        <img src="${img.image_url}" alt="${img.image_alt}" style="max-width: 60px; max-height: 60px; margin-right: 5px;">
+                                    </c:forEach>
+                                </div>
+                            </c:if>
                         </div>
                     </div>
                 </div>
@@ -193,7 +200,7 @@
                     <h5 class="modal-title">Add New Blog</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                 </div>
-                <form action="manageblogs" method="POST">
+                <form action="manageblogs" method="POST" enctype="multipart/form-data">
                     <div class="modal-body">
                         <input type="hidden" name="action" value="add">
                         
@@ -208,12 +215,8 @@
                         </div>
                         
                         <div class="mb-3">
-                            <label class="form-label">Author:</label>
-                            <select class="form-select" name="customer_email" required>
-                                <c:forEach items="${customerList}" var="customer">
-                                    <option value="${customer.email}">${customer.name}</option>
-                                </c:forEach>
-                            </select>
+                            <label class="form-label">Images:</label>
+                            <input type="file" class="form-control" name="images" multiple accept="image/*">
                         </div>
                     </div>
                     <div class="modal-footer">
@@ -233,11 +236,11 @@
                     <h5 class="modal-title">Edit Blog</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                 </div>
-                <form action="manageblogs" method="POST">
+                <form action="manageblogs" method="POST" enctype="multipart/form-data">
                     <div class="modal-body">
                         <input type="hidden" name="action" value="update">
                         <input type="hidden" name="id" id="edit_blog_id">
-                        <input type="hidden" name="customer_id" id="edit_customer_id">
+                        <input type="hidden" name="user_id" id="edit_user_id">
                         
                         <div class="mb-3">
                             <label class="form-label">Title:</label>
@@ -247,6 +250,12 @@
                         <div class="mb-3">
                             <label class="form-label">Content:</label>
                             <textarea class="form-control" name="content" id="edit_content" rows="10" required></textarea>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label class="form-label">Images:</label>
+                            <input type="file" class="form-control" name="images" multiple accept="image/*">
+                            <div id="currentImages"></div>
                         </div>
                     </div>
                     <div class="modal-footer">
@@ -302,15 +311,15 @@
             const id = element.getAttribute('data-id');
             const title = element.getAttribute('data-title');
             const content = element.getAttribute('data-content');
-            const customerId = element.getAttribute('data-customer-id');
+            const userId = element.getAttribute('data-user-id');
             
             document.getElementById('edit_blog_id').value = id;
             document.getElementById('edit_title').value = title;
             document.getElementById('edit_content').value = content;
-            document.getElementById('edit_customer_id').value = customerId;
+            document.getElementById('edit_user_id').value = userId;
         }
         
-        function confirmDelete(blogId, customerId) {
+        function confirmDelete(blogId) {
             if (confirm('Are you sure you want to delete this blog?')) {
                 const form = document.createElement('form');
                 form.method = 'POST';
@@ -323,17 +332,11 @@
                 
                 const idInput = document.createElement('input');
                 idInput.type = 'hidden';
-                idInput.name = 'id';
+                idInput.name = 'blog_id';
                 idInput.value = blogId;
-                
-                const customerIdInput = document.createElement('input');
-                customerIdInput.type = 'hidden';
-                customerIdInput.name = 'customer_id';
-                customerIdInput.value = customerId;
                 
                 form.appendChild(actionInput);
                 form.appendChild(idInput);
-                form.appendChild(customerIdInput);
                 document.body.appendChild(form);
                 form.submit();
             }
