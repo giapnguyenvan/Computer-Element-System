@@ -89,7 +89,7 @@
                         </c:choose>
                     </td>
                     <td>
-                        <a href="${pageContext.request.contextPath}/ProductDetailAdminServlet?id=${product.productId}" class="btn btn-info btn-sm">
+                        <a href="${pageContext.request.contextPath}/productservlet?service=productDetailAdmin&id=${product.productId}" class="btn btn-info btn-sm">
                             View Detail
                         </a>
                     </td>
