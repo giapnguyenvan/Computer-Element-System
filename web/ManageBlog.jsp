@@ -215,15 +215,6 @@
                         </div>
                         
                         <div class="mb-3">
-                            <label class="form-label">Author:</label>
-                            <select class="form-select" name="user_id" required>
-                                <c:forEach items="${userList}" var="user">
-                                    <option value="${user.id}">${user.username}</option>
-                                </c:forEach>
-                            </select>
-                        </div>
-                        
-                        <div class="mb-3">
                             <label class="form-label">Images:</label>
                             <input type="file" class="form-control" name="images" multiple accept="image/*">
                         </div>
@@ -259,15 +250,6 @@
                         <div class="mb-3">
                             <label class="form-label">Content:</label>
                             <textarea class="form-control" name="content" id="edit_content" rows="10" required></textarea>
-                        </div>
-                        
-                        <div class="mb-3">
-                            <label class="form-label">Author:</label>
-                            <select class="form-select" name="user_id" id="edit_user_id" required>
-                                <c:forEach items="${userList}" var="user">
-                                    <option value="${user.id}">${user.username}</option>
-                                </c:forEach>
-                            </select>
                         </div>
                         
                         <div class="mb-3">

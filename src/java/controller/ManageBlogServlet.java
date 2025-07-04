@@ -235,12 +235,11 @@ public class ManageBlogServlet extends HttpServlet {
                         return;
                     }
                     int blogId = Integer.parseInt(request.getParameter("blog_id"));
-                    int userId = ((model.User)authObj).getId();
-                    boolean deleted = blogDAO.deleteBlogById(blogId, userId);
+                    boolean deleted = blogDAO.deleteBlogById(blogId);
                     if (deleted) {
                         request.getSession().setAttribute("success", "Blog deleted successfully!");
                     } else {
-                        request.getSession().setAttribute("error", "Failed to delete blog. You can only delete your own blogs.");
+                        request.getSession().setAttribute("error", "Failed to delete blog.");
                     }
                     response.sendRedirect("manageblogs");
                     break;
@@ -323,18 +322,18 @@ public class ManageBlogServlet extends HttpServlet {
     throws ServletException, IOException {
         String title = request.getParameter("title");
         String content = request.getParameter("content");
-        String userIdStr = request.getParameter("user_id");
+        Object authObj = request.getSession().getAttribute("userAuth");
         StringBuilder errors = new StringBuilder();
         if (title == null || title.trim().isEmpty()) errors.append("Title is required. ");
         if (content == null || content.trim().isEmpty()) errors.append("Content is required. ");
-        if (userIdStr == null || userIdStr.trim().isEmpty()) errors.append("User ID is required. ");
+        if (authObj == null) errors.append("You must be logged in to add a blog. ");
         if (errors.length() > 0) {
             request.getSession().setAttribute("error", errors.toString());
             response.sendRedirect(request.getContextPath() + "/manageblogs");
             return;
         }
         try {
-            int userId = Integer.parseInt(userIdStr);
+            int userId = ((model.User)authObj).getId();
             Blog blog = new Blog(0, title.trim(), content.trim(), userId, null);
             int blogId = blogDAO.insertBlog(blog);
             
@@ -363,7 +362,7 @@ public class ManageBlogServlet extends HttpServlet {
                                 filePart.write(realPath);
                                 
                                 // Save image info to database
-                                BlogImage blogImage = new BlogImage(0, blogId, uploadPath, fileName);
+                                BlogImage blogImage = new BlogImage(0, blogId, uploadPath, fileName, 0, null);
                                 blogImageDAO.insertBlogImage(blogImage);
                             }
                         }
@@ -428,7 +427,7 @@ public class ManageBlogServlet extends HttpServlet {
                             filePart.write(realPath);
                             
                             // Save image info to database
-                            BlogImage blogImage = new BlogImage(0, id, uploadPath, fileName);
+                            BlogImage blogImage = new BlogImage(0, id, uploadPath, fileName, 0, null);
                             blogImageDAO.insertBlogImage(blogImage);
                         }
                     }

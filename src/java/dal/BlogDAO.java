@@ -227,14 +227,13 @@ public class BlogDAO {
         return listBlogs;
     }
 
-    // Delete blog by blogId and userId
-    public boolean deleteBlogById(int blogId, int userId) {
+    // Delete blog by blogId (any user can delete any blog)
+    public boolean deleteBlogById(int blogId) {
         DBContext db = DBContext.getInstance();
-        String sql = "DELETE FROM blog WHERE blog_id = ? AND user_id = ?";
+        String sql = "DELETE FROM blog WHERE blog_id = ?";
         try {
             PreparedStatement ptm = db.getConnection().prepareStatement(sql);
             ptm.setInt(1, blogId);
-            ptm.setInt(2, userId);
             int affected = ptm.executeUpdate();
             
             if (affected > 0) {
