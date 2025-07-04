@@ -57,6 +57,7 @@
                 <th><div class="colheader"><span class="sortable" data-col="6">Image</span><span><button class="no-sort btn btn-sm btn-light" data-col="6">F</button></span></div></th>
                 <th><div class="colheader"><span class="sortable" data-col="7">Description</span><span><button class="no-sort btn btn-sm btn-light" data-col="7">F</button></span></div></th>
                 <th><div class="colheader"><span class="sortable" data-col="8">Status</span><span><button class="no-sort btn btn-sm btn-light" data-col="8">F</button></span></div></th>
+                <th><div class="colheader"><span class="sortable" data-col="9">Detail</span><span><button class="no-sort btn btn-sm btn-light" data-col="9">F</button></span></div></th>
             </tr>
         </thead>
         <tbody>
@@ -86,6 +87,11 @@
                                 Active
                             </c:otherwise>
                         </c:choose>
+                    </td>
+                    <td>
+                        <a href="${pageContext.request.contextPath}/ProductDetailAdminServlet?id=${product.productId}" class="btn btn-info btn-sm">
+                            View Detail
+                        </a>
                     </td>
                 </tr>
             </c:forEach>
