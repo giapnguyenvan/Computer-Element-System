@@ -38,6 +38,8 @@ public class ProductServlet extends HttpServlet {
                 case "viewProduct":
                     plist = dao.getAllProduct();
                     request.setAttribute("product", plist);
+                    request.setAttribute("brand", brands);
+                    request.setAttribute("category", clist);
                     request.getRequestDispatcher("viewProduct.jsp").forward(request, response);
                     break;
 
