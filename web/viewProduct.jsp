@@ -1,431 +1,329 @@
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
-<%@page import="java.util.Vector, model.Products" %>
-<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
-<%@ taglib  uri="http://java.sun.com/jsp/jstl/functions" prefix="fn"%>
-
-
-<%
-    String sortBy = request.getParameter("sortBy");
-    if (sortBy == null) sortBy = "id";
-    String order = request.getParameter("order");
-    if (order == null) order = "asc";
-    String baseUrl = request.getContextPath() + "/productservlet?service=viewProduct";
-%>
-
-<%! 
-    public String getNextOrder(String col, String sortBy, String order) {
-        if (sortBy == null || !sortBy.equals(col)) return "asc";
-        if ("asc".equalsIgnoreCase(order)) return "desc";
-        if ("desc".equalsIgnoreCase(order)) return "none";
-        return "asc";
-    }
-%>
-
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
+<%@ page import="java.util.Map" %>
+<%@ page import="model.Products" %>
 <!DOCTYPE html>
-<html>
-    <head>
-        <meta charset="UTF-8">
-        <title>Product List</title>
-        <style>
-            body {
-                font-family: Arial, sans-serif;
-                margin: 20px;
-            }
-
-            .top-bar {
-                display: flex;
-                justify-content: space-between;
-                align-items: center;
-                margin-bottom: 15px;
-            }
-
-            .search-section,
-            .filter-section,
-            .insert-btn {
-                margin: 5px;
-            }
-
-            .insert-btn {
-                padding: 8px 15px;
-                background-color: #4CAF50;
-                color: white;
-                text-decoration: none;
-                border-radius: 5px;
-            }
-
-            table {
-                width: 100%;
-                border-collapse: collapse;
-                margin-top: 20px;
-            }
-
-            th, td {
-                border: 1px solid #ccc;
-                padding: 10px;
-                text-align: center;
-                vertical-align: middle;
-            }
-
-            thead {
-                background-color: #f2f2f2;
-            }
-
-            tbody tr:nth-child(even) {
-                background-color: #f9f9f9;
-            }
-
-            tbody tr:hover {
-                background-color: #e9f5ff;
-            }
-
-            .sort-link {
-                text-decoration: none;
-                color: #007bff;
-                font-weight: bold;
-            }
-
-            form {
-                display: inline-block;
-            }
-
-            input[type="text"] {
-                padding: 5px;
-                width: 250px;
-            }
-
-            button {
-                padding: 6px 10px;
-                margin-left: 5px;
-                background-color: #007bff;
-                color: white;
-                border: none;
-                border-radius: 4px;
-                cursor: pointer;
-            }
-
-            button:hover {
-                background-color: #0056b3;
-            }
-
-        </style>
-        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-        <link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/jquery.dataTables.min.css">
-    </head>
-    <body>
-        <div class="top-bar">
-            <!-- Left: Insert Button -->
-            <!--
-            <a href="${pageContext.request.contextPath}/productservlet?service=insertProduct" class="insert-btn">Insert Product</a>
-            -->          
-            <button class="insert-btn" data-bs-toggle="modal" data-bs-target="#addProductModal">Insert Product</button>
-
-            <!-- Middle: Filters -->
-            <form action="productservlet" method="get" style="display: inline;">
-                <input type="hidden" name="service" value="filterProducts"/>
-                <select name="brand" onchange="this.form.submit()">
-                    <option value="">-- Select Brand --</option>
-                    <c:forEach var="b" items="${brand}">
-                        <option value="${b}" ${param.brand == b ? 'selected' : ''}>${b}</option>
-                    </c:forEach>
-                </select>
-                <select name="category_id" onchange="this.form.submit()">
-                    <option value="">-- Select Category --</option>
-                    <c:forEach var="c" items="${category}">
-                        <option value="${c.id}" ${param.category_id == c.id ? 'selected' : ''}>${c.name}</option>
-                    </c:forEach>
-                </select>
-            </form>
-
-            <!-- Right: Search -->
-            <div class="search-section">
-                <form action="${pageContext.request.contextPath}/productservlet" method="get">
-                    <input type="hidden" name="service" value="searchProduct" />
-                    <input type="text" name="keyword" placeholder="Search by name, brand, description..." value="${keyword != null ? keyword : ''}" />
-                    <button type="submit">Search & Sort</button>
-                </form>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Product Table</title>
+    <style>
+        table {
+            border-collapse: collapse;
+            width: 100%;
+            font-family: Arial, sans-serif;
+        }
+        th, td {
+            border: 1px solid #ccc;
+            padding: 8px;
+            text-align: left;
+        }
+        th {
+            background-color: #f2f2f2;
+            cursor: default;
+        }
+        tbody tr:nth-child(even) {
+            background-color: #f9f9f9;
+        }
+        .colheader {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .selected {
+            background-color: #d1e7dd !important;
+        }
+        .sorted-asc .sort-asc {
+            background-color: #28a745 !important;
+        }
+        .sorted-desc .sort-asc {
+            background-color: #dc3545 !important;
+        }
+        #detailModal .modal-body {
+            max-height: 400px;
+            overflow-y: auto;
+        }
+    </style>
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/jquery.dataTables.min.css">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+    <div class="container mt-3">
+        <div class="buttons mb-3">
+            <a href="${pageContext.request.contextPath}/ProductEditServlet?action=new" class="btn btn-primary">New</a>
+            <a href="#" class="btn btn-primary" onclick="editSelected()">Edit</a>
+            <a href="#" class="btn btn-danger" onclick="deleteSelected()">Delete</a>
+        </div>
+        <table class="table table-striped table-hover align-middle text-center" id="myTable">
+            <thead>
+                <tr>
+                    <th><div class="colheader"><span class="sortable" data-col="0">Product ID</span><span><button class="no-sort btn btn-sm btn-light" data-col="0">F</button></span></div></th>
+                    <th><div class="colheader"><span class="sortable" data-col="1">Name</span><span><button class="no-sort btn btn-sm btn-light" data-col="1">F</button></span></div></th>
+                    <th><div class="colheader"><span class="sortable" data-col="2">Brand</span><span><button class="no-sort btn btn-sm btn-light" data-col="2">F</button></span></div></th>
+                    <th><div class="colheader"><span class="sortable" data-col="3">Category</span><span><button class="no-sort btn btn-sm btn-light" data-col="3">F</button></span></div></th>
+                    <th><div class="colheader"><span class="sortable" data-col="4">Price</span><span><button class="no-sort btn btn-sm btn-light" data-col="4">F</button></span></div></th>
+                    <th><div class="colheader"><span class="sortable" data-col="5">Stock</span><span><button class="no-sort btn btn-sm btn-light" data-col="5">F</button></span></div></th>
+                    <th><div class="colheader"><span class="sortable" data-col="6">Image</span><span><button class="no-sort btn btn-sm btn-light" data-col="6">F</button></span></div></th>
+                    <th><div class="colheader"><span class="sortable" data-col="7">Description</span><span><button class="no-sort btn btn-sm btn-light" data-col="7">F</button></span></div></th>
+                    <th><div class="colheader"><span class="sortable" data-col="8">Status</span><span><button class="no-sort btn btn-sm btn-light" data-col="8">F</button></span></div></th>
+                    <th><div class="colheader">View Detail</div></th>
+                </tr>
+            </thead>
+            <tbody>
+                <c:forEach var="product" items="${product}">
+                    <tr>
+                        <td>${product.id}</td>
+                        <td>${product.name}</td>
+                        <td>${product.brand}</td>
+                        <td>${product.categoryName}</td>
+                        <td>
+                            <c:choose>
+                                <c:when test="${product.price != null}">
+                                    ${product.price} VND
+                                </c:when>
+                                <c:otherwise>N/A</c:otherwise>
+                            </c:choose>
+                        </td>
+                        <td>${product.stock}</td>
+                        <td>
+                            <c:choose>
+                                <c:when test="${not empty product.image_url}">
+                                    <img src="${product.image_url}" width="100" alt="Product Image">
+                                </c:when>
+                                <c:otherwise>No Image</c:otherwise>
+                            </c:choose>
+                        </td>
+                        <td>${product.description}</td>
+                        <td>${product.status}</td>
+                        <td>
+                            <button 
+                                class="btn btn-info btn-sm view-detail"
+                                data-id="${product.id}"
+                                data-name="${product.name}"
+                                data-brand="${product.brand}"
+                                data-category="${product.categoryName}"
+                                data-price="${product.price}"
+                                data-stock="${product.stock}"
+                                data-image="${product.image_url}"
+                                data-description="${product.description}"
+                                data-status="${product.status}"
+                                data-specdesc="${product.specDescription != null ? fn:escapeXml(product.specDescription) : ''}">
+                                View Detail
+                            </button>
+                        </td>
+                    </tr>
+                </c:forEach>
+            </tbody>
+        </table>
+        <div id="columnFilterPopup" style="display:none; position:absolute; background:#fff; border:1px solid #ccc; box-shadow:0 2px 8px rgba(0,0,0,0.2); padding:10px; max-height:250px; overflow-y:auto; z-index:1000;">
+            <div style="text-align:right;">
+                <button id="closeFilterBtn" type="button" class="btn btn-sm btn-close"></button>
             </div>
+            <div id="filterOptionsContainer"></div>
+            <button id="applyFilterBtn" type="button" class="btn btn-sm btn-primary mt-2">Apply Filter</button>
         </div>
 
-        <div class="col-sm-12">
-            <div class="bg-light rounded p-4">
-                <table class="table table-striped table-hover align-middle display text-center" id="myTable">
-                    <thead class="table-light">
-                        <tr class="text-center">
-                            <th>Product ID</th>
-                            <th>Name</th>
-                            <th>Brand</th>
-                            <th>Category</th>
-                            <th>Price</th>
-                            <th>Stock</th>
-                            <th>Image</th>
-                            <th>Description</th>
-                            <th>Spec</th>
-                            <th>Status</th>
-                            <th>Action</th>
-                        </tr>
-                    </thead>
-                    <tfoot>
-                        <tr>
-                            <th>Product ID</th>
-                            <th>Name</th>
-                            <th>Brand</th>
-                            <th>Category ID</th>
-                            <th>Price</th>
-                            <th>Stock</th>
-                            <th>Image</th>
-                            <th>Description</th>
-                            <th>Spec_description</th>
-                            <th>Status</th>
-                            <th>Action</th>
-                        </tr>
-                    </tfoot>
-                    <tbody>
-                        <c:forEach items="${product}" var="product">
-                            <tr>
-                                <td>${product.id}</td>
-                                <td>${product.name}</td>
-                                <td>${product.brand}</td>
-                                <td>${product.categoryName}</td>
-                                <td>${product.price}</td>
-                                <td>${product.stock}</td>
-                                <td><img src="${product.image_url}" alt="${product.name}" class="img-thumbnail" style="max-width: 100px;"></td>
-                                <td>${product.description}</td>
-                                <td>${product.spec_description}</td>
-                                <td>${product.status}</td>
-                                <td>
-                                    <button 
-                                        type="button" 
-                                        class="btn btn-sm btn-info" 
-                                        onclick="editProduct(this)" 
-                                        data-id="${product.id}" 
-                                        data-name="${product.name}" 
-                                        data-brand="${product.brand}" 
-                                        data-category_id="${product.category_id}" 
-                                        data-price="${product.price}" 
-                                        data-stock="${product.stock}" 
-                                        data-description="${product.description}" 
-                                        data-spec_description="${product.spec_description}" 
-                                        data-image_url="${fn:escapeXml(product.image_url)}"
-                                        data-status="${product.status}"
-                                        data-bs-toggle="modal" 
-                                        data-bs-target="#editProductModal">
-                                        Edit
-                                    </button>
-                                </td>
-                            </tr>
-                        </c:forEach>
-                    </tbody>
-                </table>
-            </div>
-        </div>
-
-        <!-- ADD PRODUCT MODAL -->
-        <div class="modal fade" id="addProductModal" tabindex="-1" aria-labelledby="addProductModalLabel" aria-hidden="true">
+        <!-- Modal for Product Details -->
+        <div class="modal fade" id="detailModal" tabindex="-1" aria-labelledby="detailModalLabel" aria-hidden="true">
             <div class="modal-dialog modal-lg">
                 <div class="modal-content">
-                    <form action="productservlet?service=insertProduct" method="post">
-                        <div class="modal-header">
-                            <h5 class="modal-title" id="addProductModalLabel">Add New Product</h5>
-                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="detailModalLabel">Product Details</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body" id="modalProductDetails">
+                        <div class="row mb-3">
+                            <div class="col-md-6"><strong>Product ID:</strong> <span id="modalProductId"></span></div>
+                            <div class="col-md-6"><strong>Name:</strong> <span id="modalProductName"></span></div>
                         </div>
-
-                        <div class="modal-body">
-                            <div class="mb-3">
-                                <label for="name" class="form-label">Name:</label>
-                                <input id="name" type="text" name="name" class="form-control w-100" required />
-                            </div>
-
-                            <div class="mb-3">
-                                <label for="brand" class="form-label">Brand:</label>
-                                <input id="brand" type="text" name="brand" class="form-control w-100" required />
-                            </div>
-
-                            <div class="mb-3">
-                                <label for="category_id" class="form-label">Category:</label>
-                                <select id="category_id" name="category_id" class="form-select" required>
-                                    <option value="">-- Select Category --</option>
-                                    <c:forEach var="c" items="${category}">
-                                        <option value="${c.id}">${c.name}</option>
-                                    </c:forEach>
-                                </select>
-                            </div>
-
-                            <div class="mb-3">
-                                <label for="price" class="form-label">Price:</label>
-                                <input id="price" type="number" name="price" step="0.01" class="form-control w-100" required />
-                            </div>
-
-                            <div class="mb-3">
-                                <label for="stock" class="form-label">Stock:</label>
-                                <input id="stock" type="number" name="stock" class="form-control w-100" required />
-                            </div>
-
-                            <div class="mb-3">
-                                <label for="image_url" class="form-label">Image URL:</label>
-                                <input id="image_url" type="text" name="image_url" class="form-control w-100" required />
-                            </div>
-
-                            <div class="mb-3">
-                                <label for="description" class="form-label">Description:</label>
-                                <textarea id="description" name="description" class="form-control w-100" rows="3" required></textarea>
-                            </div>
-
-                            <div class="mb-3">
-                                <label for="spec_description" class="form-label">Specification:</label>
-                                <textarea id="spec_description" name="spec_description" class="form-control w-100" rows="3"></textarea>
-                            </div>
-
-                            <div class="mb-3">
-                                <label for="status" class="form-label">Status:</label>
-                                <select id="status" name="status" class="form-select" required>
-                                    <option value="Active">Active</option>
-                                    <option value="Inactive">Inactive</option>
-                                </select>
-                            </div>
+                        <div class="row mb-3">
+                            <div class="col-md-6"><strong>Brand:</strong> <span id="modalProductBrand"></span></div>
+                            <div class="col-md-6"><strong>Category:</strong> <span id="modalProductCategory"></span></div>
                         </div>
-                        <div class="modal-footer">
-                            <button type="submit" class="btn btn-primary">Add Product</button>
-                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                        <div class="row mb-3">
+                            <div class="col-md-6"><strong>Price:</strong> <span id="modalProductPrice"></span> VND</div>
+                            <div class="col-md-6"><strong>Stock:</strong> <span id="modalProductStock"></span></div>
                         </div>
-                    </form>
+                        <div class="row mb-3">
+                            <div class="col-md-12"><strong>Image:</strong> <img id="modalProductImage" src="" alt="Product Image" style="max-width: 200px;"></div>
+                        </div>
+                        <div class="row mb-3">
+                            <div class="col-md-12"><strong>Description:</strong> <span id="modalProductDescription"></span></div>
+                        </div>
+                        <div class="row mb-3">
+                            <div class="col-md-12"><strong>Status:</strong> <span id="modalProductStatus"></span></div>
+                        </div>
+                        <div class="row mb-3">
+                            <div class="col-md-12"><strong>Specifications:</strong> <span id="modalProductSpec"></span></div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    </div>
                 </div>
             </div>
         </div>
+    </div>
 
-        <!-- EDIT PRODUCT MODAL -->
-        <div class="modal fade" id="editProductModal" tabindex="-1" aria-labelledby="editProductModalLabel" aria-hidden="true">
-            <div class="modal-dialog modal-lg">
-                <div class="modal-content">
-                    <form action="productservlet?service=updateProduct" method="post">
-                        <div class="modal-header">
-                            <h5 class="modal-title" id="editProductModalLabel">Edit Product</h5>
-                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                        </div>
+    <script src="https://code.jquery.com/jquery-3.7.0.min.js"></script>
+    <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        $(document).ready(function () {
+            const table = $('#myTable').DataTable({
+                pagingType: "full_numbers",
+                lengthMenu: [[5, 10, 15], [5, 10, 15]],
+                pageLength: 5,
+                ordering: true,
+                columnDefs: [
+                    { orderable: false, targets: 9 } // Disable sorting on the View Detail column (index 9)
+                ],
+                language: {
+                    paginate: {
+                        first: '<<',
+                        previous: '<',
+                        next: '>',
+                        last: '>>'
+                    }
+                }
+            });
 
-                        <div class="modal-body">
-                            <input type="hidden" id="edit-id" name="id" />
+            $('#myTable thead th').on('click', function (e) {
+                e.preventDefault();
+                e.stopPropagation();
+            });
 
-                            <div class="mb-3">
-                                <label for="edit-name" class="form-label">Name:</label>
-                                <input id="edit-name" type="text" name="name" class="form-control w-100" required />
-                            </div>
+            let sortStates = {};
+            let currentFilterCol = null;
 
-                            <div class="mb-3">
-                                <label for="edit-brand" class="form-label">Brand:</label>
-                                <input id="edit-brand" type="text" name="brand" class="form-control w-100" required />
-                            </div>
+            $('.sortable').on('click', function () {
+                const col = parseInt($(this).data('col'));
+                sortStates[col] = !sortStates[col] || false;
+                const direction = sortStates[col] ? 'asc' : 'desc';
+                sortTable(col, direction);
+                $(this).closest('th').toggleClass('sorted-asc sorted-desc', sortStates[col]);
+                table.draw();
+            });
 
-                            <div class="mb-3">
-                                <label for="edit-category_id" class="form-label">Category:</label>
-                                <select id="edit-category_id" name="category_id" class="form-select" required>
-                                    <option value="">-- Select Category --</option>
-                                    <c:forEach var="c" items="${category}">
-                                        <option value="${c.id}">${c.name}</option>
-                                    </c:forEach>
-                                </select>
-                            </div>
+            $('.sort-asc').on('click', function (e) {
+                e.stopPropagation();
+                const col = parseInt($(this).data('col'));
+                sortStates[col] = !sortStates[col] || false;
+                const direction = sortStates[col] ? 'asc' : 'desc';
+                sortTable(col, direction);
+                $(this).closest('th').toggleClass('sorted-asc sorted-desc', sortStates[col]);
+                table.draw();
+            });
 
-                            <div class="mb-3">
-                                <label for="edit-price" class="form-label">Price:</label>
-                                <input id="edit-price" type="number" name="price" step="0.01" class="form-control w-100" required />
-                            </div>
+            // Use DataTables column search for filtering across all pages
+            $('.no-sort').on('click', function (e) {
+                e.stopPropagation();
+                currentFilterCol = parseInt($(this).data('col'));
+                const $popup = $('#columnFilterPopup');
+                const $btn = $(this);
+                const offset = $btn.offset();
 
-                            <div class="mb-3">
-                                <label for="edit-stock" class="form-label">Stock:</label>
-                                <input id="edit-stock" type="number" name="stock" class="form-control w-100" required />
-                            </div>
+                $popup.css({
+                    top: offset.top + $btn.outerHeight(),
+                    left: offset.left,
+                    display: 'block',
+                    width: $btn.outerWidth() * 8
+                });
 
-                            <div class="mb-3">
-                                <label for="edit-image_url" class="form-label">Image URL:</label>
-                                <input id="edit-image_url" type="text" name="image_url" class="form-control w-100" required />
-                                <img id="edit-image-preview" src="" alt="Product Image" class="img-fluid mt-2" style="max-height: 200px;" />
-                            </div>
+                // Get unique values from the entire column using DataTables API
+                let selectHtml = '<select id="popupColumnFilter" style="width:100%; margin-top:5px;"><option value="">-- Select to filter --</option>';
+                let uniqueValues = [];
+                table.column(currentFilterCol).data().each(function (value) {
+                    value = $('<div>').html(value).text().trim(); // Remove HTML tags
+                    if (value && uniqueValues.indexOf(value) === -1) {
+                        uniqueValues.push(value);
+                    }
+                });
+                uniqueValues.sort().forEach(function (val) {
+                    selectHtml += '<option value="' + val + '">' + val + '</option>';
+                });
+                selectHtml += '</select>';
+                $('#filterOptionsContainer').html(selectHtml);
+            });
 
-                            <div class="mb-3">
-                                <label for="edit-description" class="form-label">Description:</label>
-                                <textarea id="edit-description" name="description" class="form-control w-100" rows="3" required></textarea>
-                            </div>
+            $('#closeFilterBtn').on('click', function () {
+                $('#columnFilterPopup').hide();
+            });
 
-                            <div class="mb-3">
-                                <label for="edit-spec_description" class="form-label">Specification:</label>
-                                <textarea id="edit-spec_description" name="spec_description" class="form-control w-100" rows="3"></textarea>
-                            </div>
+            $('#applyFilterBtn').on('click', function () {
+                const $popup = $('#columnFilterPopup');
+                const selectedVal = $('#popupColumnFilter').val();
+                $popup.hide();
+                if (!selectedVal) {
+                    table.column(currentFilterCol).search('').draw();
+                } else {
+                    table.column(currentFilterCol).search('^' + $.fn.dataTable.util.escapeRegex(selectedVal) + '$', true, false).draw();
+                }
+            });
 
-                            <div class="mb-3">
-                                <label for="edit-status" class="form-label">Status:</label>
-                                <select id="edit-status" name="status" class="form-select" required>
-                                    <option value="Active">Active</option>
-                                    <option value="Inactive">Inactive</option>
-                                </select>
-                            </div>
-                        </div>
+            function sortTable(col, direction) {
+                const $rows = $('#myTable tbody tr:visible').get();
+                $rows.sort(function (a, b) {
+                    const aVal = $(a).find('td:eq(' + col + ')').text().trim();
+                    const bVal = $(b).find('td:eq(' + col + ')').text().trim();
+                    if (!isNaN(aVal) && !isNaN(bVal)) {
+                        return direction === 'asc' ? aVal - bVal : bVal - aVal;
+                    }
+                    return direction === 'asc' ? aVal.localeCompare(bVal) : bVal.localeCompare(aVal);
+                });
+                $.each($rows, function (index, row) {
+                    $('#myTable tbody').append(row);
+                });
+            }
 
-                        <div class="modal-footer">
-                            <button type="submit" class="btn btn-primary">Update Product</button>
-                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                        </div>
-                    </form>
-                </div>
-            </div>
-        </div>
-        <script src="https://code.jquery.com/jquery-3.7.0.min.js"></script>
+            window.editSelected = function() {
+                const $selectedRow = $('#myTable tbody tr.selected');
+                if ($selectedRow.length) {
+                    const id = $selectedRow.find('td:first').text();
+                    window.location.href = "${pageContext.request.contextPath}/ProductEditServlet?action=edit&id=" + id;
+                } else {
+                    alert('Please select a product to edit.');
+                }
+            }
 
-        <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
+            window.deleteSelected = function() {
+                const $selectedRow = $('#myTable tbody tr.selected');
+                if ($selectedRow.length) {
+                    if (confirm('Are you sure you want to delete this product?')) {
+                        const id = $selectedRow.find('td:first').text();
+                        window.location.href = "${pageContext.request.contextPath}/ProductEditServlet?action=delete&id=" + id;
+                    }
+                } else {
+                    alert('Please select a product to delete.');
+                }
+            }
 
-        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-        <script>
-                                            function editProduct(element) {
-                                                const id = element.getAttribute('data-id');
-                                                const name = element.getAttribute('data-name');
-                                                const brand = element.getAttribute('data-brand');
-                                                const category_id = element.getAttribute('data-category_id');
-                                                const price = element.getAttribute('data-price');
-                                                const stock = element.getAttribute('data-stock');
-                                                const description = element.getAttribute('data-description');
-                                                const spec_description = element.getAttribute('data-spec_description');
-                                                const image_url = element.getAttribute('data-image_url');
-                                                const status = element.getAttribute('data-status');
+            $('#myTable tbody').on('click', 'tr', function () {
+                if ($(this).hasClass('selected')) {
+                    $(this).removeClass('selected');
+                } else {
+                    $('#myTable tbody tr').removeClass('selected');
+                    $(this).addClass('selected');
+                }
+            });
 
-                                                document.getElementById('edit-id').value = id;
-                                                document.getElementById('edit-name').value = name;
-                                                document.getElementById('edit-brand').value = brand;
-                                                document.getElementById('edit-category_id').value = category_id;
-                                                document.getElementById('edit-price').value = price;
-                                                document.getElementById('edit-stock').value = stock;
-                                                document.getElementById('edit-description').value = description;
-                                                document.getElementById('edit-spec_description').value = spec_description;
-                                                document.getElementById('edit-image_url').value = image_url;
-                                                document.getElementById('edit-image-preview').src = image_url;
-                                                document.getElementById('edit-status').value = status;
-                                            }
-
-                                            $(document).ready(function () {
-                                                var table = $('#myTable').DataTable();
-
-                                                table.columns().flatten().each(function (colIdx) {
-                                                    // Create the select list and search operation
-                                                    var select = $('<select />')
-                                                            .appendTo(table.column(colIdx).footer())
-                                                            .on('change', function () {
-                                                                table
-                                                                        .column(colIdx)
-                                                                        .search($(this).val())
-                                                                        .draw();
-                                                            });
-
-                                                    // Get the search data for the column and add to the select list
-                                                    table
-                                                            .column(colIdx)
-                                                            .cache('search')
-                                                            .sort()
-                                                            .unique()
-                                                            .each(function (d) {
-                                                                select.append($('<option value="' + d + '">' + d + '</option>'));
-                                                            });
-                                                });
-                                            });
-
-
-        </script>
-    </body>
+            // Handle View Detail button click
+            $('#myTable tbody').on('click', '.view-detail', function () {
+                const $btn = $(this);
+                $('#modalProductId').text($btn.data('id') || 'N/A');
+                $('#modalProductName').text($btn.data('name') || 'N/A');
+                $('#modalProductBrand').text($btn.data('brand') || 'N/A');
+                $('#modalProductCategory').text($btn.data('category') || 'N/A');
+                $('#modalProductPrice').text($btn.data('price') || 'N/A');
+                $('#modalProductStock').text($btn.data('stock') || 'N/A');
+                $('#modalProductImage').attr('src', $btn.data('image') || '');
+                $('#modalProductDescription').text($btn.data('description') || 'N/A');
+                $('#modalProductStatus').text($btn.data('status') || 'N/A');
+                $('#modalProductSpec').text($btn.data('specdesc') || 'N/A');
+                new bootstrap.Modal(document.getElementById('detailModal')).show();
+            });
+        });
+    </script>
+</body>
 </html>

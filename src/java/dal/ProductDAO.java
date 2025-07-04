@@ -1,11 +1,16 @@
 package dal;
 
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
+
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.Vector;
-import java.util.List;
 import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.Vector;
+
 import model.*;
 
 //Them "connection" trong DBContext
@@ -49,16 +54,23 @@ public class ProductDAO {
                         rs.getString("name"),
                         rs.getInt("component_type_id"),
                         rs.getInt("brand_id"),
-                        rs.getBigDecimal("price"),
-                        rs.getBigDecimal("import_price"),
+                        rs.getDouble("price"),
+                        rs.getDouble("import_price"),
                         rs.getInt("stock"),
                         rs.getString("description"),
                         rs.getString("status"),
                         rs.getTimestamp("created_at"),
                         rs.getString("image_url"),
                         rs.getString("brand_name"),
-                        rs.getString("component_type_name")
+                        rs.getString("component_type_name"),
+                        null // or your Map<String, String> for specDescription
                 );
+                // If you have a specDescription column as JSON or text, parse it to Map and set:
+                String specJson = rs.getString("spec_description");
+                if (specJson != null) {
+                    Map<String, String> specMap = new Gson().fromJson(specJson, new TypeToken<Map<String, String>>(){}.getType());
+                    p.setSpecDescription(specMap);
+                }
                 listProduct.add(p);
             }
         } catch (SQLException ex) {
@@ -106,8 +118,8 @@ public class ProductDAO {
                         rs.getString("name"),
                         rs.getInt("component_type_id"),
                         rs.getInt("brand_id"),
-                        rs.getBigDecimal("price"),
-                        rs.getBigDecimal("import_price"),
+                        rs.getDouble("price"),
+                        rs.getDouble("import_price"),
                         rs.getInt("stock"),
                         rs.getString("description"),
                         rs.getString("status"),
@@ -163,8 +175,8 @@ public class ProductDAO {
                         rs.getString("name"),
                         rs.getInt("component_type_id"),
                         rs.getInt("brand_id"),
-                        rs.getBigDecimal("price"),
-                        rs.getBigDecimal("import_price"),
+                        rs.getDouble("price"),
+                        rs.getDouble("import_price"),
                         rs.getInt("stock"),
                         rs.getString("description"),
                         rs.getString("status"),
@@ -220,8 +232,8 @@ public class ProductDAO {
                         rs.getString("name"),
                         rs.getInt("component_type_id"),
                         rs.getInt("brand_id"),
-                        rs.getBigDecimal("price"),
-                        rs.getBigDecimal("import_price"),
+                        rs.getDouble("price"),
+                        rs.getDouble("import_price"),
                         rs.getInt("stock"),
                         rs.getString("description"),
                         rs.getString("status"),
@@ -356,8 +368,8 @@ public class ProductDAO {
                         rs.getString("name"),
                         rs.getInt("component_type_id"),
                         rs.getInt("brand_id"),
-                        rs.getBigDecimal("price"),
-                        rs.getBigDecimal("import_price"),
+                        rs.getDouble("price"),
+                        rs.getDouble("import_price"),
                         rs.getInt("stock"),
                         rs.getString("description"),
                         rs.getString("status"),
@@ -401,8 +413,8 @@ public class ProductDAO {
                         rs.getString("name"),
                         rs.getInt("component_type_id"),
                         rs.getInt("brand_id"),
-                        rs.getBigDecimal("price"),
-                        rs.getBigDecimal("import_price"),
+                        rs.getDouble("price"),
+                        rs.getDouble("import_price"),
                         rs.getInt("stock"),
                         rs.getString("description"),
                         rs.getString("status"),
@@ -430,8 +442,8 @@ public class ProductDAO {
             ptm.setString(1, p.getName());
             ptm.setInt(2, p.getComponent_type_id());
             ptm.setInt(3, p.getBrand_id());
-            ptm.setBigDecimal(4, p.getPrice_BigDecimal());
-            ptm.setBigDecimal(5, p.getImport_price());
+            ptm.setDouble(4, p.getPrice_double());
+            ptm.setDouble(5, p.getImport_price());
             ptm.setInt(6, p.getStock());
             ptm.setString(7, p.getDescription());
             ptm.setString(8, p.getStatus());
@@ -464,8 +476,8 @@ public class ProductDAO {
             ptm.setString(1, p.getName());
             ptm.setInt(2, p.getComponent_type_id());
             ptm.setInt(3, p.getBrand_id());
-            ptm.setBigDecimal(4, p.getPrice_BigDecimal());
-            ptm.setBigDecimal(5, p.getImport_price());
+            ptm.setDouble(4, p.getPrice_double());
+            ptm.setDouble(5, p.getImport_price());
             ptm.setInt(6, p.getStock());
             ptm.setString(7, p.getDescription());
             ptm.setString(8, p.getStatus());
@@ -526,8 +538,8 @@ public class ProductDAO {
                         rs.getString("name"),
                         rs.getInt("component_type_id"),
                         rs.getInt("brand_id"),
-                        rs.getBigDecimal("price"),
-                        rs.getBigDecimal("import_price"),
+                        rs.getDouble("price"),
+                        rs.getDouble("import_price"),
                         rs.getInt("stock"),
                         rs.getString("description"),
                         rs.getString("status"),

@@ -16,14 +16,6 @@
         <a href="${pageContext.request.contextPath}/userprofile?action=changePassword" class="${param.activePage == 'changePassword' ? 'active' : ''}">
             <i class="fas fa-lock me-2"></i> Đổi mật khẩu
         </a>
-        <div class="mt-3"></div>
-        <a href="${pageContext.request.contextPath}/userprofile?action=orderUpdate" class="${param.activePage == 'orderUpdate' ? 'active' : ''}">
-            <i class="fas fa-sync-alt me-2"></i> Cập nhật đơn hàng
-        </a>
-        <a href="${pageContext.request.contextPath}/userprofile?action=promotion" class="${param.activePage == 'promotion' ? 'active' : ''}">
-            <i class="fas fa-tags me-2"></i> Khuyến mãi
-        </a>
-        <div class="mt-3"></div>
         <a href="${pageContext.request.contextPath}/userprofile?action=orders" class="${param.activePage == 'orders' ? 'active' : ''}">
             <i class="fas fa-shopping-cart me-2"></i> Đơn hàng
         </a>

@@ -4,6 +4,7 @@
  */
 package controller;
 
+import com.google.gson.Gson;
 import java.util.List;
 import model.Products;
 import dal.ProductDAO;

@@ -182,5 +182,24 @@ public class CustomerDAO {
         }
     }
     
-    // You might want to add more methods here, e.g., getCustomerByUserId, updateCustomer, etc.
-} 
+    public boolean updateEmail(String oldEmail, String newEmail) throws SQLException {
+        String sql = "UPDATE customer SET email=? WHERE email=?";
+        try (Connection conn = dbContext.getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setString(1, newEmail);
+            ps.setString(2, oldEmail);
+            return ps.executeUpdate() > 0;
+        }
+    }
+    
+    public boolean updatePhone(String email, String newPhone) throws SQLException {
+        String sql = "UPDATE customer SET phone=? WHERE email=?";
+        try (Connection conn = dbContext.getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setString(1, newPhone);
+            ps.setString(2, email);
+            return ps.executeUpdate() > 0;
+        }
+    }
+    
+}

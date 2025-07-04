@@ -1,7 +1,7 @@
 package model;
 
-import java.math.BigDecimal;
 import java.sql.Timestamp;
+import java.util.Map;
 
 public class Products {
 
@@ -9,8 +9,8 @@ public class Products {
     private String name;
     private int component_type_id;
     private int brand_id;
-    private BigDecimal price;
-    private BigDecimal import_price;
+    private Double price;
+    private Double import_price;
     private int stock;
     private String description;
     private String status;
@@ -22,12 +22,14 @@ public class Products {
     private String seriesName; // From series table
     private String modelName; // From model table
 
+    // Specifications
+    private Map<String, String> specDescription;
 
     public Products() {
     }
 
-    // A constructor that matches the new database schema
-    public Products(int product_id, String name, int component_type_id, int brand_id, BigDecimal price, BigDecimal import_price, int stock, String description, String status, Timestamp created_at, String image_url, String brandName, String componentTypeName) {
+    // Main constructor with all fields
+    public Products(int product_id, String name, int component_type_id, int brand_id, Double price, Double import_price, int stock, String description, String status, Timestamp created_at, String image_url, String brandName, String componentTypeName, Map<String, String> specDescription) {
         this.product_id = product_id;
         this.name = name;
         this.component_type_id = component_type_id;
@@ -41,18 +43,18 @@ public class Products {
         this.image_url = image_url;
         this.brandName = brandName;
         this.componentTypeName = componentTypeName;
+        this.specDescription = specDescription;
     }
 
-    // Keep old constructor signatures for compatibility if needed, but adapt them.
-    // This old constructor is likely used in many places.
-     public Products(int id, String name, String brand, int category_id, double price,
+    // Old constructor for compatibility
+    public Products(int id, String name, String brand, int category_id, double price,
                 int stock, String image_url,
                 String description, String spec_description, String status) {
         this.product_id = id;
         this.name = name;
         this.brandName = brand;
         this.component_type_id = category_id;
-        this.price = new BigDecimal(price);
+        this.price = price;
         this.stock = stock;
         this.image_url = image_url;
         this.description = description;
@@ -64,10 +66,17 @@ public class Products {
         this.categoryName = categoryName;
     }
 
+    // Getter and Setter for specDescription
+    public Map<String, String> getSpecDescription() {
+        return specDescription;
+    }
+
+    public void setSpecDescription(Map<String, String> specDescription) {
+        this.specDescription = specDescription;
+    }
 
     // Getters and Setters
 
-    // Getter for id to maintain compatibility with JSP files (e.g., ${product.id})
     public int getId() {
         return product_id;
     }
@@ -92,16 +101,14 @@ public class Products {
         this.name = name;
     }
 
-    // Getter for brand to maintain compatibility
     public String getBrand() {
         return brandName;
     }
 
-    // Setter for brand
     public void setBrand(String brand) {
         this.brandName = brand;
     }
-    
+
     public int getComponent_type_id() {
         return component_type_id;
     }
@@ -118,27 +125,19 @@ public class Products {
         this.brand_id = brand_id;
     }
 
-    public double getPrice() {
-        return price.doubleValue();
-    }
-
-    public void setPrice(double price) {
-        this.price = new BigDecimal(price);
-    }
-    
-    public BigDecimal getPrice_BigDecimal() {
+    public Double getPrice() {
         return price;
     }
 
-    public void setPrice_BigDecimal(BigDecimal price) {
+    public void setPrice(Double price) {
         this.price = price;
     }
 
-    public BigDecimal getImport_price() {
+    public Double getImport_price() {
         return import_price;
     }
 
-    public void setImport_price(BigDecimal import_price) {
+    public void setImport_price(Double import_price) {
         this.import_price = import_price;
     }
 
@@ -197,7 +196,7 @@ public class Products {
     public void setComponentTypeName(String componentTypeName) {
         this.componentTypeName = componentTypeName;
     }
-    
+
     public String getSeriesName() {
         return seriesName;
     }
@@ -213,16 +212,16 @@ public class Products {
     public void setModelName(String modelName) {
         this.modelName = modelName;
     }
-    
+
     // Kept for backward compatibility
     public String getSpec_description() {
         return "";
     }
-    
+
     public int getCategory_id() {
         return component_type_id;
     }
-    
+
     public String getCategoryName() {
         return componentTypeName;
     }
