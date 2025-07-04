@@ -41,6 +41,11 @@ public class Products {
         this.createdAt = createdAt;
     }
 
+    @Override
+    public String toString() {
+        return "Products{" + "imageUrl=" + imageUrl + '}';
+    }
+
     // Getters and setters
     public int getProductId() { return productId; }
     public void setProductId(int productId) { this.productId = productId; }
