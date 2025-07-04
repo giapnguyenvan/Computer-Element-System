@@ -315,3 +315,21 @@ SELECT * FROM transactions;
 SELECT * FROM menu_item;
 SELECT * FROM menu_attribute;
 SELECT * FROM menu_attribute_value;
+
+INSERT INTO productimage (product_id, image_url, alt_text, is_primary)
+SELECT p.product_id, 'IMG/product/cpu1.jpg', p.name, TRUE
+FROM product p
+JOIN componenttype ct ON p.component_type_id = ct.type_id
+WHERE ct.name = 'CPU';
+
+INSERT INTO productimage (product_id, image_url, alt_text, is_primary)
+SELECT p.product_id, 'IMG/product/gpu1.jpg', p.name, TRUE
+FROM product p
+JOIN componenttype ct ON p.component_type_id = ct.type_id
+WHERE ct.name = 'GPU';
+
+INSERT INTO productimage (product_id, image_url, alt_text, is_primary)
+SELECT p.product_id, 'IMG/product/ram1.jpg', p.name, TRUE
+FROM product p
+JOIN componenttype ct ON p.component_type_id = ct.type_id
+WHERE ct.name = 'RAM';
