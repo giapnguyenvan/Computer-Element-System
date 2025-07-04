@@ -102,6 +102,18 @@ public class ProductServlet extends HttpServlet {
                     request.getRequestDispatcher("productDetail.jsp").forward(request, response);
                     break;
 
+                case "productDetailAdmin":
+                    int productIDAdmin = Integer.parseInt(request.getParameter("id"));
+                    Products productAdmin = dao.getProductById(productIDAdmin);
+                    if (productAdmin == null) {
+                        request.setAttribute("errorMsg", "Product not found!");
+                        request.getRequestDispatcher("viewProduct.jsp").forward(request, response);
+                        break;
+                    }
+                    request.setAttribute("product", productAdmin);
+                    request.getRequestDispatcher("productDetailAdmin.jsp").forward(request, response);
+                    break;
+
                 default:
                     response.sendRedirect("productservlet?service=viewProduct");
                     break;
