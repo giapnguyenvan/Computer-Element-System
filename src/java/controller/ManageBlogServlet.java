@@ -14,19 +14,28 @@ import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.annotation.MultipartConfig;
+import jakarta.servlet.http.Part;
 import java.util.Vector;
 import java.util.List;
 import model.Blog;
 import model.User;
+import model.BlogImage;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Collection;
 
 /**
  *
  * @author ADMIN
  */
 @WebServlet(name="ManageBlogServlet", urlPatterns={"/manageblogs"})
+@MultipartConfig(
+    fileSizeThreshold = 1024 * 1024, // 1 MB
+    maxFileSize = 1024 * 1024 * 10,  // 10 MB
+    maxRequestSize = 1024 * 1024 * 50 // 50 MB
+)
 public class ManageBlogServlet extends HttpServlet {
    
     private static final long serialVersionUID = 1L;
@@ -186,11 +195,11 @@ public class ManageBlogServlet extends HttpServlet {
         
         try {
             if (action == null || action.equals("list")) {
-                listBlogs(request, response);
+                processRequest(request, response);
             } else if (action.equals("view")) {
                 viewBlog(request, response);
             } else {
-                response.sendRedirect("manageblogs");
+                processRequest(request, response);
             }
         } catch (Exception ex) {
             request.setAttribute("error", "Error: " + ex.getMessage());
@@ -327,7 +336,44 @@ public class ManageBlogServlet extends HttpServlet {
         try {
             int userId = Integer.parseInt(userIdStr);
             Blog blog = new Blog(0, title.trim(), content.trim(), userId, null);
-            blogDAO.insertBlog(blog);
+            int blogId = blogDAO.insertBlog(blog);
+            
+            // Handle file uploads
+            if (blogId > 0) {
+                try {
+                    dal.BlogImageDAO blogImageDAO = new dal.BlogImageDAO();
+                    Collection<Part> fileParts = request.getParts();
+                    
+                    for (Part filePart : fileParts) {
+                        if (filePart.getName().equals("images") && filePart.getSize() > 0) {
+                            String fileName = getSubmittedFileName(filePart);
+                            if (fileName != null && !fileName.isEmpty()) {
+                                // Generate unique filename
+                                String fileExtension = fileName.substring(fileName.lastIndexOf("."));
+                                String uniqueFileName = System.currentTimeMillis() + "_" + blogId + fileExtension;
+                                String uploadPath = "/assets/assets/images/blog/" + uniqueFileName;
+                                
+                                // Save file to server
+                                String realPath = getServletContext().getRealPath(uploadPath);
+                                java.io.File uploadDir = new java.io.File(realPath).getParentFile();
+                                if (!uploadDir.exists()) {
+                                    uploadDir.mkdirs();
+                                }
+                                
+                                filePart.write(realPath);
+                                
+                                // Save image info to database
+                                BlogImage blogImage = new BlogImage(0, blogId, uploadPath, fileName);
+                                blogImageDAO.insertBlogImage(blogImage);
+                            }
+                        }
+                    }
+                } catch (Exception e) {
+                    // Log error but don't fail the blog creation
+                    System.err.println("Error uploading images: " + e.getMessage());
+                }
+            }
+            
             request.getSession().setAttribute("success", "Blog added successfully!");
             response.sendRedirect(request.getContextPath() + "/manageblogs");
         } catch (NumberFormatException e) {
@@ -357,6 +403,41 @@ public class ManageBlogServlet extends HttpServlet {
             int userId = Integer.parseInt(userIdStr);
             Blog blog = new Blog(id, title.trim(), content.trim(), userId, null);
             blogDAO.updateBlog(blog);
+            
+            // Handle file uploads for update
+            try {
+                dal.BlogImageDAO blogImageDAO = new dal.BlogImageDAO();
+                Collection<Part> fileParts = request.getParts();
+                
+                for (Part filePart : fileParts) {
+                    if (filePart.getName().equals("images") && filePart.getSize() > 0) {
+                        String fileName = getSubmittedFileName(filePart);
+                        if (fileName != null && !fileName.isEmpty()) {
+                            // Generate unique filename
+                            String fileExtension = fileName.substring(fileName.lastIndexOf("."));
+                            String uniqueFileName = System.currentTimeMillis() + "_" + id + fileExtension;
+                            String uploadPath = "/assets/assets/images/blog/" + uniqueFileName;
+                            
+                            // Save file to server
+                            String realPath = getServletContext().getRealPath(uploadPath);
+                            java.io.File uploadDir = new java.io.File(realPath).getParentFile();
+                            if (!uploadDir.exists()) {
+                                uploadDir.mkdirs();
+                            }
+                            
+                            filePart.write(realPath);
+                            
+                            // Save image info to database
+                            BlogImage blogImage = new BlogImage(0, id, uploadPath, fileName);
+                            blogImageDAO.insertBlogImage(blogImage);
+                        }
+                    }
+                }
+            } catch (Exception e) {
+                // Log error but don't fail the blog update
+                System.err.println("Error uploading images: " + e.getMessage());
+            }
+            
             request.getSession().setAttribute("success", "Blog updated successfully!");
             response.sendRedirect(request.getContextPath() + "/manageblogs");
         } catch (NumberFormatException e) {
@@ -386,5 +467,16 @@ public class ManageBlogServlet extends HttpServlet {
             request.getSession().setAttribute("error", "Invalid ID format.");
             response.sendRedirect(request.getContextPath() + "/manageblogs");
         }
+    }
+    
+    private String getSubmittedFileName(Part part) {
+        String contentDisp = part.getHeader("content-disposition");
+        String[] tokens = contentDisp.split(";");
+        for (String token : tokens) {
+            if (token.trim().startsWith("filename")) {
+                return token.substring(token.indexOf("=") + 2, token.length() - 1);
+            }
+        }
+        return "";
     }
 } 
