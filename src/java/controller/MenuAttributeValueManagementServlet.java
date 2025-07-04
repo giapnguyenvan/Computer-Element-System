@@ -70,28 +70,34 @@ public class MenuAttributeValueManagementServlet extends HttpServlet {
             throws ServletException, IOException {
         try {
             String action = request.getParameter("action");
+            System.out.println("Action received in doPost: " + action); // DEBUG
             
             if ("add".equals(action)) {
                 MenuAttributeValue value = new MenuAttributeValue();
-                value.setValue(request.getParameter("name"));
+                value.setValue(request.getParameter("value")); // Changed from "name" to "value"
                 value.setUrl(request.getParameter("url"));
                 value.setAttributeId(Integer.parseInt(request.getParameter("attributeId")));
                 value.setStatus(request.getParameter("status"));
+                System.out.println("Attempting to add MenuAttributeValue: " + value.getValue() + ", " + value.getUrl() + ", " + value.getAttributeId() + ", " + value.getStatus()); // DEBUG
                 MenuAttributeValueDAO.addMenuAttributeValue(value);
+                System.out.println("MenuAttributeValue added successfully."); // DEBUG
             } 
             else if ("update".equals(action)) {
                 MenuAttributeValue value = new MenuAttributeValue();
                 value.setValueId(Integer.parseInt(request.getParameter("id")));
-                value.setValue(request.getParameter("name"));
+                value.setValue(request.getParameter("value")); // Changed from "name" to "value"
                 value.setUrl(request.getParameter("url"));
                 value.setAttributeId(Integer.parseInt(request.getParameter("attributeId")));
                 value.setStatus(request.getParameter("status"));
+                System.out.println("Attempting to update MenuAttributeValue with ID: " + value.getValueId() + ", " + value.getValue() + ", " + value.getUrl() + ", " + value.getAttributeId() + ", " + value.getStatus()); // DEBUG
                 MenuAttributeValueDAO.updateMenuAttributeValue(value);
+                System.out.println("MenuAttributeValue updated successfully."); // DEBUG
             }
             
             response.sendRedirect("menuAttributeValueManagement");
         } catch (Exception e) {
             e.printStackTrace();
+            System.err.println("Error in doPost: " + e.getMessage()); // DEBUG
             response.sendRedirect("error.jsp");
         }
     }

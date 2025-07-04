@@ -1,6 +1,7 @@
 package dal;
 
 import model.MenuAttribute;
+import model.MenuAttributeValue;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -207,14 +208,46 @@ public class MenuAttributeDAO {
         return list;
     }
 
-    // Search menu attributes by name
+    // New method to get active menu attributes with their values by menu item ID
+    public static ArrayList<MenuAttribute> getActiveMenuAttributesWithValuesByMenuItemId(int menuItemId) {
+        DBContext db = DBContext.getInstance();
+        ArrayList<MenuAttribute> attributes = new ArrayList<>();
+        String sql = "SELECT * FROM menu_attribute WHERE menu_item_id = ? AND status = 'Activate'";
+        try {
+            PreparedStatement statement = db.getConnection().prepareStatement(sql);
+            statement.setInt(1, menuItemId);
+            ResultSet rs = statement.executeQuery();
+            while (rs.next()) {
+                MenuAttribute menuAttribute = new MenuAttribute(
+                        rs.getInt("attribute_id"),
+                        rs.getInt("menu_item_id"),
+                        rs.getString("name"),
+                        rs.getString("url"),
+                        rs.getString("status")
+                );
+                // Set the list of MenuAttributeValues for this MenuAttribute
+                menuAttribute.setMenuAttributeValues(MenuAttributeValueDAO.getActiveMenuAttributeValuesByAttributeId(menuAttribute.getAttributeId()));
+                attributes.add(menuAttribute);
+            }
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+        }
+        return attributes;
+    }
+
+    // Search menu attributes by name, url, or menu item name
     public static ArrayList<MenuAttribute> searchMenuAttributes(String name) {
         DBContext db = DBContext.getInstance();
         ArrayList<MenuAttribute> list = new ArrayList<>();
-        String sql = "SELECT * FROM menu_attribute WHERE name LIKE ?";
+        String sql = "SELECT ma.*, mi.name as menu_item_name FROM menu_attribute ma " +
+                     "LEFT JOIN menu_item mi ON ma.menu_item_id = mi.menu_item_id " +
+                     "WHERE ma.name LIKE ? OR ma.url LIKE ? OR mi.name LIKE ?";
         try {
             PreparedStatement statement = db.getConnection().prepareStatement(sql);
-            statement.setString(1, "%" + name + "%");
+            String searchPattern = "%" + name + "%";
+            statement.setString(1, searchPattern);
+            statement.setString(2, searchPattern);
+            statement.setString(3, searchPattern);
             ResultSet rs = statement.executeQuery();
             while (rs.next()) {
                 MenuAttribute menuAttribute = new MenuAttribute(
@@ -232,12 +265,17 @@ public class MenuAttributeDAO {
         return list;
     }
 
-    // Get menu attributes with pagination, sorting and searching
+    // Lấy danh sách menu attribute có phân trang, tìm kiếm, sắp xếp
     public static ArrayList<MenuAttribute> getMenuAttributes(String search, String sortOrder, int offset, int limit) {
+        DBContext db = DBContext.getInstance();
         ArrayList<MenuAttribute> list = new ArrayList<>();
-        StringBuilder sql = new StringBuilder();
-        sql.append("SELECT * FROM (");
-        sql.append("    SELECT ROW_NUMBER() OVER (");
+        StringBuilder sql = new StringBuilder("SELECT ma.*, mi.name as menu_item_name FROM menu_attribute ma ");
+        sql.append("LEFT JOIN menu_item mi ON ma.menu_item_id = mi.menu_item_id ");
+        
+        // Add search condition if provided
+        if (search != null && !search.trim().isEmpty()) {
+            sql.append("WHERE ma.name LIKE ? OR ma.url LIKE ? OR mi.name LIKE ? ");
+        }
         
         // Add sorting
         if ("asc".equals(sortOrder)) {
@@ -252,35 +290,23 @@ public class MenuAttributeDAO {
             sql.append("ORDER BY ma.attribute_id ASC");
         }
         
-        sql.append(") AS RowNum, ma.*, mi.name as menu_item_name ");
-        sql.append("FROM menu_attribute ma ");
-        sql.append("LEFT JOIN menu_item mi ON ma.menu_item_id = mi.menu_item_id ");
-        
-        // Add search condition if provided
-        if (search != null && !search.trim().isEmpty()) {
-            sql.append("WHERE ma.name LIKE ? OR ma.url LIKE ? OR mi.name LIKE ? ");
-        }
-        
-        sql.append(") AS ResultSet ");
-        sql.append("WHERE RowNum BETWEEN ? AND ?");
-        
-        try (Connection conn = DBContext.getInstance().getConnection();
-             PreparedStatement ps = conn.prepareStatement(sql.toString())) {
+        sql.append(" LIMIT ? OFFSET ?");
+
+        try {
+            PreparedStatement statement = db.getConnection().prepareStatement(sql.toString());
             
-            int paramIndex = 1;
             // Set search parameters if search is provided
+            int paramIndex = 1;
             if (search != null && !search.trim().isEmpty()) {
                 String searchPattern = "%" + search + "%";
-                ps.setString(paramIndex++, searchPattern);
-                ps.setString(paramIndex++, searchPattern);
-                ps.setString(paramIndex++, searchPattern);
+                statement.setString(paramIndex++, searchPattern);
+                statement.setString(paramIndex++, searchPattern);
+                statement.setString(paramIndex++, searchPattern);
             }
+            statement.setInt(paramIndex++, limit);
+            statement.setInt(paramIndex, offset);
             
-            // Set pagination parameters
-            ps.setInt(paramIndex++, offset + 1); // SQL Server starts from 1
-            ps.setInt(paramIndex, offset + limit);
-            
-            ResultSet rs = ps.executeQuery();
+            ResultSet rs = statement.executeQuery();
             while (rs.next()) {
                 MenuAttribute menuAttribute = new MenuAttribute(
                     rs.getInt("attribute_id"),
@@ -297,33 +323,31 @@ public class MenuAttributeDAO {
         return list;
     }
 
-    // Count total menu attributes with search
+    // Count total menu attributes (can be filtered by search)
     public static int countMenuAttributes(String search) {
-        int count = 0;
+        DBContext db = DBContext.getInstance();
         StringBuilder sql = new StringBuilder("SELECT COUNT(*) FROM menu_attribute ma ");
         sql.append("LEFT JOIN menu_item mi ON ma.menu_item_id = mi.menu_item_id ");
-        
+
         if (search != null && !search.trim().isEmpty()) {
             sql.append("WHERE ma.name LIKE ? OR ma.url LIKE ? OR mi.name LIKE ? ");
         }
-        
-        try (Connection conn = DBContext.getInstance().getConnection();
-             PreparedStatement ps = conn.prepareStatement(sql.toString())) {
-            
+
+        try {
+            PreparedStatement statement = db.getConnection().prepareStatement(sql.toString());
             if (search != null && !search.trim().isEmpty()) {
                 String searchPattern = "%" + search + "%";
-                ps.setString(1, searchPattern);
-                ps.setString(2, searchPattern);
-                ps.setString(3, searchPattern);
+                statement.setString(1, searchPattern);
+                statement.setString(2, searchPattern);
+                statement.setString(3, searchPattern);
             }
-            
-            ResultSet rs = ps.executeQuery();
+            ResultSet rs = statement.executeQuery();
             if (rs.next()) {
-                count = rs.getInt(1);
+                return rs.getInt(1);
             }
         } catch (SQLException ex) {
             ex.printStackTrace();
         }
-        return count;
+        return 0;
     }
 } 

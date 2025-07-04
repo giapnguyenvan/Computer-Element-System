@@ -4,6 +4,7 @@
 <%@ page import="dal.MenuAttributeDAO" %>
 <%@ page import="dal.MenuAttributeValueDAO" %>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
+<%@ page import="com.google.gson.Gson" %>
 <%
     List<MenuAttributeValue> list = (List<MenuAttributeValue>) request.getAttribute("menuAttributeValues");
     List<MenuAttribute> menuAttributes = (List<MenuAttribute>) request.getAttribute("menuAttributes");
@@ -152,7 +153,16 @@
                     </td>
                     <td><%= value.getStatus() %></td>
                     <td class="text-center">
-                        <button class="btn-action" onclick="editMenuAttributeValue('<%= value.getValueId() %>', '<%= value.getValue().replace("'", "\\'") %>', '<%= value.getUrl() != null ? value.getUrl().replace("'", "\\'") : "" %>', '<%= value.getAttributeId() %>', '<%= value.getStatus() %>')" data-bs-toggle="modal" data-bs-target="#editMenuAttributeValueModal" title="Edit">
+                        <button class="btn-action" 
+                                onclick="editMenuAttributeValue(this)"
+                                data-bs-toggle="modal"
+                                data-bs-target="#editMenuAttributeValueModal"
+                                title="Edit"
+                                data-id="<%= value.getValueId() %>"
+                                data-value="<%= value.getValue().replace("\"", "&quot;").replace("'", "&#39;") %>"
+                                data-url="<%= value.getUrl() != null ? value.getUrl().replace("\"", "&quot;").replace("'", "&#39;") : "" %>"
+                                data-attributeid="<%= value.getAttributeId() %>"
+                                data-status="<%= value.getStatus() %>">
                             <i class="fas fa-edit"></i>
                         </button>
                     </td>
@@ -164,6 +174,7 @@
                 </tbody>
             </table>
         </div>
+        <div id="menuAttributeValuesJsonContainer" data-json="<%= new Gson().toJson(list).replace("\"", "&quot;").replace("'", "&#39;") %>" style="display:none;"></div>
         <% if (totalPages != null && totalPages > 1) { %>
         <nav aria-label="Page navigation" class="mt-4 d-flex justify-content-end align-items-center">
             <% String prevLink = ctx + "/menuAttributeValueManagement?page=" + (currentPage - 1) + searchParam + sortParam; %>
@@ -185,24 +196,27 @@
                 <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
             </div>
             <div class="modal-body">
-                <form action="<%= ctx %>/menuAttributeValueManagement" method="post">
+                <form action="<%= ctx %>/menuAttributeValueManagement" method="post" novalidate>
                     <input type="hidden" name="action" value="add" />
                     <div class="mb-3">
                         <label for="value" class="form-label">Value</label>
-                        <input type="text" class="form-control" id="value" name="value" required maxlength="100">
+                        <input type="text" class="form-control" id="value" name="value" required>
+                        <div class="invalid-feedback">Giá trị không được để trống và không quá 100 ký tự.</div>
                     </div>
                     <div class="mb-3">
                         <label for="url" class="form-label">URL</label>
-                        <input type="text" class="form-control" id="url" name="url" maxlength="255">
+                        <input type="text" class="form-control" id="url" name="url">
+                        <div class="invalid-feedback">URL không được quá 255 ký tự.</div>
                     </div>
                     <div class="mb-3">
-                        <label for="attributeId" class="form-label">Attribute</label>
+                        <label for="attributeId" class="form-label">Menu Attribute</label>
                         <select class="form-select" id="attributeId" name="attributeId" required>
-                            <option value="">-- Chọn attribute cha --</option>
-                            <% for(MenuAttribute attr : menuAttributes) { %>
-                                <option value="<%= attr.getAttributeId() %>"><%= attr.getName() %></option>
+                            <option value="">-- Chọn thuộc tính menu cha --</option>
+                            <% for(MenuAttribute ma : menuAttributes) { %>
+                                <option value="<%= ma.getAttributeId() %>"><%= ma.getName() %></option>
                             <% } %>
                         </select>
+                        <div class="invalid-feedback">Vui lòng chọn một Menu Attribute.</div>
                     </div>
                     <div class="mb-3">
                         <label for="status" class="form-label">Status</label>
@@ -226,29 +240,32 @@
     <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title">Edit Value</h5>
+                <h5 class="modal-title">Edit Menu Attribute Value</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
             </div>
             <div class="modal-body">
-                <form action="<%= ctx %>/menuAttributeValueManagement" method="post">
+                <form action="<%= ctx %>/menuAttributeValueManagement" method="post" novalidate>
                     <input type="hidden" name="action" value="update" />
                     <input type="hidden" name="id" id="editId">
                     <div class="mb-3">
                         <label for="editValue" class="form-label">Value</label>
-                        <input type="text" class="form-control" id="editValue" name="value" required maxlength="100">
+                        <input type="text" class="form-control" id="editValue" name="value" required>
+                        <div class="invalid-feedback">Giá trị không được để trống và không quá 100 ký tự.</div>
                     </div>
                     <div class="mb-3">
                         <label for="editUrl" class="form-label">URL</label>
-                        <input type="text" class="form-control" id="editUrl" name="url" maxlength="255">
+                        <input type="text" class="form-control" id="editUrl" name="url">
+                        <div class="invalid-feedback">URL không được quá 255 ký tự.</div>
                     </div>
                     <div class="mb-3">
-                        <label for="editAttributeId" class="form-label">Attribute</label>
+                        <label for="editAttributeId" class="form-label">Menu Attribute</label>
                         <select class="form-select" id="editAttributeId" name="attributeId" required>
-                            <option value="">-- Chọn attribute cha --</option>
-                            <% for(MenuAttribute attr : menuAttributes) { %>
-                                <option value="<%= attr.getAttributeId() %>"><%= attr.getName() %></option>
+                            <option value="">-- Chọn thuộc tính menu cha --</option>
+                            <% for(MenuAttribute ma : menuAttributes) { %>
+                                <option value="<%= ma.getAttributeId() %>"><%= ma.getName() %></option>
                             <% } %>
                         </select>
+                        <div class="invalid-feedback">Vui lòng chọn một Menu Attribute.</div>
                     </div>
                     <div class="mb-3">
                         <label for="editStatus" class="form-label">Status</label>
@@ -270,13 +287,125 @@
 <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.min.js"></script>
 <script>
-    function editMenuAttributeValue(id, value, url, attributeId, status) {
-        document.getElementById('editId').value = id;
-        document.getElementById('editValue').value = value;
-        document.getElementById('editUrl').value = url;
-        document.getElementById('editAttributeId').value = attributeId;
-        document.getElementById('editStatus').value = status;
+    var menuAttributeValuesData = JSON.parse(document.getElementById('menuAttributeValuesJsonContainer').dataset.json);
+
+    function editMenuAttributeValue(element) {
+        const id = parseInt(element.dataset.id);
+        const item = menuAttributeValuesData.find(i => i.valueId === id);
+
+        if (item) {
+            document.getElementById('editId').value = item.valueId;
+            document.getElementById('editValue').value = item.value;
+            document.getElementById('editUrl').value = item.url === null ? '' : item.url;
+            document.getElementById('editAttributeId').value = item.attributeId;
+            document.getElementById('editStatus').value = item.status;
+
+            // Reset validation states when modal opens
+            document.querySelector('#editMenuAttributeValueModal form').classList.remove('was-validated');
+            document.querySelectorAll('#editMenuAttributeValueModal .form-control, #editMenuAttributeValueModal .form-select').forEach(function(input) {
+                input.classList.remove('is-invalid');
+            });
+
+            // Show the modal
+            var editModal = new bootstrap.Modal(document.getElementById('editMenuAttributeValueModal'));
+            editModal.show();
+        } else {
+            console.error("Menu attribute value not found for ID:", id);
+            alert("Không tìm thấy giá trị thuộc tính menu này để chỉnh sửa.");
+        }
     }
+
+    // Custom validation for Add Menu Attribute Value form
+    (function() {
+        'use strict';
+        var form = document.querySelector('#addMenuAttributeValueModal form');
+
+        form.addEventListener('submit', function(event) {
+            let isValid = true;
+
+            // Kiểm tra trường giá trị không chỉ là khoảng trắng và giới hạn ký tự
+            var valueInput = form.querySelector('#value');
+            if (valueInput.value.trim() === '') {
+                valueInput.setCustomValidity('Giá trị không được để trống.');
+                isValid = false;
+            } else if (valueInput.value.length > 100) {
+                valueInput.setCustomValidity('Giá trị không được quá 100 ký tự.');
+                isValid = false;
+            } else {
+                valueInput.setCustomValidity('');
+            }
+            
+            // Kiểm tra trường URL và giới hạn ký tự
+            var urlInput = form.querySelector('#url');
+            if (urlInput.value.length > 255) {
+                urlInput.setCustomValidity('URL không được quá 255 ký tự.');
+                isValid = false;
+            } else {
+                urlInput.setCustomValidity('');
+            }
+
+            // Kiểm tra Menu Attribute đã chọn chưa
+            var attributeIdInput = form.querySelector('#attributeId');
+            if (attributeIdInput.value === '') {
+                attributeIdInput.setCustomValidity('Vui lòng chọn một Menu Attribute.');
+                isValid = false;
+            } else {
+                attributeIdInput.setCustomValidity('');
+            }
+
+            if (!isValid || !form.checkValidity()) {
+                event.preventDefault();
+                event.stopPropagation();
+            }
+            form.classList.add('was-validated');
+        }, false);
+    })();
+
+    // Custom validation for Edit Menu Attribute Value form
+    (function() {
+        'use strict';
+        var form = document.querySelector('#editMenuAttributeValueModal form');
+
+        form.addEventListener('submit', function(event) {
+            let isValid = true;
+
+            // Kiểm tra trường giá trị không chỉ là khoảng trắng và giới hạn ký tự
+            var editValueInput = form.querySelector('#editValue');
+            if (editValueInput.value.trim() === '') {
+                editValueInput.setCustomValidity('Giá trị không được để trống.');
+                isValid = false;
+            } else if (editValueInput.value.length > 100) {
+                editValueInput.setCustomValidity('Giá trị không được quá 100 ký tự.');
+                isValid = false;
+            } else {
+                editValueInput.setCustomValidity('');
+            }
+            
+            // Kiểm tra trường URL và giới hạn ký tự
+            var editUrlInput = form.querySelector('#editUrl');
+            if (editUrlInput.value.length > 255) {
+                editUrlInput.setCustomValidity('URL không được quá 255 ký tự.');
+                isValid = false;
+            } else {
+                editUrlInput.setCustomValidity('');
+            }
+
+            // Kiểm tra Menu Attribute đã chọn chưa
+            var editAttributeIdInput = form.querySelector('#editAttributeId');
+            if (editAttributeIdInput.value === '') {
+                editAttributeIdInput.setCustomValidity('Vui lòng chọn một Menu Attribute.');
+                isValid = false;
+            } else {
+                editAttributeIdInput.setCustomValidity('');
+            }
+
+            if (!isValid || !form.checkValidity()) {
+                event.preventDefault();
+                event.stopPropagation();
+            }
+            form.classList.add('was-validated');
+        }, false);
+    })();
 </script>
 </body>
 </html> 

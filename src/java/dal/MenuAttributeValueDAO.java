@@ -87,6 +87,8 @@ public class MenuAttributeValueDAO {
     public static void addMenuAttributeValue(MenuAttributeValue menuAttributeValue) {
         DBContext db = DBContext.getInstance();
         String sql = "INSERT INTO menu_attribute_value(attribute_id, value, url, status) VALUES (?, ?, ?, ?)";
+        System.out.println("Executing SQL for addMenuAttributeValue: " + sql); // DEBUG
+        System.out.println("Params: " + menuAttributeValue.getAttributeId() + ", " + menuAttributeValue.getValue() + ", " + menuAttributeValue.getUrl() + ", " + menuAttributeValue.getStatus()); // DEBUG
         try {
             PreparedStatement statement = db.getConnection().prepareStatement(sql);
             statement.setInt(1, menuAttributeValue.getAttributeId());
@@ -96,6 +98,7 @@ public class MenuAttributeValueDAO {
             statement.executeUpdate();
         } catch (SQLException e) {
             e.printStackTrace();
+            System.err.println("Error adding MenuAttributeValue: " + e.getMessage()); // DEBUG
         }
     }
 
@@ -103,6 +106,8 @@ public class MenuAttributeValueDAO {
     public static void updateMenuAttributeValue(MenuAttributeValue menuAttributeValue) {
         DBContext db = DBContext.getInstance();
         String sql = "UPDATE menu_attribute_value SET attribute_id = ?, value = ?, url = ?, status = ? WHERE value_id = ?";
+        System.out.println("Executing SQL for updateMenuAttributeValue: " + sql); // DEBUG
+        System.out.println("Params: " + menuAttributeValue.getAttributeId() + ", " + menuAttributeValue.getValue() + ", " + menuAttributeValue.getUrl() + ", " + menuAttributeValue.getStatus() + ", " + menuAttributeValue.getValueId()); // DEBUG
         try {
             PreparedStatement statement = db.getConnection().prepareStatement(sql);
             statement.setInt(1, menuAttributeValue.getAttributeId());
@@ -113,6 +118,7 @@ public class MenuAttributeValueDAO {
             statement.executeUpdate();
         } catch (SQLException e) {
             e.printStackTrace();
+            System.err.println("Error updating MenuAttributeValue: " + e.getMessage()); // DEBUG
         }
     }
 
