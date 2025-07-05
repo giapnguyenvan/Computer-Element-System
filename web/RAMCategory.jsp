@@ -5,6 +5,7 @@
 <%@ page import="model.Products" %>
 <%@ page import="java.util.List" %>
 
+
 <!DOCTYPE html>
 <html>
     <head>
@@ -35,30 +36,30 @@
         <%
             ProductDAO productDAO = new ProductDAO();
 
-            // Số sản phẩm trên mỗi trang
-            int productsPerPage = 4;
 
-            // Lấy trang hiện tại từ parameter, mặc định là trang 1
+            int productsPerPage = 4;
+            int componentTypeId = 3; // RAM
+
+
             int currentPage = 1;
             String pageStr = request.getParameter("page");
             if (pageStr != null && !pageStr.isEmpty()) {
                 currentPage = Integer.parseInt(pageStr);
             }
 
-            // Lấy tổng số sản phẩm RAM
-            int totalProducts = productDAO.getTotalRAMProducts();
 
-            // Tính tổng số trang
+            int totalProducts = productDAO.getTotalProductsByComponentType(componentTypeId);
             int totalPages = (int) Math.ceil((double) totalProducts / productsPerPage);
 
-            // Lấy danh sách sản phẩm cho trang hiện tại
-            List<Products> ramProducts = productDAO.getRAMProductsWithPaging(currentPage, productsPerPage);
 
-            // Set attributes để sử dụng trong JSP
+            List<Products> ramProducts = productDAO.getProductsWithPagingByComponentType(componentTypeId, currentPage, productsPerPage);
+
+
             request.setAttribute("ramProducts", ramProducts);
             request.setAttribute("currentPage", currentPage);
             request.setAttribute("totalPages", totalPages);
         %>
+
 
         <div class="container">
             <div class="ram-section">
@@ -66,11 +67,12 @@
                     <h2 class="ram-title">RAM Products</h2>
                 </div>
 
+
                 <div class="products-grid" id="ramProductsContainer">
                     <c:forEach var="product" items="${ramProducts}">
                         <div class="product-card">
-                            <a href="${pageContext.request.contextPath}/productservlet?service=productDetail&id=${product.id}" style="text-decoration: none; color: inherit;">
-                                <img src="${product.image_url}" class="product-image" alt="${product.name}">
+                            <a href="${pageContext.request.contextPath}/productservlet?service=productDetail&id=${product.productId}" style="text-decoration: none; color: inherit;">
+                                <img src="${product.imageUrl}" class="product-image" alt="${product.name}">
                                 <h5 class="product-title">${product.name}</h5>
                                 <p class="product-description">${product.description}</p>
                             </a>
@@ -78,15 +80,17 @@
                                 <fmt:formatNumber value="${product.price}" type="number" pattern="###,###"/> VNĐ
                             </div>
 
+
                             <!-- Add to Cart Button -->
-                            <button class="btn btn-primary add-to-cart-btn" 
-                                    onclick="addToCart('${product.id}', '${product.name}', '${product.price}')"
-                                    id="addBtn_${product.id}">
+                            <button class="btn btn-primary add-to-cart-btn"
+                                    onclick="addToCart('${product.productId}', '${product.name}', '${product.price}')"
+                                    id="addBtn_${product.productId}">
                                 <i class="fas fa-shopping-cart me-2"></i>Add to Cart
                             </button>
                         </div>
                     </c:forEach>
                 </div>
+
 
                 <!-- Pagination -->
                 <div class="pagination-container">
@@ -96,12 +100,14 @@
                             <a class="page-link" onclick="loadRAMPage(${currentPage - 1})" tabindex="-1">Previous</a>
                         </li>
 
+
                         <!-- Page numbers -->
                         <c:forEach begin="1" end="${totalPages}" var="pageNumber">
                             <li class="page-item ${pageNumber == currentPage ? 'active' : ''}">
                                 <a class="page-link" onclick="loadRAMPage(${pageNumber})">${pageNumber}</a>
                             </li>
                         </c:forEach>
+
 
                         <!-- Next button -->
                         <li class="page-item ${currentPage == totalPages ? 'disabled' : ''}">
@@ -112,14 +118,16 @@
             </div>
         </div>
 
+
         <!-- Bootstrap JS -->
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
 
         <!-- Custom JavaScript -->
         <script>
             // Global variables
             let currentUserId = 0;
-            
+           
             // Get current user ID from session
             <c:choose>
                 <c:when test="${not empty sessionScope.customerAuth}">
@@ -133,6 +141,7 @@
                 </c:otherwise>
             </c:choose>
 
+
                                 // Function to load page content using AJAX
                                 function loadRAMPage(pageNumber) {
                                     // Prevent loading if it's a disabled button or current page
@@ -142,9 +151,11 @@
                                         return;
                                     }
 
+
                                     // Show loading indicator
                                     const productsContainer = document.getElementById('ramProductsContainer');
                                     productsContainer.style.opacity = '0.5';
+
 
                                     fetch('${pageContext.request.contextPath}/RAMCategoryServlet?page=' + pageNumber, {
                                         method: 'GET',
@@ -163,17 +174,20 @@
                                                 const temp = document.createElement('div');
                                                 temp.innerHTML = html;
 
+
                                                 // Update products
                                                 const newProducts = temp.querySelector('#ramProductsContainer');
                                                 if (newProducts) {
                                                     productsContainer.innerHTML = newProducts.innerHTML;
                                                 }
 
+
                                                 // Update pagination
                                                 const newPagination = temp.querySelector('#ramPaginationContainer');
                                                 if (newPagination) {
                                                     document.getElementById('ramPaginationContainer').innerHTML = newPagination.innerHTML;
                                                 }
+
 
                                                 // Update active states
                                                 document.querySelectorAll('#ramPaginationContainer .page-item').forEach(item => {
@@ -184,8 +198,10 @@
                                                     activePageLink.parentElement.classList.add('active');
                                                 }
 
+
                                                 // Restore opacity
                                                 productsContainer.style.opacity = '1';
+
 
                                                 // Reinitialize event handlers if needed
                                                 initializeRAMEventHandlers();
@@ -202,6 +218,7 @@
                                             });
                                 }
 
+
                                 // Function to initialize event handlers
                                 function initializeRAMEventHandlers() {
                                     // Add any event handlers that need to be reinitialized after content update
@@ -210,12 +227,17 @@
                                         const productName = button.closest('.product-card').querySelector('.product-title').textContent;
                                         const productPrice = button.closest('.product-card').querySelector('.product-price').textContent;
 
+
                                         button.onclick = () => addToCart(productId, productName, productPrice);
                                     });
                                 }
 
+
                                 // Initialize event handlers on page load
                                 document.addEventListener('DOMContentLoaded', initializeRAMEventHandlers);
+
+
+
 
 
 
@@ -230,11 +252,14 @@
                                         return;
                                     }
 
+
                                     const addButton = document.getElementById('addBtn_' + productId);
+
 
                                     // Disable button and show loading
                                     addButton.disabled = true;
                                     addButton.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Adding...';
+
 
                                     try {
                                         const response = await fetch('${pageContext.request.contextPath}/CartApiServlet', {
@@ -249,7 +274,9 @@
                                             })
                                         });
 
+
                                         const result = await response.json();
+
 
                                         if (result.success) {
                                             // Show success message
@@ -261,37 +288,37 @@
                                                 showConfirmButton: false
                                             });
 
+
                                             // Add visual feedback
                                             addButton.classList.add('btn-success');
                                             addButton.innerHTML = '<i class="fas fa-check me-2"></i>Added!';
+
 
                                             // Update header cart count if function exists
                                             if (typeof updateHeaderCartCount === 'function') {
                                                 updateHeaderCartCount();
                                             }
-                                            
+                                           
                                             setTimeout(() => {
                                                 addButton.classList.remove('btn-success');
                                                 addButton.innerHTML = '<i class="fas fa-shopping-cart me-2"></i>Add to Cart';
+                                                addButton.disabled = false;
                                             }, 2000);
                                         } else {
-                                            throw new Error(result.message || 'Failed to add to cart');
+                                            throw new Error(result.message || 'Unknown error');
                                         }
                                     } catch (error) {
                                         console.error('Error adding to cart:', error);
                                         Swal.fire({
                                             icon: 'error',
-                                            title: 'Error!',
-                                            text: error.message || 'Failed to add product to cart. Please try again.'
+                                            title: 'Error',
+                                            text: 'Failed to add product to cart. Please try again.'
                                         });
-                                    } finally {
-                                        // Re-enable button
+                                        // Re-enable button on error
                                         addButton.disabled = false;
-                                        if (!addButton.classList.contains('btn-success')) {
-                                            addButton.innerHTML = '<i class="fas fa-shopping-cart me-2"></i>Add to Cart';
-                                        }
+                                        addButton.innerHTML = '<i class="fas fa-shopping-cart me-2"></i>Add to Cart';
                                     }
                                 }
         </script>
     </body>
-</html> 
+</html>
