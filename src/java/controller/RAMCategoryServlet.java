@@ -18,31 +18,24 @@ public class RAMCategoryServlet extends HttpServlet {
             throws ServletException, IOException {
         ProductDAO productDAO = new ProductDAO();
 
-        // Số sản phẩm trên mỗi trang
         int productsPerPage = 4;
+        int componentTypeId = 3; // RAM
 
-        // Lấy trang hiện tại từ parameter, mặc định là trang 1
         int currentPage = 1;
         String pageStr = request.getParameter("page");
         if (pageStr != null && !pageStr.isEmpty()) {
             currentPage = Integer.parseInt(pageStr);
         }
 
-        // Lấy tổng số sản phẩm RAM
-        int totalProducts = productDAO.getTotalRAMProducts();
-
-        // Tính tổng số trang
+        int totalProducts = productDAO.getTotalProductsByComponentType(componentTypeId);
         int totalPages = (int) Math.ceil((double) totalProducts / productsPerPage);
 
-        // Lấy danh sách sản phẩm cho trang hiện tại
-        List<Products> ramProducts = productDAO.getRAMProductsWithPaging(currentPage, productsPerPage);
+        List<Products> ramProducts = productDAO.getProductsWithPagingByComponentType(componentTypeId, currentPage, productsPerPage);
 
-        // Set attributes để sử dụng trong JSP
         request.setAttribute("ramProducts", ramProducts);
         request.setAttribute("currentPage", currentPage);
         request.setAttribute("totalPages", totalPages);
 
-        // Forward to the JSP page
         request.getRequestDispatcher("RAMCategory.jsp").forward(request, response);
     }
 
@@ -51,4 +44,4 @@ public class RAMCategoryServlet extends HttpServlet {
             throws ServletException, IOException {
         doGet(request, response);
     }
-} 
+}
