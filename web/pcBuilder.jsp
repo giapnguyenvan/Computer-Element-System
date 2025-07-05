@@ -740,6 +740,7 @@
         </div>
         <jsp:include page="footer.jsp"/>
         <script>
+        //<![CDATA[
             // Add JavaScript to calculate total price when components are selected
             document.querySelectorAll('select').forEach(select => {
                 select.addEventListener('change', calculateTotal);
@@ -839,9 +840,9 @@
                     console.log('Đã click vào:', component, brand, series);
                     
                     if (component) {
-                        let url = `PCBuilderServlet?action=getProducts&componentType=${component}`;
-                        if (brand) url += `&brand=${encodeURIComponent(brand)}`;
-                        if (series) url += `&series=${encodeURIComponent(series)}`;
+                        let url = 'PCBuilderServlet?action=getProducts&componentType=' + component;
+                        if (brand) url += '&brand=' + encodeURIComponent(brand);
+                        if (series) url += '&series=' + encodeURIComponent(series);
                         
                         fetch(url)
                             .then(res => res.json())
@@ -1004,6 +1005,7 @@
             window.addEventListener('load', function() {
                 updateProgressBar();
             });
+        //]]>
         </script>
         <!-- Modal chọn linh kiện -->
         <div class="modal fade" id="componentModal" tabindex="-1" aria-labelledby="componentModalLabel" aria-hidden="true">
