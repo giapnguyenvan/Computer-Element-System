@@ -20,6 +20,7 @@ import java.sql.SQLException;
 import model.User;
 import dal.CustomerDAO;
 import model.Customer;
+import util.JwtUtil;
 
 /**
  *
@@ -112,10 +113,26 @@ public class LoginServlet extends HttpServlet {
                 // Lấy tên đầy đủ từ DAO
                 String fullname = dal.UserDAO.getInstance().getFullname(user.getId(), user.getRole());
 
+                // Generate JWT tokens for staff/admin
+                String accessToken = JwtUtil.generateAccessToken(
+                    user.getId(), 
+                    user.getEmail(), 
+                    user.getRole(), 
+                    "user"
+                );
+                String refreshToken = JwtUtil.generateRefreshToken(
+                    user.getId(), 
+                    user.getEmail(), 
+                    user.getRole(), 
+                    "user"
+                );
+
                 session.setAttribute("userAuth", user);
                 session.setAttribute("session_login", email);
                 session.setAttribute("user_role", user.getRole());
                 session.setAttribute("user_name", fullname != null ? fullname : user.getUsername()); // Dùng fullname, nếu không có thì dùng username
+                session.setAttribute("accessToken", accessToken);
+                session.setAttribute("refreshToken", refreshToken);
                 
                 // Handle remember me cookie
                 if (remember != null) {

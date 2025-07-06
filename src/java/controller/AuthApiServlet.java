@@ -38,6 +38,8 @@ public class AuthApiServlet extends HttpServlet {
                 handleRefresh(request, response, out);
             } else if ("/logout".equals(pathInfo)) {
                 handleLogout(request, response, out);
+            } else if ("/check-token".equals(pathInfo)) {
+                handleCheckToken(request, response, out);
             } else {
                 sendErrorResponse(out, 404, "Endpoint not found");
             }
@@ -79,7 +81,7 @@ public class AuthApiServlet extends HttpServlet {
                 tokenResponse.addProperty("success", true);
                 tokenResponse.addProperty("userType", "customer");
                 tokenResponse.addProperty("userId", customer.getCustomer_id());
-                tokenResponse.addProperty("userName", customer.getName());
+                tokenResponse.addProperty("userName", customer.getName() != null ? customer.getName() : "");
                 
                 out.print(gson.toJson(tokenResponse));
                 return;
@@ -107,8 +109,8 @@ public class AuthApiServlet extends HttpServlet {
                 tokenResponse.addProperty("success", true);
                 tokenResponse.addProperty("userType", "user");
                 tokenResponse.addProperty("userId", user.getId());
-                tokenResponse.addProperty("userName", user.getUsername());
-                tokenResponse.addProperty("role", user.getRole());
+                tokenResponse.addProperty("userName", user.getUsername() != null ? user.getUsername() : "");
+                tokenResponse.addProperty("role", user.getRole() != null ? user.getRole() : "");
                 
                 out.print(gson.toJson(tokenResponse));
                 return;
@@ -157,6 +159,86 @@ public class AuthApiServlet extends HttpServlet {
         jsonResponse.addProperty("message", "Logged out successfully");
         
         out.print(gson.toJson(jsonResponse));
+    }
+    
+    private void handleCheckToken(jakarta.servlet.http.HttpServletRequest request, jakarta.servlet.http.HttpServletResponse response, PrintWriter out) {
+        String authHeader = request.getHeader("Authorization");
+        
+        if (authHeader == null || !authHeader.startsWith("Bearer ")) {
+            sendErrorResponse(out, 401, "Missing or invalid Authorization header");
+            return;
+        }
+        
+        String token = authHeader.substring(7); // Remove "Bearer " prefix
+        
+        try {
+            // Validate token
+            Map<String, Object> userInfo = JwtUtil.validateToken(token);
+            
+            // Check if it's an access token
+            if (!"access".equals(userInfo.get("tokenType"))) {
+                sendErrorResponse(out, 401, "Invalid token type");
+                return;
+            }
+            
+            // Token is valid, return success
+            JsonObject jsonResponse = new JsonObject();
+            jsonResponse.addProperty("success", true);
+            jsonResponse.addProperty("valid", true);
+            
+            // Debug logging
+            System.out.println("=== DEBUG: Token Validation ===");
+            System.out.println("UserInfo Map: " + userInfo);
+            System.out.println("UserInfo Keys: " + userInfo.keySet());
+            
+            // Safely handle userId (convert Number to String if needed)
+            Object userIdObj = userInfo.get("userId");
+            System.out.println("userIdObj: " + userIdObj + " (Type: " + (userIdObj != null ? userIdObj.getClass().getSimpleName() : "null") + ")");
+            
+            if (userIdObj != null) {
+                if (userIdObj instanceof Number) {
+                    int userId = ((Number) userIdObj).intValue();
+                    jsonResponse.addProperty("userId", userId);
+                    System.out.println("Added userId as int: " + userId);
+                } else {
+                    String userId = userIdObj.toString();
+                    jsonResponse.addProperty("userId", userId);
+                    System.out.println("Added userId as string: " + userId);
+                }
+            } else {
+                jsonResponse.addProperty("userId", 0);
+                System.out.println("Added userId as default: 0");
+            }
+            
+            // Safely handle email
+            Object emailObj = userInfo.get("email");
+            System.out.println("emailObj: " + emailObj + " (Type: " + (emailObj != null ? emailObj.getClass().getSimpleName() : "null") + ")");
+            String email = emailObj != null ? emailObj.toString() : "";
+            jsonResponse.addProperty("email", email);
+            System.out.println("Added email: " + email);
+            
+            // Safely handle role
+            Object roleObj = userInfo.get("role");
+            System.out.println("roleObj: " + roleObj + " (Type: " + (roleObj != null ? roleObj.getClass().getSimpleName() : "null") + ")");
+            String role = roleObj != null ? roleObj.toString() : "";
+            jsonResponse.addProperty("role", role);
+            System.out.println("Added role: " + role);
+            
+            // Safely handle userType
+            Object userTypeObj = userInfo.get("userType");
+            System.out.println("userTypeObj: " + userTypeObj + " (Type: " + (userTypeObj != null ? userTypeObj.getClass().getSimpleName() : "null") + ")");
+            String userType = userTypeObj != null ? userTypeObj.toString() : "";
+            jsonResponse.addProperty("userType", userType);
+            System.out.println("Added userType: " + userType);
+            
+            System.out.println("Final JSON Response: " + gson.toJson(jsonResponse));
+            System.out.println("=== END DEBUG ===");
+            
+            out.print(gson.toJson(jsonResponse));
+            
+        } catch (Exception e) {
+            sendErrorResponse(out, 401, "Invalid token: " + e.getMessage());
+        }
     }
     
     private void sendErrorResponse(PrintWriter out, int status, String message) {
