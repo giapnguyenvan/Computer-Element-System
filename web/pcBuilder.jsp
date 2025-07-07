@@ -1045,7 +1045,7 @@
                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Đóng"></button>
                     </div>
                     <div class="modal-body p-0" style="height:80vh;">
-                        <iframe id="viewProductIframe" src="viewProduct.jsp" style="width:100%;height:100%;border:none;"></iframe>
+                        <iframe id="viewProductIframe" src="productservlet?service=viewProduct" style="width:100%;height:100%;border:none;"></iframe>
                     </div>
                 </div>
             </div>
