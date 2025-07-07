@@ -1,5 +1,5 @@
--- COMPONENTTYPE
-INSERT INTO componenttype (type_id, name, description) VALUES
+-- Insert data into tables
+INSERT INTO `componenttype` (type_id, name, description) VALUES
 (1, 'CPU', 'Bộ vi xử lý'),
 (2, 'Mainboard', 'Bo mạch chủ'),
 (3, 'RAM', 'Bộ nhớ trong'),
@@ -15,9 +15,7 @@ INSERT INTO componenttype (type_id, name, description) VALUES
 (13, 'Chair', 'Ghế'),
 (14, 'Desk', 'Bàn');
 
-
--- BRAND
-INSERT INTO brand (brand_id, name, description) VALUES
+INSERT INTO `brand` (brand_id, name, description) VALUES
 (1, 'AMD', 'Advanced Micro Devices - Nhà sản xuất CPU và GPU hàng đầu'),
 (2, 'Intel', 'Nhà sản xuất CPU số 1 thế giới'),
 (3, 'ASUS', 'Nhà sản xuất phần cứng và thiết bị điện tử đa dạng'),
@@ -51,9 +49,7 @@ INSERT INTO brand (brand_id, name, description) VALUES
 (31, 'Sapphire', 'Card đồ họa AMD cao cấp'),
 (32, 'XFX', 'Thiết bị gaming chất lượng cao');
 
-
--- SERIES
-INSERT INTO series (series_id, brand_id, name, component_type_id, description) VALUES
+INSERT INTO `series` (series_id, brand_id, name, component_type_id, description) VALUES
 (1, 1, 'Ryzen 9000', 1, 'Dòng CPU cao cấp mới nhất của AMD'),
 (2, 2, 'Core Ultra 200', 1, 'CPU thế hệ mới với công nghệ hybrid'),
 (3, 3, 'ROG Strix', 2, 'Dòng bo mạch chủ cao cấp của ASUS'),
@@ -102,14 +98,10 @@ INSERT INTO series (series_id, brand_id, name, component_type_id, description) V
 (46, 31, 'Radeon RX', 4, 'GPU AMD by Sapphire'),
 (47, 32, 'Radeon RX', 4, 'GPU AMD by XFX');
 
-
--- PRODUCT
-INSERT INTO product (name, component_type_id, brand_id, series_id, model, price, import_price, stock, sku, description, status, created_at) VALUES
--- CPU Products (existing + new)
+INSERT INTO `product` (name, component_type_id, brand_id, series_id, model, price, import_price, stock, sku, description, status, created_at) VALUES
 ('AMD Ryzen 7 9800X3D', 1, 1, 1, '9800X3D', 480.00, 384.00, 50, 'CPU-AMD-R7-9800X3D', '8-core CPU with 3D V-Cache', 'Active', NOW()),
 ('AMD Ryzen 9 9700X', 1, 1, 1, '9700X', 400.00, 320.00, 40, 'CPU-AMD-R9-9700X', '8-core high-performance CPU', 'Active', NOW()),
 ('Intel Core Ultra 7 265K', 1, 2, 2, '265K', 400.00, 320.00, 45, 'CPU-INTEL-265K', 'High-clock CPU for gaming', 'Active', NOW()),
--- New CPU Products
 ('Intel Core i9-14900K', 1, 2, 2, '14900K', 580.00, 464.00, 25, 'CPU-INTEL-14900K', '24-core flagship CPU for extreme performance', 'Active', NOW()),
 ('Intel Core i7-14700K', 1, 2, 2, '14700K', 420.00, 336.00, 35, 'CPU-INTEL-14700K', '20-core CPU with hybrid architecture', 'Active', NOW()),
 ('Intel Core i5-14600K', 1, 2, 2, '14600K', 320.00, 256.00, 50, 'CPU-INTEL-14600K', '14-core CPU perfect for gaming', 'Active', NOW()),
@@ -117,13 +109,9 @@ INSERT INTO product (name, component_type_id, brand_id, series_id, model, price,
 ('AMD Ryzen 5 8600X', 1, 1, 1, '8600X', 280.00, 224.00, 60, 'CPU-AMD-R5-8600X', '6-core CPU ideal for gaming and productivity', 'Active', NOW()),
 ('AMD Ryzen 9 7950X3D', 1, 1, 1, '7950X3D', 700.00, 560.00, 15, 'CPU-AMD-R9-7950X3D', '16-core CPU with 3D V-Cache technology', 'Active', NOW()),
 ('Intel Core i9-13900KS', 1, 2, 2, '13900KS', 650.00, 520.00, 20, 'CPU-INTEL-13900KS', 'Special edition CPU with higher clock speeds', 'Active', NOW()),
-
-
--- RAM Products (existing + new)
 ('Corsair Vengeance LPX DDR5-6000 32GB', 3, 7, 5, 'LPX DDR5-6000', 120.00, 96.00, 100, 'RAM-Corsair-LPX-DDR5-6000', '32GB DDR5 dual-channel RAM', 'Active', NOW()),
 ('Corsair Vengeance RGB DDR5-6400 32GB', 3, 7, 5, 'RGB DDR5-6400', 140.00, 112.00, 80, 'RAM-Corsair-RGB-DDR5-6400', 'RGB DDR5 RAM, 32GB', 'Active', NOW()),
 ('G.Skill Trident Z5 DDR5-6000 32GB', 3, 8, 6, 'Z5 DDR5-6000', 130.00, 104.00, 90, 'RAM-G.Skill-Z5-DDR5-6000', 'High-speed DDR5 with RGB', 'Active', NOW()),
--- New RAM Products
 ('Kingston Fury Beast DDR5-5600 32GB', 3, 21, 29, 'Fury Beast DDR5-5600', 110.00, 88.00, 120, 'RAM-Kingston-Fury-Beast-DDR5-5600', '32GB DDR5 RAM with aggressive styling', 'Active', NOW()),
 ('Kingston Fury Renegade DDR5-6400 32GB', 3, 21, 29, 'Fury Renegade DDR5-6400', 150.00, 120.00, 70, 'RAM-Kingston-Fury-Renegade-DDR5-6400', 'High-performance DDR5 with RGB lighting', 'Active', NOW()),
 ('Crucial Ballistix DDR5-6000 32GB', 3, 22, 30, 'Ballistix DDR5-6000', 125.00, 100.00, 85, 'RAM-Crucial-Ballistix-DDR5-6000', 'Reliable DDR5 RAM with excellent compatibility', 'Active', NOW()),
@@ -131,13 +119,9 @@ INSERT INTO product (name, component_type_id, brand_id, series_id, model, price,
 ('Patriot Viper DDR5-6000 32GB', 3, 24, 32, 'Viper DDR5-6000', 115.00, 92.00, 95, 'RAM-Patriot-Viper-DDR5-6000', '32GB DDR5 RAM with heat spreader', 'Active', NOW()),
 ('ADATA XPG Lancer DDR5-6400 32GB', 3, 25, 33, 'XPG Lancer DDR5-6400', 145.00, 116.00, 65, 'RAM-ADATA-XPG-Lancer-DDR5-6400', 'Premium DDR5 RAM with RGB effects', 'Active', NOW()),
 ('Corsair Dominator Platinum DDR5-7200 32GB', 3, 7, 34, 'Dominator Platinum DDR5-7200', 180.00, 144.00, 40, 'RAM-Corsair-Dominator-Platinum-DDR5-7200', 'Ultra-high-speed DDR5 RAM', 'Active', NOW()),
-
-
--- GPU Products (existing + new)
 ('NVIDIA GeForce RTX 5090', 4, 6, 7, '5090', 1500.00, 1200.00, 20, 'GPU-NVIDIA-5090', 'Top-tier GPU for 4K gaming', 'Active', NOW()),
 ('NVIDIA GeForce RTX 5080', 4, 6, 7, '5080', 1000.00, 800.00, 25, 'GPU-NVIDIA-5080', 'High-end GPU for 1440p', 'Active', NOW()),
 ('MSI Radeon RX 9070 XT', 4, 4, 8, '9070 XT', 800.00, 640.00, 30, 'GPU-MSI-9070-XT', 'AMD GPU with ray tracing', 'Active', NOW()),
--- New GPU Products
 ('NVIDIA GeForce RTX 4090', 4, 6, 7, '4090', 1600.00, 1280.00, 15, 'GPU-NVIDIA-4090', 'Previous generation flagship GPU', 'Active', NOW()),
 ('NVIDIA GeForce RTX 4080', 4, 6, 7, '4080', 1200.00, 960.00, 20, 'GPU-NVIDIA-4080', 'High-end RTX 40 series GPU', 'Active', NOW()),
 ('NVIDIA GeForce RTX 4070 Ti', 4, 6, 7, '4070 Ti', 800.00, 640.00, 35, 'GPU-NVIDIA-4070-Ti', 'Mid-high range GPU with excellent performance', 'Active', NOW()),
@@ -147,9 +131,6 @@ INSERT INTO product (name, component_type_id, brand_id, series_id, model, price,
 ('EVGA GeForce RTX 4070', 4, 27, 10, '4070', 600.00, 480.00, 45, 'GPU-EVGA-4070', 'EVGA RTX 4070 with excellent cooling', 'Active', NOW()),
 ('Zotac GeForce RTX 4060 Ti', 4, 28, 11, '4060 Ti', 400.00, 320.00, 60, 'GPU-Zotac-4060-Ti', 'Compact RTX 4060 Ti for small builds', 'Active', NOW()),
 ('Sapphire Radeon RX 7700 XT', 4, 31, 12, '7700 XT', 450.00, 360.00, 50, 'GPU-Sapphire-7700-XT', 'Sapphire RX 7700 XT with Nitro cooling', 'Active', NOW()),
-
-
--- Other existing products
 ('ASUS ROG Strix X870-F', 2, 3, 3, 'X870-F', 350.00, 280.00, 30, 'MB-ASUS-X870-F', 'AM5 motherboard with Wi-Fi 6E', 'Active', NOW()),
 ('ASUS ROG Strix B650-E', 2, 3, 3, 'B650-E', 300.00, 240.00, 35, 'MB-ASUS-B650-E', 'B650 chipset with PCIe 5.0', 'Active', NOW()),
 ('Gigabyte B650 Aorus Elite AX', 2, 5, 4, 'B650 AX', 250.00, 200.00, 50, 'MB-Gigabyte-B650-AX', 'Budget AM5 board with Wi-Fi', 'Active', NOW()),
@@ -184,68 +165,48 @@ INSERT INTO product (name, component_type_id, brand_id, series_id, model, price,
 ('IKEA UPPSTÅ Height-Adjustable', 14, 20, 27, 'Height-Adjustable', 300.00, 240.00, 25, 'Desk-IKEA-UPPSTÅ-Height-Adjustable', 'Motorized standing desk', 'Active', NOW()),
 ('IKEA LAGKAPTEN 120x60', 14, 20, 28, 'Standard 120x60', 150.00, 120.00, 40, 'Desk-IKEA-LAGKAPTEN-120x60', 'Compact desk for small spaces', 'Active', NOW());
 
-
--- USER
-INSERT INTO user (user_id, username, password, email, role, status, is_verified, verification_token) VALUES
+INSERT INTO `user` (user_id, username, password, email, role, status, is_verified, verification_token) VALUES
 (1, 'staff01', 'hashedpassword1', 'staff01@example.com', 'Staff', 'Active', 1, NULL),
 (2, 'admin01', 'hashedpassword2', 'admin01@example.com', 'Admin', 'Active', 1, NULL);
 
-
--- CUSTOMER
-INSERT INTO customer (customer_id, name, email, password, phone, shipping_address, is_verified, verification_token) VALUES
+INSERT INTO `customer` (customer_id, name, email, password, phone, shipping_address, is_verified, verification_token) VALUES
 (1, 'Lê Thị Khách Hàng', 'customer01@example.com', 'hashedpassword3', '0909988776', '123 Đường ABC, Quận 1, TP.HCM', 1, NULL),
 (2, 'NguyenVanGiap', 'giapThieuNang@gmail.com', 'cesvg2810A!', '0994885738', 'KhongBietHoiLamVL', 0, NULL),
 (3, 'Phạm Đức Trọng', 'trongpdhe181640@fpt.edu.vn', '$2a$10$iC2jTTQm8GSE5ni9iURIouVE.c/qVXK8PKSshKj7HjAb/Ie5r5Tea', '0559868660', 'ChauPhong-LienHa-DongAnh-HaNoi', 1, NULL),
 (4, 'huy', 'huy69332@gmail.com', '$2a$10$cVf/WsqcXPyEOtyJo/fnAeCLD4079ARM8qRdzv3OIrPWohIA9ELF.', '0987565443', NULL, 1, NULL);
 
-
--- STAFF
-INSERT INTO staff (staff_id, user_id, name, phone, enter_date, leave_date) VALUES
+INSERT INTO `staff` (staff_id, user_id, name, phone, enter_date, leave_date) VALUES
 (1, 1, 'Nguyễn Văn Nhân viên', '0901123456', '2024-01-01', NULL);
 
-
--- ADMIN
-INSERT INTO admin (admin_id, user_id, name) VALUES
+INSERT INTO `admin` (admin_id, user_id, name) VALUES
 (1, 2, 'Trần Thị Quản Trị');
 
-
--- PAYMENTMETHOD
-INSERT INTO paymentmethod (payment_method_id, method_name, description, status) VALUES
+INSERT INTO `paymentmethod` (payment_method_id, method_name, description, status) VALUES
 (1, 'Cash', 'Tiền mặt', 'Active'),
 (2, 'Transfer', 'Chuyển khoản', 'Active');
 
-
--- ORDERS
-INSERT INTO orders (order_id, customer_id, order_date, total_amount, shipping_address, shipping_fee, status, payment_method_id) VALUES
+INSERT INTO `orders` (order_id, customer_id, order_date, total_amount, shipping_address, shipping_fee, status, payment_method_id) VALUES
 (1, 1, NOW(), 10000000, 'Hanoi', 20000, 'Pending', 1),
 (2, 2, '2024-06-21 09:00:00', 32100000, 'KhongBietHoiLamVL', 10000, 'Pending', 1);
 
-
--- ORDERDETAIL
-INSERT INTO orderdetail (order_detail_id, order_id, product_id, quantity, price) VALUES
+INSERT INTO `orderdetail` (order_detail_id, order_id, product_id, quantity, price) VALUES
 (1, 1, 1, 1, 4000000),
 (2, 1, 8, 1, 9000000),
 (3, 2, 1, 1, 4000000),
 (4, 2, 8, 1, 9000000),
 (5, 2, 19, 2, 1500000);
 
-
--- VOUCHER
-INSERT INTO voucher (voucher_id, code, description, discount_type, discount_value, min_order_amount, max_uses, max_uses_per_user, start_date, end_date, status) VALUES
+INSERT INTO `voucher` (voucher_id, code, description, discount_type, discount_value, min_order_amount, max_uses, max_uses_per_user, start_date, end_date, status) VALUES
 (1, 'WELCOME10', '10% off for new users', 'percent', 10.00, 100000, 100, 1, '2024-06-01 00:00:00', '2024-12-31 23:59:59', 'Active'),
 (2, 'SUMMER50', '50,000 VND off orders over 500,000 VND', 'fixed', 50000.00, 500000, 50, 2, '2024-06-01 00:00:00', '2024-08-31 23:59:59', 'Active'),
 (3, 'FREEMOUSE', 'Mua bất kỳ bộ PC nào trong tháng này, nhận ngay chuột gaming trị giá 500.000đ. Số lượng có hạn!', 'fixed', 500000, 0, 50, 1, '2024-06-01 00:00:00', '2024-06-30 23:59:59', 'Active');
 
-
--- VOUCHER_USAGE
-INSERT INTO voucher_usage (usage_id, voucher_id, customer_id, order_id, used_at) VALUES
+INSERT INTO `voucher_usage` (usage_id, voucher_id, customer_id, order_id, used_at) VALUES
 (1, 1, 1, 1, NOW()),
 (2, 1, 3, NULL, '2024-06-21 10:00:00'),
 (3, 2, 2, NULL, '2024-06-22 11:00:00');
 
-
--- CARTITEM
-INSERT INTO cartitem (cart_item_id, customer_id, product_id, quantity) VALUES
+INSERT INTO `cartitem` (cart_item_id, customer_id, product_id, quantity) VALUES
 (1, 1, 1, 1),
 (2, 1, 8, 1),
 (3, 2, 2, 1),
@@ -258,15 +219,11 @@ INSERT INTO cartitem (cart_item_id, customer_id, product_id, quantity) VALUES
 (10, 2, 10, 1),
 (11, 2, 11, 1);
 
-
--- TRANSACTIONS
-INSERT INTO transactions (transaction_id, transaction_code, order_id, payment_method_id, total_amount, created_at, paid) VALUES
+INSERT INTO `transactions` (transaction_id, transaction_code, order_id, payment_method_id, total_amount, created_at, paid) VALUES
 (1, 'TXN001', 1, 1, 10000000, NOW(), FALSE),
 (2, 'TXN002', 2, 1, 32100000, NOW(), FALSE);
 
-
--- MENU_ITEM
-INSERT INTO menu_item (menu_item_id, name, icon, url, parent_id, status) VALUES
+INSERT INTO `menu_item` (menu_item_id, name, icon, url, parent_id, status) VALUES
 (1, 'Sản phẩm', 'fas fa-laptop', '/products', NULL, 'Activate'),
 (2, 'Danh mục', 'fas fa-th-large', '/categories', NULL, 'Activate'),
 (3, 'Quản lý', 'fas fa-cogs', '/admin', NULL, 'Activate'),
@@ -275,9 +232,7 @@ INSERT INTO menu_item (menu_item_id, name, icon, url, parent_id, status) VALUES
 (6, 'RAM', 'fas fa-memory', '/products/ram', 1, 'Activate'),
 (7, 'Build PC', 'fas fa-desktop', '/PCBuilderServlet', NULL, 'Activate');
 
-
--- MENU_ATTRIBUTE
-INSERT INTO menu_attribute (attribute_id, menu_item_id, name, url, status) VALUES
+INSERT INTO `menu_attribute` (attribute_id, menu_item_id, name, url, status) VALUES
 (1, 1, 'Tất cả sản phẩm', '/products/all', 'Activate'),
 (2, 1, 'Sản phẩm mới', '/products/new', 'Activate'),
 (3, 1, 'Khuyến mãi', '/products/sale', 'Activate'),
@@ -286,9 +241,7 @@ INSERT INTO menu_attribute (attribute_id, menu_item_id, name, url, status) VALUE
 (6, 3, 'Dashboard', '/admin/dashboard', 'Activate'),
 (7, 3, 'Cài đặt', '/admin/settings', 'Activate');
 
-
--- MENU_ATTRIBUTE_VALUE
-INSERT INTO menu_attribute_value (value_id, attribute_id, value, url, status) VALUES
+INSERT INTO `menu_attribute_value` (value_id, attribute_id, value, url, status) VALUES
 (1, 1, 'Xem tất cả', '/products/list', 'Activate'),
 (2, 1, 'Tìm kiếm', '/products/search', 'Activate'),
 (3, 2, 'Sản phẩm mới nhất', '/products/latest', 'Activate'),
@@ -306,12 +259,21 @@ INSERT INTO menu_attribute_value (value_id, attribute_id, value, url, status) VA
 (15, 7, 'Cấu hình hệ thống', '/admin/settings/system', 'Activate'),
 (16, 7, 'Cấu hình email', '/admin/settings/email', 'Activate');
 
-
--- BLOG
-INSERT INTO blog (title, content, user_id, created_at) VALUES
+INSERT INTO `blog` (title, content, user_id, created_at) VALUES
 ('Welcome to the PC Store', 'This is our first blog post by staff.', 1, NOW()),
 ('Admin Announcement', 'This is an announcement from the admin.', 2, NOW());
 
+-- Update user table to add Shipper role
+ALTER TABLE `user`
+MODIFY COLUMN `role` ENUM('Staff', 'Admin', 'Shipper') NOT NULL;
+
+-- Insert a new user with Shipper role
+INSERT INTO `user` (username, password, email, role, status, is_verified, verification_token)
+VALUES ('shipper01', 'hashedpassword3', 'shipper01@example.com', 'Shipper', 'Active', 1, NULL);
+
+-- Insert corresponding shipper information
+INSERT INTO `shipper` (name, phone, email, status)
+VALUES ('Nguyễn Văn Shipper', '0901234567', 'shipper01@example.com', 'Active');
 
 -- Select all data from tables
 SELECT * FROM admin;
@@ -338,22 +300,20 @@ SELECT * FROM menu_item;
 SELECT * FROM menu_attribute;
 SELECT * FROM menu_attribute_value;
 
-
-INSERT INTO productimage (product_id, image_url, alt_text, is_primary)
+-- Insert product images
+INSERT INTO `productimage` (product_id, image_url, alt_text, is_primary)
 SELECT p.product_id, 'IMG/product/cpu1.jpg', p.name, TRUE
 FROM product p
 JOIN componenttype ct ON p.component_type_id = ct.type_id
 WHERE ct.name = 'CPU';
 
-
-INSERT INTO productimage (product_id, image_url, alt_text, is_primary)
+INSERT INTO `productimage` (product_id, image_url, alt_text, is_primary)
 SELECT p.product_id, 'IMG/product/gpu1.jpg', p.name, TRUE
 FROM product p
 JOIN componenttype ct ON p.component_type_id = ct.type_id
 WHERE ct.name = 'GPU';
 
-
-INSERT INTO productimage (product_id, image_url, alt_text, is_primary)
+INSERT INTO `productimage` (product_id, image_url, alt_text, is_primary)
 SELECT p.product_id, 'IMG/product/ram1.jpg', p.name, TRUE
 FROM product p
 JOIN componenttype ct ON p.component_type_id = ct.type_id
