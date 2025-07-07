@@ -3,7 +3,6 @@ DROP DATABASE IF EXISTS project_g2;
 CREATE DATABASE IF NOT EXISTS project_g2;
 USE project_g2;
 
-
 -- Drop tables in dependency order (child tables first)
 DROP TABLE IF EXISTS `cartitem`;
 DROP TABLE IF EXISTS `orderdetail`;
@@ -32,7 +31,6 @@ DROP TABLE IF EXISTS `menu_attribute_value`;
 DROP TABLE IF EXISTS `menu_attribute`;
 DROP TABLE IF EXISTS `menu_item`;
 
-
 -- Create parent tables
 CREATE TABLE `componenttype` (
   `type_id` INT NOT NULL AUTO_INCREMENT,
@@ -41,7 +39,6 @@ CREATE TABLE `componenttype` (
   PRIMARY KEY (`type_id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
-
 CREATE TABLE `brand` (
   `brand_id` INT NOT NULL AUTO_INCREMENT,
   `name` VARCHAR(100) NOT NULL,
@@ -49,15 +46,13 @@ CREATE TABLE `brand` (
   PRIMARY KEY (`brand_id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
-
 CREATE TABLE `paymentmethod` (
   `payment_method_id` INT NOT NULL AUTO_INCREMENT,
   `method_name` VARCHAR(100) NOT NULL,
   `description` VARCHAR(255) DEFAULT NULL,
   `status` ENUM('Active', 'Inactive') NOT NULL DEFAULT 'Active',
   PRIMARY KEY (`payment_method_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
-
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4 collate=utf8mb4_0900_ai_ci;
 
 CREATE TABLE `user` (
   `user_id` INT NOT NULL AUTO_INCREMENT,
@@ -72,8 +67,7 @@ CREATE TABLE `user` (
   UNIQUE KEY `username` (`username`)
 ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
-
--- Bảng phụ thuộc nhiều bảng cha
+-- Create dependent tables
 CREATE TABLE `series` (
   `series_id` INT NOT NULL AUTO_INCREMENT,
   `brand_id` INT NOT NULL,
@@ -86,7 +80,6 @@ CREATE TABLE `series` (
   CONSTRAINT `series_ibfk_1` FOREIGN KEY (`brand_id`) REFERENCES `brand` (`brand_id`),
   CONSTRAINT `series_ibfk_2` FOREIGN KEY (`component_type_id`) REFERENCES `componenttype` (`type_id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
-
 
 CREATE TABLE `customer` (
   `customer_id` INT NOT NULL AUTO_INCREMENT,
@@ -101,7 +94,6 @@ CREATE TABLE `customer` (
   UNIQUE KEY `email` (`email`)
 ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
-
 CREATE TABLE `staff` (
   `staff_id` INT NOT NULL AUTO_INCREMENT,
   `user_id` INT NOT NULL,
@@ -114,7 +106,6 @@ CREATE TABLE `staff` (
   CONSTRAINT `staff_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `user` (`user_id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
-
 CREATE TABLE `shipper` (
   `shipper_id` INT NOT NULL AUTO_INCREMENT,
   `name` VARCHAR(100) NOT NULL,
@@ -124,7 +115,6 @@ CREATE TABLE `shipper` (
   PRIMARY KEY (`shipper_id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
-
 CREATE TABLE `admin` (
   `admin_id` INT NOT NULL AUTO_INCREMENT,
   `user_id` INT NOT NULL,
@@ -133,7 +123,6 @@ CREATE TABLE `admin` (
   UNIQUE KEY `user_id` (`user_id`),
   CONSTRAINT `admin_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `user` (`user_id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
-
 
 CREATE TABLE `product` (
   `product_id` INT NOT NULL AUTO_INCREMENT,
@@ -158,7 +147,6 @@ CREATE TABLE `product` (
   CONSTRAINT `product_ibfk_3` FOREIGN KEY (`series_id`) REFERENCES `series` (`series_id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
-
 CREATE TABLE `cartitem` (
   `cart_item_id` INT NOT NULL AUTO_INCREMENT,
   `customer_id` INT NOT NULL,
@@ -170,7 +158,6 @@ CREATE TABLE `cartitem` (
   CONSTRAINT `cartitem_ibfk_1` FOREIGN KEY (`customer_id`) REFERENCES `customer` (`customer_id`),
   CONSTRAINT `cartitem_ibfk_2` FOREIGN KEY (`product_id`) REFERENCES `product` (`product_id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
-
 
 CREATE TABLE `orders` (
   `order_id` INT NOT NULL AUTO_INCREMENT,
@@ -188,7 +175,6 @@ CREATE TABLE `orders` (
   CONSTRAINT `orders_ibfk_2` FOREIGN KEY (`payment_method_id`) REFERENCES `paymentmethod` (`payment_method_id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
-
 CREATE TABLE `orderdetail` (
   `order_detail_id` INT NOT NULL AUTO_INCREMENT,
   `order_id` INT NOT NULL,
@@ -202,7 +188,6 @@ CREATE TABLE `orderdetail` (
   CONSTRAINT `orderdetail_ibfk_2` FOREIGN KEY (`product_id`) REFERENCES `product` (`product_id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
-
 CREATE TABLE `productimage` (
   `image_id` INT NOT NULL AUTO_INCREMENT,
   `product_id` INT NOT NULL,
@@ -214,7 +199,6 @@ CREATE TABLE `productimage` (
   CONSTRAINT `productimage_ibfk_1` FOREIGN KEY (`product_id`) REFERENCES `product` (`product_id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
-
 CREATE TABLE `productspecification` (
   `spec_id` INT NOT NULL AUTO_INCREMENT,
   `product_id` INT NOT NULL,
@@ -224,7 +208,6 @@ CREATE TABLE `productspecification` (
   KEY `product_id` (`product_id`),
   CONSTRAINT `productspecification_ibfk_1` FOREIGN KEY (`product_id`) REFERENCES `product` (`product_id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
-
 
 CREATE TABLE `feedback` (
   `feedback_id` INT NOT NULL AUTO_INCREMENT,
@@ -241,7 +224,6 @@ CREATE TABLE `feedback` (
   CONSTRAINT `feedback_chk_1` CHECK (`rating` BETWEEN 1 AND 5)
 ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
-
 CREATE TABLE `feedback_image` (
   `image_id` INT NOT NULL AUTO_INCREMENT,
   `feedback_id` INT NOT NULL,
@@ -253,7 +235,6 @@ CREATE TABLE `feedback_image` (
   KEY `feedback_id` (`feedback_id`),
   CONSTRAINT `feedback_image_ibfk_1` FOREIGN KEY (`feedback_id`) REFERENCES `feedback` (`feedback_id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
-
 
 CREATE TABLE `inventorylog` (
   `log_id` INT NOT NULL AUTO_INCREMENT,
@@ -267,7 +248,6 @@ CREATE TABLE `inventorylog` (
   CONSTRAINT `inventorylog_ibfk_1` FOREIGN KEY (`product_id`) REFERENCES `product` (`product_id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
-
 CREATE TABLE `blog` (
   `blog_id` INT NOT NULL AUTO_INCREMENT,
   `title` VARCHAR(200) NOT NULL,
@@ -278,7 +258,6 @@ CREATE TABLE `blog` (
   KEY `user_id` (`user_id`),
   CONSTRAINT `blog_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `user` (`user_id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
-
 
 CREATE TABLE `blog_image` (
   `image_id` INT NOT NULL AUTO_INCREMENT,
@@ -292,7 +271,6 @@ CREATE TABLE `blog_image` (
   CONSTRAINT `blog_image_ibfk_1` FOREIGN KEY (`blog_id`) REFERENCES `blog` (`blog_id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
-
 CREATE TABLE `transactions` (
   `transaction_id` INT AUTO_INCREMENT PRIMARY KEY,
   `transaction_code` VARCHAR(50),
@@ -304,7 +282,6 @@ CREATE TABLE `transactions` (
   FOREIGN KEY (`order_id`) REFERENCES `orders` (`order_id`),
   FOREIGN KEY (`payment_method_id`) REFERENCES `paymentmethod` (`payment_method_id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
-
 
 CREATE TABLE `voucher` (
   `voucher_id` INT NOT NULL AUTO_INCREMENT,
@@ -321,7 +298,6 @@ CREATE TABLE `voucher` (
   PRIMARY KEY (`voucher_id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
-
 CREATE TABLE `voucher_usage` (
   `usage_id` INT NOT NULL AUTO_INCREMENT,
   `voucher_id` INT NOT NULL,
@@ -337,34 +313,30 @@ CREATE TABLE `voucher_usage` (
   CONSTRAINT `voucher_usage_ibfk_3` FOREIGN KEY (`order_id`) REFERENCES `orders` (`order_id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
-
--- MENU DYNAMIC
-CREATE TABLE menu_item (
-  menu_item_id INT PRIMARY KEY AUTO_INCREMENT,
-  name VARCHAR(100) NOT NULL,
-  icon VARCHAR(255),
-  url VARCHAR(255),
-  parent_id INT,
-  status ENUM('Activate','Deactivate') NOT NULL DEFAULT 'Activate',
-  FOREIGN KEY (parent_id) REFERENCES menu_item(menu_item_id)
+CREATE TABLE `menu_item` (
+  `menu_item_id` INT PRIMARY KEY AUTO_INCREMENT,
+  `name` VARCHAR(100) NOT NULL,
+  `icon` VARCHAR(255),
+  `url` VARCHAR(255),
+  `parent_id` INT,
+  `status` ENUM('Activate', 'Deactivate') NOT NULL DEFAULT 'Activate',
+  FOREIGN KEY (`parent_id`) REFERENCES `menu_item` (`menu_item_id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
-
-CREATE TABLE menu_attribute (
-  attribute_id INT PRIMARY KEY AUTO_INCREMENT,
-  menu_item_id INT NOT NULL,
-  name VARCHAR(100) NOT NULL,
-  url VARCHAR(255),
-  status ENUM('Activate','Deactivate') NOT NULL DEFAULT 'Activate',
-  FOREIGN KEY (menu_item_id) REFERENCES menu_item(menu_item_id)
+CREATE TABLE `menu_attribute` (
+  `attribute_id` INT PRIMARY KEY AUTO_INCREMENT,
+  `menu_item_id` INT NOT NULL,
+  `name` VARCHAR(100) NOT NULL,
+  `url` VARCHAR(255),
+  `status` ENUM('Activate', 'Deactivate') NOT NULL DEFAULT 'Activate',
+  FOREIGN KEY (`menu_item_id`) REFERENCES `menu_item` (`menu_item_id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
-
-CREATE TABLE menu_attribute_value (
-  value_id INT PRIMARY KEY AUTO_INCREMENT,
-  attribute_id INT NOT NULL,
-  value VARCHAR(100) NOT NULL,
-  url VARCHAR(255),
-  status ENUM('Activate','Deactivate') NOT NULL DEFAULT 'Activate',
-  FOREIGN KEY (attribute_id) REFERENCES menu_attribute(attribute_id)
+CREATE TABLE `menu_attribute_value` (
+  `value_id` INT PRIMARY KEY AUTO_INCREMENT,
+  `attribute_id` INT NOT NULL,
+  `value` VARCHAR(100) NOT NULL,
+  `url` VARCHAR(255),
+  `status` ENUM('Activate', 'Deactivate') NOT NULL DEFAULT 'Activate',
+  FOREIGN KEY (`attribute_id`) REFERENCES `menu_attribute` (`attribute_id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
