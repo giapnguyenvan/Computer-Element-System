@@ -235,13 +235,7 @@ public class ManageBlogServlet extends HttpServlet {
                         return;
                     }
                     int blogId = Integer.parseInt(request.getParameter("blog_id"));
-                    boolean deleted = blogDAO.deleteBlogById(blogId);
-                    if (deleted) {
-                        request.getSession().setAttribute("success", "Blog deleted successfully!");
-                    } else {
-                        request.getSession().setAttribute("error", "Failed to delete blog.");
-                    }
-                    response.sendRedirect("manageblogs");
+                    deleteBlogWithImages(request, response, blogId);
                     break;
                 default:
                     response.sendRedirect("manageblogs");
@@ -350,7 +344,7 @@ public class ManageBlogServlet extends HttpServlet {
                                 // Generate unique filename
                                 String fileExtension = fileName.substring(fileName.lastIndexOf("."));
                                 String uniqueFileName = System.currentTimeMillis() + "_" + blogId + fileExtension;
-                                String uploadPath = "/assets/assets/images/blog/" + uniqueFileName;
+                                String uploadPath = "/IMG/blog/" + uniqueFileName;
                                 
                                 // Save file to server
                                 String realPath = getServletContext().getRealPath(uploadPath);
@@ -415,7 +409,7 @@ public class ManageBlogServlet extends HttpServlet {
                             // Generate unique filename
                             String fileExtension = fileName.substring(fileName.lastIndexOf("."));
                             String uniqueFileName = System.currentTimeMillis() + "_" + id + fileExtension;
-                            String uploadPath = "/assets/assets/images/blog/" + uniqueFileName;
+                            String uploadPath = "/IMG/blog/" + uniqueFileName;
                             
                             // Save file to server
                             String realPath = getServletContext().getRealPath(uploadPath);
@@ -445,6 +439,50 @@ public class ManageBlogServlet extends HttpServlet {
         }
     }
 
+    private void deleteBlogWithImages(HttpServletRequest request, HttpServletResponse response, int blogId)
+    throws ServletException, IOException {
+        try {
+            dal.BlogImageDAO blogImageDAO = new dal.BlogImageDAO();
+            
+            // Step 1: Get all images associated with the blog
+            java.util.Vector<model.BlogImage> images = blogImageDAO.getImagesByBlogId(blogId);
+            
+            // Step 2: Delete image files from the server
+            for (model.BlogImage img : images) {
+                if (img.getImage_url() != null && (img.getImage_url().startsWith("/blog/") || img.getImage_url().startsWith("/IMG/blog/"))) {
+                    String realPath = getServletContext().getRealPath(img.getImage_url());
+                    java.io.File file = new java.io.File(realPath);
+                    if (file.exists()) {
+                        boolean fileDeleted = file.delete();
+                        if (!fileDeleted) {
+                            System.err.println("Failed to delete image file: " + realPath);
+                        }
+                    }
+                }
+            }
+            
+            // Step 3: Delete image records from database
+            blogImageDAO.deleteAllImagesByBlogId(blogId);
+            
+            // Step 4: Delete the blog itself
+            boolean blogDeleted = blogDAO.deleteBlogById(blogId);
+            
+            if (blogDeleted) {
+                request.getSession().setAttribute("success", "Blog and associated images deleted successfully!");
+            } else {
+                request.getSession().setAttribute("error", "Failed to delete blog.");
+            }
+            
+            response.sendRedirect("manageblogs");
+            
+        } catch (Exception e) {
+            System.err.println("Error deleting blog with images: " + e.getMessage());
+            e.printStackTrace();
+            request.getSession().setAttribute("error", "Error deleting blog: " + e.getMessage());
+            response.sendRedirect("manageblogs");
+        }
+    }
+
     private void deleteBlog(HttpServletRequest request, HttpServletResponse response)
     throws ServletException, IOException {
         try {
@@ -454,7 +492,7 @@ public class ManageBlogServlet extends HttpServlet {
             java.util.Vector<model.BlogImage> images = blogImageDAO.getImagesByBlogId(id);
             blogDAO.deleteBlog(id, userId);
             for (model.BlogImage img : images) {
-                if (img.getImage_url() != null && img.getImage_url().startsWith("/assets/assets/images/blog/")) {
+                if (img.getImage_url() != null && (img.getImage_url().startsWith("/blog/") || img.getImage_url().startsWith("/IMG/blog/"))) {
                     String realPath = getServletContext().getRealPath(img.getImage_url());
                     java.io.File file = new java.io.File(realPath);
                     if (file.exists()) file.delete();

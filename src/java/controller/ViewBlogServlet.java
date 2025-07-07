@@ -251,8 +251,42 @@ public class ViewBlogServlet extends HttpServlet {
                 request.setAttribute("blog", blog);
                 request.setAttribute("author", author);
                 
-                // Forward to the view blog page
-                request.getRequestDispatcher("viewblogs.jsp").forward(request, response);
+                // Check if this is an AJAX request for images
+                String xRequestedWith = request.getHeader("X-Requested-With");
+                if ("XMLHttpRequest".equals(xRequestedWith)) {
+                    // Return JSON response with blog images
+                    response.setContentType("application/json");
+                    response.setCharacterEncoding("UTF-8");
+                    
+                    // Convert blog images to JSON
+                    java.util.List<model.BlogImage> images = blog.getImages();
+                    java.util.List<java.util.Map<String, Object>> imageList = new java.util.ArrayList<>();
+                    
+                    for (model.BlogImage img : images) {
+                        java.util.Map<String, Object> imageMap = new java.util.HashMap<>();
+                        imageMap.put("image_id", img.getImage_id());
+                        imageMap.put("image_url", img.getImage_url());
+                        imageMap.put("image_alt", img.getImage_alt());
+                        imageMap.put("display_order", img.getDisplay_order());
+                        imageList.add(imageMap);
+                    }
+                    
+                    // Create response object
+                    java.util.Map<String, Object> responseObj = new java.util.HashMap<>();
+                    responseObj.put("blog_id", blogId);
+                    responseObj.put("images", imageList);
+                    responseObj.put("image_count", imageList.size());
+                    
+                    // Convert to JSON using simple string building (you could use a JSON library)
+                    String jsonResponse = "{\"blog_id\":" + blogId + 
+                                       ",\"images\":" + buildImagesJson(imageList) + 
+                                       ",\"image_count\":" + imageList.size() + "}";
+                    
+                    response.getWriter().write(jsonResponse);
+                } else {
+                    // Forward to the view blog page
+                    request.getRequestDispatcher("viewblogs.jsp").forward(request, response);
+                }
             } else {
                 request.getSession().setAttribute("error", "Blog not found");
                 response.sendRedirect(request.getContextPath() + "/viewblogs");
@@ -261,6 +295,31 @@ public class ViewBlogServlet extends HttpServlet {
             request.getSession().setAttribute("error", "Error viewing blog: " + ex.getMessage());
             response.sendRedirect(request.getContextPath() + "/viewblogs");
         }
+    }
+    
+    private String buildImagesJson(java.util.List<java.util.Map<String, Object>> images) {
+        StringBuilder json = new StringBuilder("[");
+        for (int i = 0; i < images.size(); i++) {
+            java.util.Map<String, Object> img = images.get(i);
+            if (i > 0) json.append(",");
+            json.append("{");
+            json.append("\"image_id\":").append(img.get("image_id")).append(",");
+            json.append("\"image_url\":\"").append(escapeJson((String)img.get("image_url"))).append("\",");
+            json.append("\"image_alt\":\"").append(escapeJson((String)img.get("image_alt"))).append("\",");
+            json.append("\"display_order\":").append(img.get("display_order"));
+            json.append("}");
+        }
+        json.append("]");
+        return json.toString();
+    }
+    
+    private String escapeJson(String str) {
+        if (str == null) return "";
+        return str.replace("\\", "\\\\")
+                 .replace("\"", "\\\"")
+                 .replace("\n", "\\n")
+                 .replace("\r", "\\r")
+                 .replace("\t", "\\t");
     }
 
 
