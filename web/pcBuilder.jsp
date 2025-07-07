@@ -406,6 +406,10 @@
                 display: flex;
                 justify-content: center;
                 align-items: center;
+                height: 80vh;
+                min-height: 400px;
+                max-height: 90vh;
+                overflow: hidden;
             }
             #viewProductModal iframe {
                 border-radius: 0 0 18px 18px;
@@ -414,6 +418,12 @@
                 transition: box-shadow 0.2s;
                 max-width: 100%;
                 max-height: 100%;
+                width: 100%;
+                height: 100%;
+                overflow-x: auto;
+                display: block;
+                scrollbar-color: #0d6efd #e3f0ff;
+                scrollbar-width: thin;
             }
             @keyframes modalFadeIn {
                 from { transform: translateY(40px) scale(0.98); opacity: 0; }

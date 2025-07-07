@@ -8,6 +8,18 @@
     <meta charset="UTF-8">
     <title>Product Table</title>
     <style>
+        body, .container, .container-fluid {
+            margin-left: 0 !important;
+            padding-left: 0 !important;
+        }
+        .table, .table-responsive {
+            margin-left: 0 !important;
+            padding-left: 0 !important;
+        }
+        .container, .container-fluid {
+            width: 100% !important;
+            max-width: 100% !important;
+        }
         table {
             border-collapse: collapse;
             width: 100%;
@@ -39,7 +51,7 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/nouislider@15.7.1/dist/nouislider.min.css">
 </head>
 <body>
-<div class="container mt-3">
+<div class="container-fluid mt-3" style="padding-left:0; margin-left:0; width:100%; max-width:100%;">
     <div class="mb-3">
         <a href="${pageContext.request.contextPath}/ProductEditServlet?action=new" class="btn btn-primary">New</a>
         <button type="button" class="btn btn-primary" id="editBtn">Edit</button>
