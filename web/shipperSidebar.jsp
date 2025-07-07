@@ -19,7 +19,7 @@
             <i class="fas fa-home me-2"></i> Dashboard
         </a>
         <a href="${pageContext.request.contextPath}/shipperorderservlet" target="mainFrame" class="<%= request.getRequestURI().contains("shipperorderservlet") ? "active" : "" %>">
-            <i class="fas fa-truck me-2"></i> Đơn hàng giao
+            <i class="fas fa-truck me-2"></i> Orders Management
         </a>
         <a href="${pageContext.request.contextPath}/logout">
             <i class="fas fa-sign-out-alt me-2"></i> Logout
