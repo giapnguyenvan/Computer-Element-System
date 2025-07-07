@@ -165,6 +165,9 @@ public class LoginServlet extends HttpServlet {
                 } else if ("Staff".equalsIgnoreCase(user.getRole())) {
                     // Nếu là staff thì chuyển hướng đến staffDashboard.jsp
                     response.sendRedirect(request.getContextPath() + "/staffDashboard.jsp");
+                } else if ("Shipper".equalsIgnoreCase(user.getRole())) {
+                    // Nếu là shipper thì chuyển hướng đến shipperdashboard
+                    response.sendRedirect(request.getContextPath() + "/shipperdashboard");
                 } else {
                     response.sendRedirect(request.getContextPath() + "/homepageservlet");
                 }
