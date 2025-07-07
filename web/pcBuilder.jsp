@@ -897,43 +897,61 @@
             
             // Function to select a component and update progress
             function selectComponent(componentType) {
+                // Gọi API lấy sản phẩm theo loại linh kiện
                 const url = `PCBuilderServlet?action=getProducts&componentType=${componentType}`;
                 fetch(url)
                     .then(res => res.json())
                     .then(products => {
-                        let html = `<div class='row'>`;
+                        let html = `
+                            <div class="mb-3">
+                                <input type="text" id="productSearchInput" class="form-control" placeholder="Tìm kiếm sản phẩm...">
+                            </div>
+                            <table class="table table-bordered" id="productSelectTable">
+                                <thead>
+                                    <tr>
+                                        <th>Tên</th>
+                                        <th>Brand</th>
+                                        <th>Series</th>
+                                        <th>Model</th>
+                                        <th>Giá</th>
+                                        <th>Stock</th>
+                                        <th>Chọn</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                        `;
                         products.forEach(p => {
                             html += `
-                                <div class="col-md-4 mb-4">
-                                    <div class="card component-card h-100">
-                                        <img src="${p.image_url || 'assets/images/default-product.jpg'}" class="card-img-top" alt="${p.name}" style="height: 200px; object-fit: cover;">
-                                        <div class="card-body d-flex flex-column justify-content-between">
-                                            <div>
-                                                <h5 class="card-title">${p.name}</h5>
-                                                <p class="card-text mb-2">
-                                                    <strong>Brand:</strong> ${p.brandName}<br>
-                                                    <strong>Series:</strong> ${p.seriesName || 'N/A'}<br>
-                                                    <strong>Model:</strong> ${p.modelName || 'N/A'}<br>
-                                                    <strong>Price:</strong> $${p.price}<br>
-                                                    <strong>Stock:</strong> ${p.stock}
-                                                </p>
-                                                <p class="card-text small text-muted">${p.description || ''}</p>
-                                            </div>
-                                            <button class="btn btn-primary mt-2" onclick="confirmSelectComponent('${componentType}', ${p.product_id}, '${p.name}', ${p.price})">Add to configuration</button>
-                                        </div>
-                                    </div>
-                                </div>
+                                <tr>
+                                    <td>${p.name}</td>
+                                    <td>${p.brandName}</td>
+                                    <td>${p.seriesName || ''}</td>
+                                    <td>${p.model || ''}</td>
+                                    <td>${p.price}</td>
+                                    <td>${p.stock}</td>
+                                    <td>
+                                        <button class="btn btn-primary btn-sm" onclick="confirmSelectComponent('${componentType}', ${p.product_id}, '${p.name}', ${p.price})">Chọn</button>
+                                    </td>
+                                </tr>
                             `;
                         });
-                        html += '</div>';
-                        document.getElementById('componentModalContent').innerHTML = html;
-                        // Hiển thị modal
-                        const modal = new bootstrap.Modal(document.getElementById('componentModal'));
+                        html += `</tbody></table>`;
+                        document.getElementById('productSelectModalBody').innerHTML = html;
+                        // Hiện modal
+                        const modal = new bootstrap.Modal(document.getElementById('productSelectModal'));
                         modal.show();
+
+                        // Thêm filter search
+                        document.getElementById('productSearchInput').addEventListener('input', function() {
+                            const value = this.value.toLowerCase();
+                            document.querySelectorAll('#productSelectTable tbody tr').forEach(row => {
+                                row.style.display = row.textContent.toLowerCase().includes(value) ? '' : 'none';
+                            });
+                        });
                     })
                     .catch(error => {
-                        document.getElementById('componentModalContent').innerHTML = '<p>Lỗi khi tải sản phẩm.</p>';
-                        const modal = new bootstrap.Modal(document.getElementById('componentModal'));
+                        document.getElementById('productSelectModalBody').innerHTML = '<p>Lỗi khi tải sản phẩm.</p>';
+                        const modal = new bootstrap.Modal(document.getElementById('productSelectModal'));
                         modal.show();
                     });
             }
@@ -980,7 +998,7 @@
             // Hàm xác nhận chọn linh kiện trong modal
             function confirmSelectComponent(componentType, productId, productName, price) {
                 // Đóng modal
-                const modal = bootstrap.Modal.getInstance(document.getElementById('componentModal'));
+                const modal = bootstrap.Modal.getInstance(document.getElementById('productSelectModal'));
                 if (modal) modal.hide();
                 // Cập nhật cấu hình như cũ
                 const stepElement = document.getElementById(`step-${componentType.toLowerCase()}`);
@@ -1005,20 +1023,43 @@
             window.addEventListener('load', function() {
                 updateProgressBar();
             });
+
+            // Gắn sự kiện cho các nút chọn linh kiện để mở modal chứa viewProduct.jsp
+            window.addEventListener('DOMContentLoaded', function() {
+                document.querySelectorAll('.btn.btn-pcbuilder-white.btn-lg').forEach(btn => {
+                    btn.addEventListener('click', function(e) {
+                        e.preventDefault();
+                        const modal = new bootstrap.Modal(document.getElementById('viewProductModal'));
+                        modal.show();
+                    });
+                });
+            });
         //]]>
         </script>
-        <!-- Modal chọn linh kiện -->
-        <div class="modal fade" id="componentModal" tabindex="-1" aria-labelledby="componentModalLabel" aria-hidden="true">
+        <!-- Modal chọn sản phẩm -->
+        <div class="modal fade" id="productSelectModal" tabindex="-1" aria-labelledby="productSelectModalLabel" aria-hidden="true">
             <div class="modal-dialog modal-xl">
                 <div class="modal-content">
                     <div class="modal-header">
-                        <h5 class="modal-title" id="componentModalLabel">Select component</h5>
-                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        <h5 class="modal-title" id="productSelectModalLabel">Chọn sản phẩm</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Đóng"></button>
                     </div>
-                    <div class="modal-body">
-                        <div id="componentModalContent">
-                            <!-- Sản phẩm sẽ được render ở đây -->
-                        </div>
+                    <div class="modal-body" id="productSelectModalBody">
+                        <!-- Bảng sản phẩm sẽ render ở đây -->
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- Modal popup viewProduct -->
+        <div class="modal fade" id="viewProductModal" tabindex="-1" aria-labelledby="viewProductModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-xl">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="viewProductModalLabel">Chọn sản phẩm</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Đóng"></button>
+                    </div>
+                    <div class="modal-body p-0" style="height:80vh;">
+                        <iframe id="viewProductIframe" src="viewProduct.jsp" style="width:100%;height:100%;border:none;"></iframe>
                     </div>
                 </div>
             </div>
