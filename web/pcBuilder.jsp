@@ -429,6 +429,25 @@
                 from { transform: translateY(40px) scale(0.98); opacity: 0; }
                 to { transform: none; opacity: 1; }
             }
+            #productSelectModal .table-responsive {
+                margin: 0;
+                padding: 0;
+            }
+            #productSelectModal table {
+                width: 100%;
+                table-layout: auto;
+                word-break: break-word;
+            }
+            #productSelectModal th, #productSelectModal td {
+                white-space: normal !important;
+                word-break: break-word;
+                vertical-align: middle;
+                font-size: 1rem;
+                padding: 0.5rem 0.75rem;
+            }
+            #productSelectModal .modal-dialog {
+                max-width: 98vw;
+            }
         </style>
     </head>
     <body>
@@ -1015,22 +1034,37 @@
                     .then(res => res.json())
                     .then(products => {
                         let html = `
-                            <div class="mb-3">
-                                <input type="text" id="productSearchInput" class="form-control" placeholder="Tìm kiếm sản phẩm...">
+                            <div class="row mb-3">
+                                <div class="col">
+                                    <input type="text" id="searchInput" class="form-control" placeholder="Tìm kiếm...">
+                                </div>
+                                <div class="col">
+                                    <select id="brandFilter" class="form-select">
+                                        <option value="">Tất cả Brand</option>
+                                        <!-- Options sẽ được JS render -->
+                                    </select>
+                                </div>
+                                <div class="col">
+                                    <select id="seriesFilter" class="form-select">
+                                        <option value="">Tất cả Series</option>
+                                        <!-- Options sẽ được JS render -->
+                                    </select>
+                                </div>
                             </div>
-                            <table class="table table-bordered" id="productSelectTable">
-                                <thead>
-                                    <tr>
-                                        <th>Tên</th>
-                                        <th>Brand</th>
-                                        <th>Series</th>
-                                        <th>Model</th>
-                                        <th>Giá</th>
-                                        <th>Stock</th>
-                                        <th>Chọn</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
+                            <div class="table-responsive">
+                                <table class="table table-bordered align-middle" id="productTable">
+                                    <thead>
+                                        <tr>
+                                            <th>Tên</th>
+                                            <th>Brand</th>
+                                            <th>Series</th>
+                                            <th>Model</th>
+                                            <th>Giá</th>
+                                            <th>Stock</th>
+                                            <th>Chọn</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
                         `;
                         products.forEach(p => {
                             html += `
@@ -1038,7 +1072,7 @@
                                     <td>${p.name}</td>
                                     <td>${p.brandName}</td>
                                     <td>${p.seriesName || ''}</td>
-                                    <td>${p.model || ''}</td>
+                                    <td>${p.modelName || ''}</td>
                                     <td>${p.price}</td>
                                     <td>${p.stock}</td>
                                     <td>
@@ -1054,12 +1088,29 @@
                         modal.show();
 
                         // Thêm filter search
-                        document.getElementById('productSearchInput').addEventListener('input', function() {
-                            const value = this.value.toLowerCase();
-                            document.querySelectorAll('#productSelectTable tbody tr').forEach(row => {
-                                row.style.display = row.textContent.toLowerCase().includes(value) ? '' : 'none';
+                        document.getElementById('searchInput').addEventListener('input', filterTable);
+                        document.getElementById('brandFilter').addEventListener('change', filterTable);
+                        document.getElementById('seriesFilter').addEventListener('change', filterTable);
+                        function filterTable() {
+                            const search = document.getElementById('searchInput').value.toLowerCase();
+                            const brand = document.getElementById('brandFilter').value;
+                            const series = document.getElementById('seriesFilter').value;
+                            document.querySelectorAll('#productTable tbody tr').forEach(row => {
+                                const cells = row.children;
+                                const matchSearch = cells[0].textContent.toLowerCase().includes(search);
+                                const matchBrand = !brand || cells[1].textContent === brand;
+                                const matchSeries = !series || cells[2].textContent === series;
+                                row.style.display = (matchSearch && matchBrand && matchSeries) ? '' : 'none';
                             });
-                        });
+                        }
+
+                        // Sau khi fetch xong products:
+                        const brands = [...new Set(products.map(p => p.brandName))].filter(Boolean);
+                        const series = [...new Set(products.map(p => p.seriesName))].filter(Boolean);
+                        const brandFilter = document.getElementById('brandFilter');
+                        const seriesFilter = document.getElementById('seriesFilter');
+                        if (brandFilter) brandFilter.innerHTML = '<option value="">Tất cả Brand</option>' + brands.map(b => `<option value="${b}">${b}</option>`).join('');
+                        if (seriesFilter) seriesFilter.innerHTML = '<option value="">Tất cả Series</option>' + series.map(s => `<option value="${s}">${s}</option>`).join('');
                     })
                     .catch(error => {
                         document.getElementById('productSelectModalBody').innerHTML = '<p>Lỗi khi tải sản phẩm.</p>';
@@ -1188,7 +1239,7 @@
                             <button type="button" class="btn-forward" onclick="forwardProductModal()" aria-label="Tiến tới"></button>
                             <button type="button" class="btn-reset" onclick="resetProductModal()" aria-label="Làm mới"></button>
                         </div>
-                        <h5 class="modal-title" id="viewProductModalLabel">Chọn sản phẩm</h5>
+                        <h5 class="modal-title" id="viewProductModalLabel">Select Components</h5>
                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Đóng"></button>
                     </div>
                     <div class="modal-body p-0" style="height:80vh;">
@@ -1197,5 +1248,6 @@
                 </div>
             </div>
         </div>
+        
     </body>
 </html> 
