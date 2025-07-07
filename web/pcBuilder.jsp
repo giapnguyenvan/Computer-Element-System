@@ -1036,20 +1036,6 @@
             });
         //]]>
         </script>
-        <!-- Modal chọn sản phẩm -->
-        <div class="modal fade" id="productSelectModal" tabindex="-1" aria-labelledby="productSelectModalLabel" aria-hidden="true">
-            <div class="modal-dialog modal-xl">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h5 class="modal-title" id="productSelectModalLabel">Chọn sản phẩm</h5>
-                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Đóng"></button>
-                    </div>
-                    <div class="modal-body" id="productSelectModalBody">
-                        <!-- Bảng sản phẩm sẽ render ở đây -->
-                    </div>
-                </div>
-            </div>
-        </div>
         <!-- Modal popup viewProduct -->
         <div class="modal fade" id="viewProductModal" tabindex="-1" aria-labelledby="viewProductModalLabel" aria-hidden="true">
             <div class="modal-dialog modal-xl">
