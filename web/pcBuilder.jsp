@@ -317,6 +317,108 @@
                 color: #fff !important;
                 box-shadow: 0 4px 16px rgba(13,110,253,0.15);
             }
+            /* Modern tech style for modal popup in pcBuilder.jsp */
+            #viewProductModal .modal-content {
+                border-radius: 18px;
+                box-shadow: 0 8px 32px rgba(0,0,0,0.18), 0 1.5px 8px rgba(0,123,255,0.08);
+                border: none;
+                background: rgba(255,255,255,0.98);
+                overflow: hidden;
+                animation: modalFadeIn 0.4s cubic-bezier(.4,0,.2,1);
+            }
+            #viewProductModal .modal-header {
+                background: linear-gradient(90deg, #0d6efd 0%, #00c6ff 100%);
+                color: #fff;
+                border-bottom: none;
+                padding: 1.2rem 2rem 1.2rem 2rem;
+                align-items: center;
+                justify-content: space-between;
+            }
+            #viewProductModal .modal-title {
+                font-size: 1.5rem;
+                font-weight: 700;
+                letter-spacing: 1px;
+                text-shadow: 0 2px 8px rgba(0,0,0,0.08);
+                margin: 0 auto;
+            }
+            #viewProductModal .btn-back {
+                background: #fff url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" stroke="%230d6efd" stroke-width="3" viewBox="0 0 24 24"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>') center/1.2em auto no-repeat;
+                border-radius: 50%;
+                width: 2.5rem;
+                height: 2.5rem;
+                opacity: 0.85;
+                transition: background 0.2s, box-shadow 0.2s;
+                box-shadow: 0 2px 8px rgba(13,110,253,0.08);
+                border: none;
+                margin-right: auto;
+            }
+            #viewProductModal .btn-back:hover {
+                background-color: #e3f0ff;
+                opacity: 1;
+            }
+            #viewProductModal .btn-forward {
+                background: #fff url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" stroke="%230d6efd" stroke-width="3" viewBox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7"/></svg>') center/1.2em auto no-repeat;
+                border-radius: 50%;
+                width: 2.5rem;
+                height: 2.5rem;
+                opacity: 0.85;
+                transition: background 0.2s, box-shadow 0.2s;
+                box-shadow: 0 2px 8px rgba(13,110,253,0.08);
+                border: none;
+                margin-left: 0.5rem;
+            }
+            #viewProductModal .btn-forward:hover {
+                background-color: #e3f0ff;
+                opacity: 1;
+            }
+            #viewProductModal .btn-reset {
+                background: #fff url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" stroke="%230d6efd" stroke-width="3" viewBox="0 0 24 24"><path d="M3 12a9 9 0 1 1 9 9M3 12h9M3 12l3-3M3 12l3 3"/></svg>') center/1.2em auto no-repeat;
+                border-radius: 50%;
+                width: 2.5rem;
+                height: 2.5rem;
+                opacity: 0.85;
+                transition: background 0.2s, box-shadow 0.2s;
+                box-shadow: 0 2px 8px rgba(13,110,253,0.08);
+                border: none;
+                margin-left: 0.5rem;
+            }
+            #viewProductModal .btn-reset:hover {
+                background-color: #e3f0ff;
+                opacity: 1;
+            }
+            #viewProductModal .btn-close {
+                background: #fff url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" fill="none" stroke="%230d6efd" stroke-width="3" viewBox="0 0 24 24"><path d="M6 6l12 12M6 18L18 6"/></svg>') center/1.5em auto no-repeat;
+                border-radius: 50%;
+                width: 2.5rem;
+                height: 2.5rem;
+                opacity: 0.85;
+                transition: background 0.2s, box-shadow 0.2s;
+                box-shadow: 0 2px 8px rgba(13,110,253,0.08);
+                margin-left: 0.5rem;
+            }
+            #viewProductModal .btn-close:hover {
+                background-color: #e3f0ff;
+                opacity: 1;
+            }
+            #viewProductModal .modal-body {
+                background: linear-gradient(120deg, #f8fafd 60%, #e3f0ff 100%);
+                padding: 0;
+                display: flex;
+                justify-content: center;
+                align-items: center;
+            }
+            #viewProductModal iframe {
+                border-radius: 0 0 18px 18px;
+                background: transparent;
+                box-shadow: none;
+                transition: box-shadow 0.2s;
+                max-width: 100%;
+                max-height: 100%;
+            }
+            @keyframes modalFadeIn {
+                from { transform: translateY(40px) scale(0.98); opacity: 0; }
+                to { transform: none; opacity: 1; }
+            }
         </style>
     </head>
     <body>
@@ -1034,6 +1136,36 @@
                     });
                 });
             });
+
+            // Hàm đóng modal sản phẩm
+            function closeProductModal() {
+                const modal = bootstrap.Modal.getInstance(document.getElementById('viewProductModal'));
+                if (modal) modal.hide();
+            }
+
+            // Hàm quay lại bước trước đó trong iframe
+            function backProductModal() {
+                const iframe = document.getElementById('viewProductIframe');
+                try {
+                    // Thử gọi history.back() trong iframe
+                    iframe.contentWindow.history.back();
+                } catch (e) {
+                    // Nếu không thể truy cập iframe (CORS), reload về trang đầu
+                    iframe.src = 'productservlet?service=viewProduct';
+                }
+            }
+
+            // Hàm tiến tới (reload iframe)
+            function forwardProductModal() {
+                const iframe = document.getElementById('viewProductIframe');
+                iframe.src = iframe.src;
+            }
+
+            // Hàm reset (về trang đầu)
+            function resetProductModal() {
+                const iframe = document.getElementById('viewProductIframe');
+                iframe.src = 'productservlet?service=viewProduct';
+            }
         //]]>
         </script>
         <!-- Modal popup viewProduct -->
@@ -1041,6 +1173,11 @@
             <div class="modal-dialog modal-xl">
                 <div class="modal-content">
                     <div class="modal-header">
+                        <div class="d-flex align-items-center">
+                            <button type="button" class="btn-back" onclick="backProductModal()" aria-label="Quay lại"></button>
+                            <button type="button" class="btn-forward" onclick="forwardProductModal()" aria-label="Tiến tới"></button>
+                            <button type="button" class="btn-reset" onclick="resetProductModal()" aria-label="Làm mới"></button>
+                        </div>
                         <h5 class="modal-title" id="viewProductModalLabel">Chọn sản phẩm</h5>
                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Đóng"></button>
                     </div>
