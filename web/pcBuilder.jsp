@@ -447,6 +447,37 @@
             }
             #productSelectModal .modal-dialog {
                 max-width: 98vw;
+                width: 98vw;
+                margin: 0 auto;
+            }
+            #productSelectModal .modal-content {
+                width: 100%;
+                min-height: 80vh;
+                max-height: 95vh;
+            }
+            #productSelectModal .modal-body {
+                overflow: visible !important;
+                max-height: none !important;
+                padding: 0;
+            }
+            #productSelectModal .table-responsive {
+                overflow-x: visible !important;
+            }
+            #productSelectModal table {
+                width: 100%;
+                table-layout: auto;
+            }
+            #productSelectModal table,
+            #productSelectModal th,
+            #productSelectModal td {
+                font-size: 0.92em;
+                padding: 0.3em 0.5em;
+            }
+            /* Tuỳ chọn: scale nhỏ bảng để vừa modal */
+            #productSelectModal .table-responsive {
+                transform: scale(0.85);
+                transform-origin: top left;
+                width: 117.6%; /* 1/0.85 để bù lại scale */
             }
         </style>
     </head>
@@ -1051,20 +1082,19 @@
                                     </select>
                                 </div>
                             </div>
-                            <div class="table-responsive">
-                                <table class="table table-bordered align-middle" id="productTable">
-                                    <thead>
-                                        <tr>
-                                            <th>Tên</th>
-                                            <th>Brand</th>
-                                            <th>Series</th>
-                                            <th>Model</th>
-                                            <th>Giá</th>
-                                            <th>Stock</th>
-                                            <th>Chọn</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
+                            <table class="table table-bordered align-middle" id="productTable">
+                                <thead>
+                                    <tr>
+                                        <th>Tên</th>
+                                        <th>Brand</th>
+                                        <th>Series</th>
+                                        <th>Model</th>
+                                        <th>Giá</th>
+                                        <th>Stock</th>
+                                        <th>Chọn</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
                         `;
                         products.forEach(p => {
                             html += `
