@@ -3,35 +3,39 @@
 <%@taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 <!DOCTYPE html>
 <html lang="en">
-    <head>
-        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1">
-        <title>Home Page</title>
-        <!-- Bootstrap CSS -->
-        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-        <!-- Font Awesome -->
-        <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
-        <!-- Custom CSS -->
-        <link href="css/homePage.css" rel="stylesheet">
-        <!-- SweetAlert2 for notifications -->
-        <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-    </head>
-    <body>
-        <!-- Include Header -->
-        <jsp:include page="header.jsp"/>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Home Page</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <!-- Custom CSS -->
+    <link href="css/homePage.css" rel="stylesheet">
+    <!-- SweetAlert2 for notifications -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+</head>
+<body>
+    <!-- Gọi MenuServlet để lấy menuItems -->
+    <%
+        request.getRequestDispatcher("/menu").include(request, response);
+    %>
+    <!-- Include Header -->
+    <jsp:include page="header.jsp"/>
 
-        <!-- Hero Section -->
-        <section class="hero-section">
-            <div class="container">
-                <div class="row align-items-center">
-                    <div class="col-md-6">
-                        <h1 class="display-4 mb-4">Build Your Dream PC</h1>
-                        <p class="lead mb-4">Customize your perfect PC with our easy-to-use PC Builder tool. Select from our wide range of high-quality components.</p>
-                        <a href="PCBuilderServlet" class="btn btn-primary btn-lg">Build PC</a>
-                    </div>
+    <!-- Hero Section -->
+    <section class="hero-section">
+        <div class="container">
+            <div class="row align-items-center">
+                <div class="col-md-6">
+                    <h1 class="display-4 mb-4">Build Your Dream PC</h1>
+                    <p class="lead mb-4">Customize your perfect PC with our easy-to-use PC Builder tool. Select from our wide range of high-quality components.</p>
+                    <a href="PCBuilderServlet" class="btn btn-primary btn-lg">Build PC</a>
                 </div>
             </div>
-        </section>
+        </div>
+    </section>
 
         <!-- Features -->
         <section class="py-5">
