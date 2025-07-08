@@ -87,13 +87,45 @@
     }
     .mega-menu-content {
         display: flex;
-        flex-wrap: wrap; /* Cho phép xu?ng dòng khi c?n */
-        gap: 15px; /* Kho?ng cách gi?a các c?t */
+        flex-wrap: wrap;
+        gap: 20px;
+        padding: 10px 0;
     }
     .mega-menu-column {
-        flex: 0 0 calc(33.33% - 10px); /* Kho?ng 3 c?t trên m?t hàng, tr? kho?ng cách */
-        min-width: 0; /* ??m b?o không b? tràn */
+        flex: 0 0 calc(33.33% - 13.33px);
+        max-width: calc(33.33% - 13.33px);
+        min-width: 120px;
         box-sizing: border-box;
+        padding: 10px;
+        background: #f9f9f9;
+        border-radius: 5px;
+    }
+    .mega-menu-column h5 {
+        margin: 0 0 10px 0;
+        font-size: 16px;
+        font-weight: bold;
+        word-break: break-word; /* Cho phép xu?ng dòng t? nhiên */
+    }
+    .mega-menu-column.full-width {
+        flex: 0 0 100%;
+        max-width: 100%;
+    }
+    .mega-menu-column ul {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+    }
+    .mega-menu-column li {
+        padding: 5px 0;
+    }
+    .mega-menu-column a {
+        color: #000;
+        text-decoration: none;
+        word-break: break-word; /* Cho phép xu?ng dòng t? nhiên */
+    }
+    .mega-menu-column a:hover {
+        color: #007bff;
+        text-decoration: underline;
     }
     .third-level-menu {
         display: none;
@@ -103,7 +135,7 @@
         background: #fff;
         border-radius: 8px;
         box-shadow: 0 2px 8px rgba(0,0,0,0.08);
-        padding: 15px;
+        padding: 10px;
         min-width: 200px;
         z-index: 1001;
     }
@@ -121,14 +153,11 @@
             box-shadow: none;
         }
         .mega-menu-content {
-            flex-direction: column; /* Chuy?n sang hi?n th? d?c trên màn hình nh? */
+            flex-direction: column;
         }
         .mega-menu-column {
-            flex: 0 0 100%; /* M?i c?t chi?m toàn b? chi?u r?ng */
-        }
-        .third-level-menu {
-            min-width: 100%;
-            position: static;
+            flex: 0 0 100%;
+            max-width: 100%;
         }
     }
 </style>
@@ -180,7 +209,7 @@
                                             <div class="mega-menu-content">
                                                 <c:forEach var="attribute" items="${item.menuAttributes}">
                                                     <c:if test="${empty pageScope.renderedNames[attribute.name]}">
-                                                        <div class="mega-menu-column">
+                                                        <div class="mega-menu-column" data-content="${attribute.name}">
                                                             <h5>${attribute.name}</h5>
                                                             <ul>
                                                                 <li class="position-relative menu-item-level-2">
@@ -292,6 +321,15 @@
                     console.log('[Header] Mouse leave third-level-menu');
                     thirdLevelMenu.classList.remove('show-menu');
                 });
+            }
+        });
+
+        // ?i?u ch?nh kích th??c c?t d?a trên s? ký t?
+        const maxChars = 15; // Gi?i h?n s? ký t? (có th? thay ??i)
+        document.querySelectorAll('.mega-menu-column').forEach(column => {
+            const content = column.getAttribute('data-content');
+            if (content && content.length > maxChars) {
+                column.classList.add('full-width');
             }
         });
 
