@@ -3,6 +3,6 @@
 <div class="card stat-card">
     <div class="card-body">
         <h5 class="card-title">Xem địa chỉ</h5>
-        <button>Add address</button>
+        <p><strong>Địa chỉ giao hàng:</strong> ${data.shipping_address}</p>
     </div>
 </div>

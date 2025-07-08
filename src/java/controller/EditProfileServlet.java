@@ -11,9 +11,10 @@ import util.EmailUtil;
 
 @WebServlet(name = "EditProfileServlet", urlPatterns = {"/editProfile"})
 public class EditProfileServlet extends HttpServlet {
+
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
-        throws ServletException, IOException {
+            throws ServletException, IOException {
         HttpSession session = request.getSession();
         String email = (String) session.getAttribute("session_login");
         String action = request.getParameter("action");
@@ -88,6 +89,32 @@ public class EditProfileServlet extends HttpServlet {
                 }
             } else {
                 out.print("{\"success\":false,\"error\":\"Mã xác nhận không đúng hoặc đã hết hạn.\"}");
+            }
+            return;
+        }
+        
+        if ("editName".equals(action)) {
+            String newName = request.getParameter("newName");
+
+            if (newName == null || newName.trim().isEmpty()) {
+                out.print("{\"success\":false,\"error\":\"Tên không được để trống.\"}");
+                return;
+            }
+
+            try {
+                CustomerDAO dao = new CustomerDAO();
+                dao.updateName(email, newName);
+
+                // Update session info if you store full Customer object
+                Customer currentUser = (Customer) session.getAttribute("customerAuth");
+                if (currentUser != null) {
+                    currentUser.setName(newName);
+                    session.setAttribute("customerAuth", currentUser);
+                }
+
+                out.print("{\"success\":true}");
+            } catch (Exception ex) {
+                out.print("{\"success\":false,\"error\":\"Không thể cập nhật tên: " + ex.getMessage() + "\"}");
             }
             return;
         }
