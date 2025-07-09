@@ -7,14 +7,12 @@ Click nbfs://nbhost/SystemFileSystem/Templates/JSP_Servlet/CascadeStyleSheet.css
     Author     : fpt shop
 */
 
-/* Đã loại bỏ các rule liên quan đến header để không đè lên header.jsp */
+/* Removed rules related to top-bar */
 :root {
     --primary-color: #0d6efd;
     --secondary-color: #6c757d;
     --accent-color: #ffc107;
-    --topbar-height: 40px;
     --navbar-height: 76px;
-    --total-header-height: calc(var(--topbar-height) + var(--navbar-height));
 }
 
 .hero-section {
@@ -26,7 +24,7 @@ Click nbfs://nbhost/SystemFileSystem/Templates/JSP_Servlet/CascadeStyleSheet.css
     color: white;
     padding: 100px 0;
     margin: 0;
-    min-height: calc(100vh - var(--total-header-height));
+    min-height: calc(100vh - var(--navbar-height)); /* Updated to use only navbar height */
     display: flex;
     align-items: center;
     position: relative;

@@ -10,7 +10,6 @@
     if (menuItems == null) {
         menuItems = new java.util.ArrayList<>(); // Fallback
     }
-    // Kh?i t?o renderedNames l� m?t HashMap
     pageContext.setAttribute("renderedNames", new HashMap<String, Boolean>());
     Gson gson = new Gson();
     String menuDataJson = gson.toJson(menuItems);
@@ -18,6 +17,7 @@
 
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
 <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+<link href="css/header.css" rel="stylesheet">
 
 <style>
     .menu-container {
@@ -104,7 +104,7 @@
         margin: 0 0 10px 0;
         font-size: 16px;
         font-weight: bold;
-        word-break: break-word; /* Cho ph�p xu?ng d�ng t? nhi�n */
+        word-break: break-word;
     }
     .mega-menu-column.full-width {
         flex: 0 0 100%;
@@ -121,7 +121,7 @@
     .mega-menu-column a {
         color: #000;
         text-decoration: none;
-        word-break: break-word; /* Cho ph�p xu?ng d�ng t? nhi�n */
+        word-break: break-word;
     }
     .mega-menu-column a:hover {
         color: #007bff;
@@ -161,20 +161,6 @@
         }
     }
 </style>
-
-<div class="top-bar">
-    <div class="container">
-        <div class="row">
-            <div class="col-md-6">
-                <i class="fas fa-phone-alt me-2"></i> 24/7 Customer Service: 1-800-123-4567
-            </div>
-            <div class="col-md-6 text-end">
-                <span class="me-3"><i class="fas fa-truck me-1"></i> Free shipping on orders over $100</span>
-                <span><i class="fas fa-map-marker-alt me-1"></i> Track Order</span>
-            </div>
-        </div>
-    </div>
-</div>
 
 <nav class="navbar navbar-expand-lg navbar-light bg-white fixed-top">
     <div class="container">
@@ -254,7 +240,6 @@
             <div class="d-flex align-items-center">
                 <c:choose>
                     <c:when test="${not empty sessionScope.userAuth or not empty sessionScope.customerAuth}">
-                        <!-- User Dropdown -->
                         <div class="dropdown me-3">
                             <c:choose>
                                 <c:when test="${fn:toLowerCase(sessionScope.user_role) eq 'admin'}">
@@ -379,6 +364,10 @@
                 });
                 listItem.addEventListener('mouseleave', () => {
                     console.log('[Header] Mouse leave level 1:', listItem);
+                    megaMenu.classList.add('show-menu');
+                });
+                listItem.addEventListener('mouseleave', () => {
+                    console.log('[Header] Mouse leave level 1:', listItem);
                     megaMenu.classList.remove('show-menu');
                 });
                 megaMenu.addEventListener('mouseenter', () => {
@@ -416,8 +405,7 @@
             }
         });
 
-        // ?i?u ch?nh k�ch th??c c?t d?a tr�n s? k� t?
-        const maxChars = 15; // Gi?i h?n s? k� t? (c� th? thay ??i)
+        const maxChars = 15;
         document.querySelectorAll('.mega-menu-column').forEach(column => {
             const content = column.getAttribute('data-content');
             if (content && content.length > maxChars) {
