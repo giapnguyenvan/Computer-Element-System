@@ -1,6 +1,7 @@
 package dal;
 
 import model.MenuItem;
+import model.MenuAttribute;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -23,6 +24,32 @@ public class MenuItemDAO {
                 Object parentId = rs.getObject("parent_id");
                 item.setParentId(parentId != null ? rs.getInt("parent_id") : null);
                 item.setStatus(rs.getString("status"));
+                list.add(item);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return list;
+    }
+
+    public static List<MenuItem> getAllMenuItemsWithAttributesAndValues() {
+        List<MenuItem> list = new ArrayList<>();
+        String sql = "SELECT menu_item_id, name, icon, url, parent_id, status FROM menu_item WHERE status = 'Activate'";
+        try (Connection conn = DBContext.getInstance().getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql);
+             ResultSet rs = ps.executeQuery()) {
+            while (rs.next()) {
+                MenuItem item = new MenuItem();
+                item.setMenuItemId(rs.getInt("menu_item_id"));
+                item.setName(rs.getString("name"));
+                item.setIcon(rs.getString("icon"));
+                item.setUrl(rs.getString("url"));
+                Object parentId = rs.getObject("parent_id");
+                item.setParentId(parentId != null ? rs.getInt("parent_id") : null);
+                item.setStatus(rs.getString("status"));
+                
+                // Lấy các MenuAttribute liên quan và gán vào MenuItem
+                item.setMenuAttributes(MenuAttributeDAO.getActiveMenuAttributesWithValuesByMenuItemId(item.getMenuItemId()));
                 list.add(item);
             }
         } catch (Exception e) {
@@ -119,6 +146,8 @@ public class MenuItemDAO {
         if (sort != null) {
             if ("asc".equals(sort)) sql.append(" ORDER BY name ASC");
             else if ("desc".equals(sort)) sql.append(" ORDER BY name DESC");
+            else if ("status".equals(sort)) sql.append(" ORDER BY status ASC");
+            else if ("status_desc".equals(sort)) sql.append(" ORDER BY status DESC");
             else sql.append(" ORDER BY menu_item_id ASC");
         } else {
             sql.append(" ORDER BY menu_item_id ASC");

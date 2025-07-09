@@ -1,11 +1,14 @@
 package model;
 
+import java.util.List;
+
 public class MenuAttribute {
     private int attributeId;
     private int menuItemId;
     private String name;
     private String url;
     private String status;
+    private List<MenuAttributeValue> menuAttributeValues;
     
     public MenuAttribute() {
     }
@@ -69,10 +72,18 @@ public class MenuAttribute {
     public void setStatus(String status) {
         this.status = status;
     }
-    
+
+    public List<MenuAttributeValue> getMenuAttributeValues() {
+        return menuAttributeValues;
+    }
+
+    public void setMenuAttributeValues(List<MenuAttributeValue> menuAttributeValues) {
+        this.menuAttributeValues = menuAttributeValues;
+    }
+
     @Override
     public String toString() {
         return "MenuAttribute{" + "attributeId=" + attributeId + ", menuItemId=" + menuItemId + 
-               ", name=" + name + ", url=" + url + ", status=" + status + '}';
+               ", name=" + name + ", url=" + url + ", status=" + status + ", menuAttributeValues=" + menuAttributeValues + '}';
     }
 } 

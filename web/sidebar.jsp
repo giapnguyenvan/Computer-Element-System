@@ -27,6 +27,19 @@
         <a href="${pageContext.request.contextPath}/category?sort=default" target="mainFrame" class="<%= request.getRequestURI().endsWith("categoryList.jsp") ? "active" : ""%>">
             <i class="fas fa-list me-2"></i> Categories
         </a>
+
+        <!-- Menu Management Dropdown -->
+        <div class="nav-item dropdown">
+            <a class="nav-link dropdown-toggle <%= request.getRequestURI().contains("menuItemManagement") || request.getRequestURI().contains("menuAttributeManagement") || request.getRequestURI().contains("menuAttributeValueManagement") ? "active" : ""%>" href="#" id="navbarDropdownMenuManagement" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                <i class="fas fa-bars me-2"></i> Menu Management
+            </a>
+            <ul class="dropdown-menu dropdown-menu-dark" aria-labelledby="navbarDropdownMenuManagement">
+                <li><a class="dropdown-item <%= request.getRequestURI().contains("menuItemManagement") ? "active" : ""%>" href="${pageContext.request.contextPath}/menuItemManagement" target="mainFrame">Menu Level 1</a></li>
+                <li><a class="dropdown-item <%= request.getRequestURI().contains("menuAttributeManagement") ? "active" : ""%>" href="${pageContext.request.contextPath}/menuAttributeManagement" target="mainFrame">Menu Level 2</a></li>
+                <li><a class="dropdown-item <%= request.getRequestURI().contains("menuAttributeValueManagement") ? "active" : ""%>" href="${pageContext.request.contextPath}/menuAttributeValueManagement" target="mainFrame">Menu Level 3</a></li>
+            </ul>
+        </div>
+
         <a href="${pageContext.request.contextPath}/productservlet" target="mainFrame" class="<%= request.getRequestURI().contains("productservlet") ? "active" : ""%>">
             <i class="fas fa-box me-2"></i> Products
         </a>

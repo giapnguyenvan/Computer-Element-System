@@ -1,5 +1,7 @@
 package model;
 
+import java.util.List;
+
 public class MenuItem {
     private int menuItemId;
     private String name;
@@ -7,6 +9,7 @@ public class MenuItem {
     private String url;
     private Integer parentId;
     private String status;
+    private List<MenuAttribute> menuAttributes;
     
     public MenuItem() {
     }
@@ -81,9 +84,17 @@ public class MenuItem {
         this.status = status;
     }
     
+    public List<MenuAttribute> getMenuAttributes() {
+        return menuAttributes;
+    }
+
+    public void setMenuAttributes(List<MenuAttribute> menuAttributes) {
+        this.menuAttributes = menuAttributes;
+    }
+
     @Override
     public String toString() {
         return "MenuItem{" + "menuItemId=" + menuItemId + ", name=" + name + ", icon=" + icon + 
-               ", url=" + url + ", parentId=" + parentId + ", status=" + status + '}';
+               ", url=" + url + ", parentId=" + parentId + ", status=" + status + ", menuAttributes=" + menuAttributes + '}';
     }
 } 
