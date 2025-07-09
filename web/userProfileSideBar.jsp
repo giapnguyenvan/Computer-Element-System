@@ -13,9 +13,6 @@
         <a href="${pageContext.request.contextPath}/userprofile?action=address" class="${param.activePage == 'address' ? 'active' : ''}">
             <i class="fas fa-map-marker-alt me-2"></i> Địa chỉ
         </a>
-        <a href="${pageContext.request.contextPath}/userprofile?action=changePassword" class="${param.activePage == 'changePassword' ? 'active' : ''}">
-            <i class="fas fa-lock me-2"></i> Đổi mật khẩu
-        </a>
         <a href="${pageContext.request.contextPath}/userprofile?action=orders" class="${param.activePage == 'orders' ? 'active' : ''}">
             <i class="fas fa-shopping-cart me-2"></i> Đơn hàng
         </a>

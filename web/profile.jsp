@@ -1,19 +1,19 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <style>
-.custom-btn {
-    background-color: #007BFF;
-    color: white;
-    border: none;
-    border-radius: 8px;
-    padding: 5px 10px;
-    font-size: 14px;
-    cursor: pointer;
-    margin-left: 10px;
-}
-.custom-btn:hover {
-    background-color: #0056b3;
-}
+    .custom-btn {
+        background-color: #007BFF;
+        color: white;
+        border: none;
+        border-radius: 8px;
+        padding: 5px 10px;
+        font-size: 14px;
+        cursor: pointer;
+        margin-left: 10px;
+    }
+    .custom-btn:hover {
+        background-color: #0056b3;
+    }
 </style>
 
 <div class="card stat-card">
@@ -33,6 +33,8 @@
             <button type="button" class="custom-btn" onclick="showEditPhoneModal()">Edit</button>
         </p>
         <p><strong>Địa chỉ giao hàng:</strong> ${data.shipping_address}</p>
+
+        <button type="button" class="custom-btn">Change password</button>
     </div>               
 </div>
 
@@ -215,6 +217,69 @@
                 .catch(err => {
                     console.error(err);
                     alert('Lỗi kết nối tới server.');
+                });
+    }
+    function showChangePasswordModal() {
+        document.getElementById('changePasswordModal').style.display = 'block';
+        document.getElementById('modalOverlay').style.display = 'block';
+    }
+    function closeChangePasswordModal() {
+        document.getElementById('changePasswordModal').style.display = 'none';
+        document.getElementById('modalOverlay').style.display = 'none';
+    }
+    function showVerifyPasswordModal() {
+        document.getElementById('verifyPasswordModal').style.display = 'block';
+        document.getElementById('modalOverlay').style.display = 'block';
+    }
+    function closeVerifyPasswordModal() {
+        document.getElementById('verifyPasswordModal').style.display = 'none';
+        document.getElementById('modalOverlay').style.display = 'none';
+    }
+
+    function submitNewPassword(event) {
+        event.preventDefault();
+        const newPassword = document.getElementById('newPassword').value;
+        const confirmPassword = document.getElementById('confirmPassword').value;
+
+        if (newPassword !== confirmPassword) {
+            alert("Mật khẩu không khớp!");
+            return;
+        }
+
+        fetch('editProfile', {
+            method: 'POST',
+            headers: {'Content-Type': 'application/x-www-form-urlencoded'},
+            body: 'action=initiatePasswordChange&newPassword=' + encodeURIComponent(newPassword)
+        })
+                .then(res => res.json())
+                .then(data => {
+                    if (data.success) {
+                        closeChangePasswordModal();
+                        showVerifyPasswordModal();
+                    } else {
+                        alert(data.error || "Lỗi gửi mã xác nhận.");
+                    }
+                });
+    }
+
+    function submitPasswordToken(event) {
+        event.preventDefault();
+        const token = document.getElementById('passwordTokenInput').value;
+
+        fetch('editProfile', {
+            method: 'POST',
+            headers: {'Content-Type': 'application/x-www-form-urlencoded'},
+            body: 'action=verifyPasswordToken&token=' + encodeURIComponent(token)
+        })
+                .then(res => res.json())
+                .then(data => {
+                    if (data.success) {
+                        closeVerifyPasswordModal();
+                        alert("Đổi mật khẩu thành công!");
+                        window.location.reload();
+                    } else {
+                        alert(data.error || "Sai mã xác nhận!");
+                    }
                 });
     }
 </script>
