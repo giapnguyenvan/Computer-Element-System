@@ -350,10 +350,18 @@ public class ManageBlogServlet extends HttpServlet {
                                 String realPath = getServletContext().getRealPath(uploadPath);
                                 java.io.File uploadDir = new java.io.File(realPath).getParentFile();
                                 if (!uploadDir.exists()) {
-                                    uploadDir.mkdirs();
+                                    boolean created = uploadDir.mkdirs();
+                                    if (!created) {
+                                        System.err.println("Failed to create directory: " + uploadDir.getAbsolutePath());
+                                    }
                                 }
-                                
-                                filePart.write(realPath);
+                                System.out.println("Saving image to: " + realPath);
+                                try {
+                                    filePart.write(realPath);
+                                } catch (Exception ex) {
+                                    System.err.println("Failed to save image file: " + realPath);
+                                    ex.printStackTrace();
+                                }
                                 
                                 // Save image info to database
                                 BlogImage blogImage = new BlogImage(0, blogId, uploadPath, fileName, 0, null);
@@ -415,10 +423,18 @@ public class ManageBlogServlet extends HttpServlet {
                             String realPath = getServletContext().getRealPath(uploadPath);
                             java.io.File uploadDir = new java.io.File(realPath).getParentFile();
                             if (!uploadDir.exists()) {
-                                uploadDir.mkdirs();
+                                boolean created = uploadDir.mkdirs();
+                                if (!created) {
+                                    System.err.println("Failed to create directory: " + uploadDir.getAbsolutePath());
+                                }
                             }
-                            
-                            filePart.write(realPath);
+                            System.out.println("Saving image to: " + realPath);
+                            try {
+                                filePart.write(realPath);
+                            } catch (Exception ex) {
+                                System.err.println("Failed to save image file: " + realPath);
+                                ex.printStackTrace();
+                            }
                             
                             // Save image info to database
                             BlogImage blogImage = new BlogImage(0, id, uploadPath, fileName, 0, null);

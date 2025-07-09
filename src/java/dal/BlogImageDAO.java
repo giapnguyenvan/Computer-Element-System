@@ -65,7 +65,7 @@ public class BlogImageDAO {
         try {
             PreparedStatement ptm = db.getConnection().prepareStatement(sql);
             ptm.setInt(1, image.getBlog_id());
-            ptm.setString(2, image.getImage_url());
+            ptm.setString(2, model.BlogImage.normalizeImageUrl(image.getImage_url()));
             ptm.setString(3, image.getImage_alt());
             ptm.setInt(4, image.getDisplay_order());
             ptm.executeUpdate();
@@ -80,7 +80,7 @@ public class BlogImageDAO {
         String sql = "UPDATE blog_image SET image_url = ?, image_alt = ?, display_order = ? WHERE image_id = ?";
         try {
             PreparedStatement ptm = db.getConnection().prepareStatement(sql);
-            ptm.setString(1, image.getImage_url());
+            ptm.setString(1, model.BlogImage.normalizeImageUrl(image.getImage_url()));
             ptm.setString(2, image.getImage_alt());
             ptm.setInt(3, image.getDisplay_order());
             ptm.setInt(4, image.getImage_id());
@@ -165,6 +165,72 @@ public class BlogImageDAO {
             ex.printStackTrace();
         }
         return 0;
+    }
+
+    // Batch insert images
+    public void insertBlogImages(Vector<BlogImage> images) {
+        if (images == null || images.isEmpty()) return;
+        DBContext db = DBContext.getInstance();
+        String sql = "INSERT INTO blog_image (blog_id, image_url, image_alt, display_order) VALUES (?, ?, ?, ?)";
+        try {
+            PreparedStatement ptm = db.getConnection().prepareStatement(sql);
+            for (BlogImage image : images) {
+                ptm.setInt(1, image.getBlog_id());
+                ptm.setString(2, model.BlogImage.normalizeImageUrl(image.getImage_url()));
+                ptm.setString(3, image.getImage_alt());
+                ptm.setInt(4, image.getDisplay_order());
+                ptm.addBatch();
+            }
+            ptm.executeBatch();
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+        }
+    }
+
+    // Batch delete images by IDs
+    public void deleteBlogImages(Vector<Integer> imageIds) {
+        if (imageIds == null || imageIds.isEmpty()) return;
+        DBContext db = DBContext.getInstance();
+        String sql = "DELETE FROM blog_image WHERE image_id = ?";
+        try {
+            PreparedStatement ptm = db.getConnection().prepareStatement(sql);
+            for (Integer id : imageIds) {
+                ptm.setInt(1, id);
+                ptm.addBatch();
+            }
+            ptm.executeBatch();
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+        }
+    }
+
+    // Update image alt text
+    public void updateImageAlt(int imageId, String newAlt) {
+        DBContext db = DBContext.getInstance();
+        String sql = "UPDATE blog_image SET image_alt = ? WHERE image_id = ?";
+        try {
+            PreparedStatement ptm = db.getConnection().prepareStatement(sql);
+            ptm.setString(1, newAlt);
+            ptm.setInt(2, imageId);
+            ptm.executeUpdate();
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+        }
+    }
+
+    // Check if an image exists by URL
+    public boolean imageExists(String imageUrl) {
+        DBContext db = DBContext.getInstance();
+        String sql = "SELECT 1 FROM blog_image WHERE image_url = ? LIMIT 1";
+        try {
+            PreparedStatement ptm = db.getConnection().prepareStatement(sql);
+            ptm.setString(1, imageUrl);
+            ResultSet rs = ptm.executeQuery();
+            return rs.next();
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+        }
+        return false;
     }
 
     public static void main(String[] args) {
