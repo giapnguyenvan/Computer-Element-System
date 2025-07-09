@@ -92,7 +92,7 @@ public class EditProfileServlet extends HttpServlet {
             }
             return;
         }
-        
+
         if ("editName".equals(action)) {
             String newName = request.getParameter("newName");
 
@@ -115,6 +115,44 @@ public class EditProfileServlet extends HttpServlet {
                 out.print("{\"success\":true}");
             } catch (Exception ex) {
                 out.print("{\"success\":false,\"error\":\"Không thể cập nhật tên: " + ex.getMessage() + "\"}");
+            }
+            return;
+        }
+        
+        if ("initiatePasswordChange".equals(action)) {
+            String newPassword = request.getParameter("newPassword");
+            if (newPassword == null || newPassword.length() < 8) {
+                out.print("{\"success\":false,\"error\":\"Mật khẩu phải có ít nhất 8 ký tự.\"}");
+                return;
+            }
+            String verificationCode = String.format("%06d", new java.util.Random().nextInt(1000000));
+            session.setAttribute("pending_new_password", newPassword);
+            session.setAttribute("password_verification_code", verificationCode);
+            try {
+                EmailUtil.sendVerificationEmail(email, verificationCode);
+                out.print("{\"success\":true}");
+            } catch (Exception ex) {
+                out.print("{\"success\":false,\"error\":\"Không thể gửi email xác nhận: " + ex.getMessage() + "\"}");
+            }
+            return;
+        }
+
+        if ("verifyPasswordToken".equals(action)) {
+            String token = request.getParameter("token");
+            String code = (String) session.getAttribute("password_verification_code");
+            String newPassword = (String) session.getAttribute("pending_new_password");
+            if (code != null && code.equals(token) && newPassword != null) {
+                try {
+                    CustomerDAO dao = new CustomerDAO();
+                    dao.updatePassword(email, newPassword);
+                    session.removeAttribute("password_verification_code");
+                    session.removeAttribute("pending_new_password");
+                    out.print("{\"success\":true}");
+                } catch (Exception ex) {
+                    out.print("{\"success\":false,\"error\":\"Không thể cập nhật mật khẩu: " + ex.getMessage() + "\"}");
+                }
+            } else {
+                out.print("{\"success\":false,\"error\":\"Mã xác nhận không đúng hoặc đã hết hạn.\"}");
             }
             return;
         }
