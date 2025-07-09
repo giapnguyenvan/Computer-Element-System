@@ -317,6 +317,168 @@
                 color: #fff !important;
                 box-shadow: 0 4px 16px rgba(13,110,253,0.15);
             }
+            /* Modern tech style for modal popup in pcBuilder.jsp */
+            #viewProductModal .modal-content {
+                border-radius: 18px;
+                box-shadow: 0 8px 32px rgba(0,0,0,0.18), 0 1.5px 8px rgba(0,123,255,0.08);
+                border: none;
+                background: rgba(255,255,255,0.98);
+                overflow: hidden;
+                animation: modalFadeIn 0.4s cubic-bezier(.4,0,.2,1);
+            }
+            #viewProductModal .modal-header {
+                background: linear-gradient(90deg, #0d6efd 0%, #00c6ff 100%);
+                color: #fff;
+                border-bottom: none;
+                padding: 1.2rem 2rem 1.2rem 2rem;
+                align-items: center;
+                justify-content: space-between;
+            }
+            #viewProductModal .modal-title {
+                font-size: 1.5rem;
+                font-weight: 700;
+                letter-spacing: 1px;
+                text-shadow: 0 2px 8px rgba(0,0,0,0.08);
+                margin: 0 auto;
+            }
+            #viewProductModal .btn-back {
+                background: #fff url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" stroke="%230d6efd" stroke-width="3" viewBox="0 0 24 24"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>') center/1.2em auto no-repeat;
+                border-radius: 50%;
+                width: 2.5rem;
+                height: 2.5rem;
+                opacity: 0.85;
+                transition: background 0.2s, box-shadow 0.2s;
+                box-shadow: 0 2px 8px rgba(13,110,253,0.08);
+                border: none;
+                margin-right: auto;
+            }
+            #viewProductModal .btn-back:hover {
+                background-color: #e3f0ff;
+                opacity: 1;
+            }
+            #viewProductModal .btn-forward {
+                background: #fff url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" stroke="%230d6efd" stroke-width="3" viewBox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7"/></svg>') center/1.2em auto no-repeat;
+                border-radius: 50%;
+                width: 2.5rem;
+                height: 2.5rem;
+                opacity: 0.85;
+                transition: background 0.2s, box-shadow 0.2s;
+                box-shadow: 0 2px 8px rgba(13,110,253,0.08);
+                border: none;
+                margin-left: 0.5rem;
+            }
+            #viewProductModal .btn-forward:hover {
+                background-color: #e3f0ff;
+                opacity: 1;
+            }
+            #viewProductModal .btn-reset {
+                background: #fff url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" stroke="%230d6efd" stroke-width="3" viewBox="0 0 24 24"><path d="M3 12a9 9 0 1 1 9 9M3 12h9M3 12l3-3M3 12l3 3"/></svg>') center/1.2em auto no-repeat;
+                border-radius: 50%;
+                width: 2.5rem;
+                height: 2.5rem;
+                opacity: 0.85;
+                transition: background 0.2s, box-shadow 0.2s;
+                box-shadow: 0 2px 8px rgba(13,110,253,0.08);
+                border: none;
+                margin-left: 0.5rem;
+            }
+            #viewProductModal .btn-reset:hover {
+                background-color: #e3f0ff;
+                opacity: 1;
+            }
+            #viewProductModal .btn-close {
+                background: #fff url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" fill="none" stroke="%230d6efd" stroke-width="3" viewBox="0 0 24 24"><path d="M6 6l12 12M6 18L18 6"/></svg>') center/1.5em auto no-repeat;
+                border-radius: 50%;
+                width: 2.5rem;
+                height: 2.5rem;
+                opacity: 0.85;
+                transition: background 0.2s, box-shadow 0.2s;
+                box-shadow: 0 2px 8px rgba(13,110,253,0.08);
+                margin-left: 0.5rem;
+            }
+            #viewProductModal .btn-close:hover {
+                background-color: #e3f0ff;
+                opacity: 1;
+            }
+            #viewProductModal .modal-body {
+                background: linear-gradient(120deg, #f8fafd 60%, #e3f0ff 100%);
+                padding: 0;
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                height: 80vh;
+                min-height: 400px;
+                max-height: 90vh;
+                overflow: hidden;
+            }
+            #viewProductModal iframe {
+                border-radius: 0 0 18px 18px;
+                background: transparent;
+                box-shadow: none;
+                transition: box-shadow 0.2s;
+                max-width: 100%;
+                max-height: 100%;
+                width: 100%;
+                height: 100%;
+                overflow-x: auto;
+                display: block;
+                scrollbar-color: #0d6efd #e3f0ff;
+                scrollbar-width: thin;
+            }
+            @keyframes modalFadeIn {
+                from { transform: translateY(40px) scale(0.98); opacity: 0; }
+                to { transform: none; opacity: 1; }
+            }
+            #productSelectModal .table-responsive {
+                margin: 0;
+                padding: 0;
+            }
+            #productSelectModal table {
+                width: 100%;
+                table-layout: auto;
+                word-break: break-word;
+            }
+            #productSelectModal th, #productSelectModal td {
+                white-space: normal !important;
+                word-break: break-word;
+                vertical-align: middle;
+                font-size: 1rem;
+                padding: 0.5rem 0.75rem;
+            }
+            #productSelectModal .modal-dialog {
+                max-width: 98vw;
+                width: 98vw;
+                margin: 0 auto;
+            }
+            #productSelectModal .modal-content {
+                width: 100%;
+                min-height: 80vh;
+                max-height: 95vh;
+            }
+            #productSelectModal .modal-body {
+                overflow: visible !important;
+                max-height: none !important;
+                padding: 0;
+            }
+            #productSelectModal .table-responsive {
+                overflow-x: visible !important;
+            }
+            #productSelectModal table {
+                width: 100%;
+                table-layout: auto;
+            }
+            #productSelectModal table,
+            #productSelectModal th,
+            #productSelectModal td {
+                font-size: 0.92em;
+                padding: 0.3em 0.5em;
+            }
+            /* Tuỳ chọn: scale nhỏ bảng để vừa modal */
+            #productSelectModal .table-responsive {
+                transform: scale(0.85);
+                transform-origin: top left;
+                width: 117.6%; /* 1/0.85 để bù lại scale */
+            }
         </style>
     </head>
     <body>
@@ -740,6 +902,7 @@
         </div>
         <jsp:include page="footer.jsp"/>
         <script>
+        //<![CDATA[
             // Add JavaScript to calculate total price when components are selected
             document.querySelectorAll('select').forEach(select => {
                 select.addEventListener('change', calculateTotal);
@@ -839,9 +1002,9 @@
                     console.log('Đã click vào:', component, brand, series);
                     
                     if (component) {
-                        let url = `PCBuilderServlet?action=getProducts&componentType=${component}`;
-                        if (brand) url += `&brand=${encodeURIComponent(brand)}`;
-                        if (series) url += `&series=${encodeURIComponent(series)}`;
+                        let url = 'PCBuilderServlet?action=getProducts&componentType=' + component;
+                        if (brand) url += '&brand=' + encodeURIComponent(brand);
+                        if (series) url += '&series=' + encodeURIComponent(series);
                         
                         fetch(url)
                             .then(res => res.json())
@@ -896,43 +1059,92 @@
             
             // Function to select a component and update progress
             function selectComponent(componentType) {
+                // Gọi API lấy sản phẩm theo loại linh kiện
                 const url = `PCBuilderServlet?action=getProducts&componentType=${componentType}`;
                 fetch(url)
                     .then(res => res.json())
                     .then(products => {
-                        let html = `<div class='row'>`;
+                        let html = `
+                            <div class="row mb-3">
+                                <div class="col">
+                                    <input type="text" id="searchInput" class="form-control" placeholder="Tìm kiếm...">
+                                </div>
+                                <div class="col">
+                                    <select id="brandFilter" class="form-select">
+                                        <option value="">Tất cả Brand</option>
+                                        <!-- Options sẽ được JS render -->
+                                    </select>
+                                </div>
+                                <div class="col">
+                                    <select id="seriesFilter" class="form-select">
+                                        <option value="">Tất cả Series</option>
+                                        <!-- Options sẽ được JS render -->
+                                    </select>
+                                </div>
+                            </div>
+                            <table class="table table-bordered align-middle" id="productTable">
+                                <thead>
+                                    <tr>
+                                        <th>Tên</th>
+                                        <th>Brand</th>
+                                        <th>Series</th>
+                                        <th>Model</th>
+                                        <th>Giá</th>
+                                        <th>Stock</th>
+                                        <th>Chọn</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                        `;
                         products.forEach(p => {
                             html += `
-                                <div class="col-md-4 mb-4">
-                                    <div class="card component-card h-100">
-                                        <img src="${p.image_url || 'assets/images/default-product.jpg'}" class="card-img-top" alt="${p.name}" style="height: 200px; object-fit: cover;">
-                                        <div class="card-body d-flex flex-column justify-content-between">
-                                            <div>
-                                                <h5 class="card-title">${p.name}</h5>
-                                                <p class="card-text mb-2">
-                                                    <strong>Brand:</strong> ${p.brandName}<br>
-                                                    <strong>Series:</strong> ${p.seriesName || 'N/A'}<br>
-                                                    <strong>Model:</strong> ${p.modelName || 'N/A'}<br>
-                                                    <strong>Price:</strong> $${p.price}<br>
-                                                    <strong>Stock:</strong> ${p.stock}
-                                                </p>
-                                                <p class="card-text small text-muted">${p.description || ''}</p>
-                                            </div>
-                                            <button class="btn btn-primary mt-2" onclick="confirmSelectComponent('${componentType}', ${p.product_id}, '${p.name}', ${p.price})">Add to configuration</button>
-                                        </div>
-                                    </div>
-                                </div>
+                                <tr>
+                                    <td>${p.name}</td>
+                                    <td>${p.brandName}</td>
+                                    <td>${p.seriesName || ''}</td>
+                                    <td>${p.modelName || ''}</td>
+                                    <td>${p.price}</td>
+                                    <td>${p.stock}</td>
+                                    <td>
+                                        <button class="btn btn-primary btn-sm" onclick="confirmSelectComponent('${componentType}', ${p.product_id}, '${p.name}', ${p.price})">Chọn</button>
+                                    </td>
+                                </tr>
                             `;
                         });
-                        html += '</div>';
-                        document.getElementById('componentModalContent').innerHTML = html;
-                        // Hiển thị modal
-                        const modal = new bootstrap.Modal(document.getElementById('componentModal'));
+                        html += `</tbody></table>`;
+                        document.getElementById('productSelectModalBody').innerHTML = html;
+                        // Hiện modal
+                        const modal = new bootstrap.Modal(document.getElementById('productSelectModal'));
                         modal.show();
+
+                        // Thêm filter search
+                        document.getElementById('searchInput').addEventListener('input', filterTable);
+                        document.getElementById('brandFilter').addEventListener('change', filterTable);
+                        document.getElementById('seriesFilter').addEventListener('change', filterTable);
+                        function filterTable() {
+                            const search = document.getElementById('searchInput').value.toLowerCase();
+                            const brand = document.getElementById('brandFilter').value;
+                            const series = document.getElementById('seriesFilter').value;
+                            document.querySelectorAll('#productTable tbody tr').forEach(row => {
+                                const cells = row.children;
+                                const matchSearch = cells[0].textContent.toLowerCase().includes(search);
+                                const matchBrand = !brand || cells[1].textContent === brand;
+                                const matchSeries = !series || cells[2].textContent === series;
+                                row.style.display = (matchSearch && matchBrand && matchSeries) ? '' : 'none';
+                            });
+                        }
+
+                        // Sau khi fetch xong products:
+                        const brands = [...new Set(products.map(p => p.brandName))].filter(Boolean);
+                        const series = [...new Set(products.map(p => p.seriesName))].filter(Boolean);
+                        const brandFilter = document.getElementById('brandFilter');
+                        const seriesFilter = document.getElementById('seriesFilter');
+                        if (brandFilter) brandFilter.innerHTML = '<option value="">Tất cả Brand</option>' + brands.map(b => `<option value="${b}">${b}</option>`).join('');
+                        if (seriesFilter) seriesFilter.innerHTML = '<option value="">Tất cả Series</option>' + series.map(s => `<option value="${s}">${s}</option>`).join('');
                     })
                     .catch(error => {
-                        document.getElementById('componentModalContent').innerHTML = '<p>Lỗi khi tải sản phẩm.</p>';
-                        const modal = new bootstrap.Modal(document.getElementById('componentModal'));
+                        document.getElementById('productSelectModalBody').innerHTML = '<p>Lỗi khi tải sản phẩm.</p>';
+                        const modal = new bootstrap.Modal(document.getElementById('productSelectModal'));
                         modal.show();
                     });
             }
@@ -979,7 +1191,7 @@
             // Hàm xác nhận chọn linh kiện trong modal
             function confirmSelectComponent(componentType, productId, productName, price) {
                 // Đóng modal
-                const modal = bootstrap.Modal.getInstance(document.getElementById('componentModal'));
+                const modal = bootstrap.Modal.getInstance(document.getElementById('productSelectModal'));
                 if (modal) modal.hide();
                 // Cập nhật cấu hình như cũ
                 const stepElement = document.getElementById(`step-${componentType.toLowerCase()}`);
@@ -1004,22 +1216,68 @@
             window.addEventListener('load', function() {
                 updateProgressBar();
             });
+
+            // Gắn sự kiện cho các nút chọn linh kiện để mở modal chứa viewProduct.jsp
+            window.addEventListener('DOMContentLoaded', function() {
+                document.querySelectorAll('.btn.btn-pcbuilder-white.btn-lg').forEach(btn => {
+                    btn.addEventListener('click', function(e) {
+                        e.preventDefault();
+                        const modal = new bootstrap.Modal(document.getElementById('viewProductModal'));
+                        modal.show();
+                    });
+                });
+            });
+
+            // Hàm đóng modal sản phẩm
+            function closeProductModal() {
+                const modal = bootstrap.Modal.getInstance(document.getElementById('viewProductModal'));
+                if (modal) modal.hide();
+            }
+
+            // Hàm quay lại bước trước đó trong iframe
+            function backProductModal() {
+                const iframe = document.getElementById('viewProductIframe');
+                try {
+                    // Thử gọi history.back() trong iframe
+                    iframe.contentWindow.history.back();
+                } catch (e) {
+                    // Nếu không thể truy cập iframe (CORS), reload về trang đầu
+                    iframe.src = 'productservlet?service=viewProduct';
+                }
+            }
+
+            // Hàm tiến tới (reload iframe)
+            function forwardProductModal() {
+                const iframe = document.getElementById('viewProductIframe');
+                iframe.src = iframe.src;
+            }
+
+            // Hàm reset (về trang đầu)
+            function resetProductModal() {
+                const iframe = document.getElementById('viewProductIframe');
+                iframe.src = 'productservlet?service=viewProduct';
+            }
+        //]]>
         </script>
-        <!-- Modal chọn linh kiện -->
-        <div class="modal fade" id="componentModal" tabindex="-1" aria-labelledby="componentModalLabel" aria-hidden="true">
+        <!-- Modal popup viewProduct -->
+        <div class="modal fade" id="viewProductModal" tabindex="-1" aria-labelledby="viewProductModalLabel" aria-hidden="true">
             <div class="modal-dialog modal-xl">
                 <div class="modal-content">
                     <div class="modal-header">
-                        <h5 class="modal-title" id="componentModalLabel">Select component</h5>
-                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                    </div>
-                    <div class="modal-body">
-                        <div id="componentModalContent">
-                            <!-- Sản phẩm sẽ được render ở đây -->
+                        <div class="d-flex align-items-center">
+                            <button type="button" class="btn-back" onclick="backProductModal()" aria-label="Quay lại"></button>
+                            <button type="button" class="btn-forward" onclick="forwardProductModal()" aria-label="Tiến tới"></button>
+                            <button type="button" class="btn-reset" onclick="resetProductModal()" aria-label="Làm mới"></button>
                         </div>
+                        <h5 class="modal-title" id="viewProductModalLabel">Select Components</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Đóng"></button>
+                    </div>
+                    <div class="modal-body p-0" style="height:80vh;">
+                        <iframe id="viewProductIframe" src="productservlet?service=viewProduct" style="width:100%;height:100%;border:none;"></iframe>
                     </div>
                 </div>
             </div>
         </div>
+        
     </body>
 </html> 

@@ -178,7 +178,10 @@
                         <!-- Blog Image -->
                         <c:choose>
                             <c:when test="${not empty blog.images and blog.images.size() > 0}">
-                                <img src="${blog.images[0].image_url}" alt="${blog.images[0].image_alt}" class="blog-image">
+                                <img src="${blog.images[0].image_url}" alt="${blog.images[0].image_alt}" class="blog-image" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                                <div class="blog-image-placeholder" style="display: none;">blo
+                                    <i class="fas fa-image fa-2x"></i>
+                                </div>
                             </c:when>
                             <c:otherwise>
                                 <div class="blog-image-placeholder">
@@ -198,14 +201,12 @@
                                 <p class="card-text">${fn:substring(blog.content, 0, 100)}${fn:length(blog.content) > 100 ? '...' : ''}</p>
                             </div>
                             <div class="blog-meta">
-                                <small>Author: ${customerNames[blog.customer_id]}</small>
-                                <c:if test="${not empty blog.images and blog.images.size() > 0}">
-                                    <br><small><i class="fas fa-images"></i> ${blog.images.size()} image(s)</small>
-                                </c:if>
+                                <small>Author: ${userNames[blog.user_id]}</small>
+                                <br><small><i class="fas fa-images"></i> ${empty blog.images ? 0 : blog.images.size()} image(s)</small>
                             </div>
                             <div class="mt-3">
                                 <button type="button" class="btn btn-sm btn-info" 
-                                        onclick="showBlogContent(this, '${fn:escapeXml(blog.title)}', '${fn:escapeXml(blog.content)}', '${fn:escapeXml(customerNames[blog.customer_id])}', '<fmt:formatDate value='${blog.created_at}' pattern='dd/MM/yyyy HH:mm'/>', ${blog.blog_id})">
+                                        onclick="showBlogContent(this, '${fn:escapeXml(blog.title)}', '${fn:escapeXml(blog.content)}', '${fn:escapeXml(userNames[blog.user_id])}', '<fmt:formatDate value='${blog.created_at}' pattern='dd/MM/yyyy HH:mm'/>', ${blog.blog_id})">
                                     <i class="fas fa-eye me-1"></i>View Details
                                 </button>
                             </div>
@@ -314,19 +315,41 @@
             imagesContainer.style.display = 'none';
             imageGallery.innerHTML = '';
             
-            // For now, we'll show a placeholder message
-            // In a real implementation, you would make an AJAX call to get images
-            imageGallery.innerHTML = '<div class="no-images-message">Loading images...</div>';
-            imagesContainer.style.display = 'block';
-            imageCount.textContent = '...';
-            
-            // Simulate loading images (replace with actual AJAX call)
-            setTimeout(() => {
-                // This is where you would make an AJAX call to get images for the blog
-                // For demo purposes, we'll show a message
-                imageGallery.innerHTML = '<div class="no-images-message">Images feature is ready! Blog ID: ' + blogId + '</div>';
-                imageCount.textContent = '0';
-            }, 500);
+            // Load images via AJAX
+            fetch(`viewblogs?action=view&id=${blogId}`, {
+                headers: {
+                    'X-Requested-With': 'XMLHttpRequest'
+                }
+            })
+                .then(response => response.json())
+                .then(data => {
+                    const images = data.images || [];
+                    
+                    // Display images
+                    if (images && images.length > 0) {
+                        imagesContainer.style.display = 'block';
+                        imageCount.textContent = images.length;
+                        
+                        images.forEach(image => {
+                            const imgElement = document.createElement('img');
+                            imgElement.src = image.image_url;
+                            imgElement.alt = image.image_alt || 'Blog image';
+                            imgElement.className = 'gallery-image';
+                            imgElement.onclick = () => openImageModal(image.image_url, image.image_alt);
+                            imageGallery.appendChild(imgElement);
+                        });
+                    } else {
+                        imageGallery.innerHTML = '<div class="no-images-message">No images available for this blog.</div>';
+                        imageCount.textContent = '0';
+                        imagesContainer.style.display = 'block';
+                    }
+                })
+                .catch(error => {
+                    console.error('Error loading images:', error);
+                    imageGallery.innerHTML = '<div class="no-images-message">Error loading images.</div>';
+                    imageCount.textContent = '0';
+                    imagesContainer.style.display = 'block';
+                });
             
             new bootstrap.Modal(document.getElementById('blogContentModal')).show();
         }

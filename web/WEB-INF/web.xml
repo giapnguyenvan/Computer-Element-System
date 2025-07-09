@@ -8,14 +8,7 @@
         <servlet-name>LogoutServlet</servlet-name>
         <servlet-class>controller.LogoutServlet</servlet-class>
     </servlet>
-    <servlet>
-        <servlet-name>RegisterServlet</servlet-name>
-        <servlet-class>controller.RegisterServlet</servlet-class>
-    </servlet>
-    <servlet>
-        <servlet-name>ForgetPasswordServlet</servlet-name>
-        <servlet-class>controller.ForgetPasswordServlet</servlet-class>
-    </servlet>
+
     <servlet>
         <servlet-name>CategoryController</servlet-name>
         <servlet-class>controller.CategoryController</servlet-class>
@@ -28,6 +21,7 @@
         <servlet-name>GPUCategoryServlet</servlet-name>
         <servlet-class>controller.GPUCategoryServlet</servlet-class>
     </servlet>
+
     <servlet>
         <servlet-name>RAMCategoryServlet</servlet-name>
         <servlet-class>controller.RAMCategoryServlet</servlet-class>
@@ -44,6 +38,7 @@
         <servlet-name>MenuAttributeValueManagementServlet</servlet-name>
         <servlet-class>controller.MenuAttributeValueManagementServlet</servlet-class>
     </servlet>
+
     <servlet-mapping>
         <servlet-name>LoginServlet</servlet-name>
         <url-pattern>/login</url-pattern>
@@ -52,14 +47,7 @@
         <servlet-name>LogoutServlet</servlet-name>
         <url-pattern>/logout</url-pattern>
     </servlet-mapping>
-    <servlet-mapping>
-        <servlet-name>RegisterServlet</servlet-name>
-        <url-pattern>/register</url-pattern>
-    </servlet-mapping>
-    <servlet-mapping>
-        <servlet-name>ForgetPasswordServlet</servlet-name>
-        <url-pattern>/forget-password</url-pattern>
-    </servlet-mapping>
+
     <servlet-mapping>
         <servlet-name>CategoryController</servlet-name>
         <url-pattern>/category</url-pattern>
@@ -72,6 +60,7 @@
         <servlet-name>GPUCategoryServlet</servlet-name>
         <url-pattern>/GPUCategoryServlet</url-pattern>
     </servlet-mapping>
+
     <servlet-mapping>
         <servlet-name>RAMCategoryServlet</servlet-name>
         <url-pattern>/RAMCategoryServlet</url-pattern>
@@ -88,6 +77,7 @@
         <servlet-name>MenuAttributeValueManagementServlet</servlet-name>
         <url-pattern>/menuAttributeValueManagement</url-pattern>
     </servlet-mapping>
+
     <welcome-file-list>
         <welcome-file>homepageservlet</welcome-file>
     </welcome-file-list>

@@ -145,7 +145,7 @@
                                     Edit
                                 </button>
                                 <button type="button" class="btn btn-sm btn-danger" 
-                                        onclick="confirmDelete('${blog.blog_id}', '${blog.user_id}')">
+                                        onclick="confirmDelete('${blog.blog_id}')">
                                     Delete
                                 </button>
                             </div>
@@ -215,15 +215,6 @@
                         </div>
                         
                         <div class="mb-3">
-                            <label class="form-label">Author:</label>
-                            <select class="form-select" name="customer_email" required>
-                                <c:forEach items="${customerList}" var="customer">
-                                    <option value="${customer.email}">${customer.name}</option>
-                                </c:forEach>
-                            </select>
-                        </div>
-                        
-                        <div class="mb-3">
                             <label class="form-label">Images:</label>
                             <input type="file" class="form-control" name="images" multiple accept="image/*">
                         </div>
@@ -249,7 +240,7 @@
                     <div class="modal-body">
                         <input type="hidden" name="action" value="update">
                         <input type="hidden" name="id" id="edit_blog_id">
-                        <input type="hidden" name="customer_id" id="edit_customer_id">
+                        <input type="hidden" name="user_id" id="edit_user_id">
                         
                         <div class="mb-3">
                             <label class="form-label">Title:</label>
@@ -325,10 +316,10 @@
             document.getElementById('edit_blog_id').value = id;
             document.getElementById('edit_title').value = title;
             document.getElementById('edit_content').value = content;
-            document.getElementById('edit_customer_id').value = userId;
+            document.getElementById('edit_user_id').value = userId;
         }
         
-        function confirmDelete(blogId, userId) {
+        function confirmDelete(blogId) {
             if (confirm('Are you sure you want to delete this blog?')) {
                 const form = document.createElement('form');
                 form.method = 'POST';
@@ -341,17 +332,11 @@
                 
                 const idInput = document.createElement('input');
                 idInput.type = 'hidden';
-                idInput.name = 'id';
+                idInput.name = 'blog_id';
                 idInput.value = blogId;
-                
-                const userIdInput = document.createElement('input');
-                userIdInput.type = 'hidden';
-                userIdInput.name = 'user_id';
-                userIdInput.value = userId;
                 
                 form.appendChild(actionInput);
                 form.appendChild(idInput);
-                form.appendChild(userIdInput);
                 document.body.appendChild(form);
                 form.submit();
             }

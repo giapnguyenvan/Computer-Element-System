@@ -32,17 +32,18 @@ DROP TABLE IF EXISTS `menu_attribute`;
 DROP TABLE IF EXISTS `menu_item`;
 
 -- Create parent tables
-CREATE TABLE `brand` (
-  `brand_id` INT NOT NULL AUTO_INCREMENT,
-  `name` VARCHAR(100) NOT NULL,
-  PRIMARY KEY (`brand_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
-
 CREATE TABLE `componenttype` (
   `type_id` INT NOT NULL AUTO_INCREMENT,
   `name` VARCHAR(100) NOT NULL,
   `description` VARCHAR(255) DEFAULT NULL,
   PRIMARY KEY (`type_id`)
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+CREATE TABLE `brand` (
+  `brand_id` INT NOT NULL AUTO_INCREMENT,
+  `name` VARCHAR(100) NOT NULL,
+  `description` TEXT,
+  PRIMARY KEY (`brand_id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 CREATE TABLE `paymentmethod` (
@@ -51,7 +52,7 @@ CREATE TABLE `paymentmethod` (
   `description` VARCHAR(255) DEFAULT NULL,
   `status` ENUM('Active', 'Inactive') NOT NULL DEFAULT 'Active',
   PRIMARY KEY (`payment_method_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4 collate=utf8mb4_0900_ai_ci;
 
 CREATE TABLE `user` (
   `user_id` INT NOT NULL AUTO_INCREMENT,
@@ -66,14 +67,18 @@ CREATE TABLE `user` (
   UNIQUE KEY `username` (`username`)
 ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
--- Bảng phụ thuộc nhiều bảng cha
+-- Create dependent tables
 CREATE TABLE `series` (
   `series_id` INT NOT NULL AUTO_INCREMENT,
   `brand_id` INT NOT NULL,
   `name` VARCHAR(100) DEFAULT NULL,
+  `component_type_id` INT NOT NULL,
+  `description` TEXT,
   PRIMARY KEY (`series_id`),
   KEY `brand_id` (`brand_id`),
-  CONSTRAINT `series_ibfk_1` FOREIGN KEY (`brand_id`) REFERENCES `brand` (`brand_id`)
+  KEY `component_type_id` (`component_type_id`),
+  CONSTRAINT `series_ibfk_1` FOREIGN KEY (`brand_id`) REFERENCES `brand` (`brand_id`),
+  CONSTRAINT `series_ibfk_2` FOREIGN KEY (`component_type_id`) REFERENCES `componenttype` (`type_id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 CREATE TABLE `customer` (
@@ -124,18 +129,22 @@ CREATE TABLE `product` (
   `name` VARCHAR(255) DEFAULT NULL,
   `component_type_id` INT NOT NULL,
   `brand_id` INT NOT NULL,
+  `series_id` INT,
   `model` VARCHAR(100) DEFAULT NULL,
   `price` DECIMAL(18,2) DEFAULT NULL,
   `import_price` DECIMAL(18,2) DEFAULT NULL,
   `stock` INT NOT NULL DEFAULT 0,
+  `sku` VARCHAR(50) UNIQUE NOT NULL,
   `description` TEXT,
   `status` ENUM('Active', 'Inactive') NOT NULL DEFAULT 'Active',
   `created_at` DATETIME DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (`product_id`),
   KEY `component_type_id` (`component_type_id`),
   KEY `brand_id` (`brand_id`),
+  KEY `series_id` (`series_id`),
   CONSTRAINT `product_ibfk_1` FOREIGN KEY (`component_type_id`) REFERENCES `componenttype` (`type_id`),
-  CONSTRAINT `product_ibfk_2` FOREIGN KEY (`brand_id`) REFERENCES `brand` (`brand_id`)
+  CONSTRAINT `product_ibfk_2` FOREIGN KEY (`brand_id`) REFERENCES `brand` (`brand_id`),
+  CONSTRAINT `product_ibfk_3` FOREIGN KEY (`series_id`) REFERENCES `series` (`series_id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 CREATE TABLE `cartitem` (
@@ -183,6 +192,8 @@ CREATE TABLE `productimage` (
   `image_id` INT NOT NULL AUTO_INCREMENT,
   `product_id` INT NOT NULL,
   `image_url` VARCHAR(255) DEFAULT NULL,
+  `alt_text` VARCHAR(255) DEFAULT NULL,
+  `is_primary` BOOLEAN DEFAULT FALSE,
   PRIMARY KEY (`image_id`),
   KEY `product_id` (`product_id`),
   CONSTRAINT `productimage_ibfk_1` FOREIGN KEY (`product_id`) REFERENCES `product` (`product_id`)
@@ -302,31 +313,30 @@ CREATE TABLE `voucher_usage` (
   CONSTRAINT `voucher_usage_ibfk_3` FOREIGN KEY (`order_id`) REFERENCES `orders` (`order_id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
--- MENU DYNAMIC
-CREATE TABLE menu_item (
-  menu_item_id INT PRIMARY KEY AUTO_INCREMENT,
-  name VARCHAR(100) NOT NULL,
-  icon VARCHAR(255),
-  url VARCHAR(255),
-  parent_id INT,
-  status ENUM('Activate','Deactivate') NOT NULL DEFAULT 'Activate',
-  FOREIGN KEY (parent_id) REFERENCES menu_item(menu_item_id)
+CREATE TABLE `menu_item` (
+  `menu_item_id` INT PRIMARY KEY AUTO_INCREMENT,
+  `name` VARCHAR(100) NOT NULL,
+  `icon` VARCHAR(255),
+  `url` VARCHAR(255),
+  `parent_id` INT,
+  `status` ENUM('Activate', 'Deactivate') NOT NULL DEFAULT 'Activate',
+  FOREIGN KEY (`parent_id`) REFERENCES `menu_item` (`menu_item_id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
-CREATE TABLE menu_attribute (
-  attribute_id INT PRIMARY KEY AUTO_INCREMENT,
-  menu_item_id INT NOT NULL,
-  name VARCHAR(100) NOT NULL,
-  url VARCHAR(255),
-  status ENUM('Activate','Deactivate') NOT NULL DEFAULT 'Activate',
-  FOREIGN KEY (menu_item_id) REFERENCES menu_item(menu_item_id)
+CREATE TABLE `menu_attribute` (
+  `attribute_id` INT PRIMARY KEY AUTO_INCREMENT,
+  `menu_item_id` INT NOT NULL,
+  `name` VARCHAR(100) NOT NULL,
+  `url` VARCHAR(255),
+  `status` ENUM('Activate', 'Deactivate') NOT NULL DEFAULT 'Activate',
+  FOREIGN KEY (`menu_item_id`) REFERENCES `menu_item` (`menu_item_id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
-CREATE TABLE menu_attribute_value (
-  value_id INT PRIMARY KEY AUTO_INCREMENT,
-  attribute_id INT NOT NULL,
-  value VARCHAR(100) NOT NULL,
-  url VARCHAR(255),
-  status ENUM('Activate','Deactivate') NOT NULL DEFAULT 'Activate',
-  FOREIGN KEY (attribute_id) REFERENCES menu_attribute(attribute_id)
+CREATE TABLE `menu_attribute_value` (
+  `value_id` INT PRIMARY KEY AUTO_INCREMENT,
+  `attribute_id` INT NOT NULL,
+  `value` VARCHAR(100) NOT NULL,
+  `url` VARCHAR(255),
+  `status` ENUM('Activate', 'Deactivate') NOT NULL DEFAULT 'Activate',
+  FOREIGN KEY (`attribute_id`) REFERENCES `menu_attribute` (`attribute_id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;

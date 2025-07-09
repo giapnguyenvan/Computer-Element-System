@@ -15,10 +15,11 @@ public class CPUCategoryServlet extends HttpServlet {
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         response.setContentType("text/html;charset=UTF-8");
-        
+
         try {
             ProductDAO productDAO = new ProductDAO();
             int productsPerPage = 4;
+            int componentTypeId = 1; // CPU
 
             // Get current page from parameter
             int currentPage = 1;
@@ -28,7 +29,7 @@ public class CPUCategoryServlet extends HttpServlet {
             }
 
             // Get total products and calculate total pages
-            int totalProducts = productDAO.getTotalCPUProducts();
+            int totalProducts = productDAO.getTotalProductsByComponentType(componentTypeId);
             int totalPages = (int) Math.ceil((double) totalProducts / productsPerPage);
 
             // Validate current page
@@ -39,7 +40,7 @@ public class CPUCategoryServlet extends HttpServlet {
             }
 
             // Get products for current page
-            List<Products> cpuProducts = productDAO.getCPUProductsWithPaging(currentPage, productsPerPage);
+            List<Products> cpuProducts = productDAO.getProductsWithPagingByComponentType(componentTypeId, currentPage, productsPerPage);
 
             // Set attributes
             request.setAttribute("cpuProducts", cpuProducts);
@@ -48,10 +49,10 @@ public class CPUCategoryServlet extends HttpServlet {
 
             // Forward to JSP
             request.getRequestDispatcher("/CPUCategory.jsp").forward(request, response);
-            
+
         } catch (Exception e) {
             e.printStackTrace();
             response.getWriter().write("Error: " + e.getMessage());
         }
     }
-} 
+}

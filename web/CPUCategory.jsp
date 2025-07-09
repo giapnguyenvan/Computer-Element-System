@@ -5,6 +5,7 @@
 <%@ page import="model.Products" %>
 <%@ page import="java.util.List" %>
 
+
 <!DOCTYPE html>
 <html>
     <head>
@@ -35,30 +36,30 @@
         <%
             ProductDAO productDAO = new ProductDAO();
 
-            // Số sản phẩm trên mỗi trang (thay đổi thành 4)
-            int productsPerPage = 4;
 
-            // Lấy trang hiện tại từ parameter, mặc định là trang 1
+            int productsPerPage = 4;
+            int componentTypeId = 1; // CPU
+
+
             int currentPage = 1;
             String pageStr = request.getParameter("page");
             if (pageStr != null && !pageStr.isEmpty()) {
                 currentPage = Integer.parseInt(pageStr);
             }
 
-            // Lấy tổng số sản phẩm CPU
-            int totalProducts = productDAO.getTotalCPUProducts();
 
-            // Tính tổng số trang
+            int totalProducts = productDAO.getTotalProductsByComponentType(componentTypeId);
             int totalPages = (int) Math.ceil((double) totalProducts / productsPerPage);
 
-            // Lấy danh sách sản phẩm cho trang hiện tại
-            List<Products> cpuProducts = productDAO.getCPUProductsWithPaging(currentPage, productsPerPage);
 
-            // Set attributes để sử dụng trong JSP
+            List<Products> cpuProducts = productDAO.getProductsWithPagingByComponentType(componentTypeId, currentPage, productsPerPage);
+
+
             request.setAttribute("cpuProducts", cpuProducts);
             request.setAttribute("currentPage", currentPage);
             request.setAttribute("totalPages", totalPages);
         %>
+
 
         <div class="container">
             <div class="cpu-section">
@@ -66,11 +67,12 @@
                     <h2 class="cpu-title">CPU Products</h2>
                 </div>
 
+
                 <div class="products-grid" id="productsContainer">
                     <c:forEach var="product" items="${cpuProducts}">
                         <div class="product-card">
-                            <a href="${pageContext.request.contextPath}/productservlet?service=productDetail&id=${product.id}" style="text-decoration: none; color: inherit; display: block;">
-                                <img src="${product.image_url}" class="product-image" alt="${product.name}">
+                            <a href="${pageContext.request.contextPath}/productservlet?service=productDetail&id=${product.productId}" style="text-decoration: none; color: inherit; display: block;">
+                                <img src="${product.imageUrl}" class="product-image" alt="${product.name}">
                                 <h5 class="product-title">${product.name}</h5>
                                 <p class="product-description">${product.description}</p>
                             </a>
@@ -78,14 +80,15 @@
                                 <fmt:formatNumber value="${product.price}" type="number" pattern="###,###"/> VNĐ
                             </div>
                             <!-- Add to Cart Button -->
-                            <button class="btn btn-primary add-to-cart-btn" 
-                                    onclick="addToCart('${product.id}', '${product.name}', '${product.price}')"
-                                    id="addBtn_${product.id}">
+                            <button class="btn btn-primary add-to-cart-btn"
+                                    onclick="addToCart('${product.productId}', '${product.name}', '${product.price}')"
+                                    id="addBtn_${product.productId}">
                                 <i class="fas fa-shopping-cart me-2"></i>Add to Cart
                             </button>
                         </div>
                     </c:forEach>
                 </div>
+
 
                 <!-- Pagination -->
                 <div class="pagination-container">
@@ -95,12 +98,14 @@
                             <a class="page-link" onclick="loadPage(${currentPage - 1})" tabindex="-1">Previous</a>
                         </li>
 
+
                         <!-- Page numbers -->
                         <c:forEach begin="1" end="${totalPages}" var="pageNumber">
                             <li class="page-item ${pageNumber == currentPage ? 'active' : ''}">
                                 <a class="page-link" onclick="loadPage(${pageNumber})">${pageNumber}</a>
                             </li>
                         </c:forEach>
+
 
                         <!-- Next button -->
                         <li class="page-item ${currentPage == totalPages ? 'disabled' : ''}">
@@ -111,8 +116,10 @@
             </div>
         </div>
 
+
         <!-- Bootstrap JS -->
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
 
         <!-- Custom JavaScript -->
         <script>
@@ -120,14 +127,16 @@
             function loadPage(pageNumber) {
                 // Prevent loading if it's a disabled button or current page
                 const currentPage = parseInt(document.querySelector('.page-item.active .page-link').textContent);
-                if (pageNumber === currentPage || 
+                if (pageNumber === currentPage ||
                     document.querySelector('.page-item.disabled .page-link[onclick*="loadPage(' + pageNumber + ')"]')) {
                     return;
                 }
 
+
                 // Show loading indicator
                 const productsContainer = document.getElementById('productsContainer');
                 productsContainer.style.opacity = '0.5';
+
 
                 fetch('${pageContext.request.contextPath}/CPUCategoryServlet?page=' + pageNumber, {
                     method: 'GET',
@@ -146,17 +155,20 @@
                     const temp = document.createElement('div');
                     temp.innerHTML = html;
 
+
                     // Update products
                     const newProducts = temp.querySelector('#productsContainer');
                     if (newProducts) {
                         productsContainer.innerHTML = newProducts.innerHTML;
                     }
 
+
                     // Update pagination
                     const newPagination = temp.querySelector('#paginationContainer');
                     if (newPagination) {
                         document.getElementById('paginationContainer').innerHTML = newPagination.innerHTML;
                     }
+
 
                     // Update active states
                     document.querySelectorAll('.page-item').forEach(item => {
@@ -167,8 +179,10 @@
                         activePageLink.parentElement.classList.add('active');
                     }
 
+
                     // Restore opacity
                     productsContainer.style.opacity = '1';
+
 
                     // Reinitialize event handlers if needed
                     initializeEventHandlers();
@@ -185,6 +199,7 @@
                 });
             }
 
+
             // Function to initialize event handlers
             function initializeEventHandlers() {
                 // Add any event handlers that need to be reinitialized after content update
@@ -192,17 +207,19 @@
                     const productId = button.id.replace('addBtn_', '');
                     const productName = button.closest('.product-card').querySelector('.product-title').textContent;
                     const productPrice = button.closest('.product-card').querySelector('.product-price').textContent;
-                    
+                   
                     button.onclick = () => addToCart(productId, productName, productPrice);
                 });
             }
 
+
             // Initialize event handlers on page load
             document.addEventListener('DOMContentLoaded', initializeEventHandlers);
 
+
             // Global variables
             let currentUserId = 0;
-            
+           
             // Get current user ID from session
             <c:choose>
                 <c:when test="${not empty sessionScope.customerAuth}">
@@ -216,6 +233,7 @@
                 </c:otherwise>
             </c:choose>
 
+
             async function addToCart(productId, productName, productPrice) {
                 // Check if user is logged in
                 if (currentUserId === 0) {
@@ -227,11 +245,14 @@
                     return;
                 }
 
+
                 const addButton = document.getElementById('addBtn_' + productId);
+
 
                 // Disable button and show loading
                 addButton.disabled = true;
                 addButton.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Adding...';
+
 
                 try {
                     const response = await fetch('${pageContext.request.contextPath}/CartApiServlet', {
@@ -246,7 +267,9 @@
                         })
                     });
 
+
                     const result = await response.json();
+
 
                     if (result.success) {
                         // Show success message
@@ -258,6 +281,7 @@
                             showConfirmButton: false
                         });
 
+
                         // Update cart count
                         updateCartCount();
                         // Update header cart count if function exists
@@ -265,9 +289,11 @@
                             updateHeaderCartCount();
                         }
 
+
                         // Add visual feedback
                         addButton.classList.add('btn-success');
                         addButton.innerHTML = '<i class="fas fa-check me-2"></i>Added!';
+
 
                         setTimeout(() => {
                             addButton.classList.remove('btn-success');
@@ -292,11 +318,13 @@
                 }
             }
 
+
             // Function to update cart count
             async function updateCartCount() {
                 try {
                     const response = await fetch('${pageContext.request.contextPath}/CartApiServlet?customerId=' + currentUserId);
                     const result = await response.json();
+
 
                     if (result.success && result.data) {
                         const totalItems = result.data.reduce((sum, item) => sum + item.quantity, 0);
@@ -310,10 +338,11 @@
                 }
             }
 
+
             // Initialize cart count on page load
             document.addEventListener('DOMContentLoaded', function() {
                 updateCartCount();
             });
         </script>
     </body>
-</html> 
+</html>

@@ -1,0 +1,524 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Staff Dashboard Comprehensive Test</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        .test-section {
+            margin-bottom: 2rem;
+            padding: 1rem;
+            border: 1px solid #dee2e6;
+            border-radius: 0.375rem;
+        }
+        .test-result {
+            margin-top: 1rem;
+            padding: 0.75rem;
+            border-radius: 0.375rem;
+        }
+        .test-result.success {
+            background-color: #d1e7dd;
+            border: 1px solid #badbcc;
+            color: #0f5132;
+        }
+        .test-result.error {
+            background-color: #f8d7da;
+            border: 1px solid #f5c2c7;
+            color: #842029;
+        }
+        .test-result.warning {
+            background-color: #fff3cd;
+            border: 1px solid #ffecb5;
+            color: #664d03;
+        }
+        .test-result.info {
+            background-color: #d1ecf1;
+            border: 1px solid #bee5eb;
+            color: #0c5460;
+        }
+        .progress-bar {
+            height: 20px;
+            background-color: #e9ecef;
+            border-radius: 0.375rem;
+            overflow: hidden;
+        }
+        .progress-fill {
+            height: 100%;
+            background-color: #28a745;
+            transition: width 0.3s ease;
+        }
+    </style>
+</head>
+<body class="bg-light">
+    <div class="container mt-4">
+        <div class="row">
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-header bg-success text-white">
+                        <h3 class="mb-0">
+                            <i class="fas fa-vial me-2"></i>Staff Dashboard Comprehensive Test Suite
+                        </h3>
+                    </div>
+                    <div class="card-body">
+                        <!-- Progress Bar -->
+                        <div class="mb-4">
+                            <h5>Test Progress</h5>
+                            <div class="progress-bar">
+                                <div class="progress-fill" id="progressBar" style="width: 0%"></div>
+                            </div>
+                            <small class="text-muted" id="progressText">0% Complete</small>
+                        </div>
+
+                        <!-- Test Results Summary -->
+                        <div class="row mb-4">
+                            <div class="col-md-3">
+                                <div class="text-center">
+                                    <h4 id="totalTests">0</h4>
+                                    <small class="text-muted">Total Tests</small>
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="text-center">
+                                    <h4 id="passedTests" class="text-success">0</h4>
+                                    <small class="text-muted">Passed</small>
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="text-center">
+                                    <h4 id="failedTests" class="text-danger">0</h4>
+                                    <small class="text-muted">Failed</small>
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="text-center">
+                                    <h4 id="warningTests" class="text-warning">0</h4>
+                                    <small class="text-muted">Warnings</small>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Control Buttons -->
+                        <div class="mb-4">
+                            <button class="btn btn-primary me-2" onclick="runAllTests()">
+                                <i class="fas fa-play me-2"></i>Run All Tests
+                            </button>
+                            <button class="btn btn-secondary me-2" onclick="clearResults()">
+                                <i class="fas fa-eraser me-2"></i>Clear Results
+                            </button>
+                            <button class="btn btn-info me-2" onclick="exportResults()">
+                                <i class="fas fa-download me-2"></i>Export Results
+                            </button>
+                        </div>
+
+                        <!-- Test Sections -->
+                        <div id="testSections">
+                            <!-- Authentication Tests -->
+                            <div class="test-section">
+                                <h5><i class="fas fa-shield-alt me-2"></i>Authentication Tests</h5>
+                                <div id="authTests"></div>
+                                <button class="btn btn-sm btn-outline-primary" onclick="runAuthTests()">Run Auth Tests</button>
+                            </div>
+
+                            <!-- Token Management Tests -->
+                            <div class="test-section">
+                                <h5><i class="fas fa-key me-2"></i>Token Management Tests</h5>
+                                <div id="tokenTests"></div>
+                                <button class="btn btn-sm btn-outline-primary" onclick="runTokenTests()">Run Token Tests</button>
+                            </div>
+
+                            <!-- API Endpoint Tests -->
+                            <div class="test-section">
+                                <h5><i class="fas fa-plug me-2"></i>API Endpoint Tests</h5>
+                                <div id="apiTests"></div>
+                                <button class="btn btn-sm btn-outline-primary" onclick="runApiTests()">Run API Tests</button>
+                            </div>
+
+                            <!-- Access Control Tests -->
+                            <div class="test-section">
+                                <h5><i class="fas fa-user-lock me-2"></i>Access Control Tests</h5>
+                                <div id="accessTests"></div>
+                                <button class="btn btn-sm btn-outline-primary" onclick="runAccessTests()">Run Access Tests</button>
+                            </div>
+
+                            <!-- UI/UX Tests -->
+                            <div class="test-section">
+                                <h5><i class="fas fa-desktop me-2"></i>UI/UX Tests</h5>
+                                <div id="uiTests"></div>
+                                <button class="btn btn-sm btn-outline-primary" onclick="runUiTests()">Run UI Tests</button>
+                            </div>
+
+                            <!-- Security Tests -->
+                            <div class="test-section">
+                                <h5><i class="fas fa-lock me-2"></i>Security Tests</h5>
+                                <div id="securityTests"></div>
+                                <button class="btn btn-sm btn-outline-primary" onclick="runSecurityTests()">Run Security Tests</button>
+                            </div>
+                        </div>
+
+                        <!-- Detailed Results -->
+                        <div class="mt-4">
+                            <h5>Detailed Test Results</h5>
+                            <div id="detailedResults"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let testResults = {
+            total: 0,
+            passed: 0,
+            failed: 0,
+            warnings: 0,
+            details: []
+        };
+
+        // Test Configuration
+        const BASE_URL = window.location.origin + window.location.pathname.replace(/\/[^\/]*$/, '');
+        const API_BASE = BASE_URL + '/api/auth';
+
+        // Utility Functions
+        function addTestResult(section, testName, status, message, details = null) {
+            const result = {
+                section,
+                testName,
+                status,
+                message,
+                details,
+                timestamp: new Date().toISOString()
+            };
+
+            testResults.details.push(result);
+            testResults.total++;
+
+            switch (status) {
+                case 'success':
+                    testResults.passed++;
+                    break;
+                case 'error':
+                    testResults.failed++;
+                    break;
+                case 'warning':
+                    testResults.warnings++;
+                    break;
+            }
+
+            updateProgress();
+            displayTestResult(section, result);
+        }
+
+        function updateProgress() {
+            const progress = (testResults.passed / testResults.total) * 100;
+            document.getElementById('progressBar').style.width = progress + '%';
+            document.getElementById('progressText').textContent = Math.round(progress) + '% Complete';
+            
+            document.getElementById('totalTests').textContent = testResults.total;
+            document.getElementById('passedTests').textContent = testResults.passed;
+            document.getElementById('failedTests').textContent = testResults.failed;
+            document.getElementById('warningTests').textContent = testResults.warnings;
+        }
+
+        function displayTestResult(section, result) {
+            const container = document.getElementById(section + 'Tests');
+            const resultDiv = document.createElement('div');
+            resultDiv.className = `test-result ${result.status}`;
+            
+            const icon = result.status === 'success' ? 'check-circle' : 
+                        result.status === 'error' ? 'times-circle' : 
+                        result.status === 'warning' ? 'exclamation-triangle' : 'info-circle';
+            
+            resultDiv.innerHTML = `
+                <div class="d-flex justify-content-between align-items-start">
+                    <div>
+                        <i class="fas fa-${icon} me-2"></i>
+                        <strong>${result.testName}</strong>
+                    </div>
+                    <small>${new Date(result.timestamp).toLocaleTimeString()}</small>
+                </div>
+                <p class="mb-1">${result.message}</p>
+                ${result.details ? `<small class="text-muted">${result.details}</small>` : ''}
+            `;
+            
+            container.appendChild(resultDiv);
+        }
+
+        // Authentication Tests
+        async function runAuthTests() {
+            addTestResult('auth', 'Session Check', 'info', 'Checking session status...');
+            
+            try {
+                const response = await fetch(`${BASE_URL}/staffTest.jsp`);
+                if (response.ok) {
+                    addTestResult('auth', 'Session Check', 'success', 'Session is accessible');
+                } else {
+                    addTestResult('auth', 'Session Check', 'error', 'Session check failed');
+                }
+            } catch (error) {
+                addTestResult('auth', 'Session Check', 'error', 'Session check error: ' + error.message);
+            }
+
+            // Test login page accessibility
+            try {
+                const response = await fetch(`${BASE_URL}/login.jsp`);
+                if (response.ok) {
+                    addTestResult('auth', 'Login Page', 'success', 'Login page is accessible');
+                } else {
+                    addTestResult('auth', 'Login Page', 'error', 'Login page not accessible');
+                }
+            } catch (error) {
+                addTestResult('auth', 'Login Page', 'error', 'Login page error: ' + error.message);
+            }
+        }
+
+        // Token Management Tests
+        async function runTokenTests() {
+            addTestResult('token', 'Token Generation', 'info', 'Testing token generation...');
+            
+            // Test token generation via API
+            try {
+                const formData = new URLSearchParams();
+                formData.append('email', 'test@example.com');
+                formData.append('password', 'testpassword');
+                
+                const response = await fetch(`${API_BASE}/login`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded'
+                    },
+                    body: formData
+                });
+                
+                const data = await response.json();
+                
+                if (data.success && data.accessToken) {
+                    addTestResult('token', 'Token Generation', 'success', 'Token generated successfully');
+                } else {
+                    addTestResult('token', 'Token Generation', 'warning', 'Token generation failed (expected for invalid credentials)');
+                }
+            } catch (error) {
+                addTestResult('token', 'Token Generation', 'error', 'Token generation error: ' + error.message);
+            }
+
+            // Test token validation endpoint
+            try {
+                const response = await fetch(`${API_BASE}/check-token`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': 'Bearer invalid.token.here'
+                    }
+                });
+                
+                if (response.status === 401) {
+                    addTestResult('token', 'Token Validation', 'success', 'Token validation correctly rejects invalid tokens');
+                } else {
+                    addTestResult('token', 'Token Validation', 'warning', 'Token validation response unexpected');
+                }
+            } catch (error) {
+                addTestResult('token', 'Token Validation', 'error', 'Token validation error: ' + error.message);
+            }
+        }
+
+        // API Endpoint Tests
+        async function runApiTests() {
+            const endpoints = [
+                { path: '/login', method: 'POST', name: 'Login Endpoint' },
+                { path: '/refresh', method: 'POST', name: 'Refresh Endpoint' },
+                { path: '/logout', method: 'POST', name: 'Logout Endpoint' },
+                { path: '/check-token', method: 'POST', name: 'Check Token Endpoint' }
+            ];
+
+            for (const endpoint of endpoints) {
+                try {
+                    const response = await fetch(`${API_BASE}${endpoint.path}`, {
+                        method: endpoint.method,
+                        headers: {
+                            'Content-Type': 'application/json'
+                        }
+                    });
+                    
+                    if (response.status !== 404) {
+                        addTestResult('api', endpoint.name, 'success', `Endpoint responds (${response.status})`);
+                    } else {
+                        addTestResult('api', endpoint.name, 'error', 'Endpoint not found (404)');
+                    }
+                } catch (error) {
+                    addTestResult('api', endpoint.name, 'error', `API error: ${error.message}`);
+                }
+            }
+        }
+
+        // Access Control Tests
+        async function runAccessTests() {
+            // Test staff dashboard access
+            try {
+                const response = await fetch(`${BASE_URL}/staffDashboard.jsp`);
+                if (response.ok) {
+                    addTestResult('access', 'Staff Dashboard Access', 'success', 'Staff dashboard page is accessible');
+                } else {
+                    addTestResult('access', 'Staff Dashboard Access', 'error', 'Staff dashboard not accessible');
+                }
+            } catch (error) {
+                addTestResult('access', 'Staff Dashboard Access', 'error', 'Access error: ' + error.message);
+            }
+
+            // Test staff home page
+            try {
+                const response = await fetch(`${BASE_URL}/staffHome.jsp`);
+                if (response.ok) {
+                    addTestResult('access', 'Staff Home Page', 'success', 'Staff home page is accessible');
+                } else {
+                    addTestResult('access', 'Staff Home Page', 'error', 'Staff home page not accessible');
+                }
+            } catch (error) {
+                addTestResult('access', 'Staff Home Page', 'error', 'Access error: ' + error.message);
+            }
+        }
+
+        // UI/UX Tests
+        async function runUiTests() {
+            // Test Bootstrap loading
+            if (typeof bootstrap !== 'undefined') {
+                addTestResult('ui', 'Bootstrap Framework', 'success', 'Bootstrap is loaded');
+            } else {
+                addTestResult('ui', 'Bootstrap Framework', 'error', 'Bootstrap not loaded');
+            }
+
+            // Test Font Awesome
+            if (document.querySelector('.fas')) {
+                addTestResult('ui', 'Font Awesome Icons', 'success', 'Font Awesome icons are working');
+            } else {
+                addTestResult('ui', 'Font Awesome Icons', 'warning', 'Font Awesome icons may not be loaded');
+            }
+
+            // Test responsive design
+            const isMobile = window.innerWidth < 768;
+            addTestResult('ui', 'Responsive Design', 'info', `Viewport width: ${window.innerWidth}px (${isMobile ? 'Mobile' : 'Desktop'})`);
+        }
+
+        // Security Tests
+        async function runSecurityTests() {
+            // Test CORS headers
+            try {
+                const response = await fetch(`${API_BASE}/check-token`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    }
+                });
+                
+                const corsHeader = response.headers.get('Access-Control-Allow-Origin');
+                if (corsHeader) {
+                    addTestResult('security', 'CORS Headers', 'success', 'CORS headers are present');
+                } else {
+                    addTestResult('security', 'CORS Headers', 'warning', 'CORS headers not found');
+                }
+            } catch (error) {
+                addTestResult('security', 'CORS Headers', 'error', 'CORS test error: ' + error.message);
+            }
+
+            // Test HTTPS (if available)
+            if (window.location.protocol === 'https:') {
+                addTestResult('security', 'HTTPS Protocol', 'success', 'Using secure HTTPS protocol');
+            } else {
+                addTestResult('security', 'HTTPS Protocol', 'warning', 'Using HTTP protocol (consider HTTPS for production)');
+            }
+        }
+
+        // Run All Tests
+        async function runAllTests() {
+            clearResults();
+            
+            await runAuthTests();
+            await runTokenTests();
+            await runApiTests();
+            await runAccessTests();
+            runUiTests();
+            await runSecurityTests();
+            
+            generateDetailedReport();
+        }
+
+        function clearResults() {
+            testResults = {
+                total: 0,
+                passed: 0,
+                failed: 0,
+                warnings: 0,
+                details: []
+            };
+            
+            document.getElementById('progressBar').style.width = '0%';
+            document.getElementById('progressText').textContent = '0% Complete';
+            
+            ['auth', 'token', 'api', 'access', 'ui', 'security'].forEach(section => {
+                document.getElementById(section + 'Tests').innerHTML = '';
+            });
+            
+            document.getElementById('detailedResults').innerHTML = '';
+        }
+
+        function generateDetailedReport() {
+            const container = document.getElementById('detailedResults');
+            container.innerHTML = `
+                <div class="card">
+                    <div class="card-header">
+                        <h6 class="mb-0">Detailed Test Report</h6>
+                    </div>
+                    <div class="card-body">
+                        <div class="table-responsive">
+                            <table class="table table-sm">
+                                <thead>
+                                    <tr>
+                                        <th>Test</th>
+                                        <th>Status</th>
+                                        <th>Message</th>
+                                        <th>Time</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    ${testResults.details.map(result => `
+                                        <tr class="${result.status === 'success' ? 'table-success' : 
+                                                   result.status === 'error' ? 'table-danger' : 
+                                                   result.status === 'warning' ? 'table-warning' : 'table-info'}">
+                                            <td>${result.testName}</td>
+                                            <td>
+                                                <i class="fas fa-${result.status === 'success' ? 'check-circle text-success' : 
+                                                                  result.status === 'error' ? 'times-circle text-danger' : 
+                                                                  result.status === 'warning' ? 'exclamation-triangle text-warning' : 'info-circle text-info'}"></i>
+                                                ${result.status}
+                                            </td>
+                                            <td>${result.message}</td>
+                                            <td>${new Date(result.timestamp).toLocaleTimeString()}</td>
+                                        </tr>
+                                    `).join('')}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        function exportResults() {
+            const dataStr = JSON.stringify(testResults, null, 2);
+            const dataBlob = new Blob([dataStr], {type: 'application/json'});
+            const url = URL.createObjectURL(dataBlob);
+            const link = document.createElement('a');
+            link.href = url;
+            link.download = `staff-dashboard-test-results-${new Date().toISOString().split('T')[0]}.json`;
+            link.click();
+            URL.revokeObjectURL(url);
+        }
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', function() {
+            addTestResult('auth', 'Test Suite Initialized', 'info', 'Staff Dashboard test suite is ready');
+        });
+    </script>
+</body>
+</html> 

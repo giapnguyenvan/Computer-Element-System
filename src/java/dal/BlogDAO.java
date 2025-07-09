@@ -227,14 +227,13 @@ public class BlogDAO {
         return listBlogs;
     }
 
-    // Delete blog by blogId and userId
-    public boolean deleteBlogById(int blogId, int userId) {
+    // Delete blog by blogId (any user can delete any blog)
+    public boolean deleteBlogById(int blogId) {
         DBContext db = DBContext.getInstance();
-        String sql = "DELETE FROM blog WHERE blog_id = ? AND user_id = ?";
+        String sql = "DELETE FROM blog WHERE blog_id = ?";
         try {
             PreparedStatement ptm = db.getConnection().prepareStatement(sql);
             ptm.setInt(1, blogId);
-            ptm.setInt(2, userId);
             int affected = ptm.executeUpdate();
             
             if (affected > 0) {
@@ -276,8 +275,8 @@ public class BlogDAO {
         Blog newBlog = new Blog(0, "Test Blog with Images", "This is a test blog content with images", 1, null);
         
         // Add some test images
-        newBlog.addImage(new BlogImage(0, 0, "/assets/assets/images/blog/test1.jpg", "Test Image 1", 1, null));
-        newBlog.addImage(new BlogImage(0, 0, "/assets/assets/images/blog/test2.jpg", "Test Image 2", 2, null));
+        newBlog.addImage(new BlogImage(0, 0, "/IMG/blog/test1.jpg", "Test Image 1", 1, null));
+        newBlog.addImage(new BlogImage(0, 0, "/IMG/blog/test2.jpg", "Test Image 2", 2, null));
         
         int blogId = dao.insertBlog(newBlog);
         System.out.println("Blog inserted with ID: " + blogId);

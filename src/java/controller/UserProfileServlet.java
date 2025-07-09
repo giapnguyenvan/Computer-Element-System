@@ -71,7 +71,8 @@ public class UserProfileServlet extends HttpServlet {
                     break;
                 }
                 case "address": {
-                    // Placeholder - No data set yet
+                    Customer customer = customerDAO.getCustomerByEmail(email);
+                    request.setAttribute("data", customer);
                     content = "address.jsp";
                     activePage = "address";
                     break;

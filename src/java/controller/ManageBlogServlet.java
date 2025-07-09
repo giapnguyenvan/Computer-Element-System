@@ -14,19 +14,28 @@ import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.annotation.MultipartConfig;
+import jakarta.servlet.http.Part;
 import java.util.Vector;
 import java.util.List;
 import model.Blog;
 import model.User;
+import model.BlogImage;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Collection;
 
 /**
  *
  * @author ADMIN
  */
 @WebServlet(name="ManageBlogServlet", urlPatterns={"/manageblogs"})
+@MultipartConfig(
+    fileSizeThreshold = 1024 * 1024, // 1 MB
+    maxFileSize = 1024 * 1024 * 10,  // 10 MB
+    maxRequestSize = 1024 * 1024 * 50 // 50 MB
+)
 public class ManageBlogServlet extends HttpServlet {
    
     private static final long serialVersionUID = 1L;
@@ -76,6 +85,10 @@ public class ManageBlogServlet extends HttpServlet {
             
             // Store the user names map in request
             request.setAttribute("userNames", userNames);
+            
+            // Add this: get all users for author dropdown
+            Vector<User> userList = userDAO.getAllUsers();
+            request.setAttribute("userList", userList);
             
             // Apply search filter if specified
             String search = request.getParameter("search");
@@ -182,11 +195,11 @@ public class ManageBlogServlet extends HttpServlet {
         
         try {
             if (action == null || action.equals("list")) {
-                listBlogs(request, response);
+                processRequest(request, response);
             } else if (action.equals("view")) {
                 viewBlog(request, response);
             } else {
-                response.sendRedirect("manageblogs");
+                processRequest(request, response);
             }
         } catch (Exception ex) {
             request.setAttribute("error", "Error: " + ex.getMessage());
@@ -215,21 +228,14 @@ public class ManageBlogServlet extends HttpServlet {
                     break;
                 case "delete":
                     // Xử lý xóa blog
-                    Object authObj = request.getSession().getAttribute("customerAuth");
+                    Object authObj = request.getSession().getAttribute("userAuth");
                     if (authObj == null) {
                         request.getSession().setAttribute("error", "You must be logged in to delete a blog.");
                         response.sendRedirect("manageblogs");
                         return;
                     }
                     int blogId = Integer.parseInt(request.getParameter("blog_id"));
-                    int customerId = ((model.Customer)authObj).getCustomer_id();
-                    boolean deleted = blogDAO.deleteBlogById(blogId, customerId);
-                    if (deleted) {
-                        request.getSession().setAttribute("success", "Blog deleted successfully!");
-                    } else {
-                        request.getSession().setAttribute("error", "Failed to delete blog. You can only delete your own blogs.");
-                    }
-                    response.sendRedirect("manageblogs");
+                    deleteBlogWithImages(request, response, blogId);
                     break;
                 default:
                     response.sendRedirect("manageblogs");
@@ -269,6 +275,15 @@ public class ManageBlogServlet extends HttpServlet {
         request.setAttribute("currentPage", page);
         request.setAttribute("totalPages", totalPages);
         request.setAttribute("totalBlogs", totalBlogs);
+        // Add this: get all users for author dropdown
+        try {
+            Vector<User> userList = userDAO.getAllUsers();
+            request.setAttribute("userList", userList);
+        } catch (java.sql.SQLException e) {
+            request.setAttribute("error", "Error loading user list: " + e.getMessage());
+            request.getRequestDispatcher("error.jsp").forward(request, response);
+            return;
+        }
         request.getRequestDispatcher("ManageBlog.jsp").forward(request, response);
     }
 
@@ -301,20 +316,57 @@ public class ManageBlogServlet extends HttpServlet {
     throws ServletException, IOException {
         String title = request.getParameter("title");
         String content = request.getParameter("content");
-        String userIdStr = request.getParameter("user_id");
+        Object authObj = request.getSession().getAttribute("userAuth");
         StringBuilder errors = new StringBuilder();
         if (title == null || title.trim().isEmpty()) errors.append("Title is required. ");
         if (content == null || content.trim().isEmpty()) errors.append("Content is required. ");
-        if (userIdStr == null || userIdStr.trim().isEmpty()) errors.append("User ID is required. ");
+        if (authObj == null) errors.append("You must be logged in to add a blog. ");
         if (errors.length() > 0) {
             request.getSession().setAttribute("error", errors.toString());
             response.sendRedirect(request.getContextPath() + "/manageblogs");
             return;
         }
         try {
-            int userId = Integer.parseInt(userIdStr);
+            int userId = ((model.User)authObj).getId();
             Blog blog = new Blog(0, title.trim(), content.trim(), userId, null);
-            blogDAO.insertBlog(blog);
+            int blogId = blogDAO.insertBlog(blog);
+            
+            // Handle file uploads
+            if (blogId > 0) {
+                try {
+                    dal.BlogImageDAO blogImageDAO = new dal.BlogImageDAO();
+                    Collection<Part> fileParts = request.getParts();
+                    
+                    for (Part filePart : fileParts) {
+                        if (filePart.getName().equals("images") && filePart.getSize() > 0) {
+                            String fileName = getSubmittedFileName(filePart);
+                            if (fileName != null && !fileName.isEmpty()) {
+                                // Generate unique filename
+                                String fileExtension = fileName.substring(fileName.lastIndexOf("."));
+                                String uniqueFileName = System.currentTimeMillis() + "_" + blogId + fileExtension;
+                                String uploadPath = "/IMG/blog/" + uniqueFileName;
+                                
+                                // Save file to server
+                                String realPath = getServletContext().getRealPath(uploadPath);
+                                java.io.File uploadDir = new java.io.File(realPath).getParentFile();
+                                if (!uploadDir.exists()) {
+                                    uploadDir.mkdirs();
+                                }
+                                
+                                filePart.write(realPath);
+                                
+                                // Save image info to database
+                                BlogImage blogImage = new BlogImage(0, blogId, uploadPath, fileName, 0, null);
+                                blogImageDAO.insertBlogImage(blogImage);
+                            }
+                        }
+                    }
+                } catch (Exception e) {
+                    // Log error but don't fail the blog creation
+                    System.err.println("Error uploading images: " + e.getMessage());
+                }
+            }
+            
             request.getSession().setAttribute("success", "Blog added successfully!");
             response.sendRedirect(request.getContextPath() + "/manageblogs");
         } catch (NumberFormatException e) {
@@ -344,11 +396,90 @@ public class ManageBlogServlet extends HttpServlet {
             int userId = Integer.parseInt(userIdStr);
             Blog blog = new Blog(id, title.trim(), content.trim(), userId, null);
             blogDAO.updateBlog(blog);
+            
+            // Handle file uploads for update
+            try {
+                dal.BlogImageDAO blogImageDAO = new dal.BlogImageDAO();
+                Collection<Part> fileParts = request.getParts();
+                
+                for (Part filePart : fileParts) {
+                    if (filePart.getName().equals("images") && filePart.getSize() > 0) {
+                        String fileName = getSubmittedFileName(filePart);
+                        if (fileName != null && !fileName.isEmpty()) {
+                            // Generate unique filename
+                            String fileExtension = fileName.substring(fileName.lastIndexOf("."));
+                            String uniqueFileName = System.currentTimeMillis() + "_" + id + fileExtension;
+                            String uploadPath = "/IMG/blog/" + uniqueFileName;
+                            
+                            // Save file to server
+                            String realPath = getServletContext().getRealPath(uploadPath);
+                            java.io.File uploadDir = new java.io.File(realPath).getParentFile();
+                            if (!uploadDir.exists()) {
+                                uploadDir.mkdirs();
+                            }
+                            
+                            filePart.write(realPath);
+                            
+                            // Save image info to database
+                            BlogImage blogImage = new BlogImage(0, id, uploadPath, fileName, 0, null);
+                            blogImageDAO.insertBlogImage(blogImage);
+                        }
+                    }
+                }
+            } catch (Exception e) {
+                // Log error but don't fail the blog update
+                System.err.println("Error uploading images: " + e.getMessage());
+            }
+            
             request.getSession().setAttribute("success", "Blog updated successfully!");
             response.sendRedirect(request.getContextPath() + "/manageblogs");
         } catch (NumberFormatException e) {
             request.getSession().setAttribute("error", "Invalid ID format.");
             response.sendRedirect(request.getContextPath() + "/manageblogs");
+        }
+    }
+
+    private void deleteBlogWithImages(HttpServletRequest request, HttpServletResponse response, int blogId)
+    throws ServletException, IOException {
+        try {
+            dal.BlogImageDAO blogImageDAO = new dal.BlogImageDAO();
+            
+            // Step 1: Get all images associated with the blog
+            java.util.Vector<model.BlogImage> images = blogImageDAO.getImagesByBlogId(blogId);
+            
+            // Step 2: Delete image files from the server
+            for (model.BlogImage img : images) {
+                if (img.getImage_url() != null && (img.getImage_url().startsWith("/blog/") || img.getImage_url().startsWith("/IMG/blog/"))) {
+                    String realPath = getServletContext().getRealPath(img.getImage_url());
+                    java.io.File file = new java.io.File(realPath);
+                    if (file.exists()) {
+                        boolean fileDeleted = file.delete();
+                        if (!fileDeleted) {
+                            System.err.println("Failed to delete image file: " + realPath);
+                        }
+                    }
+                }
+            }
+            
+            // Step 3: Delete image records from database
+            blogImageDAO.deleteAllImagesByBlogId(blogId);
+            
+            // Step 4: Delete the blog itself
+            boolean blogDeleted = blogDAO.deleteBlogById(blogId);
+            
+            if (blogDeleted) {
+                request.getSession().setAttribute("success", "Blog and associated images deleted successfully!");
+            } else {
+                request.getSession().setAttribute("error", "Failed to delete blog.");
+            }
+            
+            response.sendRedirect("manageblogs");
+            
+        } catch (Exception e) {
+            System.err.println("Error deleting blog with images: " + e.getMessage());
+            e.printStackTrace();
+            request.getSession().setAttribute("error", "Error deleting blog: " + e.getMessage());
+            response.sendRedirect("manageblogs");
         }
     }
 
@@ -361,7 +492,7 @@ public class ManageBlogServlet extends HttpServlet {
             java.util.Vector<model.BlogImage> images = blogImageDAO.getImagesByBlogId(id);
             blogDAO.deleteBlog(id, userId);
             for (model.BlogImage img : images) {
-                if (img.getImage_url() != null && img.getImage_url().startsWith("/assets/assets/images/blog/")) {
+                if (img.getImage_url() != null && (img.getImage_url().startsWith("/blog/") || img.getImage_url().startsWith("/IMG/blog/"))) {
                     String realPath = getServletContext().getRealPath(img.getImage_url());
                     java.io.File file = new java.io.File(realPath);
                     if (file.exists()) file.delete();
@@ -373,5 +504,16 @@ public class ManageBlogServlet extends HttpServlet {
             request.getSession().setAttribute("error", "Invalid ID format.");
             response.sendRedirect(request.getContextPath() + "/manageblogs");
         }
+    }
+    
+    private String getSubmittedFileName(Part part) {
+        String contentDisp = part.getHeader("content-disposition");
+        String[] tokens = contentDisp.split(";");
+        for (String token : tokens) {
+            if (token.trim().startsWith("filename")) {
+                return token.substring(token.indexOf("=") + 2, token.length() - 1);
+            }
+        }
+        return "";
     }
 } 

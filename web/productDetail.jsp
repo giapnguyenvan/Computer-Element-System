@@ -98,43 +98,50 @@
     <body>
         <!-- Include Header -->
         <jsp:include page="header.jsp"/>
-        
+       
         <div class="container mt-5">
             <div class="row">
                 <!-- Product Image -->
                 <div class="col-md-5">
-                    <img src="${product.image_url}" alt="${product.name}" class="img-fluid rounded">
+                    <img src="${product.imageUrl}" alt="${product.name}" class="img-fluid rounded">
                 </div>
+
 
                 <!-- Product Info -->
                 <div class="col-md-7">
                     <h2 class="mb-3">${product.name}</h2>
-                    <h4 class="text-muted">${product.brand}</h4>
+                    <h4 class="text-muted">${product.brandName}</h4>
                     <h3 class="text-danger mb-3">$${product.price}</h3>
 
-                    <p><strong>Category ID:</strong> ${product.category_id}</p>
-                    <p><strong>Stock:</strong> 
+
+                    <p><strong>Category:</strong> ${product.componentTypeName}</p>
+                    <p><strong>Stock:</strong>
                         <span id="stockDisplay">${product.stock}</span> available
                     </p>
+                    <p><strong>Status:</strong> ${product.status}</p>
+                    <p><strong>Model:</strong> ${product.model}</p>
+                    <p><strong>Series:</strong> ${product.seriesName}</p>
+                    <p><strong>SKU:</strong> ${product.sku}</p>
+                    <p><strong>Created At:</strong> ${product.createdAt}</p>
+
 
                     <hr>
+
 
                     <h5>Description</h5>
                     <p>${product.description}</p>
 
-                    <h5>Specifications</h5>
-                    <p>${product.spec_description}</p>
 
                     <c:if test="${product.stock > 0}">
                         <div class="d-flex align-items-center mt-4">
                             <div class="quantity-selector" style="width: 120px; margin-right: 15px;">
-                                <button type="button" class="qty-btn" onclick="changeQuantity(${product.id}, -1)">-</button>
-                                <input type="number" id="quantity_${product.id}" value="1" min="1" max="${product.stock}" class="qty-input" style="text-align:center;">
-                                <button type="button" class="qty-btn" onclick="changeQuantity(${product.id}, 1)">+</button>
+                                <button type="button" class="qty-btn" onclick="changeQuantity(${product.productId}, -1)">-</button>
+                                <input type="number" id="quantity_${product.productId}" value="1" min="1" max="${product.stock}" class="qty-input" style="text-align:center;">
+                                <button type="button" class="qty-btn" onclick="changeQuantity(${product.productId}, 1)">+</button>
                             </div>
-                            <button class="btn btn-primary" 
-                                    onclick="addToCart(${product.id}, '${product.name}', ${product.price})"
-                                    id="addBtn_${product.id}">
+                            <button class="btn btn-primary"
+                                    onclick="addToCart(${product.productId}, '${product.name}', ${product.price})"
+                                    id="addBtn_${product.productId}">
                                 <i class="fas fa-cart-plus me-2"></i>Add to Cart
                             </button>
                         </div>
@@ -142,22 +149,24 @@
                 </div>
             </div>
 
+
             <hr>
+
 
             <!-- Related Products Section -->
             <div class="container">
                 <h4 class="mt-5">Related Products</h4>
                 <div class="row">
                     <c:forEach var="p" items="${relatedProducts}">
-                        <c:if test="${p.id != product.id}">
+                        <c:if test="${p.productId != product.productId}">
                             <div class="col-md-3 mb-4">
                                 <div class="card h-100">
-                                    <img src="${p.image_url}" class="card-img-top" alt="${p.name}">
+                                    <img src="${p.imageUrl}" class="card-img-top" alt="${p.name}">
                                     <div class="card-body">
                                         <h5 class="card-title">${p.name}</h5>
-                                        <p class="card-text">${p.brand}</p>
+                                        <p class="card-text">${p.brandName}</p>
                                         <p class="card-text text-danger">$${p.price}</p>
-                                        <a href="${pageContext.request.contextPath}/productservlet?service=productDetail&id=${p.id}" class="btn btn-outline-primary btn-sm">View</a>
+                                        <a href="${pageContext.request.contextPath}/productservlet?service=productDetail&id=${p.productId}" class="btn btn-outline-primary btn-sm">View</a>
                                     </div>
                                 </div>
                             </div>
@@ -166,13 +175,15 @@
                 </div>
             </div>
 
+
             <!-- Include Customer Feedback Section -->
             <jsp:include page="viewCustomerFeedback.jsp" />
         </div>
 
+
         <!-- Bootstrap JS -->
         <!-- Đã được load trong header.jsp -->
-        
+       
         <!-- Initialize Bootstrap Components -->
         <script>
             document.addEventListener('DOMContentLoaded', function() {
@@ -183,43 +194,47 @@
                 });
             });
 
+
             function validateQuantity() {
                 const quantityInput = document.getElementById('quantity');
                 const maxStock = ${product.stock};
                 let value = parseInt(quantityInput.value);
-                
+               
                 if (isNaN(value) || value < 1) {
                     value = 1;
                 } else if (value > maxStock) {
                     value = maxStock;
                 }
-                
+               
                 quantityInput.value = value;
             }
+
 
             function incrementQuantity() {
                 const quantityInput = document.getElementById('quantity');
                 const maxStock = ${product.stock};
                 let value = parseInt(quantityInput.value);
-                
+               
                 if (value < maxStock) {
                     quantityInput.value = value + 1;
                 }
             }
 
+
             function decrementQuantity() {
                 const quantityInput = document.getElementById('quantity');
                 let value = parseInt(quantityInput.value);
-                
+               
                 if (value > 1) {
                     quantityInput.value = value - 1;
                 }
             }
         </script>
 
+
         <!-- SweetAlert2 for notifications -->
         <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-        
+       
         <!-- Custom JavaScript for Cart Functionality -->
         <script>
             // Global variables
@@ -236,19 +251,23 @@
                 </c:otherwise>
             </c:choose>
 
+
             // Function to change quantity
             function changeQuantity(productId, change) {
                 const quantityInput = document.getElementById('quantity_' + productId);
                 let currentQuantity = parseInt(quantityInput.value);
                 let newQuantity = currentQuantity + change;
 
+
                 if (newQuantity < 1)
                     newQuantity = 1;
                 if (newQuantity > ${product.stock})
                     newQuantity = ${product.stock};
 
+
                 quantityInput.value = newQuantity;
             }
+
 
             // Function to add product to cart
             async function addToCart(productId, productName, productPrice) {
@@ -262,9 +281,11 @@
                     return;
                 }
 
+
                 const quantityInput = document.getElementById('quantity_' + productId);
                 const quantity = parseInt(quantityInput.value);
                 const addButton = document.getElementById('addBtn_' + productId);
+
 
                 // Validate quantity
                 if (isNaN(quantity) || quantity < 1) {
@@ -276,9 +297,11 @@
                     return;
                 }
 
+
                 // Disable button and show loading
                 addButton.disabled = true;
                 addButton.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Adding...';
+
 
                 try {
                     console.log('Sending request to add to cart:', {
@@ -286,6 +309,7 @@
                         productId: productId,
                         quantity: quantity
                     });
+
 
                     const response = await fetch('${pageContext.request.contextPath}/CartApiServlet', {
                         method: 'POST',
@@ -299,9 +323,11 @@
                         })
                     });
 
+
                     console.log('Response status:', response.status);
                     const result = await response.json();
                     console.log('Response data:', result);
+
 
                     if (result.success) {
                         // Show success message
@@ -313,8 +339,10 @@
                             showConfirmButton: false
                         });
 
+
                         // Update cart count
                         updateCartCount();
+
 
                         // Update stock display
                         const stockDisplay = document.getElementById('stockDisplay');
@@ -322,12 +350,15 @@
                             stockDisplay.textContent = result.remainingStock;
                         }
 
+
                         // Reset quantity to 1
                         quantityInput.value = 1;
+
 
                         // Add visual feedback
                         addButton.classList.add('btn-success');
                         addButton.innerHTML = '<i class="fas fa-check me-2"></i>Added!';
+
 
                         setTimeout(() => {
                             addButton.classList.remove('btn-success');
@@ -352,11 +383,13 @@
                 }
             }
 
+
             // Function to update cart count
             async function updateCartCount() {
                 try {
                     const response = await fetch('${pageContext.request.contextPath}/CartApiServlet?customerId=' + currentUserId);
                     const result = await response.json();
+
 
                     if (result.success && result.data) {
                         const totalItems = result.data.reduce((sum, item) => sum + item.quantity, 0);
@@ -367,22 +400,25 @@
                         cartCount = totalItems;
                     }
                 } catch (error) {
-                    console.error('Error updating cart count:', error);
+                    // Ignore error
                 }
             }
+
 
             // Initialize cart count on page load
             document.addEventListener('DOMContentLoaded', function() {
                 updateCartCount();
 
+
                 // Add keyboard support for quantity input
-                const quantityInput = document.getElementById('quantity_${product.id}');
+                const quantityInput = document.getElementById('quantity_${product.productId}');
                 if (quantityInput) {
                     quantityInput.addEventListener('keypress', function(e) {
                         if (e.key === 'Enter') {
-                            addToCart(${product.id}, '${product.name}', ${product.price});
+                            addToCart(${product.productId}, '${product.name}', ${product.price});
                         }
                     });
+
 
                     quantityInput.addEventListener('change', function() {
                         let value = parseInt(this.value);
@@ -397,6 +433,7 @@
                 }
             });
         </script>
+
 
         <c:if test="${empty product}">
             <div class="alert alert-danger mt-5">Không tìm thấy sản phẩm hoặc có lỗi xảy ra! Vui lòng thử lại.</div>
