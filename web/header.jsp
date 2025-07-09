@@ -10,7 +10,7 @@
     if (menuItems == null) {
         menuItems = new java.util.ArrayList<>(); // Fallback
     }
-    // Kh?i t?o renderedNames là m?t HashMap
+    // Kh?i t?o renderedNames lï¿½ m?t HashMap
     pageContext.setAttribute("renderedNames", new HashMap<String, Boolean>());
     Gson gson = new Gson();
     String menuDataJson = gson.toJson(menuItems);
@@ -104,7 +104,7 @@
         margin: 0 0 10px 0;
         font-size: 16px;
         font-weight: bold;
-        word-break: break-word; /* Cho phép xu?ng dòng t? nhiên */
+        word-break: break-word; /* Cho phï¿½p xu?ng dï¿½ng t? nhiï¿½n */
     }
     .mega-menu-column.full-width {
         flex: 0 0 100%;
@@ -121,7 +121,7 @@
     .mega-menu-column a {
         color: #000;
         text-decoration: none;
-        word-break: break-word; /* Cho phép xu?ng dòng t? nhiên */
+        word-break: break-word; /* Cho phï¿½p xu?ng dï¿½ng t? nhiï¿½n */
     }
     .mega-menu-column a:hover {
         color: #007bff;
@@ -243,7 +243,99 @@
                 <li class="nav-item"><a class="nav-link" href="#">Custom Builds</a></li>
                 <li class="nav-item"><a class="nav-link" href="${pageContext.request.contextPath}/viewblogs">Blog</a></li>
             </ul>
-            <!-- Form tìm ki?m và các nút khác (gi? nguyên) -->
+            <form class="d-flex me-3">
+                <div class="input-group">
+                    <input type="search" class="form-control" placeholder="Search products...">
+                    <button class="btn btn-outline-primary" type="submit">
+                        <i class="fas fa-search"></i>
+                    </button>
+                </div>
+            </form>
+            <div class="d-flex align-items-center">
+                <c:choose>
+                    <c:when test="${not empty sessionScope.userAuth or not empty sessionScope.customerAuth}">
+                        <!-- User Dropdown -->
+                        <div class="dropdown me-3">
+                            <c:choose>
+                                <c:when test="${fn:toLowerCase(sessionScope.user_role) eq 'admin'}">
+                                    <a class="btn btn-outline-primary dropdown-toggle" href="#" role="button" id="userDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+                                        <i class="fas fa-user me-1"></i>
+                                        ${fn:trim(fn:replace(sessionScope.user_name, '(Admin)', ''))} (Admin)
+                                    </a>
+                                    <ul class="dropdown-menu dropdown-menu-end shadow" aria-labelledby="userDropdown">
+                                        <li>
+                                            <a class="dropdown-item text-primary" href="${pageContext.request.contextPath}/adminservlet">
+                                                <i class="fas fa-gauge-high me-2"></i>Admin Dashboard
+                                            </a>
+                                        </li>
+                                        <li><hr class="dropdown-divider"></li>
+                                        <li>
+                                            <a class="dropdown-item" href="${pageContext.request.contextPath}/adminservlet">
+                                                <i class="fas fa-user-circle me-2"></i>Profile
+                                            </a>
+                                        </li>
+                                        <li><a class="dropdown-item" href="${pageContext.request.contextPath}/orderHistory"><i class="fas fa-history me-2"></i>Order History</a></li>
+                                        <li><hr class="dropdown-divider"></li>
+                                        <li><a class="dropdown-item text-danger" href="${pageContext.request.contextPath}/logout"><i class="fas fa-sign-out-alt me-2"></i>Logout</a></li>
+                                    </ul>
+                                </c:when>
+                                <c:when test="${fn:toLowerCase(sessionScope.user_role) eq 'staff'}">
+                                    <a class="btn btn-outline-primary dropdown-toggle" href="#" role="button" id="userDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+                                        <i class="fas fa-user me-1"></i>
+                                        ${sessionScope.user_name} (Staff)
+                                    </a>
+                                    <ul class="dropdown-menu dropdown-menu-end shadow" aria-labelledby="userDropdown">
+                                        <li>
+                                            <a class="dropdown-item text-primary" href="${pageContext.request.contextPath}/staffservlet">
+                                                <i class="fas fa-gauge-high me-2"></i>Staff Dashboard
+                                            </a>
+                                        </li>
+                                        <li><hr class="dropdown-divider"></li>
+                                        <li>
+                                            <a class="dropdown-item" href="${pageContext.request.contextPath}/staffservlet">
+                                                <i class="fas fa-user-circle me-2"></i>Profile
+                                            </a>
+                                        </li>
+                                        <li><a class="dropdown-item" href="${pageContext.request.contextPath}/orderHistory"><i class="fas fa-history me-2"></i>Order History</a></li>
+                                        <li><hr class="dropdown-divider"></li>
+                                        <li><a class="dropdown-item text-danger" href="${pageContext.request.contextPath}/logout"><i class="fas fa-sign-out-alt me-2"></i>Logout</a></li>
+                                    </ul>
+                                </c:when>
+                                <c:otherwise>
+                                    <a class="btn btn-outline-primary dropdown-toggle" href="#" role="button" id="userDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+                                        <i class="fas fa-user me-1"></i>
+                                        ${sessionScope.user_name}
+                                    </a>
+                                    <ul class="dropdown-menu dropdown-menu-end shadow" aria-labelledby="userDropdown">
+                                        <li>
+                                            <a class="dropdown-item" href="${pageContext.request.contextPath}/userprofile?action=profile">
+                                                <i class="fas fa-user-circle me-2"></i>Profile
+                                            </a>
+                                        </li>
+                                        <li><a class="dropdown-item" href="${pageContext.request.contextPath}/userprofile?action=orders"><i class="fas fa-history me-2"></i>Order History</a></li>
+                                        <li><hr class="dropdown-divider"></li>
+                                        <li><a class="dropdown-item text-danger" href="${pageContext.request.contextPath}/logout"><i class="fas fa-sign-out-alt me-2"></i>Logout</a></li>
+                                    </ul>
+                                </c:otherwise>
+                            </c:choose>
+                        </div>
+                    </c:when>
+                    <c:otherwise>
+                        <a href="${pageContext.request.contextPath}/login" class="btn btn-outline-primary me-2">
+                            <i class="fas fa-user me-1"></i> Login
+                        </a>
+                        <a href="${pageContext.request.contextPath}/register" class="btn btn-primary me-2">
+                            <i class="fas fa-user-plus me-1"></i> Register
+                        </a>
+                    </c:otherwise>
+                </c:choose>
+                <a href="#" onclick="checkLoginBeforeCart(event)" class="btn btn-outline-primary position-relative">
+                    <i class="fas fa-shopping-cart"></i>
+                    <span id="cartCount" class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
+                        0
+                    </span>
+                </a>
+            </div>
         </div>
     </div>
 </nav>
@@ -324,8 +416,8 @@
             }
         });
 
-        // ?i?u ch?nh kích th??c c?t d?a trên s? ký t?
-        const maxChars = 15; // Gi?i h?n s? ký t? (có th? thay ??i)
+        // ?i?u ch?nh kï¿½ch th??c c?t d?a trï¿½n s? kï¿½ t?
+        const maxChars = 15; // Gi?i h?n s? kï¿½ t? (cï¿½ th? thay ??i)
         document.querySelectorAll('.mega-menu-column').forEach(column => {
             const content = column.getAttribute('data-content');
             if (content && content.length > maxChars) {
