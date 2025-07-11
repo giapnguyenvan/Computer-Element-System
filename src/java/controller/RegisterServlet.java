@@ -1,6 +1,7 @@
 package controller;
 
 import dal.CustomerDAO;
+import dal.UserDAO;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
@@ -105,7 +106,22 @@ public class RegisterServlet extends HttpServlet {
             }
 
             CustomerDAO customerDAO = new CustomerDAO();
-            // Kiểm tra email đã tồn tại chưa
+            UserDAO userDAO = UserDAO.getInstance();
+            
+            // Kiểm tra email đã tồn tại trong bảng User chưa
+            try {
+                if (userDAO.isEmailExists(email)) {
+                    request.setAttribute("error", "Email is already in use by another account!");
+                    request.getRequestDispatcher("Register.jsp").forward(request, response);
+                    return;
+                }
+            } catch (SQLException e) {
+                request.setAttribute("error", "System error checking email: " + e.getMessage());
+                request.getRequestDispatcher("Register.jsp").forward(request, response);
+                return;
+            }
+            
+            // Kiểm tra email đã tồn tại trong bảng Customer chưa
             if (customerDAO.isEmailExists(email)) {
                 // Kiểm tra xem email có tồn tại nhưng chưa xác thực không
                 if (customerDAO.isEmailExistsButNotVerified(email)) {
