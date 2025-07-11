@@ -553,26 +553,15 @@
     <% if (request.getAttribute("showVerificationPopup") != null) { %>
     <script>
     document.addEventListener("DOMContentLoaded", function() {
-      // Show loading modal first
-      const loadingModal = new bootstrap.Modal(document.getElementById('loadingModal'));
-      const loadingLabel = document.getElementById('loadingModalLabel');
-      const loadingText = document.getElementById('loadingModalText');
-      const loadingSubtext = document.getElementById('loadingModalSubtext');
-      
-      if (loadingLabel) loadingLabel.textContent = 'Sending verification code...';
-      if (loadingText) loadingText.textContent = 'Please wait while we send the verification code to your email';
-      if (loadingSubtext) loadingSubtext.textContent = 'Please check your email inbox';
-      
-      loadingModal.show();
-      
-      // Hide loading modal and show verification popup after 3 seconds
-      setTimeout(() => {
+      // Hide loading modal and show verification popup immediately
+      const loadingModal = bootstrap.Modal.getInstance(document.getElementById('loadingModal'));
+      if (loadingModal) {
         loadingModal.hide();
-        
-        // Show verification popup after loading is done
-        var myModal = new bootstrap.Modal(document.getElementById('verificationModalNew'));
-        myModal.show();
-      }, 3000);
+      }
+      
+      // Show verification popup
+      var myModal = new bootstrap.Modal(document.getElementById('verificationModalNew'));
+      myModal.show();
     });
     </script>
     <% } %>
@@ -763,18 +752,21 @@
                 isSubmitting = true;
                 console.log('Setting isSubmitting to true');
                 
-                // Show loading modal immediately
+                // Show loading modal immediately for sending verification code
                 const loadingModalElement = document.getElementById('loadingModal');
-                console.log('Loading modal element:', loadingModalElement);
+                const loadingLabel = document.getElementById('loadingModalLabel');
+                const loadingText = document.getElementById('loadingModalText');
+                const loadingSubtext = document.getElementById('loadingModalSubtext');
                 
                 if (loadingModalElement) {
+                    // Update loading modal content for verification
+                    if (loadingLabel) loadingLabel.textContent = 'Sending verification code...';
+                    if (loadingText) loadingText.textContent = 'Please wait while we send the verification code to your email';
+                    if (loadingSubtext) loadingSubtext.textContent = 'Please check your email inbox';
+                    
                     const loadingModal = new bootstrap.Modal(loadingModalElement);
-                    console.log('Showing loading modal immediately...');
+                    console.log('Showing loading modal immediately for verification...');
                     loadingModal.show();
-                } else {
-                    console.error('Loading modal element not found!');
-                    // Fallback: show alert
-                    alert('Processing registration... Please wait.');
                 }
                 
                 const fullname = document.getElementById('fullname').value;
@@ -909,7 +901,7 @@
                     // Add disabled class to form
                     registerForm.classList.add('form-disabled');
                     
-                    // Gửi form sau khi hiển thị loading
+                    // Submit form immediately (loading already shown)
                     setTimeout(() => {
                         console.log('Submitting form...');
                         registerForm.submit();
