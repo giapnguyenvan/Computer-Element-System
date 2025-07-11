@@ -97,6 +97,7 @@ public class LoginServlet extends HttpServlet {
                 session.setAttribute("session_login", email);
                 session.setAttribute("user_role", "customer");
                 session.setAttribute("user_name", customer.getName());
+                session.setAttribute("customer_id", customer.getCustomer_id());
                 response.sendRedirect(request.getContextPath() + "/homepageservlet");
                 return;
             }

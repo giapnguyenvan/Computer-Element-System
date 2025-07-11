@@ -2,6 +2,7 @@ package controller;
 
 import dal.CustomerDAO;
 import dal.MenuItemDAO;
+import dal.VoucherDAO;
 import java.io.IOException;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
@@ -12,6 +13,7 @@ import jakarta.servlet.http.HttpSession;
 import java.sql.SQLException;
 import model.Customer;
 import model.MenuItem;
+import model.Voucher;
 import java.util.List;
 
 /**
@@ -51,6 +53,7 @@ public class UserProfileServlet extends HttpServlet {
             action = "profile";
         }
         HttpSession session = request.getSession();
+        Integer customerId = (Integer) session.getAttribute("customer_id");
         String email = (String) session.getAttribute("session_login");
         CustomerDAO customerDAO = new CustomerDAO();
 
@@ -83,28 +86,10 @@ public class UserProfileServlet extends HttpServlet {
                     activePage = "orders";
                     break;
                 }
-                case "orderUpdate": {
-                    // Placeholder - No data set yet
-                    content = "orderUpdate.jsp";
-                    activePage = "orderUpdate";
-                    break;
-                }
-                case "promotion": {
-                    // Placeholder - No data set yet
-                    content = "promotion.jsp";
-                    activePage = "promotion";
-                    break;
-                }
                 case "voucher": {
-                    // Placeholder - No data set yet
+                    List<Voucher> vouchers = new VoucherDAO().getCustomerVoucher(customerId);
                     content = "voucher.jsp";
                     activePage = "voucher";
-                    break;
-                }
-                case "changePassword": {
-                    // Placeholder - No data set yet
-                    content = "changePassword.jsp";
-                    activePage = "changePassword";
                     break;
                 }
                 default: {
