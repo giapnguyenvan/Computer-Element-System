@@ -35,9 +35,67 @@ public class RegisterServlet extends HttpServlet {
             String fullname = request.getParameter("fullname");
             String email = request.getParameter("email");
             String phone = request.getParameter("phone");
-            String address = request.getParameter("address");
             String gender = request.getParameter("gender");
             String dateOfBirthStr = request.getParameter("dateOfBirth");
+            
+            // Lấy thông tin address từ các trường riêng biệt
+            String province = request.getParameter("province");
+            String district = request.getParameter("district");
+            String ward = request.getParameter("ward");
+            String addressDetail = request.getParameter("addressDetail");
+            
+            // Fallback to hidden inputs if regular inputs are null
+            if (province == null || province.trim().isEmpty()) {
+                province = request.getParameter("provinceHidden");
+            }
+            if (district == null || district.trim().isEmpty()) {
+                district = request.getParameter("districtHidden");
+            }
+            if (ward == null || ward.trim().isEmpty()) {
+                ward = request.getParameter("wardHidden");
+            }
+            
+            // Ghép address thành chuỗi hoàn chỉnh
+            StringBuilder addressBuilder = new StringBuilder();
+            if (province != null && !province.trim().isEmpty()) {
+                addressBuilder.append(province.trim());
+            }
+            if (district != null && !district.trim().isEmpty()) {
+                if (addressBuilder.length() > 0) addressBuilder.append(", ");
+                addressBuilder.append(district.trim());
+            }
+            if (ward != null && !ward.trim().isEmpty()) {
+                if (addressBuilder.length() > 0) addressBuilder.append(", ");
+                addressBuilder.append(ward.trim());
+            }
+            if (addressDetail != null && !addressDetail.trim().isEmpty()) {
+                if (addressBuilder.length() > 0) addressBuilder.append(", ");
+                addressBuilder.append(addressDetail.trim());
+            }
+            
+            String address = addressBuilder.toString();
+            
+            // Ensure address is not empty - use a fallback if needed
+            if (address == null || address.trim().isEmpty()) {
+                address = "Address not specified";
+            }
+            
+            // Validate address fields
+            if (province == null || province.trim().isEmpty()) {
+                request.setAttribute("error", "Please select a province/city.");
+                request.getRequestDispatcher("Register.jsp").forward(request, response);
+                return;
+            }
+            if (district == null || district.trim().isEmpty()) {
+                request.setAttribute("error", "Please select a district.");
+                request.getRequestDispatcher("Register.jsp").forward(request, response);
+                return;
+            }
+            if (ward == null || ward.trim().isEmpty()) {
+                request.setAttribute("error", "Please select a ward/commune.");
+                request.getRequestDispatcher("Register.jsp").forward(request, response);
+                return;
+            }
 
             // Kiểm tra mật khẩu xác nhận
             if (!password.equals(confirmPassword)) {

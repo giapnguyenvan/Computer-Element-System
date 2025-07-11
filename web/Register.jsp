@@ -453,6 +453,12 @@
                                value="${param.addressDetail != null ? param.addressDetail : (not empty addressDetail ? addressDetail : '')}">
                         <div class="invalid-feedback" id="addressDetailError"></div>
                     </div>
+                    
+                    <!-- Hidden inputs to ensure address values are always sent -->
+                    <input type="hidden" id="provinceHidden" name="provinceHidden">
+                    <input type="hidden" id="districtHidden" name="districtHidden">
+                    <input type="hidden" id="wardHidden" name="wardHidden">
+                    
                     <button type="submit" class="btn-register">Sign Up</button>
                 </form>
                 <div class="login-link">
@@ -723,6 +729,11 @@
                 const province = document.getElementById('province').value;
                 const errorDiv = document.getElementById('clientError');
                 let hasFieldErrors = false;
+
+                // Copy dropdown values to hidden inputs to ensure they are sent
+                document.getElementById('provinceHidden').value = province;
+                document.getElementById('districtHidden').value = district;
+                document.getElementById('wardHidden').value = ward;
 
                 // Clear all field errors first
                 clearFieldError('fullname');
