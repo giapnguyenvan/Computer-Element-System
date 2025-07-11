@@ -74,14 +74,17 @@
             text-decoration: underline;
         }
         .register-left-content h1 {
-            font-size: 1.3rem;
+            font-size: 3rem;
             font-weight: bold;
-            margin-bottom: 0.7rem;
+            margin-bottom: 1.5rem;
         }
         .register-left-content p {
-            font-size: 1rem;
-            margin-bottom: 0.7rem;
+            font-size: 1.25rem;
+            margin-bottom: 1.5rem;
             text-shadow: 0 1px 4px rgba(0, 0, 0, 0.15);
+        }
+        .register-left-content a {
+            font-size: 1.25rem;
         }
         .register-left-content a.btn {
             font-size: 1.25rem;

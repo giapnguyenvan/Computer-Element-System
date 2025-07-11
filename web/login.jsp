@@ -258,13 +258,11 @@
                     font-weight: bold;
                     margin-bottom: 1.5rem;
                 }
-
                 .login-left-content p {
                     font-size: 1.25rem;
                     margin-bottom: 1.5rem;
                     text-shadow: 0 1px 4px rgba(0, 0, 0, 0.15);
                 }
-
                 .login-left-content a {
                     font-size: 1.25rem;
                 }
@@ -273,13 +271,12 @@
             <div class="login-left">
                 <div class="login-left-content">
                     <a class="navbar-brand" href="${pageContext.request.contextPath}/homepageservlet" style="color: white;">
-                        <i class="fas fa-microchip me-2"></i>
                         <span class="fw-bold">CES</span>
                     </a>
-                    <h1>Build Your Dream PC</h1>
+                    <h1>Welcome to CES</h1>
                     <p>
-                        Customize your perfect PC with our easy-to-use PC Builder tool.<br>
-                        Select from our wide range of high-quality components.
+                        Join us to build your dream PC and enjoy exclusive member benefits.<br>
+                        Sign up now and start your journey!
                     </p>
                     <a href="PCBuilderServlet" class="btn btn-primary btn-lg" style="color: white">Build PC</a>
                 </div>
