@@ -3,6 +3,7 @@ package dal;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
+import java.sql.Date;
 import model.Customer;
 import org.springframework.security.crypto.bcrypt.BCrypt;
 
@@ -30,13 +31,19 @@ public class CustomerDAO {
             throw new SQLException("Email already exists: " + customer.getEmail());
         }
 
-        String sql = "INSERT INTO Customer (name, email, password, phone, shipping_address) VALUES (?, ?, ?, ?, ?)";
+        String sql = "INSERT INTO Customer (name, email, password, phone, shipping_address, gender, date_of_birth) VALUES (?, ?, ?, ?, ?, ?, ?)";
         try (Connection conn = dbContext.getConnection(); PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setString(1, customer.getName());
             stmt.setString(2, customer.getEmail());
             stmt.setString(3, hashedPassword);
             stmt.setString(4, customer.getPhone());
             stmt.setString(5, customer.getShipping_address());
+            stmt.setString(6, customer.getGender());
+            if (customer.getDateOfBirth() != null) {
+                stmt.setDate(7, new Date(customer.getDateOfBirth().getTime()));
+            } else {
+                stmt.setNull(7, java.sql.Types.DATE);
+            }
             stmt.executeUpdate();
         }
     }
@@ -59,6 +66,11 @@ public class CustomerDAO {
                         );
                         customer.setEmail(rs.getString("email"));
                         customer.setPassword(hashedPassword);
+                        customer.setGender(rs.getString("gender"));
+                        java.sql.Date dateOfBirth = rs.getDate("date_of_birth");
+                        if (dateOfBirth != null) {
+                            customer.setDateOfBirth(new java.util.Date(dateOfBirth.getTime()));
+                        }
                         return customer;
                     } else {
                         return null; // Sai mật khẩu
@@ -84,6 +96,11 @@ public class CustomerDAO {
                     );
                     customer.setEmail(rs.getString("email"));
                     customer.setPassword(rs.getString("password"));
+                    customer.setGender(rs.getString("gender"));
+                    java.sql.Date dateOfBirth = rs.getDate("date_of_birth");
+                    if (dateOfBirth != null) {
+                        customer.setDateOfBirth(new java.util.Date(dateOfBirth.getTime()));
+                    }
                     return customer;
                 }
             }
@@ -125,6 +142,11 @@ public class CustomerDAO {
                 );
                 customer.setEmail(rs.getString("email"));
                 customer.setPassword(rs.getString("password"));
+                customer.setGender(rs.getString("gender"));
+                java.sql.Date dateOfBirth = rs.getDate("date_of_birth");
+                if (dateOfBirth != null) {
+                    customer.setDateOfBirth(new java.util.Date(dateOfBirth.getTime()));
+                }
                 customers.add(customer);
             }
         }
@@ -160,9 +182,27 @@ public class CustomerDAO {
         }
     }
 
+    public boolean updateCustomerInfoWithGenderAndDOB(String email, String name, String phone, String address, String hashedPassword, String gender, java.util.Date dateOfBirth) throws SQLException {
+        String sql = "UPDATE Customer SET name = ?, phone = ?, shipping_address = ?, password = ?, gender = ?, date_of_birth = ? WHERE email = ? AND is_verified = 0";
+        try (Connection conn = dbContext.getConnection(); PreparedStatement stmt = conn.prepareStatement(sql)) {
+            stmt.setString(1, name);
+            stmt.setString(2, phone);
+            stmt.setString(3, address);
+            stmt.setString(4, hashedPassword);
+            stmt.setString(5, gender);
+            if (dateOfBirth != null) {
+                stmt.setDate(6, new Date(dateOfBirth.getTime()));
+            } else {
+                stmt.setNull(6, java.sql.Types.DATE);
+            }
+            stmt.setString(7, email);
+            return stmt.executeUpdate() > 0;
+        }
+    }
+
     public boolean updatePassword(String email, String newPassword) throws SQLException {
         // Hash the password using BCrypt
-        String hashedPassword = org.springframework.security.crypto.bcrypt.BCrypt.hashpw(newPassword, org.springframework.security.crypto.bcrypt.BCrypt.gensalt());
+        String hashedPassword = BCrypt.hashpw(newPassword, BCrypt.gensalt());
         String sql = "UPDATE Customer SET password = ? WHERE email = ?";
         try (Connection conn = dbContext.getConnection(); PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setString(1, hashedPassword);

@@ -1,5 +1,7 @@
 package model;
 
+import java.util.Date;
+
 public class Customer {
     private int customer_id;
     private int user_id;
@@ -8,6 +10,8 @@ public class Customer {
     private String shipping_address;
     private String email;
     private String password;
+    private String gender;
+    private Date dateOfBirth;
     private boolean isVerified;
 
     public Customer() {
@@ -95,6 +99,22 @@ public class Customer {
         this.password = password;
     }
 
+    public String getGender() {
+        return gender;
+    }
+
+    public void setGender(String gender) {
+        this.gender = gender;
+    }
+
+    public Date getDateOfBirth() {
+        return dateOfBirth;
+    }
+
+    public void setDateOfBirth(Date dateOfBirth) {
+        this.dateOfBirth = dateOfBirth;
+    }
+
     public boolean isVerified() {
         return isVerified;
     }
@@ -111,6 +131,8 @@ public class Customer {
                 ", name='" + name + '\'' +
                 ", phone='" + phone + '\'' +
                 ", shipping_address='" + shipping_address + '\'' +
+                ", gender='" + gender + '\'' +
+                ", dateOfBirth=" + dateOfBirth +
                 '}';
     }
 } 

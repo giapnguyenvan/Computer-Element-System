@@ -64,6 +64,8 @@ CREATE TABLE customer (
     password NVARCHAR(255),
     phone NVARCHAR(20),
     shipping_address NVARCHAR(255),
+    gender NVARCHAR(10) CHECK (gender IN ('Male', 'Female', 'Other')),
+    date_of_birth DATE,
     is_verified BIT DEFAULT 0,
     verification_token NVARCHAR(255)
 );

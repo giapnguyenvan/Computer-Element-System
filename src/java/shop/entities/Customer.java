@@ -14,6 +14,7 @@ import lombok.experimental.FieldDefaults;
 import shop.anotation.Column;
 import shop.anotation.Id;
 import shop.anotation.Table;
+import java.util.Date;
 
 /**
  *
@@ -47,4 +48,10 @@ public class Customer {
 
     @Column(name = "shipping_address")
     String shippingAddress;
+
+    @Column(name = "gender")
+    String gender;
+
+    @Column(name = "date_of_birth")
+    Date dateOfBirth;
 }

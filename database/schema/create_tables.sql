@@ -88,6 +88,8 @@ CREATE TABLE `customer` (
   `password` VARCHAR(255) DEFAULT NULL,
   `phone` VARCHAR(20) DEFAULT NULL,
   `shipping_address` VARCHAR(255) DEFAULT NULL,
+  `gender` ENUM('Male', 'Female', 'Other') DEFAULT NULL,
+  `date_of_birth` DATE DEFAULT NULL,
   `is_verified` TINYINT(1) DEFAULT '0',
   `verification_token` VARCHAR(255) DEFAULT NULL,
   PRIMARY KEY (`customer_id`),

@@ -8,6 +8,9 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.sql.SQLException;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import model.Customer;
 import org.springframework.security.crypto.bcrypt.BCrypt;
 import util.EmailUtil;
@@ -33,6 +36,8 @@ public class RegisterServlet extends HttpServlet {
             String email = request.getParameter("email");
             String phone = request.getParameter("phone");
             String address = request.getParameter("address");
+            String gender = request.getParameter("gender");
+            String dateOfBirthStr = request.getParameter("dateOfBirth");
 
             // Kiểm tra mật khẩu xác nhận
             if (!password.equals(confirmPassword)) {
@@ -49,7 +54,21 @@ public class RegisterServlet extends HttpServlet {
                     // Cập nhật thông tin customer chưa xác thực thay vì tạo mới
                     try {
                         String hashedPassword = BCrypt.hashpw(password, BCrypt.gensalt());
-                        boolean updateSuccess = customerDAO.updateCustomerInfo(email, fullname, phone, address, hashedPassword);
+                        
+                        // Parse date of birth
+                        Date dateOfBirth = null;
+                        if (dateOfBirthStr != null && !dateOfBirthStr.trim().isEmpty()) {
+                            try {
+                                SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+                                dateOfBirth = sdf.parse(dateOfBirthStr);
+                            } catch (ParseException e) {
+                                request.setAttribute("error", "Invalid date format for date of birth.");
+                                request.getRequestDispatcher("Register.jsp").forward(request, response);
+                                return;
+                            }
+                        }
+                        
+                        boolean updateSuccess = customerDAO.updateCustomerInfoWithGenderAndDOB(email, fullname, phone, address, hashedPassword, gender, dateOfBirth);
                         
                         if (updateSuccess) {
                             // Gửi mã xác thực qua email
@@ -67,7 +86,7 @@ public class RegisterServlet extends HttpServlet {
                         } else {
                             request.setAttribute("error", "Cannot update account information. Please try again.");
                         }
-                    } catch (SQLException e) {
+                    } catch (Exception e) {
                         request.setAttribute("error", "Error updating information: " + e.getMessage());
                     }
                     request.getRequestDispatcher("Register.jsp").forward(request, response);
@@ -81,6 +100,22 @@ public class RegisterServlet extends HttpServlet {
             // Tạo đối tượng Customer mới
             Customer newCustomer = new Customer(0, 0, fullname, phone, address);
             newCustomer.setEmail(email);
+            newCustomer.setGender(gender);
+            
+            // Parse date of birth
+            Date dateOfBirth = null;
+            if (dateOfBirthStr != null && !dateOfBirthStr.trim().isEmpty()) {
+                try {
+                    SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+                    dateOfBirth = sdf.parse(dateOfBirthStr);
+                    newCustomer.setDateOfBirth(dateOfBirth);
+                } catch (ParseException e) {
+                    request.setAttribute("error", "Invalid date format for date of birth.");
+                    request.getRequestDispatcher("Register.jsp").forward(request, response);
+                    return;
+                }
+            }
+            
             // Mã hóa mật khẩu trước khi lưu
             String hashedPassword = BCrypt.hashpw(password, BCrypt.gensalt());
             newCustomer.setPassword(hashedPassword);

@@ -399,6 +399,22 @@
                                value="${param.email != null ? param.email : (not empty email ? email : '')}">
                     </div>
                     <div class="form-col">
+                        <label class="form-label" for="gender">Gender:</label>
+                        <select class="form-control" id="gender" name="gender" required>
+                            <option value="">-- Select gender --</option>
+                            <option value="Male" ${param.gender == 'Male' ? 'selected' : ''}>Male</option>
+                            <option value="Female" ${param.gender == 'Female' ? 'selected' : ''}>Female</option>
+                            <option value="Other" ${param.gender == 'Other' ? 'selected' : ''}>Other</option>
+                        </select>
+                        <div class="invalid-feedback" id="genderError"></div>
+                    </div>
+                    <div class="form-col">
+                        <label class="form-label" for="dateOfBirth">Date of Birth:</label>
+                        <input type="date" class="form-control" id="dateOfBirth" name="dateOfBirth" required
+                               value="${param.dateOfBirth != null ? param.dateOfBirth : ''}">
+                        <div class="invalid-feedback" id="dateOfBirthError"></div>
+                    </div>
+                    <div class="form-col">
                         <label class="form-label" for="phone">Phone Number:</label>
                         <input type="tel" class="form-control" id="phone" name="phone" required
                                value="${param.phone != null ? param.phone : (not empty phone ? phone : '')}">
@@ -641,6 +657,26 @@
             return true;
         }
 
+        function validateGender(gender) {
+            return gender && gender !== '';
+        }
+
+        function validateDateOfBirth(dateOfBirth) {
+            if (!dateOfBirth || dateOfBirth.trim() === '') return false;
+            
+            // Check if date is in the past and user is at least 13 years old
+            const today = new Date();
+            const birthDate = new Date(dateOfBirth);
+            const age = today.getFullYear() - birthDate.getFullYear();
+            const monthDiff = today.getMonth() - birthDate.getMonth();
+            
+            if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < birthDate.getDate())) {
+                age--;
+            }
+            
+            return age >= 13 && age <= 120;
+        }
+
         function validateAddressField(fieldValue) {
             if (!fieldValue || fieldValue.trim() === '') {
                 return "This field is required.";
@@ -679,6 +715,8 @@
                 const password = document.getElementById('password').value;
                 const confirmPassword = document.getElementById('confirmPassword').value;
                 const phone = document.getElementById('phone').value;
+                const gender = document.getElementById('gender').value;
+                const dateOfBirth = document.getElementById('dateOfBirth').value;
                 const addressDetail = document.getElementById('addressDetail').value;
                 const ward = document.getElementById('ward').value;
                 const district = document.getElementById('district').value;
@@ -692,6 +730,8 @@
                 clearFieldError('password');
                 clearFieldError('confirmPassword');
                 clearFieldError('phone');
+                clearFieldError('gender');
+                clearFieldError('dateOfBirth');
                 clearFieldError('addressDetail');
                 clearFieldError('ward');
                 clearFieldError('district');
@@ -706,6 +746,18 @@
                 // Validate email
                 if (!validateEmail(email)) {
                     showFieldError('email', 'Invalid email. Please enter a valid email address (max 100 characters).');
+                    hasFieldErrors = true;
+                }
+
+                // Validate gender
+                if (!validateGender(gender)) {
+                    showFieldError('gender', 'Please select your gender.');
+                    hasFieldErrors = true;
+                }
+
+                // Validate date of birth
+                if (!validateDateOfBirth(dateOfBirth)) {
+                    showFieldError('dateOfBirth', 'Please enter a valid date of birth. You must be at least 13 years old.');
                     hasFieldErrors = true;
                 }
 
