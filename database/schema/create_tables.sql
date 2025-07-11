@@ -52,7 +52,7 @@ CREATE TABLE `paymentmethod` (
   `description` VARCHAR(255) DEFAULT NULL,
   `status` ENUM('Active', 'Inactive') NOT NULL DEFAULT 'Active',
   PRIMARY KEY (`payment_method_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4 collate=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 CREATE TABLE `user` (
   `user_id` INT NOT NULL AUTO_INCREMENT,
