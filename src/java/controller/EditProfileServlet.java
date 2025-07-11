@@ -118,7 +118,7 @@ public class EditProfileServlet extends HttpServlet {
             }
             return;
         }
-        
+
         if ("initiatePasswordChange".equals(action)) {
             String newPassword = request.getParameter("newPassword");
             if (newPassword == null || newPassword.length() < 8) {
@@ -153,6 +153,32 @@ public class EditProfileServlet extends HttpServlet {
                 }
             } else {
                 out.print("{\"success\":false,\"error\":\"Mã xác nhận không đúng hoặc đã hết hạn.\"}");
+            }
+            return;
+        }
+
+        if ("editGender".equals(action)) {
+            String newGender = request.getParameter("newGender");
+
+            if (newGender == null || newGender.trim().isEmpty()) {
+                out.print("{\"success\":false,\"error\":\"Giới tính không được để trống.\"}");
+                return;
+            }
+
+            try {
+                CustomerDAO dao = new CustomerDAO();
+                dao.updateGender(email, newGender); // ⬅️ call your DAO method
+
+                // Update session info
+                Customer currentUser = (Customer) session.getAttribute("customerAuth");
+                if (currentUser != null) {
+                    currentUser.setGender(newGender);
+                    session.setAttribute("customerAuth", currentUser);
+                }
+
+                out.print("{\"success\":true}");
+            } catch (Exception ex) {
+                out.print("{\"success\":false,\"error\":\"Không thể cập nhật giới tính: " + ex.getMessage() + "\"}");
             }
             return;
         }

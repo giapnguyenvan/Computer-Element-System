@@ -1,5 +1,7 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
+
 <style>
     .custom-btn {
         background-color: #007BFF;
@@ -20,19 +22,33 @@
     <div class="card-body">
         <h5 class="card-title">Hồ sơ cá nhân</h5>
         <p>
-            <strong>Tên:</strong>
+            <strong>Name:</strong>
             <input type="text" id="nameInput" value="${data.name}" style="border-radius: 8px; padding: 5px;" />
-            <button type="button" class="custom-btn" onclick="submitName()">Lưu</button>
+            <button type="button" class="custom-btn" onclick="submitName()">Save</button>
         </p>
         <p>
             <strong>Email:</strong> ${data.email}
             <button type="button" class="custom-btn" onclick="showEditEmailModal()">Edit</button>
         </p>
         <p>
-            <strong>Số điện thoại:</strong> ${data.phone}
+            <strong>Phone:</strong> ${data.phone}
             <button type="button" class="custom-btn" onclick="showEditPhoneModal()">Edit</button>
+        <p>
+            <strong>Gender:</strong>
+            <select id="genderSelect" style="border-radius: 8px; padding: 5px;">
+                <option value="Male" ${data.gender == 'Male' ? 'selected' : ''}>Male</option>
+                <option value="Female" ${data.gender == 'Female' ? 'selected' : ''}>Female</option>
+                <option value="Other" ${data.gender == 'Other' ? 'selected' : ''}>Other</option>
+            </select>
+            <button type="button" class="custom-btn" onclick="submitGender()">Save</button>
         </p>
-        <p><strong>Địa chỉ giao hàng:</strong> ${data.shipping_address}</p>
+
+        <p>
+            <strong>DoB:</strong>
+            <fmt:formatDate value="${data.dateOfBirth}" pattern="dd/MM/yyyy" />
+        </p>
+
+        <p><strong>Shipping address:</strong> ${data.shipping_address}</p>
 
         <button type="button" class="custom-btn" onclick="showChangePasswordModal()">Change password</button>
     </div>               
@@ -301,4 +317,27 @@
                     }
                 });
     }
+    function submitGender() {
+        const newGender = document.getElementById('genderSelect').value;
+
+        fetch('editProfile', {
+            method: 'POST',
+            headers: {'Content-Type': 'application/x-www-form-urlencoded'},
+            body: 'action=editGender&newGender=' + encodeURIComponent(newGender)
+        })
+                .then(res => res.json())
+                .then(data => {
+                    if (data.success) {
+                        alert("Cập nhật giới tính thành công!");
+                        window.location.reload();
+                    } else {
+                        alert(data.error || 'Có lỗi xảy ra!');
+                    }
+                })
+                .catch(err => {
+                    console.error(err);
+                    alert('Lỗi kết nối tới server.');
+                });
+    }
+
 </script>

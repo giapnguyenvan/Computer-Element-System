@@ -237,4 +237,14 @@ public class CustomerDAO {
             return ps.executeUpdate() > 0;
         }
     }
+
+    public boolean updateGender(String email, String newGender) throws SQLException {
+        String sql = "UPDATE customer SET gender = ? WHERE email = ?";
+        try (Connection conn = dbContext.getConnection(); PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setString(1, newGender);
+            ps.setString(2, email);
+            return ps.executeUpdate() > 0;
+        }
+    }
+
 }
