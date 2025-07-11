@@ -29,9 +29,13 @@ public class CheckVerificationServlet extends HttpServlet {
                 boolean updateSuccess = customerDAO.updateIsVerified(email, true);
                 
                 if (updateSuccess) {
-                    // Xác thực thành công, chuyển về trang login
+                    // Xác thực thành công, lưu thông tin để hiển thị popup
+                    session.setAttribute("verification_success", true);
+                    session.setAttribute("verified_email", email);
                     session.setAttribute("successMessage", "Account has been successfully verified! You can now login.");
-                    response.sendRedirect("login.jsp");
+                    
+                    // Chuyển hướng đến trang login với thông báo thành công
+                    response.sendRedirect("login.jsp?verification=success&email=" + java.net.URLEncoder.encode(email, "UTF-8"));
                     return;
                 } else {
                     request.setAttribute("error", "Cannot update verification status. Please try again.");

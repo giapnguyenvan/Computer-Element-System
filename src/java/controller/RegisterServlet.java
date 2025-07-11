@@ -152,19 +152,27 @@ public class RegisterServlet extends HttpServlet {
                                 // Lưu mã xác thực vào session để kiểm tra sau
                                 request.getSession().setAttribute("verification_code", verificationCode);
                                 request.getSession().setAttribute("verification_email", email);
+                                
+                                // Hiển thị popup verification
                                 request.setAttribute("showVerificationPopup", true);
                                 request.setAttribute("registerMessage", "Information has been updated. Please check your email to verify your account!");
+                                request.getRequestDispatcher("Register.jsp").forward(request, response);
+                                return;
                             } catch (Exception ex) {
                                 request.setAttribute("error", "Cannot send verification email: " + ex.getMessage());
+                                request.getRequestDispatcher("Register.jsp").forward(request, response);
+                                return;
                             }
                         } else {
                             request.setAttribute("error", "Cannot update account information. Please try again.");
+                            request.getRequestDispatcher("Register.jsp").forward(request, response);
+                            return;
                         }
                     } catch (Exception e) {
                         request.setAttribute("error", "Error updating information: " + e.getMessage());
+                        request.getRequestDispatcher("Register.jsp").forward(request, response);
+                        return;
                     }
-                    request.getRequestDispatcher("Register.jsp").forward(request, response);
-                    return;
                 } else {
                     request.setAttribute("error", "Email is already in use!");
                     request.getRequestDispatcher("Register.jsp").forward(request, response);
@@ -204,12 +212,17 @@ public class RegisterServlet extends HttpServlet {
                     // Lưu mã xác thực vào session để kiểm tra sau
                     request.getSession().setAttribute("verification_code", verificationCode);
                     request.getSession().setAttribute("verification_email", email);
+                    
+                    // Hiển thị popup verification
                     request.setAttribute("showVerificationPopup", true);
                     request.setAttribute("registerMessage", "Please check your email to verify your account!");
+                    request.getRequestDispatcher("Register.jsp").forward(request, response);
+                    return;
                 } catch (Exception ex) {
                     request.setAttribute("error", "Cannot send verification email: " + ex.getMessage());
+                    request.getRequestDispatcher("Register.jsp").forward(request, response);
+                    return;
                 }
-                request.getRequestDispatcher("Register.jsp").forward(request, response);
             } catch (SQLException e) {
                 // Kiểm tra xem có phải lỗi duplicate key không
                 if (e.getMessage().contains("Duplicate entry") && e.getMessage().contains("customer.email")) {

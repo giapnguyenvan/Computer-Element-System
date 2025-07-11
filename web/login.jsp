@@ -290,7 +290,33 @@
                     <h2><span>Login to your</span> Account</h2>
                     <p>Don't have an account? <a href="Register.jsp">Create one here</a></p>
                     
-                    <!-- Hiển thị thông báo thành công từ session -->
+                    <!-- Hiển thị thông báo thành công từ registration -->
+                    <% 
+                    String successParam = request.getParameter("success");
+                    String emailParam = request.getParameter("email");
+                    String verificationParam = request.getParameter("verification");
+                    String loginEmail = (String) session.getAttribute("login_email");
+                    String loginPassword = (String) session.getAttribute("login_password");
+                    Boolean registrationSuccess = (Boolean) session.getAttribute("registration_success");
+                    
+                    if ("registration".equals(successParam) && emailParam != null) {
+                        // Xóa session attributes sau khi sử dụng
+                        session.removeAttribute("login_email");
+                        session.removeAttribute("login_password");
+                        session.removeAttribute("registration_success");
+                    %>
+                        <div class="alert alert-success" role="alert">
+                            <i class="fa fa-check-circle me-2"></i>Registration successful! Please check your email to verify your account.
+                        </div>
+                    <% } %>
+                    
+                    <!-- Hiển thị thông báo thành công từ verification -->
+                    <% if ("success".equals(verificationParam) && emailParam != null) { %>
+                        <div class="alert alert-success" role="alert">
+                            <i class="fa fa-check-circle me-2"></i>Account verified successfully! You can now login.
+                        </div>
+                    <% } %>
+                    
                     <% String successMessage = (String) session.getAttribute("successMessage"); %>
                     <% if (successMessage != null) { %>
                         <div class="alert alert-success" role="alert">
@@ -333,8 +359,65 @@
                 </div>
             </div>
         </div>
+        
+        <!-- Success Modal -->
+        <div class="modal fade" id="successModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="successModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content">
+                    <div class="modal-header bg-success text-white">
+                        <h5 class="modal-title" id="successModalLabel">
+                            <i class="fa fa-check-circle me-2"></i>Registration Successful!
+                        </h5>
+                        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body text-center">
+                        <div class="mb-3">
+                            <i class="fa fa-check-circle text-success" style="font-size: 3rem;"></i>
+                        </div>
+                        <h5 class="mb-3">Account Verified Successfully!</h5>
+                        <p class="text-muted">Your account has been verified and is now ready to use.</p>
+                        <p class="text-muted">You can now login with your email and password.</p>
+                    </div>
+                    <div class="modal-footer justify-content-center">
+                        <button type="button" class="btn btn-success" data-bs-dismiss="modal">Continue to Login</button>
+                    </div>
+                </div>
+            </div>
+        </div>
         <script>
             const loginForm = document.getElementById('loginForm');
+            
+            // Auto-fill email and password if coming from registration
+            document.addEventListener('DOMContentLoaded', function() {
+                const urlParams = new URLSearchParams(window.location.search);
+                const success = urlParams.get('success');
+                const verification = urlParams.get('verification');
+                const email = urlParams.get('email');
+                
+                if (success === 'registration' && email) {
+                    // Email đã được điền từ URL parameter
+                    document.getElementById('email').value = email;
+                    
+                    // Hiển thị thông báo thành công
+                    const successAlert = document.createElement('div');
+                    successAlert.className = 'alert alert-success';
+                    successAlert.innerHTML = '<i class="fa fa-check-circle me-2"></i>Registration successful! Please check your email to verify your account.';
+                    
+                    const form = document.getElementById('loginForm');
+                    form.parentNode.insertBefore(successAlert, form);
+                }
+                
+                // Hiển thị popup thành công khi verification thành công
+                if (verification === 'success' && email) {
+                    // Email đã được điền từ URL parameter
+                    document.getElementById('email').value = email;
+                    
+                    // Hiển thị popup thành công
+                    const successModal = new bootstrap.Modal(document.getElementById('successModal'));
+                    successModal.show();
+                }
+            });
+            
             if (loginForm) {
                 loginForm.addEventListener('submit', function (event) {
                     const email = document.getElementById('email').value;
@@ -343,7 +426,7 @@
                     let errors = [];
 
                     if (email.trim() === '') {
-                        errors.push("Username is required.");
+                        errors.push("Email is required.");
                     }
 
                     if (password.trim() === '') {
