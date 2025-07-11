@@ -235,30 +235,22 @@ public class ProductDAO {
     public void insertProduct(Products p) {
         DBContext db = DBContext.getInstance();
         String sql = """
-            INSERT INTO product (name, component_type_id, brand_id, series_id, model, price, import_price, stock, sku, description, status, created_at)
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-            """;
+        INSERT INTO product (name, component_type_id, brand_id, series_id, model, price, import_price, stock, sku, description, status, created_at)
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+        """;
         try {
             PreparedStatement ptm = db.getConnection().prepareStatement(sql);
             ptm.setString(1, p.getName());
             ptm.setInt(2, p.getComponentTypeId());
             ptm.setInt(3, p.getBrandId());
-            if (p.getSeriesId() != null) {
-                ptm.setInt(4, p.getSeriesId());
-            } else {
-                ptm.setNull(4, java.sql.Types.INTEGER);
-            }
+            ptm.setInt(4, p.getSeriesId());
             ptm.setString(5, p.getModel());
             ptm.setDouble(6, p.getPrice());
-            if (p.getImportPrice() != null) {
-                ptm.setDouble(7, p.getImportPrice());
-            } else {
-                ptm.setNull(7, java.sql.Types.DOUBLE);
-            }
+            ptm.setDouble(7, p.getImportPrice());
             ptm.setInt(8, p.getStock());
             ptm.setString(9, p.getSku());
             ptm.setString(10, p.getDescription());
-            ptm.setString(11, p.getStatus() != null ? p.getStatus() : "Active");
+            ptm.setString(11, p.getStatus());
             ptm.setTimestamp(12, p.getCreatedAt());
             ptm.executeUpdate();
         } catch (SQLException ex) {
@@ -460,7 +452,7 @@ public class ProductDAO {
         }
         return listProduct;
     }
-    
+
     public static void main(String[] args) {
         ProductDAO dao = new ProductDAO();
         Vector<Products> list = dao.getAllProduct();

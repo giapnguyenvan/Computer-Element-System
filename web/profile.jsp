@@ -34,7 +34,7 @@
         </p>
         <p><strong>Địa chỉ giao hàng:</strong> ${data.shipping_address}</p>
 
-        <button type="button" class="custom-btn">Change password</button>
+        <button type="button" class="custom-btn" onclick="showChangePasswordModal()">Change password</button>
     </div>               
 </div>
 
@@ -75,7 +75,26 @@
     </form>
 </div>
 <div id="modalOverlay" style="display:none; position:fixed; top:0; left:0; width:100vw; height:100vh; background:rgba(0,0,0,0.3); z-index:999;"></div>
-
+<!-- Change Password Modal -->
+<div id="changePasswordModal" style="display:none; position:fixed; top:30%; left:50%; transform:translate(-50%,-50%); background:#fff; padding:20px; border:1px solid #ccc; z-index:1000;">
+    <form onsubmit="submitNewPassword(event)">
+        <label>New Password:</label>
+        <input type="password" id="newPassword" required minlength="8">
+        <label>Confirm Password:</label>
+        <input type="password" id="confirmPassword" required minlength="8">
+        <button type="submit">Gửi xác nhận</button>
+        <button type="button" onclick="closeChangePasswordModal()">Hủy</button>
+    </form>
+</div>
+<!-- Verify Password Code Modal -->
+<div id="verifyPasswordModal" style="display:none; position:fixed; top:35%; left:50%; transform:translate(-50%,-50%); background:#fff; padding:20px; border:1px solid #ccc; z-index:1001;">
+    <form onsubmit="submitPasswordToken(event)">
+        <label>Nhập mã xác nhận đã gửi tới email:</label>
+        <input type="text" id="passwordTokenInput" required>
+        <button type="submit">Xác nhận</button>
+        <button type="button" onclick="closeVerifyPasswordModal()">Hủy</button>
+    </form>
+</div>
 <script>
     function showEditEmailModal() {
         document.getElementById('editEmailModal').style.display = 'block';
