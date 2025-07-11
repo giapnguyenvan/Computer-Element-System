@@ -13,11 +13,20 @@
         <link rel="stylesheet" type="text/css" href="assets/css/style.css">
         <link class="skin" rel="stylesheet" type="text/css" href="assets/css/color/color-1.css">
         <style>
-            .login-main-row {
+            body, .auth-form-box, .auth-form-box * {
+                font-family: 'Times New Roman', Times, serif !important;
+            }
+            body {
+                font-family: Arial, sans-serif;
+                margin: 0;
+                padding: 0;
+                background: none;
+            }
+            .auth-main-row {
                 min-height: 100vh;
                 display: flex;
             }
-            .login-left {
+            .auth-left {
                 position: relative;
                 background: url('https://images.unsplash.com/photo-1518770660439-4636190af475?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80') center center/cover no-repeat;
                 color: #fff;
@@ -27,21 +36,18 @@
                 min-width: 400px;
                 overflow: hidden;
             }
-            .login-left::before {
+            .auth-left::before {
                 content: '';
                 position: absolute;
-                top: 0;
-                left: 0;
-                right: 0;
-                bottom: 0;
+                top: 0; left: 0; right: 0; bottom: 0;
                 background: rgba(93,46,188,0.85);
                 z-index: 1;
             }
-            .login-left > * {
+            .auth-left > * {
                 position: relative;
                 z-index: 2;
             }
-            .login-left-content {
+            .auth-left-content {
                 text-align: center;
                 color: #fff;
                 text-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
@@ -49,20 +55,47 @@
                 padding: 20px;
                 margin: auto;
             }
-            .login-left-content h1 {
+            .auth-left-content .navbar-brand {
+                color: white;
+                display: flex;
+                align-items: center;
+                gap: 8px;
+                justify-content: center;
+                margin-bottom: 30px;
+                font-size: 2rem;
+                text-decoration: none;
+            }
+            .auth-left-content .fw-bold {
+                font-size: 2rem;
+                text-decoration: underline;
+            }
+            .auth-left-content h1 {
                 font-size: 3rem;
                 font-weight: bold;
                 margin-bottom: 1.5rem;
             }
-            .login-left-content p {
+            .auth-left-content p {
                 font-size: 1.25rem;
                 margin-bottom: 1.5rem;
                 text-shadow: 0 1px 4px rgba(0, 0, 0, 0.15);
             }
-            .login-left-content a {
+            .auth-left-content a.btn {
                 font-size: 1.25rem;
+                color: white;
+                background: #0d6efd;
+                border-radius: 8px;
+                border: none;
+                padding: 0.75rem 2rem;
+                display: inline-block;
+                font-weight: 600;
+                box-shadow: 0 2px 8px rgba(44, 62, 80, 0.13);
+                transition: background 0.2s, color 0.2s;
             }
-            .login-right {
+            .auth-left-content a.btn:hover {
+                background: #0056b3;
+                color: #fff;
+            }
+            .auth-right {
                 flex: 1.2;
                 display: flex;
                 align-items: center;
@@ -70,98 +103,112 @@
                 background: #f4f6fb;
                 min-height: 100vh;
             }
-            .login-form-box {
+            .auth-form-box {
                 width: 100%;
-                max-width: 400px;
+                max-width: 440px;
                 background: #fff;
-                border-radius: 20px;
+                border-radius: 16px;
                 box-shadow: 0 8px 32px rgba(44, 62, 80, 0.12);
-                padding: 48px 36px 36px 36px;
-                margin: 32px 0;
+                padding: 32px 24px 24px 24px;
+                margin: 24px 0;
                 display: flex;
                 flex-direction: column;
                 align-items: stretch;
                 transition: box-shadow 0.2s;
             }
-            .login-form-box:hover {
+            .auth-form-box:hover {
                 box-shadow: 0 12px 40px rgba(44, 62, 80, 0.18);
             }
-            .login-form-box h2 {
+            .auth-form-box h2 {
                 font-family: 'Times New Roman', Times, serif;
-                font-size: 2.1rem;
+                font-size: 2rem;
                 font-weight: 800;
                 margin-bottom: 10px;
                 text-align: center;
                 color: #222;
                 letter-spacing: -1px;
             }
-            .login-form-box p {
+            .auth-form-box p {
                 margin-bottom: 28px;
                 text-align: center;
                 color: #666;
             }
-            .login-form-box .form-label {
+            .auth-form-box .form-label {
                 display: block;
                 margin-bottom: 6px;
                 font-weight: 600;
                 color: #333;
+                font-size: 1rem;
             }
-            .login-form-box .form-control {
+            .auth-form-box .form-control {
                 width: 100%;
                 box-sizing: border-box;
                 border-radius: 10px;
-                min-height: 46px;
-                font-size: 1.08rem;
+                min-height: 40px;
+                font-size: 1rem;
                 border: 1.5px solid #e0e3ea;
-                margin-bottom: 18px;
-                padding: 10px 16px;
+                margin-bottom: 14px;
+                padding: 8px 12px;
                 background: #fff;
                 transition: border-color 0.2s;
             }
-            .login-form-box .form-control:focus {
+            .auth-form-box .form-control:focus {
                 border-color: #705FBC;
                 box-shadow: 0 0 0 2px rgba(112,95,188,0.08);
             }
-            .login-form-box .btn-warning {
+            .auth-form-box .btn-primary, .auth-form-box .btn-register, .auth-form-box button[type="submit"] {
                 width: 100%;
-                min-height: 48px;
+                min-height: 44px;
+                border-radius: 8px;
+                background: #0d6efd;
+                color: #fff;
+                font-weight: 700;
+                font-size: 1.13rem;
+                border: none;
+                box-shadow: none;
+                margin: 12px 0 8px 0;
                 display: flex;
                 align-items: center;
                 justify-content: center;
-                font-weight: 700;
-                font-size: 1.13rem;
-                margin: 20px 0 12px 0;
-                border-radius: 8px;
-                background: #ffc107;
-                border: none;
-                color: #222;
-                box-shadow: none;
-                padding: 0;
                 transition: background 0.2s, color 0.2s;
             }
-            .login-form-box .btn-warning:hover {
-                background: #e0a800;
+            .auth-form-box .btn-primary:hover, .auth-form-box .btn-register:hover, .auth-form-box button[type="submit"]:hover {
+                background: #0056b3;
                 color: #fff;
             }
-            .login-form-box .alert {
+            .auth-form-box .alert {
                 width: 100%;
                 text-align: center;
                 margin-bottom: 1rem;
                 border-radius: 8px;
+                font-size: 1rem;
+                padding: 12px 8px;
             }
-            .login-form-box a {
+            .auth-form-box a {
                 color: #705FBC;
                 text-decoration: none;
                 font-weight: 500;
             }
-            .login-form-box a:hover {
+            .auth-form-box a:hover {
+                text-decoration: underline;
+            }
+            .auth-form-box .login-link {
+                text-align: center;
+                margin-top: 8px;
+                font-size: 0.98rem;
+            }
+            .auth-form-box .login-link a {
+                color: #333;
+                text-decoration: none;
+            }
+            .auth-form-box .login-link a:hover {
                 text-decoration: underline;
             }
             @media (max-width: 900px) {
-                .login-main-row {
+                .auth-main-row {
                     flex-direction: column;
                 }
-                .login-left, .login-right {
+                .auth-left, .auth-right {
                     min-width: 100vw;
                 }
             }
@@ -322,10 +369,10 @@
         </style>
     </head>
     <body>
-        <div class="login-main-row">
-            <div class="login-left">
-                <div class="login-left-content">
-                    <a class="navbar-brand" href="${pageContext.request.contextPath}/homepageservlet" style="color: white;">
+        <div class="auth-main-row">
+            <div class="auth-left">
+                <div class="auth-left-content">
+                    <a class="navbar-brand" href="${pageContext.request.contextPath}/homepageservlet">
                         <i class="fas fa-microchip me-2"></i>
                         <span class="fw-bold">CES</span>
                     </a>
@@ -334,11 +381,11 @@
                         Enter your username and email to reset your password.<br>
                         We'll send you instructions to recover your account.
                     </p>
-                    <a href="login.jsp" class="btn btn-primary btn-lg" style="color: white">Back to Login</a>
+                    <a href="login.jsp" class="btn btn-primary btn-lg">Back to Login</a>
                 </div>
             </div>
-            <div class="login-right">
-                <div class="login-form-box">
+            <div class="auth-right">
+                <div class="auth-form-box">
                     <h2>Forgot Password</h2>
                     <p>Enter your details to reset your password</p>
                     <div id="clientError" class="alert alert-danger" style="display:none;" role="alert"></div>
@@ -354,7 +401,7 @@
                             <input type="email" class="form-control" id="email" name="email" required
                                    value="${param.email != null ? param.email : (not empty email ? email : '')}">
                         </div>
-                        <button type="submit" class="btn btn-warning">Reset Password</button>
+                        <button type="submit" class="btn btn-primary">Reset Password</button>
                     </form>
                     <div class="login-link" style="text-align:center; margin-top:15px;">
                         <p>Already have an account? <a href="login.jsp">Login here</a></p>
