@@ -355,6 +355,20 @@
         .form-control.is-invalid + .invalid-feedback {
             display: block;
         }
+        
+        /* Disabled button styles */
+        .btn-register:disabled {
+            background: #6c757d !important;
+            color: #fff !important;
+            cursor: not-allowed !important;
+            opacity: 0.6;
+        }
+        
+        /* Disabled form styles */
+        .form-disabled {
+            opacity: 0.6;
+            pointer-events: none;
+        }
     </style>
 </head>
 <body>
@@ -526,8 +540,9 @@
                         <div class="spinner-border text-primary mb-3" role="status">
                           <span class="visually-hidden">Loading...</span>
                         </div>
-                        <h6 class="modal-title" id="loadingModalLabel">Sending verification code...</h6>
-                        <p class="text-muted small">Please wait a moment</p>
+                        <h6 class="modal-title" id="loadingModalLabel">Processing Registration...</h6>
+                        <p class="text-muted small">Please wait while we create your account and send verification code</p>
+                        <p class="text-muted small">Do not close this window or refresh the page</p>
                       </div>
                     </div>
                   </div>
@@ -714,8 +729,21 @@
         }
 
         const registerForm = document.getElementById('registerForm');
+        let isSubmitting = false; // Track submission status
+        
         if (registerForm) {
+            console.log('Register form found, adding event listener...');
             registerForm.addEventListener('submit', function (event) {
+                console.log('Form submitted, isSubmitting:', isSubmitting);
+                // Prevent duplicate submission
+                if (isSubmitting) {
+                    event.preventDefault();
+                    console.log('Preventing duplicate submission');
+                    return;
+                }
+                
+                isSubmitting = true;
+                console.log('Setting isSubmitting to true');
                 const fullname = document.getElementById('fullname').value;
                 const email = document.getElementById('email').value;
                 const password = document.getElementById('password').value;
@@ -819,18 +847,97 @@
                 }
 
                 if (hasFieldErrors) {
+                    console.log('Validation errors found, preventing submission');
                     event.preventDefault();
                     errorDiv.innerHTML = 'Please correct the errors above.';
                     errorDiv.style.display = 'block';
+                    isSubmitting = false; // Reset submission status
                 } else {
+                    console.log('No validation errors, proceeding with submission');
                     errorDiv.style.display = 'none';
+                    
+                    // Disable form để tránh duplicate submission
+                    const submitButton = registerForm.querySelector('button[type="submit"]');
+                    submitButton.disabled = true;
+                    submitButton.textContent = 'Signing Up...';
+                    
+                    // Disable tất cả input fields
+                    const inputs = registerForm.querySelectorAll('input, select');
+                    inputs.forEach(input => {
+                        input.disabled = true;
+                    });
+                    
+                    // Add disabled class to form
+                    registerForm.classList.add('form-disabled');
+                    
                     // Hiển thị loading modal
-                    const loadingModal = new bootstrap.Modal(document.getElementById('loadingModal'));
-                    loadingModal.show();
+                    const loadingModalElement = document.getElementById('loadingModal');
+                    console.log('Loading modal element:', loadingModalElement);
+                    
+                    if (loadingModalElement) {
+                        const loadingModal = new bootstrap.Modal(loadingModalElement);
+                        console.log('Showing loading modal...');
+                        loadingModal.show();
+                    } else {
+                        console.error('Loading modal element not found!');
+                        // Fallback: show alert
+                        alert('Processing registration... Please wait.');
+                    }
+                    
+                    // Alternative: Show loading overlay
+                    const loadingOverlay = document.createElement('div');
+                    loadingOverlay.id = 'loadingOverlay';
+                    loadingOverlay.style.cssText = `
+                        position: fixed;
+                        top: 0;
+                        left: 0;
+                        width: 100%;
+                        height: 100%;
+                        background: rgba(0,0,0,0.5);
+                        display: flex;
+                        justify-content: center;
+                        align-items: center;
+                        z-index: 9999;
+                    `;
+                    loadingOverlay.innerHTML = `
+                        <div style="background: white; padding: 20px; border-radius: 10px; text-align: center;">
+                            <div class="spinner-border text-primary mb-3" role="status">
+                                <span class="visually-hidden">Loading...</span>
+                            </div>
+                            <h6>Processing Registration...</h6>
+                            <p class="text-muted small">Please wait while we create your account</p>
+                        </div>
+                    `;
+                    document.body.appendChild(loadingOverlay);
+                    
                     // Gửi form sau khi hiển thị loading
                     setTimeout(() => {
+                        console.log('Submitting form...');
                         registerForm.submit();
                     }, 100);
+                    
+                    // Timeout để tự động ẩn loading modal nếu có lỗi (30 giây)
+                    setTimeout(() => {
+                        if (isSubmitting) {
+                            const loadingModal = bootstrap.Modal.getInstance(document.getElementById('loadingModal'));
+                            if (loadingModal) {
+                                loadingModal.hide();
+                            }
+                            // Remove loading overlay if exists
+                            const loadingOverlay = document.getElementById('loadingOverlay');
+                            if (loadingOverlay) {
+                                loadingOverlay.remove();
+                            }
+                            // Re-enable form
+                            isSubmitting = false;
+                            submitButton.disabled = false;
+                            submitButton.textContent = 'Sign Up';
+                            inputs.forEach(input => {
+                                input.disabled = false;
+                            });
+                            registerForm.classList.remove('form-disabled');
+                        }
+                    }, 30000);
                 }
             });
         }
