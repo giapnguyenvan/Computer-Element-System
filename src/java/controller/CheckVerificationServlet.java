@@ -32,7 +32,6 @@ public class CheckVerificationServlet extends HttpServlet {
                     // Xác thực thành công, lưu thông tin để hiển thị popup
                     session.setAttribute("verification_success", true);
                     session.setAttribute("verified_email", email);
-                    session.setAttribute("successMessage", "Account has been successfully verified! You can now login.");
                     
                     // Chuyển hướng đến trang login với thông báo thành công
                     response.sendRedirect("login.jsp?verification=success&email=" + java.net.URLEncoder.encode(email, "UTF-8"));

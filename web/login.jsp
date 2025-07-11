@@ -315,14 +315,14 @@
                         <div class="alert alert-success" role="alert">
                             <i class="fa fa-check-circle me-2"></i>Account verified successfully! You can now login.
                         </div>
-                    <% } %>
-                    
-                    <% String successMessage = (String) session.getAttribute("successMessage"); %>
-                    <% if (successMessage != null) { %>
-                        <div class="alert alert-success" role="alert">
-                            <i class="fa fa-check-circle me-2"></i><%= successMessage %>
-                        </div>
-                        <% session.removeAttribute("successMessage"); %>
+                    <% } else { %>
+                        <% String successMessage = (String) session.getAttribute("successMessage"); %>
+                        <% if (successMessage != null) { %>
+                            <div class="alert alert-success" role="alert">
+                                <i class="fa fa-check-circle me-2"></i><%= successMessage %>
+                            </div>
+                            <% session.removeAttribute("successMessage"); %>
+                        <% } %>
                     <% } %>
                     
                     <% String error = (String) request.getAttribute("error"); %>
