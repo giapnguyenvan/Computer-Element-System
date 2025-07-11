@@ -305,16 +305,21 @@
                         session.removeAttribute("login_password");
                         session.removeAttribute("registration_success");
                     %>
-                        <div class="alert alert-success" role="alert">
+                        ```jsp
+                        <!-- Hiển thị thông báo thành công khi đăng ký -->
+
+                        <div class="alert alert-success" style="color: #28a745;" role="alert">
                             <i class="fa fa-check-circle me-2"></i>Registration successful! Please check your email to verify your account.
                         </div>
-                    <% } %>
-                    
-                    <!-- Hiển thị thông báo thành công từ verification -->
-                    <% if ("success".equals(verificationParam) && emailParam != null) { %>
-                        <div class="alert alert-success" role="alert">
+                        <% } %>
+
+                        <!-- Hiển thị thông báo thành công từ verification -->
+                        <% if ("success".equals(verificationParam) && emailParam != null) { %>
+                        <div class="alert alert-success" style="color: #28a745;" role="alert">
                             <i class="fa fa-check-circle me-2"></i>Account verified successfully! You can now login.
                         </div>
+
+```
                     <% } else { %>
                         <% String successMessage = (String) session.getAttribute("successMessage"); %>
                         <% if (successMessage != null) { %>
