@@ -275,6 +275,29 @@ VALUES ('shipper01', 'hashedpassword3', 'shipper01@example.com', 'Shipper', 'Act
 INSERT INTO `shipper` (name, phone, email, status)
 VALUES ('Nguyễn Văn Shipper', '0901234567', 'shipper01@example.com', 'Active');
 
+-- Insert product images
+INSERT INTO `productimage` (product_id, image_url, alt_text, is_primary)
+SELECT p.product_id, 'IMG/product/cpu1.jpg', p.name, TRUE
+FROM product p
+JOIN componenttype ct ON p.component_type_id = ct.type_id
+WHERE ct.name = 'CPU';
+
+INSERT INTO `productimage` (product_id, image_url, alt_text, is_primary)
+SELECT p.product_id, 'IMG/product/gpu1.jpg', p.name, TRUE
+FROM product p
+JOIN componenttype ct ON p.component_type_id = ct.type_id
+WHERE ct.name = 'GPU';
+
+INSERT INTO `productimage` (product_id, image_url, alt_text, is_primary)
+SELECT p.product_id, 'IMG/product/ram1.jpg', p.name, TRUE
+FROM product p
+JOIN componenttype ct ON p.component_type_id = ct.type_id
+WHERE ct.name = 'RAM';
+
+ALTER TABLE `customer` 
+ADD COLUMN `gender` ENUM('Male', 'Female', 'Other') DEFAULT NULL AFTER `shipping_address`,
+ADD COLUMN `date_of_birth` DATE DEFAULT NULL AFTER `gender`;
+
 -- Select all data from tables
 SELECT * FROM admin;
 SELECT * FROM blog;
@@ -318,3 +341,7 @@ SELECT p.product_id, 'IMG/product/ram1.jpg', p.name, TRUE
 FROM product p
 JOIN componenttype ct ON p.component_type_id = ct.type_id
 WHERE ct.name = 'RAM';
+
+ALTER TABLE `customer` 
+ADD COLUMN `gender` ENUM('Male', 'Female', 'Other') DEFAULT NULL AFTER `shipping_address`,
+ADD COLUMN `date_of_birth` DATE DEFAULT NULL AFTER `gender`;
