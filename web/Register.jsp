@@ -541,8 +541,8 @@
                           <span class="visually-hidden">Loading...</span>
                         </div>
                         <h6 class="modal-title" id="loadingModalLabel">Processing Registration...</h6>
-                        <p class="text-muted small">Please wait while we create your account and send verification code</p>
-                        <p class="text-muted small">Do not close this window or refresh the page</p>
+                        <p class="text-muted small" id="loadingModalText">Please wait while we create your account and send verification code</p>
+                        <p class="text-muted small" id="loadingModalSubtext">Do not close this window or refresh the page</p>
                       </div>
                     </div>
                   </div>
@@ -553,8 +553,26 @@
     <% if (request.getAttribute("showVerificationPopup") != null) { %>
     <script>
     document.addEventListener("DOMContentLoaded", function() {
-      var myModal = new bootstrap.Modal(document.getElementById('verificationModalNew'));
-      myModal.show();
+      // Show loading modal first
+      const loadingModal = new bootstrap.Modal(document.getElementById('loadingModal'));
+      const loadingLabel = document.getElementById('loadingModalLabel');
+      const loadingText = document.getElementById('loadingModalText');
+      const loadingSubtext = document.getElementById('loadingModalSubtext');
+      
+      if (loadingLabel) loadingLabel.textContent = 'Sending verification code...';
+      if (loadingText) loadingText.textContent = 'Please wait while we send the verification code to your email';
+      if (loadingSubtext) loadingSubtext.textContent = 'Please check your email inbox';
+      
+      loadingModal.show();
+      
+      // Hide loading modal and show verification popup after 3 seconds
+      setTimeout(() => {
+        loadingModal.hide();
+        
+        // Show verification popup after loading is done
+        var myModal = new bootstrap.Modal(document.getElementById('verificationModalNew'));
+        myModal.show();
+      }, 3000);
     });
     </script>
     <% } %>
@@ -744,6 +762,21 @@
                 
                 isSubmitting = true;
                 console.log('Setting isSubmitting to true');
+                
+                // Show loading modal immediately
+                const loadingModalElement = document.getElementById('loadingModal');
+                console.log('Loading modal element:', loadingModalElement);
+                
+                if (loadingModalElement) {
+                    const loadingModal = new bootstrap.Modal(loadingModalElement);
+                    console.log('Showing loading modal immediately...');
+                    loadingModal.show();
+                } else {
+                    console.error('Loading modal element not found!');
+                    // Fallback: show alert
+                    alert('Processing registration... Please wait.');
+                }
+                
                 const fullname = document.getElementById('fullname').value;
                 const email = document.getElementById('email').value;
                 const password = document.getElementById('password').value;
@@ -852,6 +885,12 @@
                     errorDiv.innerHTML = 'Please correct the errors above.';
                     errorDiv.style.display = 'block';
                     isSubmitting = false; // Reset submission status
+                    
+                    // Hide loading modal if validation fails
+                    const loadingModal = bootstrap.Modal.getInstance(document.getElementById('loadingModal'));
+                    if (loadingModal) {
+                        loadingModal.hide();
+                    }
                 } else {
                     console.log('No validation errors, proceeding with submission');
                     errorDiv.style.display = 'none';
@@ -870,46 +909,6 @@
                     // Add disabled class to form
                     registerForm.classList.add('form-disabled');
                     
-                    // Hiển thị loading modal
-                    const loadingModalElement = document.getElementById('loadingModal');
-                    console.log('Loading modal element:', loadingModalElement);
-                    
-                    if (loadingModalElement) {
-                        const loadingModal = new bootstrap.Modal(loadingModalElement);
-                        console.log('Showing loading modal...');
-                        loadingModal.show();
-                    } else {
-                        console.error('Loading modal element not found!');
-                        // Fallback: show alert
-                        alert('Processing registration... Please wait.');
-                    }
-                    
-                    // Alternative: Show loading overlay
-                    const loadingOverlay = document.createElement('div');
-                    loadingOverlay.id = 'loadingOverlay';
-                    loadingOverlay.style.cssText = `
-                        position: fixed;
-                        top: 0;
-                        left: 0;
-                        width: 100%;
-                        height: 100%;
-                        background: rgba(0,0,0,0.5);
-                        display: flex;
-                        justify-content: center;
-                        align-items: center;
-                        z-index: 9999;
-                    `;
-                    loadingOverlay.innerHTML = `
-                        <div style="background: white; padding: 20px; border-radius: 10px; text-align: center;">
-                            <div class="spinner-border text-primary mb-3" role="status">
-                                <span class="visually-hidden">Loading...</span>
-                            </div>
-                            <h6>Processing Registration...</h6>
-                            <p class="text-muted small">Please wait while we create your account</p>
-                        </div>
-                    `;
-                    document.body.appendChild(loadingOverlay);
-                    
                     // Gửi form sau khi hiển thị loading
                     setTimeout(() => {
                         console.log('Submitting form...');
@@ -922,11 +921,6 @@
                             const loadingModal = bootstrap.Modal.getInstance(document.getElementById('loadingModal'));
                             if (loadingModal) {
                                 loadingModal.hide();
-                            }
-                            // Remove loading overlay if exists
-                            const loadingOverlay = document.getElementById('loadingOverlay');
-                            if (loadingOverlay) {
-                                loadingOverlay.remove();
                             }
                             // Re-enable form
                             isSubmitting = false;
@@ -957,6 +951,18 @@
             resendBtn.disabled = true;
             resendBtn.textContent = 'Sending...';
             
+            // Show loading modal
+            const loadingModal = new bootstrap.Modal(document.getElementById('loadingModal'));
+            loadingModal.show();
+            
+            // Update loading modal content for verification
+            const loadingLabel = document.getElementById('loadingModalLabel');
+            const loadingText = document.getElementById('loadingModalText');
+            const loadingSubtext = document.getElementById('loadingModalSubtext');
+            if (loadingLabel) loadingLabel.textContent = 'Sending verification code...';
+            if (loadingText) loadingText.textContent = 'Please wait while we send the verification code to your email';
+            if (loadingSubtext) loadingSubtext.textContent = 'Please check your email inbox';
+            
             // Send AJAX request to resend verification code
             fetch('send-verification', {
                 method: 'POST',
@@ -967,11 +973,44 @@
             })
             .then(response => response.text())
             .then(data => {
-                alert('Verification code has been resent to your email');
+                // Hide loading modal
+                loadingModal.hide();
+                
+                if (data === 'success') {
+                    // Show success message in verification popup instead of alert
+                    const verificationModal = document.getElementById('verificationModalNew');
+                    if (verificationModal) {
+                        const alertDiv = document.createElement('div');
+                        alertDiv.className = 'alert alert-success mt-3';
+                        alertDiv.innerHTML = '<i class="fa fa-check-circle me-2"></i>Verification code has been resent to your email';
+                        
+                        const modalBody = verificationModal.querySelector('.verification-modal-body');
+                        if (modalBody) {
+                            // Remove any existing success alerts
+                            const existingAlerts = modalBody.querySelectorAll('.alert-success');
+                            existingAlerts.forEach(alert => alert.remove());
+                            
+                            // Add new success alert
+                            modalBody.appendChild(alertDiv);
+                            
+                            // Auto-remove alert after 5 seconds
+                            setTimeout(() => {
+                                if (alertDiv.parentNode) {
+                                    alertDiv.remove();
+                                }
+                            }, 5000);
+                        }
+                    }
+                } else {
+                    alert('Failed to resend verification code: ' + data);
+                }
                 resendBtn.textContent = 'Resend Code';
                 resendBtn.disabled = false;
             })
             .catch(error => {
+                // Hide loading modal
+                loadingModal.hide();
+                
                 alert('Failed to resend verification code. Please try again.');
                 resendBtn.textContent = 'Resend Code';
                 resendBtn.disabled = false;
