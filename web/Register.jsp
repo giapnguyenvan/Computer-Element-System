@@ -363,6 +363,43 @@
             opacity: 0.6;
             pointer-events: none;
         }
+        .auth-form-box form {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 8px 16px;
+        }
+        .auth-form-box .form-col,
+        .auth-form-box .form-col-full {
+            display: flex;
+            flex-direction: column;
+            margin-bottom: 0;
+        }
+        .auth-form-box .form-col-full {
+            grid-column: 1 / -1;
+        }
+        .auth-form-box .form-control {
+            margin-bottom: 4px;
+            min-height: 32px;
+            font-size: 0.95rem;
+            padding: 4px 8px;
+        }
+        .auth-form-box .form-label {
+            margin-bottom: 1px;
+            font-size: 0.97rem;
+        }
+        .auth-form-box {
+            height: 100%;
+            justify-content: center;
+        }
+        @media (max-width: 700px) {
+            .auth-form-box form {
+                grid-template-columns: 1fr;
+                gap: 0;
+            }
+            .auth-form-box .form-col, .auth-form-box .form-col-full {
+                grid-column: 1 / -1;
+            }
+        }
     </style>
 </head>
 <body>
@@ -467,7 +504,7 @@
                     <input type="hidden" id="districtHidden" name="districtHidden">
                     <input type="hidden" id="wardHidden" name="wardHidden">
                     
-                    <button type="submit" class="btn-register">Sign Up</button>
+                    <button type="submit" class="btn btn-primary w-100">Sign Up</button>
                 </form>
                 <div class="login-link">
                     <p>Already have an account? <a href="login.jsp">Login now</a></p>
