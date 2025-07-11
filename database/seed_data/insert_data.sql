@@ -323,25 +323,3 @@ SELECT * FROM menu_item;
 SELECT * FROM menu_attribute;
 SELECT * FROM menu_attribute_value;
 
--- Insert product images
-INSERT INTO `productimage` (product_id, image_url, alt_text, is_primary)
-SELECT p.product_id, 'IMG/product/cpu1.jpg', p.name, TRUE
-FROM product p
-JOIN componenttype ct ON p.component_type_id = ct.type_id
-WHERE ct.name = 'CPU';
-
-INSERT INTO `productimage` (product_id, image_url, alt_text, is_primary)
-SELECT p.product_id, 'IMG/product/gpu1.jpg', p.name, TRUE
-FROM product p
-JOIN componenttype ct ON p.component_type_id = ct.type_id
-WHERE ct.name = 'GPU';
-
-INSERT INTO `productimage` (product_id, image_url, alt_text, is_primary)
-SELECT p.product_id, 'IMG/product/ram1.jpg', p.name, TRUE
-FROM product p
-JOIN componenttype ct ON p.component_type_id = ct.type_id
-WHERE ct.name = 'RAM';
-
-ALTER TABLE `customer` 
-ADD COLUMN `gender` ENUM('Male', 'Female', 'Other') DEFAULT NULL AFTER `shipping_address`,
-ADD COLUMN `date_of_birth` DATE DEFAULT NULL AFTER `gender`;
