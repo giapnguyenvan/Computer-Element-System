@@ -453,6 +453,54 @@ public class ProductDAO {
         return listProduct;
     }
 
+    public int getBrandIdByName(String brandName) {
+        String sql = "SELECT brand_id FROM brand WHERE name = ?";
+        try (PreparedStatement ps = DBContext.getInstance().getConnection().prepareStatement(sql)) {
+            ps.setString(1, brandName);
+            ResultSet rs = ps.executeQuery();
+            if (rs.next()) {
+                return rs.getInt("brand_id");
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return 0;
+    }
+
+    public void insertBrand(String brandName) {
+        String sql = "INSERT INTO brand(name) VALUES(?)";
+        try (PreparedStatement ps = DBContext.getInstance().getConnection().prepareStatement(sql)) {
+            ps.setString(1, brandName);
+            ps.executeUpdate();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    public int getComponentTypeIdByName(String typeName) {
+        String sql = "SELECT type_id FROM componenttype WHERE name = ?";
+        try (PreparedStatement ps = DBContext.getInstance().getConnection().prepareStatement(sql)) {
+            ps.setString(1, typeName);
+            ResultSet rs = ps.executeQuery();
+            if (rs.next()) {
+                return rs.getInt("type_id");
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return 0;
+    }
+
+    public void insertComponentType(String typeName) {
+        String sql = "INSERT INTO componenttype(name) VALUES(?)";
+        try (PreparedStatement ps = DBContext.getInstance().getConnection().prepareStatement(sql)) {
+            ps.setString(1, typeName);
+            ps.executeUpdate();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
     public static void main(String[] args) {
         ProductDAO dao = new ProductDAO();
         Vector<Products> list = dao.getAllProduct();
