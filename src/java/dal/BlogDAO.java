@@ -275,8 +275,8 @@ public class BlogDAO {
         Blog newBlog = new Blog(0, "Test Blog with Images", "This is a test blog content with images", 1, null);
         
         // Add some test images
-        newBlog.addImage(new BlogImage(0, 0, "/IMG/blog/test1.jpg", "Test Image 1", 1, null));
-        newBlog.addImage(new BlogImage(0, 0, "/IMG/blog/test2.jpg", "Test Image 2", 2, null));
+        newBlog.addImage(new BlogImage(0, 0, "IMG/blog/test1.jpg", "Test Image 1", 1, null));
+        newBlog.addImage(new BlogImage(0, 0, "IMG/blog/test2.jpg", "Test Image 2", 2, null));
         
         int blogId = dao.insertBlog(newBlog);
         System.out.println("Blog inserted with ID: " + blogId);

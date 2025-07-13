@@ -265,7 +265,7 @@ public class BlogControl extends HttpServlet {
 
             // Delete physical files after DB delete
             for (model.BlogImage img : images) {
-                if (img.getImage_url() != null && img.getImage_url().startsWith("/IMG/blog/")) {
+                if (img.getImage_url() != null && img.getImage_url().startsWith("IMG/blog/")) {
                     String realPath = getServletContext().getRealPath(img.getImage_url());
                     java.io.File file = new java.io.File(realPath);
                     if (file.exists()) file.delete();
@@ -285,7 +285,7 @@ public class BlogControl extends HttpServlet {
         BlogDAO blogDAO = new BlogDAO();
         blogDAO.deleteBlog(blogId, userId);
         for (model.BlogImage img : images) {
-            if (img.getImage_url() != null && (img.getImage_url().startsWith("/assets/assets/images/blog/") || img.getImage_url().startsWith("/IMG/blog/"))) {
+            if (img.getImage_url() != null && (img.getImage_url().startsWith("/assets/assets/images/blog/") || img.getImage_url().startsWith("IMG/blog/"))) {
                 String realPath = context.getRealPath(img.getImage_url());
                 java.io.File file = new java.io.File(realPath);
                 if (file.exists()) file.delete();

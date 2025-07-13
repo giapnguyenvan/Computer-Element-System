@@ -11,22 +11,22 @@ public class BlogImage {
     private int display_order;
     private Timestamp created_at;
 
-    // Utility to normalize image_url to always start with /IMG/blog/
+    // Utility to normalize image_url to always start with IMG/blog/
     public static String normalizeImageUrl(String url) {
-        if (url == null || url.isEmpty()) return "/IMG/blog/";
+        if (url == null || url.isEmpty()) return "IMG/blog/";
         String trimmed = url.trim();
-        if (trimmed.startsWith("/IMG/blog/")) return trimmed;
+        if (trimmed.startsWith("IMG/blog/")) return trimmed;
         // Remove any leading slashes
         while (trimmed.startsWith("/")) trimmed = trimmed.substring(1);
         if (trimmed.startsWith("IMG/blog/")) return "/" + trimmed;
-        return "/IMG/blog/" + trimmed;
+        return "IMG/blog/" + trimmed;
     }
 
     // Default constructor
     public BlogImage() {
         this.image_id = 0;
         this.blog_id = 0;
-        this.image_url = "/IMG/blog/";
+        this.image_url = "IMG/blog/";
         this.image_alt = "";
         this.display_order = 0;
         this.created_at = null;
