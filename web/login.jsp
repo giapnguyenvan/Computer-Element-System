@@ -332,11 +332,6 @@
                             <a href="forget_password.jsp">Forgot Password?</a>
                         </div>
                         <button type="submit" class="btn btn-primary">Login</button>
-                        <div class="text-center mt-2 mb-2 fw-bold">Login with Social media</div>
-                        <div class="social-login">
-                            <a class="btn btn-facebook" href="#"><i class="fa fa-facebook"></i> Facebook</a>
-                            <a class="btn btn-google" href="#"><i class="fa fa-google-plus"></i> Google Plus</a>
-                        </div>
                     </form>
                 </div>
             </div>

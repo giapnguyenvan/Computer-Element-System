@@ -175,7 +175,7 @@
             <ul class="navbar-nav me-auto">
                 <li class="nav-item position-relative">
                     <a class="nav-link" href="#" id="menuDropdown">
-                        <i class="fas fa-bars me-1"></i>Menu
+                        Menu
                     </a>
                     <div class="menu-container">
                         <ul class="menu-list p-0" style="min-width: 270px;" aria-labelledby="menuDropdown">

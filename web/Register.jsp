@@ -504,7 +504,7 @@
                     <input type="hidden" id="districtHidden" name="districtHidden">
                     <input type="hidden" id="wardHidden" name="wardHidden">
                     
-                    <button type="submit" class="btn btn-primary w-100">Sign Up</button>
+                    <button type="submit" class="btn btn-primary form-col-full">Sign Up</button>
                 </form>
                 <div class="login-link">
                     <p>Already have an account? <a href="login.jsp">Login now</a></p>

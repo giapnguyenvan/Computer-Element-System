@@ -25,7 +25,7 @@
             <i class="fas fa-user-gear me-2"></i> Accounts
         </a>
         <a href="${pageContext.request.contextPath}/category?sort=default" target="mainFrame" class="<%= request.getRequestURI().endsWith("categoryList.jsp") ? "active" : ""%>">
-            <i class="fas fa-list me-2"></i> Categories
+            <i class="fas fa-boxes me-2"></i> Categories
         </a>
 
         <!-- Menu Management Dropdown -->
