@@ -630,37 +630,7 @@
                 <h4>Total Price: $<span id="totalPrice">0.00</span></h4>
             </div>
         </div>
-        <div class="container mt-5">
-            <h3 class="mb-4">Danh sách Series và Model theo từng loại linh kiện</h3>
-            <div class="row">
-                <c:set var="typeNames" value="CPU,Mainboard,RAM,GPU,Storage,PSU,Case,Cooler" />
-                <c:forEach var="typeId" begin="1" end="8" varStatus="status">
-                    <div class="col-md-3 mb-4">
-                        <div class="card h-100 shadow-sm">
-                            <div class="card-header bg-primary text-white">
-                                <strong>
-                                    <c:out value="${fn:split(typeNames, ',')[typeId-1]}" />
-                                </strong>
-                            </div>
-                            <div class="card-body">
-                                <strong>Series:</strong>
-                                <ul class="mb-2" style="font-size:0.97em;">
-                                    <c:forEach var="series" items="${allSeriesMap[typeId]}">
-                                        <li>${series}</li>
-                                    </c:forEach>
-                                </ul>
-                                <strong>Model:</strong>
-                                <ul style="font-size:0.97em;">
-                                    <c:forEach var="model" items="${allModelMap[typeId]}">
-                                        <li>${model}</li>
-                                    </c:forEach>
-                                </ul>
-                            </div>
-                        </div>
-                    </div>
-                </c:forEach>
-            </div>
-        </div>
+     
         <jsp:include page="footer.jsp"/>
         <script>
         //<![CDATA[
