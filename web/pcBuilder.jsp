@@ -492,288 +492,49 @@
                         <div class="sidebar-section mb-4">
                             <h5 class="mb-3">Build Case PC</h5>
                             <ul class="sidebar-menu">
-                                <!-- CPU Section -->
-                                <li class="menu-item has-submenu">
+                                <li class="menu-item">
                                     <a href="#"><i class="fas fa-microchip fa-fw me-2"></i> CPU</a>
-                                    <div class="submenu">
-                                        <div class="submenu-col">
-                                            <h6>Brand</h6>
-                                            <ul>
-                                                <c:forEach var="brand" items="${brandsMap['CPU']}">
-                                                    <li><a href="#" data-component="cpu" data-brand="${brand}">${brand}</a></li>
-                                                </c:forEach>
-                                            </ul>
-                                        </div>
-                                        <div class="submenu-col">
-                                            <h6>Series</h6>
-                                            <ul>
-                                                <c:forEach var="series" items="${seriesMap['CPU']}">
-                                                    <li><a href="#" data-component="cpu" data-series="${series}">${series}</a></li>
-                                                </c:forEach>
-                                            </ul>
-                                        </div>
-                                    </div>
                                 </li>
-                                
-                                <!-- Mainboard Section -->
-                                <li class="menu-item has-submenu">
+                                <li class="menu-item">
                                     <a href="#"><i class="fas fa-server fa-fw me-2"></i> Mainboard</a>
-                                    <div class="submenu">
-                                        <div class="submenu-col">
-                                            <h6>Brand</h6>
-                                            <ul>
-                                                <c:forEach var="brand" items="${brandsMap['Mainboard']}">
-                                                    <li><a href="#" data-component="mainboard" data-brand="${brand}">${brand}</a></li>
-                                                </c:forEach>
-                                            </ul>
-                                        </div>
-                                        <div class="submenu-col">
-                                            <h6>Series</h6>
-                                            <ul>
-                                                <c:forEach var="series" items="${seriesMap['Mainboard']}">
-                                                    <li><a href="#" data-component="mainboard" data-series="${series}">${series}</a></li>
-                                                </c:forEach>
-                                            </ul>
-                                        </div>
-                                    </div>
                                 </li>
-                                
-                                <!-- RAM Section -->
-                                <li class="menu-item has-submenu">
+                                <li class="menu-item">
                                     <a href="#"><i class="fas fa-memory fa-fw me-2"></i> RAM</a>
-                                    <div class="submenu">
-                                        <div class="submenu-col">
-                                            <h6>Brand</h6>
-                                            <ul>
-                                                <c:forEach var="brand" items="${brandsMap['RAM']}">
-                                                    <li><a href="#" data-component="ram" data-brand="${brand}">${brand}</a></li>
-                                                </c:forEach>
-                                            </ul>
-                                        </div>
-                                        <div class="submenu-col">
-                                            <h6>Series</h6>
-                                            <ul>
-                                                <c:forEach var="series" items="${seriesMap['RAM']}">
-                                                    <li><a href="#" data-component="ram" data-series="${series}">${series}</a></li>
-                                                </c:forEach>
-                                            </ul>
-                                        </div>
-                                    </div>
                                 </li>
-                                
-                                <!-- GPU Section -->
-                                <li class="menu-item has-submenu">
+                                <li class="menu-item">
                                     <a href="#"><i class="fas fa-video fa-fw me-2"></i> GPU</a>
-                                    <div class="submenu">
-                                        <div class="submenu-col">
-                                            <h6>Brand</h6>
-                                            <ul>
-                                                <c:forEach var="brand" items="${brandsMap['GPU']}">
-                                                    <li><a href="#" data-component="gpu" data-brand="${brand}">${brand}</a></li>
-                                                </c:forEach>
-                                            </ul>
-                                        </div>
-                                        <div class="submenu-col">
-                                            <h6>Series</h6>
-                                            <ul>
-                                                <c:forEach var="series" items="${seriesMap['GPU']}">
-                                                    <li><a href="#" data-component="gpu" data-series="${series}">${series}</a></li>
-                                                </c:forEach>
-                                            </ul>
-                                        </div>
-                                    </div>
                                 </li>
-                                
-                                <!-- Storage Section -->
-                                <li class="menu-item has-submenu">
+                                <li class="menu-item">
                                     <a href="#"><i class="fas fa-hdd fa-fw me-2"></i> Storage</a>
-                                    <div class="submenu">
-                                        <div class="submenu-col">
-                                            <h6>Brand</h6>
-                                            <ul>
-                                                <c:forEach var="brand" items="${brandsMap['Storage']}">
-                                                    <li><a href="#" data-component="storage" data-brand="${brand}">${brand}</a></li>
-                                                </c:forEach>
-                                            </ul>
-                                        </div>
-                                        <div class="submenu-col">
-                                            <h6>Series</h6>
-                                            <ul>
-                                                <c:forEach var="series" items="${seriesMap['Storage']}">
-                                                    <li><a href="#" data-component="storage" data-series="${series}">${series}</a></li>
-                                                </c:forEach>
-                                            </ul>
-                                        </div>
-                                    </div>
                                 </li>
-                                
-                                <!-- PSU Section -->
-                                <li class="menu-item has-submenu">
+                                <li class="menu-item">
                                     <a href="#"><i class="fas fa-plug fa-fw me-2"></i> PSU</a>
-                                    <div class="submenu">
-                                        <div class="submenu-col">
-                                            <h6>Brand</h6>
-                                            <ul>
-                                                <c:forEach var="brand" items="${brandsMap['PSU']}">
-                                                    <li><a href="#" data-component="psu" data-brand="${brand}">${brand}</a></li>
-                                                </c:forEach>
-                                            </ul>
-                                        </div>
-                                        <div class="submenu-col">
-                                            <h6>Series</h6>
-                                            <ul>
-                                                <c:forEach var="series" items="${seriesMap['PSU']}">
-                                                    <li><a href="#" data-component="psu" data-series="${series}">${series}</a></li>
-                                                </c:forEach>
-                                            </ul>
-                                        </div>
-                                    </div>
                                 </li>
-                                
-                                <!-- Case Section -->
-                                <li class="menu-item has-submenu">
+                                <li class="menu-item">
                                     <a href="#"><i class="fas fa-desktop fa-fw me-2"></i> Case</a>
-                                    <div class="submenu">
-                                        <div class="submenu-col">
-                                            <h6>Brand</h6>
-                                            <ul>
-                                                <c:forEach var="brand" items="${brandsMap['Case']}">
-                                                    <li><a href="#" data-component="case" data-brand="${brand}">${brand}</a></li>
-                                                </c:forEach>
-                                            </ul>
-                                        </div>
-                                        <div class="submenu-col">
-                                            <h6>Series</h6>
-                                            <ul>
-                                                <c:forEach var="series" items="${seriesMap['Case']}">
-                                                    <li><a href="#" data-component="case" data-series="${series}">${series}</a></li>
-                                                </c:forEach>
-                                            </ul>
-                                        </div>
-                                    </div>
                                 </li>
-                                
-                                <!-- Cooler Section -->
-                                <li class="menu-item has-submenu">
+                                <li class="menu-item">
                                     <a href="#"><i class="fas fa-fan fa-fw me-2"></i> Cooler</a>
-                                    <div class="submenu">
-                                        <div class="submenu-col">
-                                            <h6>Brand</h6>
-                                            <ul>
-                                                <c:forEach var="brand" items="${brandsMap['Cooler']}">
-                                                    <li><a href="#" data-component="cooler" data-brand="${brand}">${brand}</a></li>
-                                                </c:forEach>
-                                            </ul>
-                                        </div>
-                                        <div class="submenu-col">
-                                            <h6>Series</h6>
-                                            <ul>
-                                                <c:forEach var="series" items="${seriesMap['Cooler']}">
-                                                    <li><a href="#" data-component="cooler" data-series="${series}">${series}</a></li>
-                                                </c:forEach>
-                                            </ul>
-                                        </div>
-                                    </div>
                                 </li>
                             </ul>
                         </div>
                         <div class="sidebar-section">
                             <h5 class="mb-3">Accessories</h5>
                             <ul class="sidebar-menu">
-                                <li class="menu-item has-submenu">
+                                <li class="menu-item">
                                     <a href="#"><i class="fas fa-mouse fa-fw me-2"></i> Mouse</a>
-                                    <div class="submenu">
-                                        <div class="submenu-col">
-                                            <h6>Brand</h6>
-                                            <ul>
-                                                <li><a href="#">Logitech</a></li>
-                                                <li><a href="#">Razer</a></li>
-                                            </ul>
-                                        </div>
-                                        <div class="submenu-col">
-                                            <h6>Type</h6>
-                                            <ul>
-                                                <li><a href="#">Gaming Mouse</a></li>
-                                                <li><a href="#">Wireless Mouse</a></li>
-                                            </ul>
-                                        </div>
-                                    </div>
                                 </li>
-                                <li class="menu-item has-submenu">
+                                <li class="menu-item">
                                     <a href="#"><i class="fas fa-keyboard fa-fw me-2"></i> Keyboard</a>
-                                    <div class="submenu">
-                                        <div class="submenu-col">
-                                            <h6>Brand</h6>
-                                            <ul>
-                                                <li><a href="#">DareU</a></li>
-                                                <li><a href="#">Logitech</a></li>
-                                            </ul>
-                                        </div>
-                                        <div class="submenu-col">
-                                            <h6>Type</h6>
-                                            <ul>
-                                                <li><a href="#">Mechanical</a></li>
-                                                <li><a href="#">Wireless</a></li>
-                                            </ul>
-                                        </div>
-                                    </div>
                                 </li>
-                                <li class="menu-item has-submenu">
+                                <li class="menu-item">
                                     <a href="#"><i class="fas fa-headphones fa-fw me-2"></i> Headphone</a>
-                                    <div class="submenu">
-                                        <div class="submenu-col">
-                                            <h6>Brand</h6>
-                                            <ul>
-                                                <li><a href="#">HyperX</a></li>
-                                                <li><a href="#">Sony</a></li>
-                                            </ul>
-                                        </div>
-                                        <div class="submenu-col">
-                                            <h6>Type</h6>
-                                            <ul>
-                                                <li><a href="#">Gaming</a></li>
-                                                <li><a href="#">Bluetooth</a></li>
-                                            </ul>
-                                        </div>
-                                    </div>
                                 </li>
-                                <li class="menu-item has-submenu">
+                                <li class="menu-item">
                                     <a href="#"><i class="fas fa-tv fa-fw me-2"></i> Monitor</a>
-                                    <div class="submenu">
-                                        <div class="submenu-col">
-                                            <h6>Brand</h6>
-                                            <ul>
-                                                <li><a href="#">LG</a></li>
-                                                <li><a href="#">Samsung</a></li>
-                                            </ul>
-                                        </div>
-                                        <div class="submenu-col">
-                                            <h6>Type</h6>
-                                            <ul>
-                                                <li><a href="#">Gaming</a></li>
-                                                <li><a href="#">Graphic Design</a></li>
-                                            </ul>
-                                        </div>
-                                    </div>
                                 </li>
-                                <li class="menu-item has-submenu">
+                                <li class="menu-item">
                                     <a href="#"><i class="fas fa-chair fa-fw me-2"></i> Chair & Desk</a>
-                                    <div class="submenu">
-                                        <div class="submenu-col">
-                                            <h6>Brand</h6>
-                                            <ul>
-                                                <li><a href="#">E-Dra</a></li>
-                                                <li><a href="#">DXRacer</a></li>
-                                            </ul>
-                                        </div>
-                                        <div class="submenu-col">
-                                            <h6>Type</h6>
-                                            <ul>
-                                                <li><a href="#">Gaming Chair</a></li>
-                                                <li><a href="#">Gaming Desk</a></li>
-                                            </ul>
-                                        </div>
-                                    </div>
                                 </li>
                             </ul>
                         </div>
@@ -980,82 +741,6 @@
                     });
                 });
             }
-            // Hiển thị sản phẩm khi bấm submenu (giống GearVN)
-            const typeMap = {
-                "CPU": 1,
-                "GPU": 4,
-                "Mainboard": 2,
-                "RAM": 3,
-                "Storage": 5,
-                "PSU": 6,
-                "Case": 7,
-                "Cooler": 8
-            };
-            
-            document.querySelectorAll('.submenu-col ul li a').forEach(link => {
-                link.addEventListener('click', function(e) {
-                    e.preventDefault();
-                    const component = this.getAttribute('data-component');
-                    const brand = this.getAttribute('data-brand');
-                    const series = this.getAttribute('data-series');
-                    
-                    console.log('Đã click vào:', component, brand, series);
-                    
-                    if (component) {
-                        let url = 'PCBuilderServlet?action=getProducts&componentType=' + component;
-                        if (brand) url += '&brand=' + encodeURIComponent(brand);
-                        if (series) url += '&series=' + encodeURIComponent(series);
-                        
-                        fetch(url)
-                            .then(res => res.json())
-                            .then(products => {
-                                let html = `<h4 class="mb-3">Products: ${component.toUpperCase()}`;
-                                if (brand) html += ` - ${brand}`;
-                                if (series) html += ` - ${series}`;
-                                html += `</h4>`;
-                                
-                                if (products.length > 0) {
-                                    html += '<div class="row">';
-                                    products.forEach(p => {
-                                        html += `
-                                            <div class="col-md-4 mb-3">
-                                                <div class="card component-card">
-                                                    <img src="${p.image_url || 'assets/images/default-product.jpg'}" 
-                                                         class="card-img-top" alt="${p.name}" 
-                                                         style="height: 200px; object-fit: cover;">
-                                                    <div class="card-body">
-                                                        <h5 class="card-title">${p.name}</h5>
-                                                        <p class="card-text">
-                                                            <strong>Brand:</strong> ${p.brandName}<br>
-                                                            <strong>Series:</strong> ${p.seriesName || 'N/A'}<br>
-                                                            <strong>Model:</strong> ${p.modelName || 'N/A'}<br>
-                                                            <strong>Price:</strong> $${p.price}<br>
-                                                            <strong>Stock:</strong> ${p.stock}
-                                                        </p>
-                                                        <p class="card-text">${p.description || ''}</p>
-                                                        <button class="btn btn-primary" onclick="selectComponent(componentType, ${p.product_id}, '${p.name}', ${p.price})">
-                                                            Select ${component.toUpperCase()}
-                                                        </button>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        `;
-                                    });
-                                    html += '</div>';
-                                } else {
-                                    html += '<p>No products found.</p>';
-                                }
-                                document.getElementById('productList').innerHTML = html;
-                            })
-                            .catch(error => {
-                                console.error('Error fetching products:', error);
-                                document.getElementById('productList').innerHTML = '<p>Error loading products.</p>';
-                            });
-                    } else {
-                        document.getElementById('productList').innerHTML = '<p>Component type not supported.</p>';
-                    }
-                });
-            });
             
             // Function to select a component and update progress
             function selectComponent(componentType) {
