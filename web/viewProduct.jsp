@@ -108,7 +108,7 @@
                                     <th><div class="colheader"><span>Price</span><span><button class="no-sort btn btn-sm btn-light w-100" data-col="4">F</button></span></div></th>
                                     <th><div class="colheader"><span>Stock</span><span><button class="no-sort btn btn-sm btn-light w-100" data-col="5">F</button></span></div></th>
                                     <th><div class="colheader"><span>Image</span></div></th>
-                                    <th><div class="colheader"><span>Status</span><span><button class="no-sort btn btn-sm btn-light w-100" data-col="8">F</button></span></div></th>
+                                    <th><div class="colheader"><span>Status</span><span><button class="no-sort btn btn-sm btn-light w-100" data-col="7">F</button></span></div></th>
                                     <th><div class="colheader"><span>Detail</span></div></th>
                                 </tr>
                             </thead>
@@ -168,7 +168,10 @@
                         <button id="closeFilterBtn" type="button" class="btn btn-sm btn-close"></button>
                     </div>
                     <div id="filterOptionsContainer"></div>
-                    <button id="applyFilterBtn" type="button" class="btn btn-sm btn-primary mt-2">Apply Filter</button>
+                    <div class="mt-2" style="display: flex; gap: 10px;">
+                        <button id="applyFilterBtn" type="button" class="btn btn-sm btn-primary">Apply Filter</button>
+                        <button id="clearFilterBtn" type="button" class="btn btn-sm btn-secondary">Clear Filter</button>
+                    </div>
                 </div>
 
                 <!-- Upload Modal -->
@@ -228,7 +231,7 @@
                                  pageLength: 5,
                                  ordering: true,
                                  columnDefs: [
-                                     {orderable: false, targets: []}
+                                     {orderable: false, targets: [2, 3, 6, 7]}
                                  ],
                                  language: {
                                      paginate: {
@@ -320,6 +323,51 @@
                                      });
                                      // Save slider for use in filter
                                      $('#applyFilterBtn').data('slider', slider);
+                                 } else if (currentFilterCol === 5) {
+                                     // Stock filter with slider
+                                     let stocks = [];
+                                     table.column(currentFilterCol, {search: 'applied'}).data().each(function (value) {
+                                         let num = parseFloat(String(value).replace(/[^0-9.\-]+/g, ''));
+                                         if (!isNaN(num))
+                                             stocks.push(num);
+                                     });
+                                     let min = Math.min.apply(null, stocks);
+                                     let max = Math.max.apply(null, stocks);
+                                     let html = `
+                            <div>
+                                <div id="stockSlider" style="margin:20px 10px 10px 10px"></div>
+                                <div>
+                                    <span>Min: <span id="minStockVal">${min}</span></span>
+                                    <span class="ms-3">Max: <span id="maxStockVal">${max}</span></span>
+                                </div>
+                            </div>
+                        `;
+                                     $('#filterOptionsContainer').html(html);
+                                     // Initialize noUiSlider
+                                     var slider = document.getElementById('stockSlider');
+                                     noUiSlider.create(slider, {
+                                         start: [min, max],
+                                         connect: true,
+                                         range: {
+                                             'min': min,
+                                             'max': max
+                                         },
+                                         tooltips: [true, true],
+                                         format: {
+                                             to: function (value) {
+                                                 return Math.round(value);
+                                             },
+                                             from: function (value) {
+                                                 return Number(value);
+                                             }
+                                         }
+                                     });
+                                     slider.noUiSlider.on('update', function (values) {
+                                         $('#minStockVal').text(values[0]);
+                                         $('#maxStockVal').text(values[1]);
+                                     });
+                                     // Save slider for use in filter
+                                     $('#applyFilterBtn').data('slider', slider);
                                  } else {
                                      // Default: dropdown filter for other columns
                                      let selectHtml = '<select id="popupColumnFilter" style="width:100%; margin-top:5px;"><option value="">-- Select to filter --</option>';
@@ -340,6 +388,20 @@
                              $('#closeFilterBtn').on('click', function () {
                                  $('#columnFilterPopup').hide();
                              });
+                             
+                             $('#clearFilterBtn').on('click', function () {
+                                 const $popup = $('#columnFilterPopup');
+                                 $popup.hide();
+                                 
+                                 // Clear all custom filters by removing all search functions
+                                 $.fn.dataTable.ext.search = [];
+                                 
+                                 // Clear all column searches
+                                 table.columns().search('').draw();
+                                 
+                                 // Reset any dropdown selections
+                                 $('#popupColumnFilter').val('');
+                             });
                              $('#applyFilterBtn').off('click').on('click', function () {
                                  const $popup = $('#columnFilterPopup');
                                  $popup.hide();
@@ -358,6 +420,23 @@
                                          if (isNaN(price))
                                              return false;
                                          return price >= min && price <= max;
+                                     });
+                                     table.draw();
+                                 } else if (currentFilterCol === 5) {
+                                     // Stock filter with slider
+                                     let slider = $('#applyFilterBtn').data('slider');
+                                     let values = slider.noUiSlider.get();
+                                     let min = parseFloat(values[0]);
+                                     let max = parseFloat(values[1]);
+                                     // Remove previous stock filter
+                                     $.fn.dataTable.ext.search = $.fn.dataTable.ext.search.filter(function (f) {
+                                         return f.name !== 'stockRange';
+                                     });
+                                     $.fn.dataTable.ext.search.push(function (settings, data, dataIndex) {
+                                         let stock = parseFloat(data[5].replace(/[^0-9.\-]+/g, ''));
+                                         if (isNaN(stock))
+                                             return false;
+                                         return stock >= min && stock <= max;
                                      });
                                      table.draw();
                                  } else {
