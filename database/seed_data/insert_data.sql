@@ -171,9 +171,7 @@ INSERT INTO `user` (user_id, username, password, email, role, status, is_verifie
 
 INSERT INTO `customer` (customer_id, name, email, password, phone, shipping_address, is_verified, verification_token) VALUES
 (1, 'Lê Thị Khách Hàng', 'customer01@example.com', 'hashedpassword3', '0909988776', '123 Đường ABC, Quận 1, TP.HCM', 1, NULL),
-(2, 'NguyenVanGiap', 'giapThieuNang@gmail.com', 'cesvg2810A!', '0994885738', 'KhongBietHoiLamVL', 0, NULL),
-(3, 'Phạm Đức Trọng', 'trongpdhe181640@fpt.edu.vn', '$2a$10$iC2jTTQm8GSE5ni9iURIouVE.c/qVXK8PKSshKj7HjAb/Ie5r5Tea', '0559868660', 'ChauPhong-LienHa-DongAnh-HaNoi', 1, NULL),
-(4, 'huy', 'huy69332@gmail.com', '$2a$10$cVf/WsqcXPyEOtyJo/fnAeCLD4079ARM8qRdzv3OIrPWohIA9ELF.', '0987565443', NULL, 1, NULL);
+
 
 INSERT INTO `staff` (staff_id, user_id, name, phone, enter_date, leave_date) VALUES
 (1, 1, 'Nguyễn Văn Nhân viên', '0901123456', '2024-01-01', NULL);
