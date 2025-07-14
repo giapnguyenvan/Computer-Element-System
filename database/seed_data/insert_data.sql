@@ -318,3 +318,88 @@ SELECT * FROM transactions;
 SELECT * FROM menu_item;
 SELECT * FROM menu_attribute;
 SELECT * FROM menu_attribute_value;
+
+-- Product Specifications for Product ID 1: AMD Ryzen 7 9800X3D
+-- This file contains detailed specifications for the AMD Ryzen 7 9800X3D CPU
+
+-- Clear existing specifications for product ID 1 (if any)
+DELETE FROM `productspecification` WHERE `product_id` = 1;
+
+-- Insert comprehensive specifications for AMD Ryzen 7 9800X3D
+INSERT INTO `productspecification` (`product_id`, `spec_key`, `spec_value`) VALUES
+-- Basic Information
+(1, 'Processor Type', 'Desktop CPU'),
+(1, 'Architecture', 'Zen 5'),
+(1, 'Socket', 'AM5'),
+(1, 'Manufacturing Process', '4nm'),
+(1, 'Launch Date', 'Q4 2024'),
+
+-- Core Configuration
+(1, 'Cores', '8'),
+(1, 'Threads', '16'),
+(1, 'Base Clock Speed', '4.2 GHz'),
+(1, 'Boost Clock Speed', '5.4 GHz'),
+(1, '3D V-Cache', 'Yes'),
+(1, 'L3 Cache', '96 MB'),
+(1, 'L2 Cache', '8 MB'),
+(1, 'L1 Cache', '512 KB'),
+
+-- Performance Features
+(1, 'TDP', '120W'),
+(1, 'Max Temperature', '95°C'),
+(1, 'PCIe Version', 'PCIe 5.0'),
+(1, 'PCIe Lanes', '24'),
+(1, 'Memory Support', 'DDR5'),
+(1, 'Memory Channels', 'Dual Channel'),
+(1, 'Max Memory Speed', 'DDR5-5600'),
+(1, 'Max Memory Capacity', '128 GB'),
+
+-- Graphics
+(1, 'Integrated Graphics', 'AMD Radeon Graphics'),
+(1, 'Graphics Cores', '2'),
+(1, 'Graphics Base Clock', '400 MHz'),
+(1, 'Graphics Boost Clock', '2200 MHz'),
+
+-- Advanced Features
+(1, 'Overclocking', 'Yes'),
+(1, 'Precision Boost', 'Yes'),
+(1, 'Precision Boost Overdrive', 'Yes'),
+(1, 'AMD 3D V-Cache Technology', 'Yes'),
+(1, 'AMD EXPO Technology', 'Yes'),
+(1, 'AMD Ryzen Master Support', 'Yes'),
+
+-- Security
+(1, 'AMD Secure Processor', 'Yes'),
+(1, 'AMD Memory Guard', 'Yes'),
+(1, 'AMD Shadow Stack', 'Yes'),
+
+-- Package Information
+(1, 'Package Type', 'AM5'),
+(1, 'Die Size', '71 mm²'),
+(1, 'Transistor Count', '6.5 billion'),
+(1, 'Thermal Solution', 'Not included'),
+
+-- Compatibility
+(1, 'Motherboard Chipset', 'X670E, X670, B650E, B650'),
+(1, 'Windows Support', 'Windows 10 64-bit, Windows 11 64-bit'),
+(1, 'Linux Support', 'Yes'),
+
+-- Performance Benchmarks (Estimated)
+(1, 'Cinebench R23 Single-Core', '~2200 points'),
+(1, 'Cinebench R23 Multi-Core', '~28000 points'),
+(1, 'Geekbench 6 Single-Core', '~3200 points'),
+(1, 'Geekbench 6 Multi-Core', '~28000 points'),
+
+-- Gaming Performance
+(1, 'Gaming Performance', 'Excellent for 1080p, 1440p, and 4K gaming'),
+(1, 'Streaming Capability', 'Excellent for game streaming'),
+(1, 'Content Creation', 'Excellent for video editing, 3D rendering'),
+(1, 'Productivity', 'Excellent for multitasking and productivity tasks'),
+
+-- Warranty and Support
+(1, 'Warranty', '3 years'),
+(1, 'Box Contents', 'AMD Ryzen 7 9800X3D Processor, AMD Wraith Stealth Cooler (if included), Documentation'),
+(1, 'Support', 'AMD Technical Support');
+
+-- Note: These specifications are based on typical AMD Ryzen 7 9000 series features
+-- Actual specifications may vary based on the exact model and AMD's official documentation 

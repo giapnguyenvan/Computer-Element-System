@@ -266,7 +266,7 @@ public class ProductDAO {
         }
     }
 
-    public void updateProduct(Products p) {
+    public boolean updateProduct(Products p) {
         DBContext db = DBContext.getInstance();
         String sql = """
             UPDATE product SET
@@ -307,9 +307,11 @@ public class ProductDAO {
             ptm.setString(11, p.getStatus() != null ? p.getStatus() : "Active");
             ptm.setTimestamp(12, p.getCreatedAt());
             ptm.setInt(13, p.getProductId());
-            ptm.executeUpdate();
+            int rowsAffected = ptm.executeUpdate();
+            return rowsAffected > 0;
         } catch (SQLException ex) {
             ex.printStackTrace();
+            return false;
         }
     }
 
@@ -605,6 +607,45 @@ public class ProductDAO {
             return ptm.executeUpdate() > 0;
         } catch (SQLException e) {
             e.printStackTrace();
+        }
+        return false;
+    }
+
+    public boolean deactivateProduct(int productId) {
+        DBContext db = DBContext.getInstance();
+        String sql = "UPDATE product SET status = 'Inactive' WHERE product_id = ?";
+        try {
+            PreparedStatement ptm = db.getConnection().prepareStatement(sql);
+            ptm.setInt(1, productId);
+            return ptm.executeUpdate() > 0;
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+        }
+        return false;
+    }
+    
+    public boolean updateProductImage(int productId, String imageUrl) {
+        DBContext db = DBContext.getInstance();
+        String sql = "UPDATE productimage SET image_url = ? WHERE product_id = ? AND is_primary = TRUE";
+        try {
+            PreparedStatement ptm = db.getConnection().prepareStatement(sql);
+            ptm.setString(1, imageUrl);
+            ptm.setInt(2, productId);
+            int rowsAffected = ptm.executeUpdate();
+            
+            // If no primary image exists, insert one
+            if (rowsAffected == 0) {
+                sql = "INSERT INTO productimage (product_id, image_url, alt_text, is_primary) VALUES (?, ?, ?, TRUE)";
+                ptm = db.getConnection().prepareStatement(sql);
+                ptm.setInt(1, productId);
+                ptm.setString(2, imageUrl);
+                ptm.setString(3, "Product Image");
+                return ptm.executeUpdate() > 0;
+            }
+            
+            return rowsAffected > 0;
+        } catch (SQLException ex) {
+            ex.printStackTrace();
         }
         return false;
     }

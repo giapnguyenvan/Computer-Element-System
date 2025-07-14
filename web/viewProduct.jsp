@@ -45,7 +45,7 @@
                 justify-content: space-between;
                 align-items: center;
             }
-            
+
             body.modal-open {
                 overflow: hidden;
             }
@@ -92,8 +92,8 @@
              max-width:100%;">
             <div class="mb-3">
                 <button type="button" class="btn btn-primary" onclick="openUploadModal()">Upload Excel</button>
-                <button type="button" class="btn btn-primary" id="editBtn">Edit</button>
-                <button type="button" class="btn btn-danger" id="deleteBtn">Delete</button>
+                <button type="button" class="btn btn-primary" id="editBtn" disabled>Edit</button>
+                <button type="button" class="btn btn-danger" id="deleteBtn" disabled>Delete</button>
             </div>
             <div id="productTableContainer">
                 <div class="table-wrapper">
@@ -109,7 +109,6 @@
                                     <th><div class="colheader"><span>Stock</span><span><button class="no-sort btn btn-sm btn-light w-100" data-col="5">F</button></span></div></th>
                                     <th><div class="colheader"><span>Image</span></div></th>
                                     <th><div class="colheader"><span>Status</span><span><button class="no-sort btn btn-sm btn-light w-100" data-col="7">F</button></span></div></th>
-                                    <th><div class="colheader"><span>Detail</span></div></th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -140,13 +139,6 @@
                                                     Active
                                                 </c:otherwise>
                                             </c:choose>
-                                        </td>
-                                        <td class="p-0 text-center">
-                                            <a href="${pageContext.request.contextPath}/productservlet?service=productDetailAdmin&id=${product.productId}"
-                                               class="edit-icon-btn"
-                                               title="Edit">
-                                                <i class="fas fa-edit"></i>
-                                            </a>
                                         </td>
                                     </tr>
                                 </c:forEach>
@@ -231,7 +223,7 @@
                                  pageLength: 5,
                                  ordering: true,
                                  columnDefs: [
-                                     {orderable: false, targets: [2, 3, 6, 7]}
+                                     {orderable: false, targets: [1, 2, 3, 6, 7]}
                                  ],
                                  language: {
                                      paginate: {
@@ -388,17 +380,17 @@
                              $('#closeFilterBtn').on('click', function () {
                                  $('#columnFilterPopup').hide();
                              });
-                             
+
                              $('#clearFilterBtn').on('click', function () {
                                  const $popup = $('#columnFilterPopup');
                                  $popup.hide();
-                                 
+
                                  // Clear all custom filters by removing all search functions
                                  $.fn.dataTable.ext.search = [];
-                                 
+
                                  // Clear all column searches
                                  table.columns().search('').draw();
-                                 
+
                                  // Reset any dropdown selections
                                  $('#popupColumnFilter').val('');
                              });
@@ -454,9 +446,13 @@
                              $('#myTable tbody').on('click', 'tr', function () {
                                  if ($(this).hasClass('selected')) {
                                      $(this).removeClass('selected');
+                                     // Disable buttons when no row is selected
+                                     $('#editBtn, #deleteBtn').prop('disabled', true);
                                  } else {
                                      table.$('tr.selected').removeClass('selected');
                                      $(this).addClass('selected');
+                                     // Enable buttons when a row is selected
+                                     $('#editBtn, #deleteBtn').prop('disabled', false);
                                  }
                              });
                              // Edit button
@@ -464,7 +460,7 @@
                                  var selectedRow = table.row('.selected');
                                  if (selectedRow.length) {
                                      var productId = selectedRow.data()[0];
-                                     window.location.href = "${pageContext.request.contextPath}/ProductEditServlet?action=edit&id=" + productId;
+                                     window.location.href = "${pageContext.request.contextPath}/producteditservlet?action=edit&id=" + productId;
                                  } else {
                                      alert('Please select a product to edit.');
                                  }
@@ -473,12 +469,12 @@
                              $('#deleteBtn').on('click', function () {
                                  var selectedRow = table.row('.selected');
                                  if (selectedRow.length) {
-                                     if (confirm('Are you sure you want to delete this product?')) {
+                                     if (confirm('Are you sure you want to deactivate this product? This will change its status to Inactive.')) {
                                          var productId = selectedRow.data()[0];
-                                         window.location.href = "${pageContext.request.contextPath}/ProductEditServlet?action=delete&id=" + productId;
+                                         window.location.href = "${pageContext.request.contextPath}/producteditservlet?action=delete&id=" + productId;
                                      }
                                  } else {
-                                     alert('Please select a product to delete.');
+                                     alert('Please select a product to deactivate.');
                                  }
                              });
                              function sortTable(col, direction) {
@@ -536,14 +532,12 @@
                                  thead.innerHTML = '';
                                  tbody.innerHTML = '';
 
-                                 // Header row
-                                 if (json.length > 0) {
-                                     const headerRow = json[0];
-                                     const headerHtml = '<tr>' + headerRow.map(cell => `<th>${cell}</th>`).join('') + '</tr>';
-                                     thead.innerHTML = headerHtml;
-                                 }
+                                 // Use hardcoded headers
+                                 const hardcodedHeaders = ['Name', 'Brand', 'Component Type', 'Model', 'Price', 'Import Price', 'Stock', 'SKU', 'Description'];
+                                 const headerHtml = '<tr>' + hardcodedHeaders.map(header => `<th>\${header}</th>`).join('') + '</tr>';
+                                 thead.innerHTML = headerHtml;
 
-                                 // Data rows
+                                 // Data rows - start from index 1 (skip first row)
                                  for (let i = 1; i < json.length; i++) {
                                      const row = json[i];
                                      const rowHtml = '<tr>' + row.map(cell => `<td>\${cell ?? ''}</td>`).join('') + '</tr>';
