@@ -88,7 +88,7 @@ public class UserProfileServlet extends HttpServlet {
                 }
                 case "voucher": {
                     List<Voucher> vouchers = new VoucherDAO().getCustomerVoucher(customerId);
-                    request.setAttribute("data", vouchers);
+                    request.setAttribute("vouchers", vouchers);
                     content = "voucher.jsp";
                     activePage = "voucher";
                     break;

@@ -29,34 +29,34 @@
 
 <div class="card stat-card">
     <div class="card-body">
-        <h5 class="card-title">Danh sách Voucher của bạn</h5>
+        <h5 class="card-title">Your Vouchers</h5>
 
         <c:choose>
             <c:when test="${empty vouchers}">
-                <p>Bạn chưa có voucher nào.</p>
+                <p>You don't have any vouchers yet.</p>
             </c:when>
             <c:otherwise>
                 <div class="voucher-list">
                     <c:forEach var="v" items="${vouchers}">
                         <div class="voucher-item">
                             <div class="voucher-header">${v.code}</div>
-                            <div class="voucher-detail">📄 <strong>Mô tả:</strong> ${v.description}</div>
-                            <div class="voucher-detail">🎯 <strong>Loại giảm:</strong> 
+                            <div class="voucher-detail">📄 <strong>Description:</strong> ${v.description}</div>
+                            <div class="voucher-detail">🎯 <strong>Discount Type:</strong> 
                                 <c:choose>
                                     <c:when test="${v.discount_type == 'percent'}">
-                                        ${v.discount_value}% giảm giá
+                                        ${v.discount_value}% discount
                                     </c:when>
                                     <c:otherwise>
-                                        ${v.discount_value} VND giảm cố định
+                                        ${v.discount_value} VND fixed discount
                                     </c:otherwise>
                                 </c:choose>
                             </div>
-                            <div class="voucher-detail">💵 <strong>Đơn tối thiểu:</strong> ${v.min_order_amount} VND</div>
-                            <div class="voucher-detail">📅 <strong>Thời gian:</strong> 
+                            <div class="voucher-detail">💵 <strong>Minimum Order:</strong> ${v.min_order_amount} VND</div>
+                            <div class="voucher-detail">📅 <strong>Valid Period:</strong> 
                                 <fmt:formatDate value="${v.start_date}" pattern="dd/MM/yyyy" /> - 
                                 <fmt:formatDate value="${v.end_date}" pattern="dd/MM/yyyy" />
                             </div>
-                            <div class="voucher-detail">🔖 <strong>Trạng thái:</strong> ${v.status}</div>
+                            <div class="voucher-detail">🔖 <strong>Status:</strong> ${v.status}</div>
                         </div>
                     </c:forEach>
                 </div>

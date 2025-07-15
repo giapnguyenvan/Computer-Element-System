@@ -119,8 +119,8 @@
                                                 <select class="form-select" id="seriesId" name="seriesId">
                                                     <option value="">Select Series</option>
                                                     <c:forEach items="${series}" var="s">
-                                                        <option value="${s.seriesId}" 
-                                                                ${product.seriesId == s.seriesId ? 'selected' : ''}>
+                                                        <option value="${s.seriesId}" data-brand-id="${s.brandId}"
+                                                            ${product.seriesId == s.seriesId ? 'selected' : ''}>
                                                             ${s.name}
                                                         </option>
                                                     </c:forEach>
@@ -272,6 +272,34 @@
                 seriesSelect.disabled = true;
                 seriesSelect.value = '';
             }
+        });
+
+        document.addEventListener('DOMContentLoaded', function() {
+            const brandSelect = document.getElementById('brandId');
+            const seriesSelect = document.getElementById('seriesId');
+            // Clone all options for later filtering
+            const allSeriesOptions = Array.from(seriesSelect.options).map(option => option.cloneNode(true));
+
+            function filterSeriesOptions() {
+                const selectedBrandId = brandSelect.value;
+                const currentSeriesId = "${product.seriesId}";
+                seriesSelect.innerHTML = '';
+                allSeriesOptions.forEach(option => {
+                    if (option.value === '' || option.getAttribute('data-brand-id') === selectedBrandId) {
+                        seriesSelect.appendChild(option);
+                    }
+                });
+                // Try to re-select the current series if it matches
+                if (currentSeriesId && Array.from(seriesSelect.options).some(opt => opt.value === currentSeriesId)) {
+                    seriesSelect.value = currentSeriesId;
+                } else {
+                    seriesSelect.value = '';
+                }
+            }
+
+            brandSelect.addEventListener('change', filterSeriesOptions);
+            // Initial filter on page load
+            filterSeriesOptions();
         });
     </script>
 </body>
