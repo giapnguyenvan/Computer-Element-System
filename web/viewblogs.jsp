@@ -198,17 +198,16 @@
                                 </small>
                             </div>
                             <div class="blog-content">
-                                <p class="card-text">${fn:substring(blog.content, 0, 100)}${fn:length(blog.content) > 100 ? '...' : ''}</p>
+                                <div class="card-text" style="white-space: pre-line;">${fn:substring(blog.content, 0, 100)}${fn:length(blog.content) > 100 ? '...' : ''}</div>
                             </div>
                             <div class="blog-meta">
                                 <small>Author: ${userNames[blog.user_id]}</small>
                                 <br><small><i class="fas fa-images"></i> ${empty blog.images ? 0 : blog.images.size()} image(s)</small>
                             </div>
                             <div class="mt-3">
-                                <button type="button" class="btn btn-sm btn-info" 
-                                        onclick="showBlogContent(this, '${fn:escapeXml(blog.title)}', '${fn:escapeXml(blog.content)}', '${fn:escapeXml(userNames[blog.user_id])}', '<fmt:formatDate value='${blog.created_at}' pattern='dd/MM/yyyy HH:mm'/>', ${blog.blog_id})">
+                                <a href="viewblogs?action=view&id=${blog.blog_id}" class="btn btn-sm btn-info">
                                     <i class="fas fa-eye me-1"></i>View Details
-                                </button>
+                                </a>
                             </div>
                         </div>
                     </div>

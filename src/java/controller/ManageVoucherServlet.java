@@ -26,6 +26,7 @@ public class ManageVoucherServlet extends HttpServlet {
     throws ServletException, IOException {
         response.setContentType("text/html;charset=UTF-8");
         try {
+            voucherDAO.autoUpdateVoucherStatuses();
             List<Voucher> allVouchers = voucherDAO.getAllVouchers();
 
             // Search
