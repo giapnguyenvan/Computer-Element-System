@@ -20,6 +20,8 @@ import shop.entities.OrderDetail;
 import shop.entities.Product;
 import shop.entities.User;
 import shop.utils.ResponseUtils;
+import dal.InventoryLogDAO;
+import model.InventoryLog;
 
 /**
  *
@@ -69,14 +71,25 @@ public class OrderApiServlet extends HttpServlet {
                 genId = orderDAO.insertGetKey(order);
 
                 // Process order details and update stock
+                InventoryLogDAO logDAO = new InventoryLogDAO();
                 for (OrderDetail orderDetail : order.getOrderDetails()) {
                     orderDetail.setOrderId(genId);
                     orderDetailDAO.insert(orderDetail);
 
                     // Update product stock
                     Product product = productDAO.getById(orderDetail.getProductId());
+                    int oldStock = product.getStock();
                     product.setStock(product.getStock() - orderDetail.getQuantity());
                     productDAO.update(product);
+
+                    // Log Adjust for purchase
+                    InventoryLog log = new InventoryLog();
+                    log.setProduct_id(product.getId());
+                    log.setAction("Adjust");
+                    log.setQuantity(-orderDetail.getQuantity());
+                    log.setNote("Stock adjusted due to purchase. Old stock: " + oldStock + ", Purchased: " + orderDetail.getQuantity());
+                    log.setCreated_at(new java.util.Date());
+                    logDAO.insertLog(log);
                 }
 
                 // Clear cart after successful order

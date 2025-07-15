@@ -250,43 +250,9 @@ public class ViewBlogServlet extends HttpServlet {
                 String author = (fullName != null && !fullName.isEmpty()) ? fullName : (user != null ? user.getUsername() : "Unknown User");
                 request.setAttribute("blog", blog);
                 request.setAttribute("author", author);
-                
-                // Check if this is an AJAX request for images
-                String xRequestedWith = request.getHeader("X-Requested-With");
-                if ("XMLHttpRequest".equals(xRequestedWith)) {
-                    // Return JSON response with blog images
-                    response.setContentType("application/json");
-                    response.setCharacterEncoding("UTF-8");
-                    
-                    // Convert blog images to JSON
-                    java.util.List<model.BlogImage> images = blog.getImages();
-                    java.util.List<java.util.Map<String, Object>> imageList = new java.util.ArrayList<>();
-                    
-                    for (model.BlogImage img : images) {
-                        java.util.Map<String, Object> imageMap = new java.util.HashMap<>();
-                        imageMap.put("image_id", img.getImage_id());
-                        imageMap.put("image_url", img.getImage_url());
-                        imageMap.put("image_alt", img.getImage_alt());
-                        imageMap.put("display_order", img.getDisplay_order());
-                        imageList.add(imageMap);
-                    }
-                    
-                    // Create response object
-                    java.util.Map<String, Object> responseObj = new java.util.HashMap<>();
-                    responseObj.put("blog_id", blogId);
-                    responseObj.put("images", imageList);
-                    responseObj.put("image_count", imageList.size());
-                    
-                    // Convert to JSON using simple string building (you could use a JSON library)
-                    String jsonResponse = "{\"blog_id\":" + blogId + 
-                                       ",\"images\":" + buildImagesJson(imageList) + 
-                                       ",\"image_count\":" + imageList.size() + "}";
-                    
-                    response.getWriter().write(jsonResponse);
-                } else {
-                    // Forward to the view blog page
-                    request.getRequestDispatcher("viewblogs.jsp").forward(request, response);
-                }
+                request.setAttribute("mainImage", blog.getMainImageForJsp());
+                request.setAttribute("sortedImages", blog.getSortedImagesForJsp());
+                request.getRequestDispatcher("blogDetail.jsp").forward(request, response);
             } else {
                 request.getSession().setAttribute("error", "Blog not found");
                 response.sendRedirect(request.getContextPath() + "/viewblogs");

@@ -344,7 +344,7 @@ public class ManageBlogServlet extends HttpServlet {
                                 // Generate unique filename
                                 String fileExtension = fileName.substring(fileName.lastIndexOf("."));
                                 String uniqueFileName = System.currentTimeMillis() + "_" + blogId + fileExtension;
-                                String uploadPath = "/IMG/blog/" + uniqueFileName;
+                                String uploadPath = "IMG/blog/" + uniqueFileName;
                                 
                                 // Save file to server
                                 String realPath = getServletContext().getRealPath(uploadPath);
@@ -417,7 +417,7 @@ public class ManageBlogServlet extends HttpServlet {
                             // Generate unique filename
                             String fileExtension = fileName.substring(fileName.lastIndexOf("."));
                             String uniqueFileName = System.currentTimeMillis() + "_" + id + fileExtension;
-                            String uploadPath = "/IMG/blog/" + uniqueFileName;
+                            String uploadPath = "IMG/blog/" + uniqueFileName;
                             
                             // Save file to server
                             String realPath = getServletContext().getRealPath(uploadPath);
@@ -465,7 +465,7 @@ public class ManageBlogServlet extends HttpServlet {
             
             // Step 2: Delete image files from the server
             for (model.BlogImage img : images) {
-                if (img.getImage_url() != null && (img.getImage_url().startsWith("/blog/") || img.getImage_url().startsWith("/IMG/blog/"))) {
+                if (img.getImage_url() != null && (img.getImage_url().startsWith("/blog/") || img.getImage_url().startsWith("IMG/blog/"))) {
                     String realPath = getServletContext().getRealPath(img.getImage_url());
                     java.io.File file = new java.io.File(realPath);
                     if (file.exists()) {
@@ -508,7 +508,7 @@ public class ManageBlogServlet extends HttpServlet {
             java.util.Vector<model.BlogImage> images = blogImageDAO.getImagesByBlogId(id);
             blogDAO.deleteBlog(id, userId);
             for (model.BlogImage img : images) {
-                if (img.getImage_url() != null && (img.getImage_url().startsWith("/blog/") || img.getImage_url().startsWith("/IMG/blog/"))) {
+                if (img.getImage_url() != null && (img.getImage_url().startsWith("/blog/") || img.getImage_url().startsWith("IMG/blog/"))) {
                     String realPath = getServletContext().getRealPath(img.getImage_url());
                     java.io.File file = new java.io.File(realPath);
                     if (file.exists()) file.delete();

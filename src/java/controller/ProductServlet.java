@@ -57,7 +57,7 @@ public class ProductServlet extends HttpServlet {
 
                     Products product = dao.getProductById(productID);
                     if (product == null) {
-                        request.setAttribute("errorMsg", "Không tìm thấy sản phẩm hoặc sản phẩm đã bị xóa!");
+                        request.setAttribute("errorMsg", "Product not found or has been deleted!");
                         request.getRequestDispatcher("viewProduct.jsp").forward(request, response);
                         break;
                     }
@@ -89,6 +89,11 @@ public class ProductServlet extends HttpServlet {
                         }
                         averageRating = sum / totalFeedback;
                     }
+
+                    // Add this block to fetch and set product specifications
+                    dal.ProductSpecificationDAO specDAO = new dal.ProductSpecificationDAO();
+                    java.util.List<model.ProductSpecification> specifications = specDAO.getSpecificationsByProductId(productID);
+                    request.setAttribute("specifications", specifications);
 
                     request.setAttribute("product", product);
                     request.setAttribute("relatedProducts", relatedProducts);
