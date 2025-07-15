@@ -2,7 +2,7 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <div class="card stat-card">
     <div class="card-body">
-        <h5 class="card-title">Xem địa chỉ</h5>
-        <p><strong>Địa chỉ giao hàng:</strong> ${data.shipping_address}</p>
+        <h5 class="card-title">Address</h5>
+        <p><strong>Shipping Address:</strong> ${data.shipping_address}</p>
     </div>
 </div>

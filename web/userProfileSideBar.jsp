@@ -8,19 +8,19 @@
 <div class="col-md-3 col-lg-2 sidebar">
     <nav>
         <a href="${pageContext.request.contextPath}/userprofile?action=profile" class="${param.activePage == 'profile' ? 'active' : ''}">
-            <i class="fas fa-user me-2"></i> Hồ sơ
+            <i class="fas fa-user me-2"></i> Account
         </a>
         <a href="${pageContext.request.contextPath}/userprofile?action=address" class="${param.activePage == 'address' ? 'active' : ''}">
-            <i class="fas fa-map-marker-alt me-2"></i> Địa chỉ
+            <i class="fas fa-map-marker-alt me-2"></i> Address
         </a>
         <a href="${pageContext.request.contextPath}/userprofile?action=orders" class="${param.activePage == 'orders' ? 'active' : ''}">
-            <i class="fas fa-shopping-cart me-2"></i> Đơn hàng
+            <i class="fas fa-shopping-cart me-2"></i> Order
         </a>
         <a href="${pageContext.request.contextPath}/userprofile?action=voucher" class="${param.activePage == 'voucher' ? 'active' : ''}">
             <i class="fas fa-ticket me-2"></i> Voucher
         </a>
         <a href="${pageContext.request.contextPath}/logout">
-            <i class="fas fa-sign-out-alt me-2"></i> Đăng xuất
+            <i class="fas fa-sign-out-alt me-2"></i> Logout
         </a>
     </nav>
 </div>

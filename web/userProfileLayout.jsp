@@ -105,25 +105,36 @@
             margin-left: 0;
             margin-right: 0;
         }
+
+        .content-wrapper {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+        }
     </style>
 </head>
 <body>
-    <!-- Include Header (if needed) -->
+    <!-- Include Header -->
     <jsp:include page="header.jsp" />
     
-    <div class="container-fluid">
-        <div class="row">
-            <!-- Sidebar -->
-            <jsp:include page="userProfileSideBar.jsp" />
-            
-            <!-- Main Content -->
-            <div class="col-md-9 col-lg-10 main-content">
-                <jsp:include page="${content}" />
+    <div class="content-wrapper">
+        <div class="container-fluid">
+            <div class="row">
+                <!-- Sidebar -->
+                <jsp:include page="userProfileSideBar.jsp" />
+                
+                <!-- Main Content -->
+                <div class="col-md-9 col-lg-10 main-content">
+                    <jsp:include page="${content}" />
+                </div>
             </div>
         </div>
     </div>
 
+    <!-- Include Footer -->
+    <jsp:include page="footer.jsp" />
+
     <!-- Bootstrap JS -->
-    <!-- Đã được load trong header.jsp -->
+    <!-- Already loaded in header.jsp -->
 </body>
 </html>

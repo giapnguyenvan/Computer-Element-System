@@ -20,7 +20,7 @@
 
 <div class="card stat-card">
     <div class="card-body">
-        <h5 class="card-title">Hồ sơ cá nhân</h5>
+        <h5 class="card-title">Profile</h5>
         <p>
             <strong>Name:</strong>
             <input type="text" id="nameInput" value="${data.name}" style="border-radius: 8px; padding: 5px;" />
@@ -33,6 +33,7 @@
         <p>
             <strong>Phone:</strong> ${data.phone}
             <button type="button" class="custom-btn" onclick="showEditPhoneModal()">Edit</button>
+        </p>
         <p>
             <strong>Gender:</strong>
             <select id="genderSelect" style="border-radius: 8px; padding: 5px;">
@@ -44,50 +45,50 @@
         </p>
 
         <p>
-            <strong>DoB:</strong>
+            <strong>Date of Birth:</strong>
             <fmt:formatDate value="${data.dateOfBirth}" pattern="dd/MM/yyyy" />
         </p>
 
-        <p><strong>Shipping address:</strong> ${data.shipping_address}</p>
+        <p><strong>Shipping Address:</strong> ${data.shipping_address}</p>
 
-        <button type="button" class="custom-btn" onclick="showChangePasswordModal()">Change password</button>
+        <button type="button" class="custom-btn" onclick="showChangePasswordModal()">Change Password</button>
     </div>               
 </div>
 
 <!-- Email Edit Modal -->
 <div id="editEmailModal" style="display:none; position:fixed; top:30%; left:50%; transform:translate(-50%,-50%); background:#fff; padding:20px; border:1px solid #ccc; z-index:1000;">
     <form id="editEmailForm" onsubmit="submitNewEmail(event)">
-        <label>Nhập email mới:</label>
+        <label>Enter new email:</label>
         <input type="email" id="newEmailInput" required>
-        <button type="submit">Gửi xác nhận</button>
-        <button type="button" onclick="closeEditEmailModal()">Hủy</button>
+        <button type="submit">Send Confirmation</button>
+        <button type="button" onclick="closeEditEmailModal()">Cancel</button>
     </form>
 </div>
 <!-- Token Modal -->
 <div id="tokenModal" style="display:none; position:fixed; top:35%; left:50%; transform:translate(-50%,-50%); background:#fff; padding:20px; border:1px solid #ccc; z-index:1001;">
     <form id="tokenForm" onsubmit="submitToken(event)">
-        <label>Nhập mã xác nhận đã gửi tới email cũ:</label>
+        <label>Enter confirmation code sent to your old email:</label>
         <input type="text" id="tokenInput" required>
-        <button type="submit">Xác nhận</button>
-        <button type="button" onclick="closeTokenModal()">Hủy</button>
+        <button type="submit">Confirm</button>
+        <button type="button" onclick="closeTokenModal()">Cancel</button>
     </form>
 </div>
 <!-- Phone Edit Modal -->
 <div id="editPhoneModal" style="display:none; position:fixed; top:30%; left:50%; transform:translate(-50%,-50%); background:#fff; padding:20px; border:1px solid #ccc; z-index:1000;">
     <form id="editPhoneForm" onsubmit="submitNewPhone(event)">
-        <label>Nhập số điện thoại mới:</label>
+        <label>Enter new phone number:</label>
         <input type="tel" id="newPhoneInput" required pattern="[0-9]{9,15}">
-        <button type="submit">Gửi xác nhận</button>
-        <button type="button" onclick="closeEditPhoneModal()">Hủy</button>
+        <button type="submit">Send Confirmation</button>
+        <button type="button" onclick="closeEditPhoneModal()">Cancel</button>
     </form>
 </div>
 <!-- Phone Token Modal -->
 <div id="phoneTokenModal" style="display:none; position:fixed; top:35%; left:50%; transform:translate(-50%,-50%); background:#fff; padding:20px; border:1px solid #ccc; z-index:1001;">
     <form id="phoneTokenForm" onsubmit="submitPhoneToken(event)">
-        <label>Nhập mã xác nhận đã gửi tới email của bạn:</label>
+        <label>Enter confirmation code sent to your email:</label>
         <input type="text" id="phoneTokenInput" required>
-        <button type="submit">Xác nhận</button>
-        <button type="button" onclick="closePhoneTokenModal()">Hủy</button>
+        <button type="submit">Confirm</button>
+        <button type="button" onclick="closePhoneTokenModal()">Cancel</button>
     </form>
 </div>
 <div id="modalOverlay" style="display:none; position:fixed; top:0; left:0; width:100vw; height:100vh; background:rgba(0,0,0,0.3); z-index:999;"></div>
@@ -98,17 +99,17 @@
         <input type="password" id="newPassword" required minlength="8">
         <label>Confirm Password:</label>
         <input type="password" id="confirmPassword" required minlength="8">
-        <button type="submit">Gửi xác nhận</button>
-        <button type="button" onclick="closeChangePasswordModal()">Hủy</button>
+        <button type="submit">Send Confirmation</button>
+        <button type="button" onclick="closeChangePasswordModal()">Cancel</button>
     </form>
 </div>
 <!-- Verify Password Code Modal -->
 <div id="verifyPasswordModal" style="display:none; position:fixed; top:35%; left:50%; transform:translate(-50%,-50%); background:#fff; padding:20px; border:1px solid #ccc; z-index:1001;">
     <form onsubmit="submitPasswordToken(event)">
-        <label>Nhập mã xác nhận đã gửi tới email:</label>
+        <label>Enter confirmation code sent to your email:</label>
         <input type="text" id="passwordTokenInput" required>
-        <button type="submit">Xác nhận</button>
-        <button type="button" onclick="closeVerifyPasswordModal()">Hủy</button>
+        <button type="submit">Confirm</button>
+        <button type="button" onclick="closeVerifyPasswordModal()">Cancel</button>
     </form>
 </div>
 <script>
@@ -144,7 +145,7 @@
                         closeEditEmailModal();
                         showTokenModal();
                     } else {
-                        alert(data.error || 'Có lỗi xảy ra!');
+                        alert(data.error || 'An error occurred!');
                     }
                 });
     }
@@ -174,7 +175,7 @@
                         closeTokenModal();
                         window.location.reload();
                     } else {
-                        alert(data.error || 'Sai mã xác nhận!');
+                        alert(data.error || 'Invalid confirmation code!');
                     }
                 });
     }
@@ -194,7 +195,7 @@
                         closeEditPhoneModal();
                         showPhoneTokenModal();
                     } else {
-                        alert(data.error || 'Có lỗi xảy ra!');
+                        alert(data.error || 'An error occurred!');
                     }
                 });
     }
@@ -223,7 +224,7 @@
                         closePhoneTokenModal();
                         window.location.reload();
                     } else {
-                        alert(data.error || 'Sai mã xác nhận!');
+                        alert(data.error || 'Invalid confirmation code!');
                     }
                 });
     }
@@ -231,7 +232,7 @@
     function submitName() {
         const newName = document.getElementById('nameInput').value.trim();
         if (newName === "") {
-            alert("Tên không được để trống!");
+            alert("Name cannot be empty!");
             return;
         }
 
@@ -243,15 +244,15 @@
                 .then(res => res.json())
                 .then(data => {
                     if (data.success) {
-                        alert("Cập nhật tên thành công!");
+                        alert("Name updated successfully!");
                         window.location.reload();
                     } else {
-                        alert(data.error || 'Có lỗi xảy ra!');
+                        alert(data.error || 'An error occurred!');
                     }
                 })
                 .catch(err => {
                     console.error(err);
-                    alert('Lỗi kết nối tới server.');
+                    alert('Connection error to server.');
                 });
     }
     function showChangePasswordModal() {
@@ -277,7 +278,7 @@
         const confirmPassword = document.getElementById('confirmPassword').value;
 
         if (newPassword !== confirmPassword) {
-            alert("Mật khẩu không khớp!");
+            alert("Passwords do not match!");
             return;
         }
 
@@ -292,7 +293,7 @@
                         closeChangePasswordModal();
                         showVerifyPasswordModal();
                     } else {
-                        alert(data.error || "Lỗi gửi mã xác nhận.");
+                        alert(data.error || "Error sending confirmation code.");
                     }
                 });
     }
@@ -310,10 +311,10 @@
                 .then(data => {
                     if (data.success) {
                         closeVerifyPasswordModal();
-                        alert("Đổi mật khẩu thành công!");
+                        alert("Password changed successfully!");
                         window.location.reload();
                     } else {
-                        alert(data.error || "Sai mã xác nhận!");
+                        alert(data.error || "Invalid confirmation code!");
                     }
                 });
     }
@@ -328,15 +329,15 @@
                 .then(res => res.json())
                 .then(data => {
                     if (data.success) {
-                        alert("Cập nhật giới tính thành công!");
+                        alert("Gender updated successfully!");
                         window.location.reload();
                     } else {
-                        alert(data.error || 'Có lỗi xảy ra!');
+                        alert(data.error || 'An error occurred!');
                     }
                 })
                 .catch(err => {
                     console.error(err);
-                    alert('Lỗi kết nối tới server.');
+                    alert('Connection error to server.');
                 });
     }
 
