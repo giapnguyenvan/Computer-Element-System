@@ -90,6 +90,11 @@ public class ProductServlet extends HttpServlet {
                         averageRating = sum / totalFeedback;
                     }
 
+                    // Add this block to fetch and set product specifications
+                    dal.ProductSpecificationDAO specDAO = new dal.ProductSpecificationDAO();
+                    java.util.List<model.ProductSpecification> specifications = specDAO.getSpecificationsByProductId(productID);
+                    request.setAttribute("specifications", specifications);
+
                     request.setAttribute("product", product);
                     request.setAttribute("relatedProducts", relatedProducts);
                     request.setAttribute("feedbackList", paginatedFeedback);
