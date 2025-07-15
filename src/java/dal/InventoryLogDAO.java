@@ -67,4 +67,20 @@ public class InventoryLogDAO {
 
         return listLogs;
     }
+
+    public boolean insertLog(InventoryLog log) {
+        DBContext db = DBContext.getInstance();
+        String sql = "INSERT INTO InventoryLog (product_id, action, quantity, note, created_at) VALUES (?, ?, ?, ?, ?)";
+        try (PreparedStatement ptm = db.getConnection().prepareStatement(sql)) {
+            ptm.setInt(1, log.getProduct_id());
+            ptm.setString(2, log.getAction());
+            ptm.setInt(3, log.getQuantity());
+            ptm.setString(4, log.getNote());
+            ptm.setTimestamp(5, log.getCreated_at());
+            return ptm.executeUpdate() > 0;
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+        }
+        return false;
+    }
 }

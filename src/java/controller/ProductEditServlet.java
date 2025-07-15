@@ -134,12 +134,33 @@ public class ProductEditServlet extends HttpServlet {
             ProductSpecificationDAO specDAO = new ProductSpecificationDAO();
             
             // Update product
+            // Fetch old product for stock comparison
+            Products oldProduct = productDAO.getProductById(productId);
+            int oldStock = oldProduct != null ? oldProduct.getStock() : stock;
             boolean productUpdated = productDAO.updateProduct(product);
+
+            // Log Adjust if stock changed
+            if (productUpdated && oldProduct != null && oldStock != stock) {
+                dal.InventoryLogDAO logDAO = new dal.InventoryLogDAO();
+                model.InventoryLog log = new model.InventoryLog();
+                log.setProduct_id(productId);
+                log.setAction("Adjust");
+                log.setQuantity(stock - oldStock);
+                log.setNote("Stock adjusted via product update. Old stock: " + oldStock + ", New stock: " + stock);
+                log.setCreated_at(new java.sql.Timestamp(System.currentTimeMillis()));
+                logDAO.insertLog(log);
+            }
             
             // Update product image
             boolean imageUpdated = true; // Default to true in case no image is provided
             if (imageUrl != null && !imageUrl.trim().isEmpty()) {
-                imageUpdated = productDAO.updateProductImage(productId, imageUrl.trim());
+                String lowerImageUrl = imageUrl.trim().toLowerCase();
+                if (lowerImageUrl.endsWith(".jpg") || lowerImageUrl.endsWith(".jpeg") || lowerImageUrl.endsWith(".png") || lowerImageUrl.endsWith(".webp")) {
+                    imageUpdated = productDAO.updateProductImage(productId, imageUrl.trim());
+                } else {
+                    imageUpdated = false;
+                    request.setAttribute("errorMsg", "Invalid image file type. Only jpg, jpeg, png, gif, webp are allowed.");
+                }
             }
             
             // Handle specifications

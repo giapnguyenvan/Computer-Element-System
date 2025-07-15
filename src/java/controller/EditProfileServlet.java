@@ -31,7 +31,7 @@ public class EditProfileServlet extends HttpServlet {
                 session.setAttribute("verification_code", verificationCode);
                 out.print("{\"success\":true}");
             } catch (Exception ex) {
-                out.print("{\"success\":false,\"error\":\"Không thể gửi email xác nhận: " + ex.getMessage() + "\"}");
+                out.print("{\"success\":false,\"error\":\"Unable to send verification email: " + ex.getMessage() + "\"}");
             }
             return;
         }
@@ -49,10 +49,10 @@ public class EditProfileServlet extends HttpServlet {
                     session.removeAttribute("pending_new_email");
                     out.print("{\"success\":true}");
                 } catch (Exception ex) {
-                    out.print("{\"success\":false,\"error\":\"Không thể cập nhật email: " + ex.getMessage() + "\"}");
+                    out.print("{\"success\":false,\"error\":\"Unable to update email: " + ex.getMessage() + "\"}");
                 }
             } else {
-                out.print("{\"success\":false,\"error\":\"Mã xác nhận không đúng hoặc đã hết hạn.\"}");
+                out.print("{\"success\":false,\"error\":\"Verification code is incorrect or has expired.\"}");
             }
             return;
         }
@@ -67,7 +67,7 @@ public class EditProfileServlet extends HttpServlet {
                 session.setAttribute("phone_verification_code", verificationCode);
                 out.print("{\"success\":true}");
             } catch (Exception ex) {
-                out.print("{\"success\":false,\"error\":\"Không thể gửi email xác nhận: " + ex.getMessage() + "\"}");
+                out.print("{\"success\":false,\"error\":\"Unable to send verification email: " + ex.getMessage() + "\"}");
             }
             return;
         }
@@ -85,10 +85,10 @@ public class EditProfileServlet extends HttpServlet {
                     session.removeAttribute("pending_new_phone");
                     out.print("{\"success\":true}");
                 } catch (Exception ex) {
-                    out.print("{\"success\":false,\"error\":\"Không thể cập nhật số điện thoại: " + ex.getMessage() + "\"}");
+                    out.print("{\"success\":false,\"error\":\"Unable to update phone number: " + ex.getMessage() + "\"}");
                 }
             } else {
-                out.print("{\"success\":false,\"error\":\"Mã xác nhận không đúng hoặc đã hết hạn.\"}");
+                out.print("{\"success\":false,\"error\":\"Verification code is incorrect or has expired.\"}");
             }
             return;
         }
@@ -97,7 +97,7 @@ public class EditProfileServlet extends HttpServlet {
             String newName = request.getParameter("newName");
 
             if (newName == null || newName.trim().isEmpty()) {
-                out.print("{\"success\":false,\"error\":\"Tên không được để trống.\"}");
+                out.print("{\"success\":false,\"error\":\"Name cannot be empty.\"}");
                 return;
             }
 
@@ -114,7 +114,7 @@ public class EditProfileServlet extends HttpServlet {
 
                 out.print("{\"success\":true}");
             } catch (Exception ex) {
-                out.print("{\"success\":false,\"error\":\"Không thể cập nhật tên: " + ex.getMessage() + "\"}");
+                out.print("{\"success\":false,\"error\":\"Unable to update name: " + ex.getMessage() + "\"}");
             }
             return;
         }
@@ -122,7 +122,7 @@ public class EditProfileServlet extends HttpServlet {
         if ("initiatePasswordChange".equals(action)) {
             String newPassword = request.getParameter("newPassword");
             if (newPassword == null || newPassword.length() < 8) {
-                out.print("{\"success\":false,\"error\":\"Mật khẩu phải có ít nhất 8 ký tự.\"}");
+                out.print("{\"success\":false,\"error\":\"Password must be at least 8 characters long.\"}");
                 return;
             }
             String verificationCode = String.format("%06d", new java.util.Random().nextInt(1000000));
@@ -132,7 +132,7 @@ public class EditProfileServlet extends HttpServlet {
                 EmailUtil.sendVerificationEmail(email, verificationCode);
                 out.print("{\"success\":true}");
             } catch (Exception ex) {
-                out.print("{\"success\":false,\"error\":\"Không thể gửi email xác nhận: " + ex.getMessage() + "\"}");
+                out.print("{\"success\":false,\"error\":\"Unable to send verification email: " + ex.getMessage() + "\"}");
             }
             return;
         }
@@ -149,10 +149,10 @@ public class EditProfileServlet extends HttpServlet {
                     session.removeAttribute("pending_new_password");
                     out.print("{\"success\":true}");
                 } catch (Exception ex) {
-                    out.print("{\"success\":false,\"error\":\"Không thể cập nhật mật khẩu: " + ex.getMessage() + "\"}");
+                    out.print("{\"success\":false,\"error\":\"Unable to update password: " + ex.getMessage() + "\"}");
                 }
             } else {
-                out.print("{\"success\":false,\"error\":\"Mã xác nhận không đúng hoặc đã hết hạn.\"}");
+                out.print("{\"success\":false,\"error\":\"Verification code is incorrect or has expired.\"}");
             }
             return;
         }
@@ -161,7 +161,7 @@ public class EditProfileServlet extends HttpServlet {
             String newGender = request.getParameter("newGender");
 
             if (newGender == null || newGender.trim().isEmpty()) {
-                out.print("{\"success\":false,\"error\":\"Giới tính không được để trống.\"}");
+                out.print("{\"success\":false,\"error\":\"Gender cannot be empty.\"}");
                 return;
             }
 
@@ -178,7 +178,7 @@ public class EditProfileServlet extends HttpServlet {
 
                 out.print("{\"success\":true}");
             } catch (Exception ex) {
-                out.print("{\"success\":false,\"error\":\"Không thể cập nhật giới tính: " + ex.getMessage() + "\"}");
+                out.print("{\"success\":false,\"error\":\"Unable to update gender: " + ex.getMessage() + "\"}");
             }
             return;
         }
