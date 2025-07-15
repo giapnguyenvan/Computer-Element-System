@@ -105,6 +105,14 @@ public class Blog {
         return new ArrayList<>();
     }
 
+    // For JSP EL compatibility
+    public BlogImage getMainImageForJsp() {
+        return getMainImage();
+    }
+    public List<BlogImage> getSortedImagesForJsp() {
+        return getSortedImages();
+    }
+
     @Override
     public String toString() {
         return "Blog{" + "blog_id=" + blog_id + ", title=" + title + ", content=" + content + 

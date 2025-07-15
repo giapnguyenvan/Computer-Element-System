@@ -124,12 +124,11 @@ public class VoucherDAO {
 
     public List<Voucher> getCustomerVoucher(int customerId) throws SQLException {
         List<Voucher> list = new ArrayList<>();
-        String sql = """
-        SELECT v.*
-        FROM voucher v
-        JOIN voucher_usage vu ON v.voucher_id = vu.voucher_id
-        WHERE vu.customer_id = ?
-    """;
+        String sql =
+            "SELECT v.* " +
+            "FROM voucher v " +
+            "JOIN voucher_usage vu ON v.voucher_id = vu.voucher_id " +
+            "WHERE vu.customer_id = ?";
 
         try (Connection conn = dbContext.getConnection(); PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setInt(1, customerId);
@@ -153,6 +152,63 @@ public class VoucherDAO {
         }
 
         return list;
+    }
+
+    /**
+     * Auto-update voucher statuses based on current time and usage.
+     * - Set to 'Expired' if end_date < now
+     * - Set to 'Inactive' if max_uses is reached
+     * - Otherwise, set to 'Active'
+     */
+    public void autoUpdateVoucherStatuses() {
+        String selectSql = "SELECT voucher_id, start_date, end_date, max_uses, status FROM voucher";
+        String usageSql = "SELECT COUNT(*) FROM voucher_usage WHERE voucher_id = ?";
+        String updateSql = "UPDATE voucher SET status = ? WHERE voucher_id = ?";
+        try (Connection conn = dbContext.getConnection();
+             PreparedStatement selectStmt = conn.prepareStatement(selectSql);
+             ResultSet rs = selectStmt.executeQuery()) {
+            while (rs.next()) {
+                int voucherId = rs.getInt("voucher_id");
+                Timestamp startDate = rs.getTimestamp("start_date");
+                Timestamp endDate = rs.getTimestamp("end_date");
+                Integer maxUses = rs.getObject("max_uses") != null ? rs.getInt("max_uses") : null;
+                String currentStatus = rs.getString("status");
+                String newStatus = currentStatus;
+                Timestamp now = new Timestamp(System.currentTimeMillis());
+                if (endDate != null && endDate.before(now)) {
+                    newStatus = "Expired";
+                } else if (startDate != null && startDate.after(now)) {
+                    newStatus = "Inactive";
+                } else if (maxUses != null) {
+                    // Check usage count
+                    try (PreparedStatement usageStmt = conn.prepareStatement(usageSql)) {
+                        usageStmt.setInt(1, voucherId);
+                        ResultSet usageRs = usageStmt.executeQuery();
+                        if (usageRs.next()) {
+                            int usageCount = usageRs.getInt(1);
+                            if (usageCount >= maxUses) {
+                                newStatus = "Inactive";
+                            } else {
+                                newStatus = "Active";
+                            }
+                        }
+                    }
+                } else {
+                    // No max uses, not expired, not in the future
+                    newStatus = "Active";
+                }
+                // Only update if status changed
+                if (!newStatus.equals(currentStatus)) {
+                    try (PreparedStatement updateStmt = conn.prepareStatement(updateSql)) {
+                        updateStmt.setString(1, newStatus);
+                        updateStmt.setInt(2, voucherId);
+                        updateStmt.executeUpdate();
+                    }
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
     }
 
 }
