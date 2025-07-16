@@ -294,7 +294,6 @@ WHERE ct.name = 'RAM';
 
 -- Select all data from tables
 SELECT * FROM admin;
-SELECT * FROM blog;
 SELECT * FROM brand;
 SELECT * FROM cartitem;
 SELECT * FROM componenttype;
