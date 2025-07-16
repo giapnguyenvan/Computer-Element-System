@@ -487,18 +487,19 @@ public class ProductDAO {
         }
     }
 
-    public int getComponentTypeIdByName(String typeName) {
+    public static int getComponentTypeIdByName(String typeName) {
         String sql = "SELECT type_id FROM componenttype WHERE name = ?";
-        try (PreparedStatement ps = DBContext.getInstance().getConnection().prepareStatement(sql)) {
-            ps.setString(1, typeName);
-            ResultSet rs = ps.executeQuery();
+        try {
+            PreparedStatement ptm = DBContext.getInstance().getConnection().prepareStatement(sql);
+            ptm.setString(1, typeName);
+            ResultSet rs = ptm.executeQuery();
             if (rs.next()) {
                 return rs.getInt("type_id");
             }
-        } catch (Exception e) {
-            e.printStackTrace();
+        } catch (SQLException ex) {
+            ex.printStackTrace();
         }
-        return 0;
+        return -1;
     }
 
     public void insertComponentType(String typeName) {

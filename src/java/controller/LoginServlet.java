@@ -5,6 +5,7 @@
 
 package controller;
 
+// Import các thư viện cần thiết cho Servlet, xử lý session, cookie, mã hóa, truy xuất dữ liệu
 import dal.UserDAO;
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -23,23 +24,18 @@ import model.Customer;
 import util.JwtUtil;
 
 /**
- *
- * @author admin
+ * Servlet xử lý chức năng đăng nhập cho cả Customer và User (Admin/Staff)
  */
 public class LoginServlet extends HttpServlet {
    
     /** 
-     * Processes requests for both HTTP <code>GET</code> and <code>POST</code> methods.
-     * @param request servlet request
-     * @param response servlet response
-     * @throws ServletException if a servlet-specific error occurs
-     * @throws IOException if an I/O error occurs
+     * Xử lý request cho cả GET và POST (mặc định, không dùng trong login)
      */
     public void processRequest(HttpServletRequest request, HttpServletResponse response)
     throws ServletException, IOException {
         response.setContentType("text/html;charset=UTF-8");
         try (PrintWriter out = response.getWriter()) {
-            /* TODO output your page here. You may use following sample code. */
+            // Hiển thị thông tin đơn giản (không dùng thực tế)
             out.println("<!DOCTYPE html>");
             out.println("<html>");
             out.println("<head>");
@@ -54,42 +50,39 @@ public class LoginServlet extends HttpServlet {
 
     // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
     /** 
-     * Handles the HTTP <code>GET</code> method.
-     * @param request servlet request
-     * @param response servlet response
-     * @throws ServletException if a servlet-specific error occurs
-     * @throws IOException if an I/O error occurs
+     * Xử lý HTTP GET: Hiển thị trang đăng nhập
      */
     @Override
     public void doGet(HttpServletRequest request, HttpServletResponse response)
     throws ServletException, IOException {
+        // Chuyển hướng sang trang login.jsp
         request.getRequestDispatcher("login.jsp").forward(request, response);
-    } 
+    }
 
     /** 
-     * Handles the HTTP <code>POST</code> method.
-     * @param request servlet request
-     * @param response servlet response
-     * @throws ServletException if a servlet-specific error occurs
-     * @throws IOException if an I/O error occurs
+     * Xử lý HTTP POST: Xử lý logic đăng nhập khi người dùng submit form
      */
     @Override
     public void doPost(HttpServletRequest request, HttpServletResponse response)
     throws ServletException, IOException {
+        // Lấy thông tin email, password, và trạng thái "remember me" từ form
         String email = request.getParameter("email");
         String password = request.getParameter("password");
         String remember = request.getParameter("remember");
         
         try {
-            // Thử đăng nhập với Customer
+            // Thử đăng nhập với Customer (khách hàng)
             Customer customer = new dal.CustomerDAO().login(email, password);
             if (customer != null) {
+                // Nếu tài khoản chưa xác thực, báo lỗi
                 if (!customer.isVerified()) {
                     request.setAttribute("error", "Account is not existed");
                     request.getRequestDispatcher("login.jsp").forward(request, response);
                     return;
                 }
+                // Lấy thông tin chi tiết customer
                 shop.entities.Customer cus = new shop.DAO.CustomerDAO().getById(customer.getCustomer_id());
+                // Tạo session và lưu thông tin đăng nhập
                 HttpSession session = request.getSession();
                 session.setAttribute("customerAuth", customer);
                 session.setAttribute("userAuth", customer);
@@ -98,23 +91,25 @@ public class LoginServlet extends HttpServlet {
                 session.setAttribute("user_role", "customer");
                 session.setAttribute("user_name", customer.getName());
                 session.setAttribute("customer_id", customer.getCustomer_id());
+                // Chuyển hướng về trang chủ
                 response.sendRedirect(request.getContextPath() + "/homepageservlet");
                 return;
             }
-            // Nếu không phải customer, thử với User (staff/admin)
+            // Nếu không phải customer, thử đăng nhập với User (Staff/Admin)
             User user = dal.UserDAO.getInstance().login(email, password);
             if (user != null) {
+                // Nếu tài khoản chưa xác thực email, báo lỗi
                 if (!user.isVerified()) {
                     request.setAttribute("error", "Email was not verified");
                     request.getRequestDispatcher("login.jsp").forward(request, response);
                     return;
                 }
+                // Tạo session và lưu thông tin đăng nhập
                 HttpSession session = request.getSession();
-                
-                // Lấy tên đầy đủ từ DAO
+                // Lấy tên đầy đủ từ DAO (nếu có)
                 String fullname = dal.UserDAO.getInstance().getFullname(user.getId(), user.getRole());
 
-                // Generate JWT tokens for staff/admin
+                // Sinh JWT token cho user (dùng cho API hoặc xác thực nâng cao)
                 String accessToken = JwtUtil.generateAccessToken(
                     user.getId(), 
                     user.getEmail(), 
@@ -131,11 +126,11 @@ public class LoginServlet extends HttpServlet {
                 session.setAttribute("userAuth", user);
                 session.setAttribute("session_login", email);
                 session.setAttribute("user_role", user.getRole());
-                session.setAttribute("user_name", fullname != null ? fullname : user.getUsername()); // Dùng fullname, nếu không có thì dùng username
+                session.setAttribute("user_name", fullname != null ? fullname : user.getUsername()); // Ưu tiên fullname
                 session.setAttribute("accessToken", accessToken);
                 session.setAttribute("refreshToken", refreshToken);
                 
-                // Handle remember me cookie
+                // Xử lý "Remember me": Lưu thông tin đăng nhập vào cookie nếu được chọn
                 if (remember != null) {
                     String encodedEmail = URLEncoder.encode(email, StandardCharsets.UTF_8);
                     String encodedPassword = URLEncoder.encode(password, StandardCharsets.UTF_8);
@@ -143,49 +138,48 @@ public class LoginServlet extends HttpServlet {
                     Cookie emailCookie = new Cookie("COOKIE_EMAIL", encodedEmail);
                     Cookie passwordCookie = new Cookie("COOKIE_PASSWORD", encodedPassword);
                     
-                    emailCookie.setMaxAge(60*60*24); // 24 hours
+                    emailCookie.setMaxAge(60*60*24); // 24 giờ
                     passwordCookie.setMaxAge(60*60*24);
                     
                     response.addCookie(emailCookie);
                     response.addCookie(passwordCookie);
                 } else {
-                    // If remember is not checked, delete existing cookies
+                    // Nếu không chọn, xóa cookie cũ nếu có
                     Cookie emailCookie = new Cookie("COOKIE_EMAIL", "");
                     Cookie passwordCookie = new Cookie("COOKIE_PASSWORD", "");
                     
-                    emailCookie.setMaxAge(0); // Delete cookie
+                    emailCookie.setMaxAge(0); // Xóa cookie
                     passwordCookie.setMaxAge(0);
                     
                     response.addCookie(emailCookie);
                     response.addCookie(passwordCookie);
                 }
                 
-                // Nếu là admin thì chuyển hướng đến adminDashboard.jsp
+                // Chuyển hướng theo vai trò: Admin, Staff, Shipper hoặc về trang chủ
                 if ("Admin".equalsIgnoreCase(user.getRole())) {
                     response.sendRedirect(request.getContextPath() + "/adminDashboard.jsp");
                 } else if ("Staff".equalsIgnoreCase(user.getRole())) {
-                    // Nếu là staff thì chuyển hướng đến staffDashboard.jsp
                     response.sendRedirect(request.getContextPath() + "/staffDashboard.jsp");
                 } else if ("Shipper".equalsIgnoreCase(user.getRole())) {
-                    // Nếu là shipper thì chuyển hướng đến shipperdashboard
                     response.sendRedirect(request.getContextPath() + "/shipperdashboard");
                 } else {
                     response.sendRedirect(request.getContextPath() + "/homepageservlet");
                 }
                 return;
             } else {
+                // Nếu đăng nhập thất bại, báo lỗi
                 request.setAttribute("error", "Email hoặc mật khẩu không đúng");
                 request.getRequestDispatcher("login.jsp").forward(request, response);
             }
         } catch (SQLException e) {
+            // Xử lý lỗi hệ thống, báo lỗi cho người dùng
             request.setAttribute("error", "Lỗi hệ thống: " + e.getMessage());
             request.getRequestDispatcher("login.jsp").forward(request, response);
         }
     }
 
     /** 
-     * Returns a short description of the servlet.
-     * @return a String containing servlet description
+     * Trả về mô tả ngắn về servlet
      */
     @Override
     public String getServletInfo() {

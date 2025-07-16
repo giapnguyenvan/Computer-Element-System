@@ -22,6 +22,9 @@ public class AuthApiServlet extends HttpServlet {
     
     private final Gson gson = new Gson();
     
+    /**
+     * Xử lý các API POST cho authentication: login, refresh token, logout, check-token
+     */
     @Override
     protected void doPost(jakarta.servlet.http.HttpServletRequest request, jakarta.servlet.http.HttpServletResponse response)
             throws jakarta.servlet.ServletException, IOException {
@@ -32,6 +35,7 @@ public class AuthApiServlet extends HttpServlet {
         String pathInfo = request.getPathInfo();
         
         try {
+            // Xác định endpoint API cần xử lý
             if ("/login".equals(pathInfo)) {
                 handleLogin(request, response, out);
             } else if ("/refresh".equals(pathInfo)) {
@@ -49,6 +53,9 @@ public class AuthApiServlet extends HttpServlet {
         }
     }
     
+    /**
+     * Xử lý API login: xác thực email, password cho cả customer và user, trả về JWT token nếu thành công
+     */
     private void handleLogin(jakarta.servlet.http.HttpServletRequest request, jakarta.servlet.http.HttpServletResponse response, PrintWriter out) {
         String email = request.getParameter("email");
         String password = request.getParameter("password");
@@ -59,11 +66,11 @@ public class AuthApiServlet extends HttpServlet {
         }
         
         try {
-            // Try customer login first
+            // Thử đăng nhập với customer trước
             CustomerDAO customerDAO = new CustomerDAO();
             Customer customer = customerDAO.login(email, password);
             if (customer != null && customer.isVerified()) {
-                // Generate JWT tokens for customer
+                // Sinh JWT token cho customer
                 String accessToken = JwtUtil.generateAccessToken(
                     customer.getCustomer_id(), 
                     customer.getEmail(), 
@@ -87,11 +94,11 @@ public class AuthApiServlet extends HttpServlet {
                 return;
             }
             
-            // Try user (staff/admin) login
+            // Nếu không phải customer, thử đăng nhập với user (staff/admin)
             UserDAO userDAO = UserDAO.getInstance();
             User user = userDAO.login(email, password);
             if (user != null && user.isVerified()) {
-                // Generate JWT tokens for user
+                // Sinh JWT token cho user
                 String accessToken = JwtUtil.generateAccessToken(
                     user.getId(), 
                     user.getEmail(), 
@@ -116,7 +123,7 @@ public class AuthApiServlet extends HttpServlet {
                 return;
             }
             
-            // Login failed
+            // Đăng nhập thất bại
             sendErrorResponse(out, 401, "Invalid email or password");
             
         } catch (Exception e) {

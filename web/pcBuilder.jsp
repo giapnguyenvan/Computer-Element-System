@@ -594,28 +594,28 @@
                             <div class="container mb-4">
                                 <div class="row mb-2 justify-content-center">
                                     <div class="col-auto mb-2">
-                                        <button class="btn btn-pcbuilder-white btn-lg" onclick="selectComponent('cpu')"><i class="fas fa-microchip me-2"></i>Select CPU</button>
+                                        <button class="btn btn-pcbuilder-white btn-lg" onclick="selectComponent('CPU'); return false;"><i class="fas fa-microchip me-2"></i>Select CPU</button>
                                     </div>
                                     <div class="col-auto mb-2">
-                                        <button class="btn btn-pcbuilder-white btn-lg" onclick="selectComponent('mainboard')"><i class="fas fa-server me-2"></i>Select Mainboard</button>
+                                        <button class="btn btn-pcbuilder-white btn-lg" onclick="selectComponent('Mainboard'); return false;"><i class="fas fa-server me-2"></i>Select Mainboard</button>
                                     </div>
                                     <div class="col-auto mb-2">
-                                        <button class="btn btn-pcbuilder-white btn-lg" onclick="selectComponent('ram')"><i class="fas fa-memory me-2"></i>Select RAM</button>
+                                        <button class="btn btn-pcbuilder-white btn-lg" onclick="selectComponent('RAM'); return false;"><i class="fas fa-memory me-2"></i>Select RAM</button>
                                     </div>
                                     <div class="col-auto mb-2">
-                                        <button class="btn btn-pcbuilder-white btn-lg" onclick="selectComponent('gpu')"><i class="fas fa-video me-2"></i>Select GPU</button>
+                                        <button class="btn btn-pcbuilder-white btn-lg" onclick="selectComponent('GPU'); return false;"><i class="fas fa-video me-2"></i>Select GPU</button>
                                     </div>
                                     <div class="col-auto mb-2">
-                                        <button class="btn btn-pcbuilder-white btn-lg" onclick="selectComponent('storage')"><i class="fas fa-hdd me-2"></i>Select Storage</button>
+                                        <button class="btn btn-pcbuilder-white btn-lg" onclick="selectComponent('Storage'); return false;"><i class="fas fa-hdd me-2"></i>Select Storage</button>
                                     </div>
                                     <div class="col-auto mb-2">
-                                        <button class="btn btn-pcbuilder-white btn-lg" onclick="selectComponent('psu')"><i class="fas fa-plug me-2"></i>Select PSU</button>
+                                        <button class="btn btn-pcbuilder-white btn-lg" onclick="selectComponent('PSU'); return false;"><i class="fas fa-plug me-2"></i>Select PSU</button>
                                     </div>
                                     <div class="col-auto mb-2">
-                                        <button class="btn btn-pcbuilder-white btn-lg" onclick="selectComponent('case')"><i class="fas fa-desktop me-2"></i>Select Case</button>
+                                        <button class="btn btn-pcbuilder-white btn-lg" onclick="selectComponent('Case'); return false;"><i class="fas fa-desktop me-2"></i>Select Case</button>
                                     </div>
                                     <div class="col-auto mb-2">
-                                        <button class="btn btn-pcbuilder-white btn-lg" onclick="selectComponent('cooler')"><i class="fas fa-fan me-2"></i>Select Cooler</button>
+                                        <button class="btn btn-pcbuilder-white btn-lg" onclick="selectComponent('Cooler'); return false;"><i class="fas fa-fan me-2"></i>Select Cooler</button>
                                     </div>
                                 </div>
                             </div>
@@ -632,6 +632,11 @@
         </div>
      
         <jsp:include page="footer.jsp"/>
+        <!-- Thêm DataTable & jQuery nếu chưa có -->
+        <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+        <link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/jquery.dataTables.min.css">
+        <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
+
         <script>
         //<![CDATA[
             // Add JavaScript to calculate total price when components are selected
@@ -738,6 +743,47 @@
                 const iframe = document.getElementById('viewProductIframe');
                 iframe.src = 'productservlet?service=viewProduct';
             }
+
+            let currentComponentType = null;
+            let componentTable = null;
+
+            function selectComponent(type) {
+                currentComponentType = type;
+                $('#viewProductModal').modal('show');
+                $.getJSON('/api/components', { type: type }, function(data) {
+                    if (componentTable) {
+                        componentTable.clear().destroy();
+                        $('#componentTable tbody').empty();
+                    }
+                    componentTable = $('#componentTable').DataTable({
+                        data: data,
+                        columns: [
+                            { data: 'name' },
+                            { data: 'price', render: $.fn.dataTable.render.number(',', '.', 2, '$') },
+                            { data: 'brandName' },
+                            {
+                                data: null,
+                                render: function (data, type, row) {
+                                    return `<button class="btn btn-primary btn-sm" onclick="chooseComponent('${row.productId}', '${row.name}', ${row.price})">Chọn</button>`;
+                                }
+                            }
+                        ],
+                        destroy: true,
+                        searching: true,
+                        paging: true,
+                        info: false,
+                        language: {
+                            emptyTable: "Không có dữ liệu"
+                        }
+                    });
+                });
+            }
+
+            function chooseComponent(id, name, price) {
+                $('#viewProductModal').modal('hide');
+                showNotification(`Đã chọn ${currentComponentType.toUpperCase()}: ${name}`, 'success');
+                // ... các xử lý khác ...
+            }
         //]]>
         </script>
         <!-- Modal popup viewProduct -->
@@ -745,20 +791,31 @@
             <div class="modal-dialog modal-xl">
                 <div class="modal-content">
                     <div class="modal-header">
-                        <div class="d-flex align-items-center">
-                            <button type="button" class="btn-back" onclick="backProductModal()" aria-label="Quay lại"></button>
-                            <button type="button" class="btn-forward" onclick="forwardProductModal()" aria-label="Tiến tới"></button>
-                            <button type="button" class="btn-reset" onclick="resetProductModal()" aria-label="Làm mới"></button>
-                        </div>
-                        <h5 class="modal-title" id="viewProductModalLabel">Select Components</h5>
-                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Đóng"></button>
+                        <h5 class="modal-title" id="viewProductModalLabel">Chọn linh kiện</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Đóng" id="closeModalBtn"></button>
                     </div>
-                    <div class="modal-body p-0" style="height:80vh;">
-                        <iframe id="viewProductIframe" src="productservlet?service=viewProduct" style="width:100%;height:100%;border:none;"></iframe>
+                    <div class="modal-body">
+                        <table id="componentTable" class="display" style="width:100%">
+                            <thead>
+                                <tr>
+                                    <th>Tên</th>
+                                    <th>Giá</th>
+                                    <th>Hãng</th>
+                                    <th>Chọn</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <!-- Dữ liệu sẽ được render bằng JS -->
+                            </tbody>
+                        </table>
                     </div>
                 </div>
             </div>
         </div>
-        
+        <script>
+            document.getElementById('closeModalBtn').addEventListener('click', function() {
+                window.location.href = 'pcBuilder.jsp';
+            });
+        </script>
     </body>
 </html> 

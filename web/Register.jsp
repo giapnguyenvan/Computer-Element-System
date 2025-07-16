@@ -1,3 +1,7 @@
+<%--
+Trang đăng ký tài khoản cho người dùng mới (customer)
+Hiển thị form đăng ký, xử lý hiển thị thông báo lỗi/thành công, popup xác thực email, và kiểm tra dữ liệu phía client.
+--%>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
@@ -405,6 +409,9 @@
 <body>
    
     <div class="auth-main-row">
+        <%--
+            Khối bên trái: Hiển thị thông tin chào mừng, giới thiệu, nút chuyển sang PC Builder
+        --%>
         <div class="auth-left">
             <div class="auth-left-content">
                 <a class="navbar-brand" href="${pageContext.request.contextPath}/homepageservlet">
@@ -419,19 +426,25 @@
                 <a href="PCBuilderServlet" class="btn btn-primary btn-lg" style="color: white">Build PC</a>
             </div>
         </div>
+        <%--
+            Khối bên phải: Form đăng ký và các thông báo
+        --%>
         <div class="auth-right">
             <div class="auth-form-box">
                 <h2>Sign Up</h2>
+                <%-- Hiển thị thông báo lỗi nếu có --%>
                 <% String error = (String) request.getAttribute("error"); %>
                 <% if (error != null) { %>
                     <div class="alert alert-danger" role="alert"><%= error %></div>
                 <% } %>
+                <%-- Hiển thị thông báo thành công nếu có --%>
                 <% String registerMessage = (String) request.getAttribute("registerMessage"); %>
                 <% if (registerMessage != null) { %>
                     <div class="alert alert-success" role="alert"><%= registerMessage %></div>
                 <% } %>
                 <div id="clientError" class="alert alert-danger" style="display:none;" role="alert"></div>
 
+                <%-- Form đăng ký tài khoản --%>
                 <form action="register" method="post" id="registerForm">
                     <div class="form-col">
                         <label class="form-label" for="fullname">Full Name:</label>
@@ -475,31 +488,7 @@
                         <input type="password" class="form-control" id="confirmPassword" name="confirmPassword" required>
                         <div class="invalid-feedback" id="confirmPasswordError"></div>
                     </div>
-                    <div class="form-col-full">
-                        <label class="form-label">Shipping Address:</label>
-                        <div style="display: flex; gap: 8px;">
-                            <select id="province" name="province" class="form-control" required style="flex:1; min-width:0;">
-                                <option value="">-- Select province --</option>
-                            </select>
-                            <select id="district" name="district" class="form-control" required disabled style="flex:1; min-width:0;">
-                                <option value="">-- Select district --</option>
-                            </select>
-                            <select id="ward" name="ward" class="form-control" required disabled style="flex:1; min-width:0;">
-                                <option value="">-- Select ward --</option>
-                            </select>
-                        </div>
-                        <div class="invalid-feedback" id="provinceError"></div>
-                        <div class="invalid-feedback" id="districtError"></div>
-                        <div class="invalid-feedback" id="wardError"></div>
-                    </div>
-                    <div class="form-col-full">
-                        <label class="form-label" for="addressDetail">Address Detail:</label>
-                        <input type="text" class="form-control" id="addressDetail" name="addressDetail"
-                               value="${param.addressDetail != null ? param.addressDetail : (not empty addressDetail ? addressDetail : '')}">
-                        <div class="invalid-feedback" id="addressDetailError"></div>
-                    </div>
-                    
-                    <!-- Hidden inputs to ensure address values are always sent -->
+                    <%-- Các trường địa chỉ ẩn để gửi dữ liệu dropdown --%>
                     <input type="hidden" id="provinceHidden" name="provinceHidden">
                     <input type="hidden" id="districtHidden" name="districtHidden">
                     <input type="hidden" id="wardHidden" name="wardHidden">
@@ -509,7 +498,7 @@
                 <div class="login-link">
                     <p>Already have an account? <a href="login.jsp">Login now</a></p>
                 </div>
-                <!-- Popup nhập mã xác thực -->
+                <%-- Popup nhập mã xác thực gửi về email --%>
                 <div class="modal fade" id="verificationModal" tabindex="-1" aria-labelledby="verificationModalLabel" aria-hidden="true">
                   <div class="modal-dialog modal-dialog-centered">
                     <div class="modal-content">

@@ -1,3 +1,7 @@
+<%--
+Trang đăng nhập cho người dùng (Customer, Admin, Staff)
+Hiển thị form đăng nhập, xử lý hiển thị thông báo lỗi/thành công, và các liên kết hỗ trợ như quên mật khẩu, đăng ký tài khoản mới.
+--%>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <!DOCTYPE html>
@@ -216,38 +220,9 @@
     </head>
     <body>
         <div class="auth-main-row">
-            <style>
-                .login-left {
-                    display: flex;
-                    justify-content: center;
-                    align-items: center;
-                    height: 100vh; /* căn giữa theo chiều dọc */
-                    background-color: #222; /* màu nền tối để dễ nhìn text trắng */
-                }
-
-                .login-left-content {
-                    text-align: center;
-                    color: #fff;
-                    text-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
-                    max-width: 600px;
-                    padding: 20px;
-                }
-
-                .login-left-content h1 {
-                    font-size: 3rem;
-                    font-weight: bold;
-                    margin-bottom: 1.5rem;
-                }
-                .login-left-content p {
-                    font-size: 1.25rem;
-                    margin-bottom: 1.5rem;
-                    text-shadow: 0 1px 4px rgba(0, 0, 0, 0.15);
-                }
-                .login-left-content a {
-                    font-size: 1.25rem;
-                }
-            </style>
-
+            <%--
+                Khối bên trái: Hiển thị thông tin chào mừng, giới thiệu, nút chuyển sang PC Builder
+            --%>
             <div class="auth-left">
                 <div class="auth-left-content">
                     <a class="navbar-brand" href="${pageContext.request.contextPath}/homepageservlet" style="color: white;">
@@ -262,12 +237,15 @@
                 </div>
             </div>
 
+            <%--
+                Khối bên phải: Form đăng nhập và các thông báo
+            --%>
             <div class="auth-right">
                 <div class="auth-form-box">
                     <h2><span>Login to your</span> Account</h2>
                     <p>Don't have an account? <a href="Register.jsp">Create one here</a></p>
                     
-                    <!-- Hiển thị thông báo thành công từ registration -->
+                    <%-- Hiển thị thông báo thành công khi đăng ký hoặc xác thực email thành công --%>
                     <% 
                     String successParam = request.getParameter("success");
                     String emailParam = request.getParameter("email");
@@ -282,21 +260,9 @@
                         session.removeAttribute("login_password");
                         session.removeAttribute("registration_success");
                     %>
-                        ```jsp
-                        <!-- Hiển thị thông báo thành công khi đăng ký -->
-
-                        <div class="alert alert-success" style="color: #28a745;" role="alert">
+                        <div class="alert alert-success" role="alert">
                             <i class="fa fa-check-circle me-2"></i>Registration successful! Please check your email to verify your account.
                         </div>
-                        <% } %>
-
-                        <!-- Hiển thị thông báo thành công từ verification -->
-                        <% if ("success".equals(verificationParam) && emailParam != null) { %>
-                        <div class="alert alert-success" style="color: #28a745;" role="alert">
-                            <i class="fa fa-check-circle me-2"></i>Account verified successfully! You can now login.
-                        </div>
-
-```
                     <% } else { %>
                         <% String successMessage = (String) session.getAttribute("successMessage"); %>
                         <% if (successMessage != null) { %>
@@ -307,11 +273,14 @@
                         <% } %>
                     <% } %>
                     
+                    <%-- Hiển thị thông báo lỗi nếu có --%>
                     <% String error = (String) request.getAttribute("error"); %>
                     <% if (error != null) { %>
                     <div class="alert alert-danger" role="alert"><%= error %></div>
                     <% } %>
                     <div id="clientError" class="alert alert-danger" style="display:none;" role="alert"></div>
+
+                    <%-- Form đăng nhập --%>
                     <form action="login" method="post" id="loginForm">
                         <div class="mb-3">
                             <label class="form-label" for="email">Email</label>
@@ -335,32 +304,12 @@
                     </form>
                 </div>
             </div>
+            
         </div>
         
-        <!-- Success Modal -->
-        <div class="modal fade" id="successModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="successModalLabel" aria-hidden="true">
-            <div class="modal-dialog modal-dialog-centered">
-                <div class="modal-content">
-                    <div class="modal-header bg-success text-white">
-                        <h5 class="modal-title" id="successModalLabel">
-                            <i class="fa fa-check-circle me-2"></i>Registration Successful!
-                        </h5>
-                        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
-                    </div>
-                    <div class="modal-body text-center">
-                        <div class="mb-3">
-                            <i class="fa fa-check-circle text-success" style="font-size: 3rem;"></i>
-                        </div>
-                        <h5 class="mb-3">Account Verified Successfully!</h5>
-                        <p class="text-muted">Your account has been verified and is now ready to use.</p>
-                        <p class="text-muted">You can now login with your email and password.</p>
-                    </div>
-                    <div class="modal-footer justify-content-center">
-                        <button type="button" class="btn btn-success" data-bs-dismiss="modal">Continue to Login</button>
-                    </div>
-                </div>
-            </div>
-        </div>
+        <%--
+            Script kiểm tra dữ liệu form phía client, tự động điền email nếu vừa đăng ký thành công, popup xác thực thành công
+        --%>
         <script>
             const loginForm = document.getElementById('loginForm');
             
@@ -395,6 +344,7 @@
                 }
             });
             
+            // Kiểm tra dữ liệu form trước khi submit
             if (loginForm) {
                 loginForm.addEventListener('submit', function (event) {
                     const email = document.getElementById('email').value;

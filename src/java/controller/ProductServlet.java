@@ -57,7 +57,7 @@ public class ProductServlet extends HttpServlet {
 
                     Products product = dao.getProductById(productID);
                     if (product == null) {
-                        request.setAttribute("errorMsg", "Không tìm thấy sản phẩm hoặc sản phẩm đã bị xóa!");
+                        request.setAttribute("errorMsg", "Product not found or has been deleted!");
                         request.getRequestDispatcher("viewProduct.jsp").forward(request, response);
                         break;
                     }
