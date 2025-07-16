@@ -88,7 +88,7 @@ public class OrderApiServlet extends HttpServlet {
                     log.setAction("Adjust");
                     log.setQuantity(-orderDetail.getQuantity());
                     log.setNote("Stock adjusted due to purchase. Old stock: " + oldStock + ", Purchased: " + orderDetail.getQuantity());
-                    log.setCreated_at(new java.util.Date());
+                    
                     logDAO.insertLog(log);
                 }
 
