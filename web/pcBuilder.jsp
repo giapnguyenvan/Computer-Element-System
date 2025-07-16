@@ -792,7 +792,7 @@
                 <div class="modal-content">
                     <div class="modal-header">
                         <h5 class="modal-title" id="viewProductModalLabel">Chọn linh kiện</h5>
-                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Đóng"></button>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Đóng" id="closeModalBtn"></button>
                     </div>
                     <div class="modal-body">
                         <table id="componentTable" class="display" style="width:100%">
@@ -812,6 +812,10 @@
                 </div>
             </div>
         </div>
-        
+        <script>
+            document.getElementById('closeModalBtn').addEventListener('click', function() {
+                window.location.href = 'pcBuilder.jsp';
+            });
+        </script>
     </body>
 </html> 
