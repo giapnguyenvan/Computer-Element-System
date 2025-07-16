@@ -1,4 +1,5 @@
 // JWT API Client for testing
+// Lớp JwtApiClient dùng để giao tiếp với API xác thực JWT (login, refresh, logout, check token)
 class JwtApiClient {
     constructor(baseUrl = '') {
         this.baseUrl = baseUrl;
@@ -36,12 +37,19 @@ class JwtApiClient {
     }
     
     // Login
+    /**
+     * Gửi yêu cầu đăng nhập đến API, nhận về accessToken và refreshToken nếu thành công
+     * @param email Email đăng nhập
+     * @param password Mật khẩu
+     * @returns Thông tin user và token nếu thành công, throw error nếu thất bại
+     */
     async login(email, password) {
         try {
             const formData = new URLSearchParams();
             formData.append('email', email);
             formData.append('password', password);
             
+            // Gửi request POST đến endpoint /api/auth/login
             const response = await fetch(`${this.baseUrl}/api/auth/login`, {
                 method: 'POST',
                 headers: this.getHeaders(),
@@ -50,6 +58,7 @@ class JwtApiClient {
             
             const data = await response.json();
             
+            // Nếu đăng nhập thành công, lưu token vào localStorage
             if (data.success !== false && data.accessToken) {
                 this.setTokens(data.accessToken, data.refreshToken);
                 return data;

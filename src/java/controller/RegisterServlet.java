@@ -19,17 +19,24 @@ import util.EmailUtil;
 @WebServlet(name = "RegisterServlet", urlPatterns = {"/register"})
 public class RegisterServlet extends HttpServlet {
 
+    /**
+     * Xử lý GET: Hiển thị trang đăng ký tài khoản
+     */
     @Override
     public void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
+        // Chuyển hướng sang trang đăng ký
         request.getRequestDispatcher("Register.jsp").forward(request, response);
     }
 
+    /**
+     * Xử lý POST: Nhận dữ liệu đăng ký từ form, kiểm tra hợp lệ, tạo tài khoản mới, gửi email xác thực
+     */
     @Override
     public void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         try {
-            // Lấy thông tin từ form
+            // Lấy thông tin từ form đăng ký
             String username = request.getParameter("username");
             String password = request.getParameter("password");
             String confirmPassword = request.getParameter("confirmPassword");
@@ -39,13 +46,13 @@ public class RegisterServlet extends HttpServlet {
             String gender = request.getParameter("gender");
             String dateOfBirthStr = request.getParameter("dateOfBirth");
             
-            // Lấy thông tin address từ các trường riêng biệt
+            // Lấy thông tin địa chỉ từ các trường riêng biệt
             String province = request.getParameter("province");
             String district = request.getParameter("district");
             String ward = request.getParameter("ward");
             String addressDetail = request.getParameter("addressDetail");
             
-            // Fallback to hidden inputs if regular inputs are null
+            // Fallback nếu input chính bị null thì lấy từ hidden input
             if (province == null || province.trim().isEmpty()) {
                 province = request.getParameter("provinceHidden");
             }
@@ -56,7 +63,7 @@ public class RegisterServlet extends HttpServlet {
                 ward = request.getParameter("wardHidden");
             }
             
-            // Ghép address thành chuỗi hoàn chỉnh
+            // Ghép địa chỉ thành chuỗi hoàn chỉnh
             StringBuilder addressBuilder = new StringBuilder();
             if (province != null && !province.trim().isEmpty()) {
                 addressBuilder.append(province.trim());
@@ -73,32 +80,9 @@ public class RegisterServlet extends HttpServlet {
                 if (addressBuilder.length() > 0) addressBuilder.append(", ");
                 addressBuilder.append(addressDetail.trim());
             }
-            
             String address = addressBuilder.toString();
-            
-            // Ensure address is not empty - use a fallback if needed
-            if (address == null || address.trim().isEmpty()) {
-                address = "Address not specified";
-            }
-            
-            // Validate address fields
-            if (province == null || province.trim().isEmpty()) {
-                request.setAttribute("error", "Please select a province/city.");
-                request.getRequestDispatcher("Register.jsp").forward(request, response);
-                return;
-            }
-            if (district == null || district.trim().isEmpty()) {
-                request.setAttribute("error", "Please select a district.");
-                request.getRequestDispatcher("Register.jsp").forward(request, response);
-                return;
-            }
-            if (ward == null || ward.trim().isEmpty()) {
-                request.setAttribute("error", "Please select a ward/commune.");
-                request.getRequestDispatcher("Register.jsp").forward(request, response);
-                return;
-            }
 
-            // Kiểm tra mật khẩu xác nhận
+            // Kiểm tra xác nhận mật khẩu
             if (!password.equals(confirmPassword)) {
                 request.setAttribute("error", "Password confirmation does not match!");
                 request.getRequestDispatcher("Register.jsp").forward(request, response);
@@ -123,13 +107,11 @@ public class RegisterServlet extends HttpServlet {
             
             // Kiểm tra email đã tồn tại trong bảng Customer chưa
             if (customerDAO.isEmailExists(email)) {
-                // Kiểm tra xem email có tồn tại nhưng chưa xác thực không
+                // Nếu email tồn tại nhưng chưa xác thực thì cập nhật lại thông tin
                 if (customerDAO.isEmailExistsButNotVerified(email)) {
-                    // Cập nhật thông tin customer chưa xác thực thay vì tạo mới
                     try {
                         String hashedPassword = BCrypt.hashpw(password, BCrypt.gensalt());
-                        
-                        // Parse date of birth
+                        // Parse ngày sinh
                         Date dateOfBirth = null;
                         if (dateOfBirthStr != null && !dateOfBirthStr.trim().isEmpty()) {
                             try {
@@ -141,30 +123,10 @@ public class RegisterServlet extends HttpServlet {
                                 return;
                             }
                         }
-                        
+                        // Cập nhật lại thông tin customer chưa xác thực
                         boolean updateSuccess = customerDAO.updateCustomerInfoWithGenderAndDOB(email, fullname, phone, address, hashedPassword, gender, dateOfBirth);
-                        
-                        if (updateSuccess) {
-                            // Gửi mã xác thực qua email
-                            String verificationCode = String.format("%06d", new java.util.Random().nextInt(1000000));
-                            try {
-                                EmailUtil.sendVerificationEmail(email, verificationCode);
-                                // Lưu mã xác thực vào session để kiểm tra sau
-                                request.getSession().setAttribute("verification_code", verificationCode);
-                                request.getSession().setAttribute("verification_email", email);
-                                
-                                // Hiển thị popup verification
-                                request.setAttribute("showVerificationPopup", true);
-                                request.setAttribute("registerMessage", "Information has been updated. Please check your email to verify your account!");
-                                request.getRequestDispatcher("Register.jsp").forward(request, response);
-                                return;
-                            } catch (Exception ex) {
-                                request.setAttribute("error", "Cannot send verification email: " + ex.getMessage());
-                                request.getRequestDispatcher("Register.jsp").forward(request, response);
-                                return;
-                            }
-                        } else {
-                            request.setAttribute("error", "Cannot update account information. Please try again.");
+                        if (!updateSuccess) {
+                            request.setAttribute("error", "Failed to update customer info");
                             request.getRequestDispatcher("Register.jsp").forward(request, response);
                             return;
                         }
@@ -183,8 +145,7 @@ public class RegisterServlet extends HttpServlet {
             Customer newCustomer = new Customer(0, 0, fullname, phone, address);
             newCustomer.setEmail(email);
             newCustomer.setGender(gender);
-            
-            // Parse date of birth
+            // Parse ngày sinh
             Date dateOfBirth = null;
             if (dateOfBirthStr != null && !dateOfBirthStr.trim().isEmpty()) {
                 try {
@@ -197,12 +158,10 @@ public class RegisterServlet extends HttpServlet {
                     return;
                 }
             }
-            
             // Mã hóa mật khẩu trước khi lưu
             String hashedPassword = BCrypt.hashpw(password, BCrypt.gensalt());
             newCustomer.setPassword(hashedPassword);
-            
-            // Thực hiện đăng ký thông qua CustomerDAO
+            // Thực hiện đăng ký qua CustomerDAO
             try {
                 customerDAO.addCustomerWithEmail(newCustomer, hashedPassword);
                 // Gửi mã xác thực qua email
@@ -212,8 +171,7 @@ public class RegisterServlet extends HttpServlet {
                     // Lưu mã xác thực vào session để kiểm tra sau
                     request.getSession().setAttribute("verification_code", verificationCode);
                     request.getSession().setAttribute("verification_email", email);
-                    
-                    // Hiển thị popup verification
+                    // Hiển thị popup xác thực
                     request.setAttribute("showVerificationPopup", true);
                     request.setAttribute("registerMessage", "Please check your email to verify your account!");
                     request.getRequestDispatcher("Register.jsp").forward(request, response);
@@ -223,10 +181,9 @@ public class RegisterServlet extends HttpServlet {
                     request.getRequestDispatcher("Register.jsp").forward(request, response);
                     return;
                 }
-            } catch (SQLException e) {
-                // Kiểm tra xem có phải lỗi duplicate key không
+            } catch (Exception e) {
+                // Kiểm tra lỗi duplicate key
                 if (e.getMessage().contains("Duplicate entry") && e.getMessage().contains("customer.email")) {
-                    // Email đã tồn tại, kiểm tra lại trạng thái
                     try {
                         if (customerDAO.isEmailExistsButNotVerified(email)) {
                             request.setAttribute("error", "Please confirm your email address to activate your account");

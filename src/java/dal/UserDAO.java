@@ -8,6 +8,7 @@ import model.User;
 import java.util.Vector;
 
 public class UserDAO {
+    // Singleton pattern để dùng chung một instance UserDAO
     private static UserDAO instance;
     private final DBContext dbContext;
     
@@ -22,6 +23,12 @@ public class UserDAO {
         return instance;
     }
     
+    /**
+     * Đăng nhập user (Staff/Admin) bằng email và password
+     * @param email Email đăng nhập
+     * @param password Mật khẩu (chưa mã hóa)
+     * @return User nếu đăng nhập thành công, null nếu thất bại
+     */
     public User login(String email, String password) throws SQLException {
         String sql = "SELECT * FROM User WHERE email = ? AND password = ?";
         try (Connection conn = dbContext.getConnection();
@@ -32,6 +39,7 @@ public class UserDAO {
             
             try (ResultSet rs = stmt.executeQuery()) {
                 if (rs.next()) {
+                    // Tạo đối tượng User từ dữ liệu DB
                     return new User(
                         rs.getInt("user_id"),
                         rs.getString("username"),

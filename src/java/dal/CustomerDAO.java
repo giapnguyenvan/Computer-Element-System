@@ -48,6 +48,12 @@ public class CustomerDAO {
         }
     }
 
+    /**
+     * Đăng nhập customer (khách hàng) bằng email và password
+     * @param email Email đăng nhập
+     * @param password Mật khẩu (dạng plain text, sẽ kiểm tra với hash trong DB)
+     * @return Customer nếu đăng nhập thành công, null nếu thất bại
+     */
     public Customer login(String email, String password) throws SQLException {
         String sql = "SELECT * FROM Customer WHERE email = ?";
         try (Connection conn = dbContext.getConnection(); PreparedStatement stmt = conn.prepareStatement(sql)) {
@@ -55,7 +61,9 @@ public class CustomerDAO {
             try (java.sql.ResultSet rs = stmt.executeQuery()) {
                 if (rs.next()) {
                     String hashedPassword = rs.getString("password");
+                    // So sánh mật khẩu nhập vào với mật khẩu đã mã hóa trong DB
                     if (BCrypt.checkpw(password, hashedPassword)) {
+                        // Tạo đối tượng Customer từ dữ liệu DB
                         Customer customer = new Customer(
                                 rs.getInt("customer_id"),
                                 0, // user_id không còn dùng
@@ -73,7 +81,8 @@ public class CustomerDAO {
                         }
                         return customer;
                     } else {
-                        return null; // Sai mật khẩu
+                        // Sai mật khẩu
+                        return null;
                     }
                 }
             }
