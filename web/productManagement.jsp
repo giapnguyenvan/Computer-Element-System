@@ -6,7 +6,7 @@
 <html lang="en">
     <head>
         <meta charset="UTF-8">
-        <title>Product Management</title>
+        <title>Select Product</title>
         <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
         <link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/jquery.dataTables.min.css">
         <link rel="stylesheet" href="https://cdn.datatables.net/buttons/2.4.1/css/buttons.dataTables.min.css">
@@ -104,47 +104,7 @@
                 background-color: #f8d7da;
                 color: #721c24;
             }
-            .upload-section {
-                background: white;
-                border-radius: 15px;
-                padding: 20px;
-                margin-bottom: 20px;
-                box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-            }
-            .file-upload-area {
-                border: 2px dashed #ddd;
-                border-radius: 10px;
-                padding: 30px;
-                text-align: center;
-                transition: all 0.3s ease;
-                cursor: pointer;
-            }
-            .file-upload-area:hover {
-                border-color: #667eea;
-                background-color: #f8f9ff;
-            }
-            .file-upload-area.dragover {
-                border-color: #667eea;
-                background-color: #f8f9ff;
-            }
-            .preview-table {
-                margin-top: 20px;
-                border-radius: 10px;
-                overflow: hidden;
-            }
-            .preview-table th {
-                background-color: #f8f9fa;
-                font-weight: 600;
-            }
-            .loading-spinner {
-                display: none;
-                text-align: center;
-                padding: 20px;
-            }
-            .alert {
-                border-radius: 10px;
-                border: none;
-            }
+
         </style>
     </head>
     <body>
@@ -154,64 +114,29 @@
                 <div class="card-header">
                     <div class="d-flex justify-content-between align-items-center">
                         <h3 class="mb-0">
-                            <i class="fas fa-boxes me-2"></i>Product Management
+                            <i class="fas fa-boxes me-2"></i>Select Product
                         </h3>
                         <div>
-                            <button type="button" class="btn btn-light me-2" onclick="showUploadSection()">
-                                <i class="fas fa-file-upload me-1"></i>Upload Excel
-                            </button>
-                            <a href="${pageContext.request.contextPath}/addProduct.jsp" class="btn btn-light">
-                                <i class="fas fa-plus me-1"></i>Add Product
-                            </a>
+                            <span class="text-light">
+                                <c:if test="${not empty componentType}">
+                                    <i class="fas fa-microchip me-1"></i>${componentType}
+                                </c:if>
+                            </span>
                         </div>
                     </div>
                 </div>
             </div>
 
-            <!-- Upload Section (Hidden by default) -->
-            <div id="uploadSection" class="upload-section" style="display: none;">
-                <h5 class="mb-3">
-                    <i class="fas fa-upload me-2"></i>Upload Products from Excel
-                </h5>
-                
-                <div class="file-upload-area" id="fileUploadArea">
-                    <i class="fas fa-cloud-upload-alt fa-3x text-muted mb-3"></i>
-                    <h5>Drag & Drop Excel file here</h5>
-                    <p class="text-muted">or click to browse</p>
-                    <input type="file" id="excelFile" accept=".xlsx,.xls" style="display: none;">
-                </div>
-
-                <div id="previewContainer" style="display: none;">
-                    <h6 class="mt-3 mb-2">Preview:</h6>
-                    <div class="table-responsive">
-                        <table class="table table-sm table-bordered preview-table" id="previewTable">
-                            <thead></thead>
-                            <tbody></tbody>
-                        </table>
-                    </div>
-                    <div class="mt-3">
-                        <button type="button" class="btn btn-success" id="confirmUploadBtn">
-                            <i class="fas fa-check me-1"></i>Confirm Upload
-                        </button>
-                        <button type="button" class="btn btn-secondary" onclick="hideUploadSection()">
-                            <i class="fas fa-times me-1"></i>Cancel
-                        </button>
-                    </div>
-                </div>
-
-                <div class="loading-spinner" id="loadingSpinner">
-                    <div class="spinner-border text-primary" role="status">
-                        <span class="visually-hidden">Loading...</span>
-                    </div>
-                    <p class="mt-2">Processing upload...</p>
-                </div>
-            </div>
-
-            <!-- Alert Messages -->
-            <div id="alertContainer"></div>
-
             <!-- Products DataTable -->
             <div class="table-container">
+                <div class="mb-3">
+                    <c:if test="${not empty componentType}">
+                        <div class="alert alert-info">
+                            <i class="fas fa-info-circle me-2"></i>
+                            Selecting products for <strong>${componentType}</strong>. Click the <i class="fas fa-check text-success"></i> button to choose a product.
+                        </div>
+                    </c:if>
+                </div>
                 <table id="productsTable" class="table table-striped table-hover">
                     <thead>
                         <tr>
@@ -277,15 +202,14 @@
         <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
         <script src="https://cdn.datatables.net/buttons/2.4.1/js/dataTables.buttons.min.js"></script>
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 
         <script>
             $(document).ready(function() {
                 // Initialize DataTable
                 const table = $('#productsTable').DataTable({
-                    pageLength: 10,
-                    lengthMenu: [[5, 10, 25, 50], [5, 10, 25, 50]],
-                    order: [[0, 'desc']],
+                    pageLength: 15,
+                    lengthMenu: [[10, 15, 25, 50], [10, 15, 25, 50]],
+                    order: [[5, 'asc']], // Sort by price ascending
                     responsive: true,
                     language: {
                         search: "Search products:",
@@ -304,42 +228,7 @@
                     ]
                 });
 
-                // File upload functionality
-                const fileUploadArea = document.getElementById('fileUploadArea');
-                const excelFile = document.getElementById('excelFile');
 
-                // Click to upload
-                fileUploadArea.addEventListener('click', () => {
-                    excelFile.click();
-                });
-
-                // Drag and drop
-                fileUploadArea.addEventListener('dragover', (e) => {
-                    e.preventDefault();
-                    fileUploadArea.classList.add('dragover');
-                });
-
-                fileUploadArea.addEventListener('dragleave', () => {
-                    fileUploadArea.classList.remove('dragover');
-                });
-
-                fileUploadArea.addEventListener('drop', (e) => {
-                    e.preventDefault();
-                    fileUploadArea.classList.remove('dragover');
-                    const files = e.dataTransfer.files;
-                    if (files.length > 0) {
-                        excelFile.files = files;
-                        handleFileSelect();
-                    }
-                });
-
-                // File selection
-                excelFile.addEventListener('change', handleFileSelect);
-
-                // Confirm upload
-                $('#confirmUploadBtn').on('click', function() {
-                    uploadProducts();
-                });
 
                 // Edit product
                 $('#productsTable').on('click', '.edit-product', function() {
@@ -379,130 +268,7 @@
                 });
             });
 
-            function showUploadSection() {
-                $('#uploadSection').slideDown();
-                $('#productsTable_wrapper').slideUp();
-            }
 
-            function hideUploadSection() {
-                $('#uploadSection').slideUp();
-                $('#productsTable_wrapper').slideDown();
-                resetUploadForm();
-            }
-
-            function resetUploadForm() {
-                $('#excelFile').val('');
-                $('#previewContainer').hide();
-                $('#previewTable thead').empty();
-                $('#previewTable tbody').empty();
-            }
-
-            function handleFileSelect() {
-                const file = document.getElementById('excelFile').files[0];
-                if (!file) return;
-
-                if (!file.name.endsWith('.xlsx') && !file.name.endsWith('.xls')) {
-                    showAlert('Please upload a valid Excel file.', 'danger');
-                    return;
-                }
-
-                const reader = new FileReader();
-                reader.onload = function(e) {
-                    try {
-                        const data = new Uint8Array(e.target.result);
-                        const workbook = XLSX.read(data, { type: 'array' });
-                        const sheetName = workbook.SheetNames[0];
-                        const worksheet = workbook.Sheets[sheetName];
-                        const json = XLSX.utils.sheet_to_json(worksheet, { header: 1, defval: "" });
-
-                        displayPreview(json);
-                    } catch (error) {
-                        showAlert('Error reading Excel file: ' + error.message, 'danger');
-                    }
-                };
-                reader.readAsArrayBuffer(file);
-            }
-
-            function displayPreview(json) {
-                const headers = ['Name', 'Brand', 'Component Type', 'Model', 'Price', 'Import Price', 'Stock', 'SKU', 'Description'];
-                
-                let headerHtml = '<tr>';
-                headers.forEach(header => {
-                    headerHtml += `<th class="text-center">${header}</th>`;
-                });
-                headerHtml += '</tr>';
-                
-                $('#previewTable thead').html(headerHtml);
-
-                let bodyHtml = '';
-                // Start from index 1 to skip header row
-                for (let i = 1; i < Math.min(json.length, 10); i++) { // Show max 10 rows
-                    const row = json[i];
-                    bodyHtml += '<tr>';
-                    row.forEach(cell => {
-                        bodyHtml += `<td>${cell || ''}</td>`;
-                    });
-                    bodyHtml += '</tr>';
-                }
-                
-                $('#previewTable tbody').html(bodyHtml);
-                $('#previewContainer').show();
-            }
-
-            function uploadProducts() {
-                const file = document.getElementById('excelFile').files[0];
-                if (!file) {
-                    showAlert('Please select a file first.', 'warning');
-                    return;
-                }
-
-                const formData = new FormData();
-                formData.append('excelFile', file);
-
-                $('#loadingSpinner').show();
-                $('#confirmUploadBtn').prop('disabled', true);
-
-                fetch('${pageContext.request.contextPath}/ProductImportServlet', {
-                    method: 'POST',
-                    body: formData
-                })
-                .then(response => response.json())
-                .then(data => {
-                    $('#loadingSpinner').hide();
-                    $('#confirmUploadBtn').prop('disabled', false);
-                    
-                    if (data.success) {
-                        showAlert(`Successfully uploaded ${data.count} products!`, 'success');
-                        hideUploadSection();
-                        // Reload the page to refresh the table
-                        setTimeout(() => {
-                            location.reload();
-                        }, 2000);
-                    } else {
-                        showAlert('Upload failed: ' + data.message, 'danger');
-                    }
-                })
-                .catch(error => {
-                    $('#loadingSpinner').hide();
-                    $('#confirmUploadBtn').prop('disabled', false);
-                    showAlert('Upload failed: ' + error.message, 'danger');
-                });
-            }
-
-            function showAlert(message, type) {
-                const alertHtml = `
-                    <div class="alert alert-${type} alert-dismissible fade show" role="alert">
-                        ${message}
-                        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-                    </div>
-                `;
-                $('#alertContainer').html(alertHtml);
-                
-                // Auto-dismiss after 5 seconds
-                setTimeout(() => {
-                    $('.alert').alert('close');
-                }, 5000);
-            }
         </script>
     </body>
 </html> 
