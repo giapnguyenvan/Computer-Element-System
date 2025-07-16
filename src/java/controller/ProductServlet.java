@@ -41,6 +41,19 @@ public class ProductServlet extends HttpServlet {
                     request.getRequestDispatcher("viewProduct.jsp").forward(request, response);
                     break;
 
+                case "productManagement":
+                    plist = dao.getAllProduct();
+                    request.setAttribute("product", plist);
+                    
+                    // Lấy componentType từ parameter nếu có
+                    String componentType = request.getParameter("componentType");
+                    if (componentType != null && !componentType.isEmpty()) {
+                        request.setAttribute("componentType", componentType);
+                    }
+                    
+                    request.getRequestDispatcher("productManagement.jsp").forward(request, response);
+                    break;
+
                 case "productDetail":
                     int productID = Integer.parseInt(request.getParameter("id"));
                     int page = 1;

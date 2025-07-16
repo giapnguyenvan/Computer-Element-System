@@ -18,9 +18,9 @@ public class JwtAuthenticationFilter implements Filter {
         HttpServletRequest httpRequest = (HttpServletRequest) request;
         HttpServletResponse httpResponse = (HttpServletResponse) response;
         
-        // Skip authentication for auth endpoints
+        // Skip authentication for auth endpoints và cho phép công khai /api/components
         String requestURI = httpRequest.getRequestURI();
-        if (requestURI.contains("/api/auth/")) {
+        if (requestURI.contains("/api/auth/") || requestURI.contains("/api/components")) {
             chain.doFilter(request, response);
             return;
         }

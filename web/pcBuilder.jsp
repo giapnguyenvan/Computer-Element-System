@@ -703,7 +703,27 @@
                 updateProgressBar();
             });
 
-            // Gắn sự kiện cho các nút chọn linh kiện để mở modal chứa viewProduct.jsp
+            // Hàm cập nhật progress bar
+            function updateProgressBar() {
+                const steps = ['cpu', 'mainboard', 'ram', 'gpu', 'storage', 'psu', 'case', 'cooler'];
+                let completedSteps = 0;
+                
+                steps.forEach(step => {
+                    const selectedElement = document.getElementById(`selected-${step}`);
+                    if (selectedElement && selectedElement.textContent.trim() !== '') {
+                        completedSteps++;
+                    }
+                });
+                
+                const progressPercentage = (completedSteps / steps.length) * 100;
+                const progressBar = document.getElementById('build-progress-bar');
+                if (progressBar) {
+                    progressBar.style.width = progressPercentage + '%';
+                    progressBar.setAttribute('aria-valuenow', progressPercentage);
+                }
+            }
+
+            // Gắn sự kiện cho các nút chọn linh kiện để mở modal chứa productManagement.jsp
             window.addEventListener('DOMContentLoaded', function() {
                 document.querySelectorAll('.btn.btn-pcbuilder-white.btn-lg').forEach(btn => {
                     btn.addEventListener('click', function(e) {
@@ -728,7 +748,7 @@
                     iframe.contentWindow.history.back();
                 } catch (e) {
                     // Nếu không thể truy cập iframe (CORS), reload về trang đầu
-                    iframe.src = 'productservlet?service=viewProduct';
+                    iframe.src = 'productservlet?service=productManagement';
                 }
             }
 
@@ -741,48 +761,49 @@
             // Hàm reset (về trang đầu)
             function resetProductModal() {
                 const iframe = document.getElementById('viewProductIframe');
-                iframe.src = 'productservlet?service=viewProduct';
+                iframe.src = 'productservlet?service=productManagement';
+            }
+
+            // Hàm chọn component từ iframe
+            function selectComponentFromIframe(productId, productName, price, componentType) {
+                // Đóng modal
+                const modal = bootstrap.Modal.getInstance(document.getElementById('viewProductModal'));
+                if (modal) modal.hide();
+                
+                // Cập nhật UI
+                const stepElement = document.getElementById(`step-${componentType.toLowerCase()}`);
+                const selectedElement = document.getElementById(`selected-${componentType.toLowerCase()}`);
+                if (stepElement && selectedElement) {
+                    stepElement.classList.add('selected');
+                    selectedElement.textContent = productName;
+                    selectedElement.style.color = '#28a745';
+                }
+                
+                // Lưu vào session storage
+                const selection = {
+                    productId: productId,
+                    productName: productName,
+                    price: price,
+                    componentType: componentType
+                };
+                sessionStorage.setItem(`selected_${componentType}`, JSON.stringify(selection));
+                
+                // Cập nhật progress bar
+                updateProgressBar();
+                
+                // Hiển thị thông báo
+                showNotification(`Đã chọn ${componentType.toUpperCase()}: ${productName}`, 'success');
             }
 
             let currentComponentType = null;
-            let componentTable = null;
 
+            // Hàm để iframe gọi để chọn sản phẩm
             function selectComponent(type) {
                 currentComponentType = type;
                 $('#viewProductModal').modal('show');
-                $.getJSON('/api/components', { type: type }, function(data) {
-                    if (componentTable) {
-                        componentTable.clear().destroy();
-                        $('#componentTable tbody').empty();
-                    }
-                    componentTable = $('#componentTable').DataTable({
-                        data: data,
-                        columns: [
-                            { data: 'name' },
-                            { data: 'price', render: $.fn.dataTable.render.number(',', '.', 2, '$') },
-                            { data: 'brandName' },
-                            {
-                                data: null,
-                                render: function (data, type, row) {
-                                    return `<button class="btn btn-primary btn-sm" onclick="chooseComponent('${row.productId}', '${row.name}', ${row.price})">Chọn</button>`;
-                                }
-                            }
-                        ],
-                        destroy: true,
-                        searching: true,
-                        paging: true,
-                        info: false,
-                        language: {
-                            emptyTable: "Không có dữ liệu"
-                        }
-                    });
-                });
-            }
-
-            function chooseComponent(id, name, price) {
-                $('#viewProductModal').modal('hide');
-                showNotification(`Đã chọn ${currentComponentType.toUpperCase()}: ${name}`, 'success');
-                // ... các xử lý khác ...
+                // Cập nhật iframe với component type
+                const iframe = document.getElementById('viewProductIframe');
+                iframe.src = `productservlet?service=productManagement&componentType=${type}`;
             }
         //]]>
         </script>
@@ -795,19 +816,7 @@
                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Đóng" id="closeModalBtn"></button>
                     </div>
                     <div class="modal-body">
-                        <table id="componentTable" class="display" style="width:100%">
-                            <thead>
-                                <tr>
-                                    <th>Tên</th>
-                                    <th>Giá</th>
-                                    <th>Hãng</th>
-                                    <th>Chọn</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <!-- Dữ liệu sẽ được render bằng JS -->
-                            </tbody>
-                        </table>
+                        <iframe id="viewProductIframe" src="productservlet?service=productManagement" style="width:100%; height:80vh; border:none;"></iframe>
                     </div>
                 </div>
             </div>

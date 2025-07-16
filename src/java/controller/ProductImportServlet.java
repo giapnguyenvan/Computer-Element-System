@@ -10,6 +10,8 @@ import model.Products;
 import model.InventoryLog;
 import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+import com.google.gson.Gson;
+import com.google.gson.JsonObject;
 
 import java.io.*;
 import java.sql.Timestamp;
@@ -20,13 +22,26 @@ import java.util.*;
 public class ProductImportServlet extends HttpServlet {
 
     static class RowError {
-
         int rowIndex;
         String reason;
 
         public RowError(int rowIndex, String reason) {
             this.rowIndex = rowIndex;
             this.reason = reason;
+        }
+    }
+
+    static class ImportResult {
+        boolean success;
+        String message;
+        int count;
+        List<String> errors;
+
+        public ImportResult(boolean success, String message, int count, List<String> errors) {
+            this.success = success;
+            this.message = message;
+            this.count = count;
+            this.errors = errors;
         }
     }
 
@@ -38,18 +53,22 @@ public class ProductImportServlet extends HttpServlet {
         List<RowError> errors = new ArrayList<>();
         ProductDAO dao = new ProductDAO();
 
-        response.setContentType("text/html;charset=UTF-8");
+        response.setContentType("application/json;charset=UTF-8");
         PrintWriter out = response.getWriter();
+        Gson gson = new Gson();
 
         try {
             Part filePart = request.getPart("excelFile");
             if (filePart == null) {
-                out.println("<p class='text-danger'>Excel file not found.</p>");
+                ImportResult result = new ImportResult(false, "Excel file not found.", 0, new ArrayList<>());
+                out.println(gson.toJson(result));
                 return;
             }
+            
             String fileName = filePart.getSubmittedFileName();
             if (fileName == null || !(fileName.toLowerCase().endsWith(".xlsx") || fileName.toLowerCase().endsWith(".xls"))) {
-                out.println("<p class='text-danger'>Invalid file type. Please upload an Excel file (.xlsx or .xls).</p>");
+                ImportResult result = new ImportResult(false, "Invalid file type. Please upload an Excel file (.xlsx or .xls).", 0, new ArrayList<>());
+                out.println(gson.toJson(result));
                 return;
             }
             
@@ -58,7 +77,8 @@ public class ProductImportServlet extends HttpServlet {
             Sheet sheet = workbook.getSheetAt(0);
             
             if (sheet.getLastRowNum() < 1) {
-                out.println("<p class='text-danger'>Excel file has no data or only header row.</p>");
+                ImportResult result = new ImportResult(false, "Excel file has no data or only header row.", 0, new ArrayList<>());
+                out.println(gson.toJson(result));
                 return;
             }
 
@@ -138,6 +158,7 @@ public class ProductImportServlet extends HttpServlet {
             }
 
             // ===== IMPORT LOGIC HERE =====
+            int importedCount = 0;
             if (!validProducts.isEmpty()) {
                 InventoryLogDAO logDAO = new InventoryLogDAO();
                 for (Products imported : validProducts) {
@@ -200,51 +221,34 @@ public class ProductImportServlet extends HttpServlet {
                             logDAO.insertLog(log);
                         }
                     }
+                    importedCount++;
                 }
             }
 
-            // ===== PREVIEW HTML OUTPUT =====
-            out.println("<html><head><title>Kết quả import</title>");
-            out.println("<link href='https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css' rel='stylesheet'>");
-            out.println("</head><body class='p-4'>");
+            // Convert errors to string list
+            List<String> errorMessages = new ArrayList<>();
+            for (RowError error : errors) {
+                errorMessages.add("Row " + error.rowIndex + ": " + error.reason);
+            }
 
-            out.println("<h3>Excel Import Result</h3>");
-            out.println("<p><strong>Total rows processed:</strong> " + (sheet.getLastRowNum()) + "</p>");
-
-            if (!validProducts.isEmpty()) {
-                out.println("<h5 class='text-success'>Valid Products (" + validProducts.size() + " products)</h5>");
-                out.println("<table class='table table-bordered table-striped'><thead><tr><th>Name</th><th>Brand</th><th>Component Type</th><th>Model</th><th>Price</th><th>Stock</th><th>SKU</th></tr></thead><tbody>");
-                for (Products p : validProducts) {
-                    out.printf("<tr><td>%s</td><td>%s</td><td>%s</td><td>%s</td><td>%.2f</td><td>%d</td><td>%s</td></tr>",
-                            p.getName(), 
-                            p.getBrandName(),
-                            p.getComponentTypeName(),
-                            p.getModel() != null ? p.getModel() : "",
-                            p.getPrice(), 
-                            p.getStock(), 
-                            p.getSku() != null ? p.getSku() : "");
+            // Create result
+            ImportResult result;
+            if (importedCount > 0) {
+                String message = "Successfully imported " + importedCount + " products.";
+                if (!errors.isEmpty()) {
+                    message += " " + errors.size() + " rows had errors.";
                 }
-                out.println("</tbody></table>");
+                result = new ImportResult(true, message, importedCount, errorMessages);
+            } else {
+                result = new ImportResult(false, "No valid products to import.", 0, errorMessages);
             }
 
-            if (!errors.isEmpty()) {
-                out.println("<h5 class='text-danger'>Error Rows (" + errors.size() + " errors)</h5><ul class='list-group'>");
-                for (RowError e : errors) {
-                    out.printf("<li class='list-group-item list-group-item-danger'>Row %d: %s</li>", e.rowIndex, e.reason);
-                }
-                out.println("</ul>");
-            }
-
-            if (validProducts.isEmpty() && errors.isEmpty()) {
-                out.println("<p class='text-warning'>No valid data to import.</p>");
-            }
-
-            out.println("<a href='viewProduct.jsp' class='btn btn-secondary mt-3'>Back to Product List</a>");
-            out.println("</body></html>");
+            out.println(gson.toJson(result));
 
         } catch (Exception e) {
             e.printStackTrace();
-            out.println("<p class='text-danger'>An error occurred while processing the Excel file.</p>");
+            ImportResult result = new ImportResult(false, "An error occurred while processing the Excel file: " + e.getMessage(), 0, new ArrayList<>());
+            out.println(gson.toJson(result));
         }
     }
 
