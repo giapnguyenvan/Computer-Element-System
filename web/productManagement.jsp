@@ -82,7 +82,6 @@
             }
             .action-buttons {
                 display: flex;
-                gap: 8px;
                 justify-content: center;
             }
             .btn-sm {
@@ -133,7 +132,7 @@
                     <c:if test="${not empty componentType}">
                         <div class="alert alert-info">
                             <i class="fas fa-info-circle me-2"></i>
-                            Selecting products for <strong>${componentType}</strong>. Click the <i class="fas fa-check text-success"></i> button to choose a product.
+                            Selecting products for <strong>${componentType}</strong>. Click the <i class="fas fa-check text-success"></i> button to choose a product for your PC build.
                         </div>
                     </c:if>
                 </div>
@@ -179,12 +178,6 @@
                                 </td>
                                 <td>
                                     <div class="action-buttons">
-                                        <button class="btn btn-outline-primary btn-sm edit-product" data-product-id="${product.productId}" title="Edit">
-                                            <i class="fas fa-edit"></i>
-                                        </button>
-                                        <button class="btn btn-outline-danger btn-sm delete-product" data-product-id="${product.productId}" title="Delete">
-                                            <i class="fas fa-trash"></i>
-                                        </button>
                                         <button class="btn btn-success btn-sm select-product" data-product-id="${product.productId}" data-product-name="${product.name}" data-product-price="${product.price}" title="Select">
                                             <i class="fas fa-check"></i>
                                         </button>
@@ -230,19 +223,7 @@
 
 
 
-                // Edit product
-                $('#productsTable').on('click', '.edit-product', function() {
-                    const productId = $(this).data('product-id');
-                    window.location.href = "${pageContext.request.contextPath}/producteditservlet?action=edit&id=" + productId;
-                });
 
-                // Delete product
-                $('#productsTable').on('click', '.delete-product', function() {
-                    const productId = $(this).data('product-id');
-                    if (confirm('Are you sure you want to deactivate this product? This will change its status to Inactive.')) {
-                        window.location.href = "${pageContext.request.contextPath}/producteditservlet?action=delete&id=" + productId;
-                    }
-                });
 
                 // Select product for PC Builder
                 $('#productsTable').on('click', '.select-product', function() {
