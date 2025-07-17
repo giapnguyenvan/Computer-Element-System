@@ -95,9 +95,13 @@ public class CartApiServlet extends HttpServlet {
     private void handleGetCartItems(HttpServletRequest request, HttpServletResponse response)
             throws IOException, Exception {
 
-        // Try to get customerId from request parameter first, then from session
-            Customer customer = (Customer)request.getSession().getAttribute("customer");
-            int customerId = customer.getId();
+        // Lấy customer từ session
+        Customer customer = (Customer) request.getSession().getAttribute("customer");
+        if (customer == null) {
+            ResponseUtils.sendErrorResponse(response, 401, "User not authenticated");
+            return;
+        }
+        int customerId = customer.getId();
 //        String customerIdParam = request.getParameter("customerId");
 //        int customerId;
 //        

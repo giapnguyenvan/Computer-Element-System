@@ -12,7 +12,7 @@ import shop.anotation.*;
  *
  * @author admin
  */
-@Table(name = "Order")
+@Table(name = "orders")
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder

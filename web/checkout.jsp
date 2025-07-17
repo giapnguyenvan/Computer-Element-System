@@ -463,8 +463,8 @@
 
         <script>
             // Configuration
-            const API_BASE_URL = '/CES/CartApiServlet';
-            const USER_INFO_API_URL = '/CES/UserInfoApiServlet';
+            const API_BASE_URL = '${pageContext.request.contextPath}/CartApiServlet';
+            const USER_INFO_API_URL = '${pageContext.request.contextPath}/UserInfoApiServlet';
             const userId = 1; // This should be dynamically set from session
 
             // Global variables
@@ -548,7 +548,7 @@
                     total += itemTotal;
 
                     html += '<div class="cart-item" data-item-id="' + item.id + '">' +
-                            '<img src="' + (item.product.imageUrl || '/CES/images/default-product.jpg') + '" ' +
+                            '<img src="' + (item.product.imageUrl || '${pageContext.request.contextPath}/IMG/product/default.jpg') + '" ' +
                             'alt="' + item.product.name + '" ' +
                             'class="item-image">' +
                             '<div class="item-info">' +
@@ -626,8 +626,22 @@
                     // Prepare order data
                     const formData = new FormData(form);
                     let totalAmount = 0;
+                    
+                    // Calculate total amount correctly
+                    cartItems.forEach(item => {
+                        let price = 0;
+                        if (item.product && item.product.price) {
+                            if (typeof item.product.price === 'object' && item.product.price.value !== undefined) {
+                                price = parseFloat(item.product.price.value) || 0;
+                            } else {
+                                price = parseFloat(item.product.price) || 0;
+                            }
+                        }
+                        totalAmount += item.quantity * price;
+                    });
+                    
                     const orderData = {
-                        totalAmount: 0,
+                        totalAmount: totalAmount,
                         paymentMethodId: parseInt(formData.get('paymentMethod')),
                         shippingAddress: formData.get('address'),
                         status: 'pending',
@@ -640,7 +654,6 @@
                                     price = parseFloat(item.product.price) || 0;
                                 }
                             }
-                            totalAmount = item.quantity * price;
                             return {
                                 productId: item.productId,
                                 quantity: item.quantity || 0,
@@ -648,10 +661,9 @@
                             };
                         })
                     };
-                    orderData.totalAmount = totalAmount;
 
                     // Send order to API
-                    const response = await fetch('/CES/OrderApiServlet', {
+                    const response = await fetch('${pageContext.request.contextPath}/OrderApiServlet', {
                         method: 'POST',
                         headers: {
                             'Content-Type': 'application/json',
@@ -673,8 +685,8 @@
                         // Reload cart (should be empty now)
                         setTimeout(() => {
                             loadCartItems();
-                            window.location = "payment-servlet?orderId=" + result.orderId;
-                        }, 4000);
+                            window.location = "${pageContext.request.contextPath}/payment-servlet?orderId=" + result.orderId;
+                        }, 2000);
                     } else {
                         showError('Order failed: ' + (result.message || 'Unknown error'));
                     }
@@ -684,7 +696,7 @@
                 } finally {
                     const checkoutBtn = document.getElementById('checkoutButton');
                     checkoutBtn.disabled = false;
-                    checkoutBtn.textContent = 'Place Order';
+                    checkoutBtn.textContent = 'Checkout';
                 }
             }
 
@@ -761,6 +773,7 @@
                     }
                 } catch (error) {
                     // Don't show error as user might not be logged in
+                    console.log('Could not load user info:', error.message);
                 }
             }
         </script>

@@ -48,6 +48,10 @@ public class OrderApiServlet extends HttpServlet {
         Integer genId = null;
         try {
             Customer customer = (Customer) request.getSession().getAttribute("customer");
+            if (customer == null) {
+                ResponseUtils.sendErrorResponse(response, 401, "User not authenticated");
+                return;
+            }
             int customerId = customer.getId();
             String pathInfo = request.getPathInfo();
             if (pathInfo == null || pathInfo.equals("/")) {

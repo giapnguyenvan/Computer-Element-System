@@ -14,7 +14,7 @@ import shop.anotation.*;
  *
  * @author admin
  */
-@Table(name = "OrderDetail")
+@Table(name = "orderdetail")
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
