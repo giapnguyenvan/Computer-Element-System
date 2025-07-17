@@ -479,6 +479,24 @@
                 transform-origin: top left;
                 width: 117.6%; /* 1/0.85 để bù lại scale */
             }
+            #productList {
+                background: #fff;
+                border-radius: 12px;
+                box-shadow: 0 2px 12px rgba(0,0,0,0.08);
+                padding: 24px 12px;
+                margin-bottom: 32px;
+                min-height: 300px;
+                transition: box-shadow 0.2s;
+            }
+            @media (max-width: 767px) {
+                #productList {
+                    padding: 8px 2px;
+                    font-size: 0.98em;
+                }
+                #productList table {
+                    font-size: 0.95em;
+                }
+            }
         </style>
     </head>
     <body>
@@ -594,28 +612,28 @@
                             <div class="container mb-4">
                                 <div class="row mb-2 justify-content-center">
                                     <div class="col-auto mb-2">
-                                        <button class="btn btn-pcbuilder-white btn-lg" onclick="selectComponent('CPU'); return false;"><i class="fas fa-microchip me-2"></i>Select CPU</button>
+                                        <button class="btn btn-pcbuilder-white btn-lg" onclick="loadProducts('CPU'); return false;"><i class="fas fa-microchip me-2"></i>Select CPU</button>
                                     </div>
                                     <div class="col-auto mb-2">
-                                        <button class="btn btn-pcbuilder-white btn-lg" onclick="selectComponent('Mainboard'); return false;"><i class="fas fa-server me-2"></i>Select Mainboard</button>
+                                        <button class="btn btn-pcbuilder-white btn-lg" onclick="loadProducts('Mainboard'); return false;"><i class="fas fa-server me-2"></i>Select Mainboard</button>
                                     </div>
                                     <div class="col-auto mb-2">
-                                        <button class="btn btn-pcbuilder-white btn-lg" onclick="selectComponent('RAM'); return false;"><i class="fas fa-memory me-2"></i>Select RAM</button>
+                                        <button class="btn btn-pcbuilder-white btn-lg" onclick="loadProducts('RAM'); return false;"><i class="fas fa-memory me-2"></i>Select RAM</button>
                                     </div>
                                     <div class="col-auto mb-2">
-                                        <button class="btn btn-pcbuilder-white btn-lg" onclick="selectComponent('GPU'); return false;"><i class="fas fa-video me-2"></i>Select GPU</button>
+                                        <button class="btn btn-pcbuilder-white btn-lg" onclick="loadProducts('GPU'); return false;"><i class="fas fa-video me-2"></i>Select GPU</button>
                                     </div>
                                     <div class="col-auto mb-2">
-                                        <button class="btn btn-pcbuilder-white btn-lg" onclick="selectComponent('Storage'); return false;"><i class="fas fa-hdd me-2"></i>Select Storage</button>
+                                        <button class="btn btn-pcbuilder-white btn-lg" onclick="loadProducts('Storage'); return false;"><i class="fas fa-hdd me-2"></i>Select Storage</button>
                                     </div>
                                     <div class="col-auto mb-2">
-                                        <button class="btn btn-pcbuilder-white btn-lg" onclick="selectComponent('PSU'); return false;"><i class="fas fa-plug me-2"></i>Select PSU</button>
+                                        <button class="btn btn-pcbuilder-white btn-lg" onclick="loadProducts('PSU'); return false;"><i class="fas fa-plug me-2"></i>Select PSU</button>
                                     </div>
                                     <div class="col-auto mb-2">
-                                        <button class="btn btn-pcbuilder-white btn-lg" onclick="selectComponent('Case'); return false;"><i class="fas fa-desktop me-2"></i>Select Case</button>
+                                        <button class="btn btn-pcbuilder-white btn-lg" onclick="loadProducts('Case'); return false;"><i class="fas fa-desktop me-2"></i>Select Case</button>
                                     </div>
                                     <div class="col-auto mb-2">
-                                        <button class="btn btn-pcbuilder-white btn-lg" onclick="selectComponent('Cooler'); return false;"><i class="fas fa-fan me-2"></i>Select Cooler</button>
+                                        <button class="btn btn-pcbuilder-white btn-lg" onclick="loadProducts('Cooler'); return false;"><i class="fas fa-fan me-2"></i>Select Cooler</button>
                                     </div>
                                 </div>
                             </div>
@@ -723,108 +741,49 @@
                 }
             }
 
-            // Gắn sự kiện cho các nút chọn linh kiện để mở modal chứa productManagement.jsp
-            window.addEventListener('DOMContentLoaded', function() {
-                document.querySelectorAll('.btn.btn-pcbuilder-white.btn-lg').forEach(btn => {
-                    btn.addEventListener('click', function(e) {
-                        e.preventDefault();
-                        const modal = new bootstrap.Modal(document.getElementById('viewProductModal'));
-                        modal.show();
-                    });
+            // Hàm loadProducts thay thế selectComponent
+            function loadProducts(type) {
+                $('#productList').html('<div class="text-center py-5"><div class="spinner-border text-primary"></div><div>Đang tải sản phẩm...</div></div>');
+                $.ajax({
+                    url: 'productservlet',
+                    method: 'GET',
+                    data: { service: 'productManagement', componentType: type, ajax: 1 },
+                    success: function(html) {
+                        $('#productList').html(html);
+                        // Gắn lại sự kiện chọn sản phẩm
+                        $('.select-product').off('click').on('click', function() {
+                            const productId = $(this).data('product-id');
+                            const productName = $(this).data('product-name');
+                            const productPrice = $(this).data('product-price');
+                            confirmSelectComponent(type, productId, productName, productPrice);
+                        });
+                    },
+                    error: function() {
+                        $('#productList').html('<div class="alert alert-danger">Không thể tải danh sách sản phẩm.</div>');
+                    }
                 });
-            });
-
-            // Hàm đóng modal sản phẩm
-            function closeProductModal() {
-                const modal = bootstrap.Modal.getInstance(document.getElementById('viewProductModal'));
-                if (modal) modal.hide();
-            }
-
-            // Hàm quay lại bước trước đó trong iframe
-            function backProductModal() {
-                const iframe = document.getElementById('viewProductIframe');
-                try {
-                    // Thử gọi history.back() trong iframe
-                    iframe.contentWindow.history.back();
-                } catch (e) {
-                    // Nếu không thể truy cập iframe (CORS), reload về trang đầu
-                    iframe.src = 'productservlet?service=productManagement';
-                }
-            }
-
-            // Hàm tiến tới (reload iframe)
-            function forwardProductModal() {
-                const iframe = document.getElementById('viewProductIframe');
-                iframe.src = iframe.src;
-            }
-
-            // Hàm reset (về trang đầu)
-            function resetProductModal() {
-                const iframe = document.getElementById('viewProductIframe');
-                iframe.src = 'productservlet?service=productManagement';
-            }
-
-            // Hàm chọn component từ iframe
-            function selectComponentFromIframe(productId, productName, price, componentType) {
-                // Đóng modal
-                const modal = bootstrap.Modal.getInstance(document.getElementById('viewProductModal'));
-                if (modal) modal.hide();
-                
-                // Cập nhật UI
-                const stepElement = document.getElementById(`step-${componentType.toLowerCase()}`);
-                const selectedElement = document.getElementById(`selected-${componentType.toLowerCase()}`);
-                if (stepElement && selectedElement) {
-                    stepElement.classList.add('selected');
-                    selectedElement.textContent = productName;
-                    selectedElement.style.color = '#28a745';
-                }
-                
-                // Lưu vào session storage
-                const selection = {
-                    productId: productId,
-                    productName: productName,
-                    price: price,
-                    componentType: componentType
-                };
-                sessionStorage.setItem(`selected_${componentType}`, JSON.stringify(selection));
-                
-                // Cập nhật progress bar
-                updateProgressBar();
-                
-                // Hiển thị thông báo
-                showNotification(`Đã chọn ${componentType.toUpperCase()}: ${productName}`, 'success');
-            }
-
-            let currentComponentType = null;
-
-            // Hàm để iframe gọi để chọn sản phẩm
-            function selectComponent(type) {
-                currentComponentType = type;
-                $('#viewProductModal').modal('show');
-                // Cập nhật iframe với component type
-                const iframe = document.getElementById('viewProductIframe');
-                iframe.src = `productservlet?service=productManagement&componentType=${type}`;
             }
         //]]>
         </script>
-        <!-- Modal popup viewProduct -->
-        <div class="modal fade" id="viewProductModal" tabindex="-1" aria-labelledby="viewProductModalLabel" aria-hidden="true">
-            <div class="modal-dialog modal-xl">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h5 class="modal-title" id="viewProductModalLabel">Chọn linh kiện</h5>
-                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Đóng" id="closeModalBtn"></button>
-                    </div>
-                    <div class="modal-body">
-                        <iframe id="viewProductIframe" src="productservlet?service=productManagement" style="width:100%; height:80vh; border:none;"></iframe>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <script>
-            document.getElementById('closeModalBtn').addEventListener('click', function() {
-                window.location.href = 'pcBuilder.jsp';
-            });
-        </script>
+        <style>
+            #productList {
+                background: #fff;
+                border-radius: 12px;
+                box-shadow: 0 2px 12px rgba(0,0,0,0.08);
+                padding: 24px 12px;
+                margin-bottom: 32px;
+                min-height: 300px;
+                transition: box-shadow 0.2s;
+            }
+            @media (max-width: 767px) {
+                #productList {
+                    padding: 8px 2px;
+                    font-size: 0.98em;
+                }
+                #productList table {
+                    font-size: 0.95em;
+                }
+            }
+        </style>
     </body>
 </html> 

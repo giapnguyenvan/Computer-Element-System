@@ -50,7 +50,12 @@ public class ProductServlet extends HttpServlet {
                     if (componentType != null && !componentType.isEmpty()) {
                         request.setAttribute("componentType", componentType);
                     }
-                    
+                    // AJAX fragment support
+                    String ajax = request.getParameter("ajax");
+                    if ("1".equals(ajax)) {
+                        request.getRequestDispatcher("productManagement.jsp").include(request, response);
+                        return;
+                    }
                     request.getRequestDispatcher("productManagement.jsp").forward(request, response);
                     break;
 
