@@ -701,12 +701,17 @@
                 }, 3000);
             }
             
-            // Hàm xác nhận chọn linh kiện trong modal
+            // Hàm xác nhận chọn linh kiện trong modal hoặc bảng
             function confirmSelectComponent(componentType, productId, productName, price) {
-                // Đóng modal
-                const modal = bootstrap.Modal.getInstance(document.getElementById('productSelectModal'));
-                if (modal) modal.hide();
-                // Cập nhật cấu hình như cũ
+                // Lưu vào sessionStorage (ghi đè nếu chọn lại)
+                const selection = {
+                    productId: productId,
+                    productName: productName,
+                    price: price,
+                    componentType: componentType
+                };
+                sessionStorage.setItem(`selected_${componentType}`, JSON.stringify(selection));
+                // Cập nhật UI
                 const stepElement = document.getElementById(`step-${componentType.toLowerCase()}`);
                 const selectedElement = document.getElementById(`selected-${componentType.toLowerCase()}`);
                 if (stepElement && selectedElement) {
@@ -715,13 +720,6 @@
                     selectedElement.style.color = '#28a745';
                 }
                 updateProgressBar();
-                const selection = {
-                    productId: productId,
-                    productName: productName,
-                    price: price,
-                    componentType: componentType
-                };
-                sessionStorage.setItem(`selected_${componentType}`, JSON.stringify(selection));
                 showNotification(`Đã chọn ${componentType.toUpperCase()}: ${productName}`, 'success');
             }
             
@@ -736,10 +734,8 @@
                 let completedSteps = 0;
                 
                 steps.forEach(step => {
-                    const selectedElement = document.getElementById(`selected-${step}`);
-                    if (selectedElement && selectedElement.textContent.trim() !== '') {
-                        completedSteps++;
-                    }
+                    const data = sessionStorage.getItem(`selected_${step.charAt(0).toUpperCase() + step.slice(1)}`);
+                    if (data) completedSteps++;
                 });
                 
                 const progressPercentage = (completedSteps / steps.length) * 100;
@@ -790,6 +786,78 @@
                     }
                 });
             }
+
+            // Hàm thêm vào giỏ hàng
+            function addToCart(componentType) {
+                const selection = sessionStorage.getItem(`selected_${componentType}`);
+                if (!selection) {
+                    showNotification('Bạn chưa chọn linh kiện này!', 'warning');
+                    return;
+                }
+                let cart = JSON.parse(sessionStorage.getItem('cart') || '[]');
+                const item = JSON.parse(selection);
+                // Tránh trùng lặp productId
+                if (!cart.some(i => i.productId == item.productId)) {
+                    cart.push(item);
+                    sessionStorage.setItem('cart', JSON.stringify(cart));
+                    showNotification(`Đã thêm ${item.productName} vào giỏ hàng!`, 'success');
+                } else {
+                    showNotification('Linh kiện đã có trong giỏ hàng!', 'info');
+                }
+            }
+
+            // Hook lại sự kiện sau khi load sản phẩm (AJAX)
+            function hookProductButtons(componentType) {
+                // Đổi nút chọn thành btn-success
+                $('.select-product').removeClass('btn-primary').addClass('btn-success');
+                // Thêm nút Thêm vào giỏ hàng nếu chưa có
+                $('.select-product').each(function() {
+                    if ($(this).siblings('.btn-add-cart').length === 0) {
+                        const btn = $('<button class="btn btn-warning btn-sm btn-add-cart ms-1" title="Thêm vào giỏ hàng"><i class="fas fa-cart-plus"></i></button>');
+                        btn.on('click', (e) => {
+                            e.stopPropagation();
+                            addToCart(componentType);
+                        });
+                        $(this).after(btn);
+                    }
+                });
+                // Sự kiện chọn linh kiện
+                $('.select-product').off('click').on('click', function() {
+                    const productId = $(this).data('product-id');
+                    const productName = $(this).data('product-name');
+                    const productPrice = $(this).data('product-price');
+                    confirmSelectComponent(componentType, productId, productName, productPrice);
+                });
+            }
+
+            // Sửa loadProducts để hook lại nút
+            const originalLoadProducts = window.loadProducts;
+            window.loadProducts = function(type) {
+                window.currentComponentType = type;
+                $('#currentCategoryBar').html(
+                  '<div class="mb-3" style="font-size:1.2em;font-weight:600;color:#0052cc;">' +
+                  '<i class="fas fa-layer-group me-2"></i>Category: <span>' + getCategoryDisplayName(type) + '</span></div>'
+                );
+                $('#productList').html('<div class="text-center py-5"><div class="spinner-border text-primary"></div><div>Đang tải sản phẩm...</div></div>');
+                $.ajax({
+                    url: 'productservlet',
+                    method: 'GET',
+                    data: { service: 'productManagement', componentType: type, ajax: 1 },
+                    cache: false,
+                    success: function(html) {
+                        $('#productList').html(html);
+                        hookProductButtons(type);
+                    },
+                    error: function() {
+                        $('#productList').html('<div class="alert alert-danger">Không thể tải danh sách sản phẩm.</div>');
+                    }
+                });
+            };
+
+            // Khi load lại trang, cập nhật progress bar
+            window.addEventListener('load', function() {
+                updateProgressBar();
+            });
         //]]>
         </script>
         <style>

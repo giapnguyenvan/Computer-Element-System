@@ -91,8 +91,8 @@
                     </td>
                     <td>
                         <div class="action-buttons">
-                            <button class="btn btn-success btn-sm select-product" data-product-id="${product.productId}" data-product-name="${product.name}" data-product-price="${product.price}" title="Select">
-                                <i class="fas fa-check"></i>
+                            <button class="btn btn-warning btn-sm btn-add-cart" data-product-id="${product.productId}" data-product-name="${product.name}" data-product-price="${product.price}" title="Thêm vào giỏ hàng">
+                                <i class="fas fa-cart-plus"></i>
                             </button>
                         </div>
                     </td>
@@ -126,18 +126,18 @@ $(document).ready(function() {
             { className: "text-center", targets: [1, 6, 7, 8] }
         ]
     });
-    // Gắn lại sự kiện chọn sản phẩm
-    $('.select-product').off('click').on('click', function() {
+    // Gắn sự kiện cho nút thêm vào giỏ hàng
+    $('.btn-add-cart').off('click').on('click', function() {
         const productId = $(this).data('product-id');
         const productName = $(this).data('product-name');
         const productPrice = $(this).data('product-price');
         // Lấy componentType từ URL parameter
         const urlParams = new URLSearchParams(window.location.search);
         const componentType = urlParams.get('componentType');
-        if (window.confirmSelectComponent) {
-            window.confirmSelectComponent(componentType, productId, productName, productPrice);
+        if (window.addToCart) {
+            window.addToCart(componentType);
         } else {
-            alert(`Đã chọn: ${productName} - $${productPrice}`);
+            alert(`Đã thêm: ${productName} - $${productPrice}`);
         }
     });
 });
