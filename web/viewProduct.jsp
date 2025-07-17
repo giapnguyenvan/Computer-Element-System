@@ -291,9 +291,8 @@
                         <form id="uploadForm" method="post" action="ProductImportServlet" enctype="multipart/form-data">
                             <input type="file" name="excelFile" id="excelFile" accept=".xlsx, .xls" required><br><br>
                             <div id="previewContainer" style="display:none;">
-                                <h5>Preview</h5>
-                                <div style="overflow-x: auto;
-                                     max-width: 100%;">
+                                <h5>Product Preview</h5>
+                                <div style="overflow-x: auto; max-width: 100%;">
                                     <table id="previewTable" border="1" class="table table-bordered" style="min-width: 800px;">
                                         <thead></thead>
                                         <tbody></tbody>
@@ -612,28 +611,13 @@
                                      const data = new Uint8Array(e.target.result);
                                      const workbook = XLSX.read(data, {type: 'array'});
 
-                                     const sheetName = workbook.SheetNames[0];
-                                     const worksheet = workbook.Sheets[sheetName];
-                                     const json = XLSX.utils.sheet_to_json(worksheet, {header: 1, defval: ""});
+                                     // Sheet 1: Products
+                                     const productSheetName = workbook.SheetNames[0];
+                                     const productSheet = workbook.Sheets[productSheetName];
+                                     const productJson = XLSX.utils.sheet_to_json(productSheet, {header: 1, defval: ""});
 
-                                     const previewTable = document.getElementById('previewTable');
-                                     const thead = previewTable.querySelector('thead');
-                                     const tbody = previewTable.querySelector('tbody');
-
-                                     thead.innerHTML = '';
-                                     tbody.innerHTML = '';
-
-                                     // Use hardcoded headers
-                                     const hardcodedHeaders = ['Name', 'Brand', 'Component Type', 'Model', 'Price', 'Import Price', 'Stock', 'SKU', 'Description'];
-                                     const headerHtml = '<tr>' + hardcodedHeaders.map(header => `<th>\${header}</th>`).join('') + '</tr>';
-                                     thead.innerHTML = headerHtml;
-
-                                     // Data rows - start from index 1 (skip first row)
-                                     for (let i = 1; i < json.length; i++) {
-                                         const row = json[i];
-                                         const rowHtml = '<tr>' + row.map(cell => `<td>\${cell ?? ''}</td>`).join('') + '</tr>';
-                                         tbody.innerHTML += rowHtml;
-                                     }
+                                     // Preview logic for product sheet only
+                                     previewSheet('previewTable', productJson, ['Name', 'Brand', 'Component Type', 'Model', 'Price', 'Import Price', 'Stock', 'SKU', 'Description']);
 
                                      document.getElementById('previewContainer').style.display = 'block';
                                  };
@@ -641,6 +625,29 @@
                                  reader.readAsArrayBuffer(file);
                              });
 
+                             function previewSheet(tableId, json, hardcodedHeaders) {
+                                 const previewTable = document.getElementById(tableId);
+                                 const thead = previewTable.querySelector('thead');
+                                 const tbody = previewTable.querySelector('tbody');
+
+                                 thead.innerHTML = '';
+                                 tbody.innerHTML = '';
+
+                                 // Use hardcoded headers
+                                 const headerHtml = '<tr>' + hardcodedHeaders.map(function(header) {
+                                     return '<th>' + header + '</th>';
+                                 }).join('') + '</tr>';
+                                 thead.innerHTML = headerHtml;
+
+                                 // Data rows - start from index 1 (skip first row)
+                                 for (let i = 1; i < json.length; i++) {
+                                     const row = json[i];
+                                     const rowHtml = '<tr>' + row.map(function(cell) {
+                                         return '<td>' + (cell ?? '') + '</td>';
+                                     }).join('') + '</tr>';
+                                     tbody.innerHTML += rowHtml;
+                                 }
+                             }
                 </script>
             </div>
         </body>
