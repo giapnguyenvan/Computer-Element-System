@@ -793,88 +793,14 @@
                 }
             }
 
-            function loadProducts(type) {
-                var displayName = getCategoryDisplayName(type);
-                $('#currentCategoryBarTitle').html(
-                  '<div class="mb-3" style="font-size:1.2em;font-weight:600;color:#0052cc;">' +
-                  '<i class="fas fa-layer-group me-2"></i>Category: <span>' + displayName + '</span></div>'
-                );
-                $('#productList').html('<div class="text-center py-5"><div class="spinner-border text-primary"></div><div>Đang tải sản phẩm...</div></div>');
-                $.ajax({
-                    url: 'productservlet',
-                    method: 'GET',
-                    data: { service: 'productManagement', componentType: type, ajax: 1 },
-                    success: function(html) {
-                        $('#productList').html(html);
-                        // Gắn lại sự kiện chọn sản phẩm
-                        $('.select-product').off('click').on('click', function() {
-                            const productId = $(this).data('product-id');
-                            const productName = $(this).data('product-name');
-                            const productPrice = $(this).data('product-price');
-                            selectComponent(type, productId, productName, productPrice);
-                        });
-                    },
-                    error: function() {
-                        $('#productList').html('<div class="alert alert-danger">Không thể tải danh sách sản phẩm.</div>');
-                    }
-                });
-            }
-
-            // Hàm thêm vào giỏ hàng
-            function addToCart(componentType, productId, productName, price) {
-                // Chọn linh kiện trước (ghi đè nếu đã chọn)
-                selectComponent(componentType, productId, productName, price);
-                let cart = JSON.parse(sessionStorage.getItem('cart') || '[]');
-                // Nếu đã có cùng loại linh kiện, thay thế mục đó, giữ lại các mục khác
-                let replaced = false;
-                cart = cart.map(item => {
-                    if (item.componentType === componentType) {
-                        replaced = true;
-                        return { productId, productName, price, componentType };
-                    }
-                    return item;
-                });
-                if (!replaced) {
-                    cart.push({ productId, productName, price, componentType });
-                }
-                sessionStorage.setItem('cart', JSON.stringify(cart));
-                showNotification(`Đã thêm ${productName} vào giỏ hàng!`, 'success');
-                renderTemporaryOrder();
-                updateSidebarSelectedLabels();
-                updateProgressBar();
-            }
-
-            function removeFromCart(componentType) {
-                let cart = JSON.parse(sessionStorage.getItem('cart') || '[]');
-                cart = cart.filter(item => item.componentType !== componentType);
-                sessionStorage.setItem('cart', JSON.stringify(cart));
-                // Xóa luôn lựa chọn ở sessionStorage cho sidebar/progress
-                sessionStorage.removeItem(`selected_${componentType}`);
-                renderTemporaryOrder();
-                updateSidebarSelectedLabels();
-                updateProgressBar();
-            }
-
-            // Hook lại sự kiện sau khi load sản phẩm (AJAX)
-            function hookProductButtons(componentType) {
-                // Gắn sự kiện cho nút thêm vào giỏ hàng
-                $('.btn-add-cart').off('click').on('click', function() {
-                    const productId = $(this).data('product-id');
-                    const productName = $(this).data('product-name');
-                    const productPrice = $(this).data('product-price');
-                    addToCart(componentType, productId, productName, productPrice);
-                });
-            }
-
-            // Sửa loadProducts để hook lại nút
-            const originalLoadProducts = window.loadProducts;
+            // XÓA các phiên bản cũ của hàm loadProducts (nếu có)
+            // ... giữ lại phiên bản này ở cuối file ...
             window.loadProducts = function(type) {
                 window.currentComponentType = type;
                 $('#currentCategoryBarTitle').html(
                   '<div class="mb-3" style="font-size:1.2em;font-weight:600;color:#0052cc;">' +
                   '<i class="fas fa-layer-group me-2"></i>Category: <span>' + getCategoryDisplayName(type) + '</span></div>'
                 );
-                renderTemporaryOrder(); // Đảm bảo đơn hàng tạm thời luôn hiển thị sau tiêu đề
                 $('#productList').html('<div class="text-center py-5"><div class="spinner-border text-primary"></div><div>Đang tải sản phẩm...</div></div>');
                 $.ajax({
                     url: 'productservlet',
@@ -933,7 +859,12 @@
                 }
                 html += `<div class="card mb-2"><div class="card-header bg-primary text-white py-2 px-3"><i class="fas fa-shopping-cart me-2"></i>Đơn hàng tạm thời</div><div class="card-body p-2"><div class="table-responsive"><table class="table table-sm mb-0"><thead><tr><th>Loại linh kiện</th><th>Tên sản phẩm</th><th>Giá</th><th></th></tr></thead><tbody>`;
                 cart.forEach(item => {
-                    html += `<tr><td>${item.componentType}</td><td>${item.productName}</td><td>$${item.price}</td><td><button class='btn btn-danger btn-sm btn-remove-cart' data-component-type='${item.componentType}' title='Xóa'><i class='fas fa-trash'></i></button></td></tr>`;
+                    html += `<tr>
+                        <td>${item.componentType}</td>
+                        <td>${item.productName}</td>
+                        <td>$${item.price}</td>
+                        <td><button class='btn btn-danger btn-sm btn-remove-cart' data-component-type='${item.componentType}' title='Xóa'><i class='fas fa-trash'></i></button></td>
+                    </tr>`;
                 });
                 html += '</tbody></table></div></div></div>';
                 $('#temporaryOrderBar').html(html);
