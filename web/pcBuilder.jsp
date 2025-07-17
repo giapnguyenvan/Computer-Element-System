@@ -519,28 +519,28 @@
                             <h5 class="mb-3">Build Case PC</h5>
                             <ul class="sidebar-menu">
                                 <li class="menu-item">
-                                    <a href="#"><i class="fas fa-microchip fa-fw me-2"></i> CPU</a>
+                                    <a href="#"><i class="fas fa-microchip fa-fw me-2"></i> CPU <span class="selected-component-label" id="sidebar-selected-CPU" style="font-size:0.95em;color:#28a745;margin-left:4px;"></span></a>
                                 </li>
                                 <li class="menu-item">
-                                    <a href="#"><i class="fas fa-server fa-fw me-2"></i> Mainboard</a>
+                                    <a href="#"><i class="fas fa-server fa-fw me-2"></i> Mainboard <span class="selected-component-label" id="sidebar-selected-Mainboard" style="font-size:0.95em;color:#28a745;margin-left:4px;"></span></a>
                                 </li>
                                 <li class="menu-item">
-                                    <a href="#"><i class="fas fa-memory fa-fw me-2"></i> RAM</a>
+                                    <a href="#"><i class="fas fa-memory fa-fw me-2"></i> RAM <span class="selected-component-label" id="sidebar-selected-RAM" style="font-size:0.95em;color:#28a745;margin-left:4px;"></span></a>
                                 </li>
                                 <li class="menu-item">
-                                    <a href="#"><i class="fas fa-video fa-fw me-2"></i> GPU</a>
+                                    <a href="#"><i class="fas fa-video fa-fw me-2"></i> GPU <span class="selected-component-label" id="sidebar-selected-GPU" style="font-size:0.95em;color:#28a745;margin-left:4px;"></span></a>
                                 </li>
                                 <li class="menu-item">
-                                    <a href="#"><i class="fas fa-hdd fa-fw me-2"></i> Storage</a>
+                                    <a href="#"><i class="fas fa-hdd fa-fw me-2"></i> Storage <span class="selected-component-label" id="sidebar-selected-Storage" style="font-size:0.95em;color:#28a745;margin-left:4px;"></span></a>
                                 </li>
                                 <li class="menu-item">
-                                    <a href="#"><i class="fas fa-plug fa-fw me-2"></i> PSU</a>
+                                    <a href="#"><i class="fas fa-plug fa-fw me-2"></i> PSU <span class="selected-component-label" id="sidebar-selected-PSU" style="font-size:0.95em;color:#28a745;margin-left:4px;"></span></a>
                                 </li>
                                 <li class="menu-item">
-                                    <a href="#"><i class="fas fa-desktop fa-fw me-2"></i> Case</a>
+                                    <a href="#"><i class="fas fa-desktop fa-fw me-2"></i> Case <span class="selected-component-label" id="sidebar-selected-Case" style="font-size:0.95em;color:#28a745;margin-left:4px;"></span></a>
                                 </li>
                                 <li class="menu-item">
-                                    <a href="#"><i class="fas fa-fan fa-fw me-2"></i> Cooler</a>
+                                    <a href="#"><i class="fas fa-fan fa-fw me-2"></i> Cooler <span class="selected-component-label" id="sidebar-selected-Cooler" style="font-size:0.95em;color:#28a745;margin-left:4px;"></span></a>
                                 </li>
                             </ul>
                         </div>
@@ -646,7 +646,10 @@
                                 </div>
                             </div>
                             <!-- Vùng hiển thị sản phẩm động -->
-                            <div id="currentCategoryBar"></div>
+                            <div id="currentCategoryBar">
+                              <div id="currentCategoryBarTitle"></div>
+                              <div id="temporaryOrderBar"></div>
+                            </div>
                             <div id="productList" class="mt-4"></div>
                         </div>
                     </div>
@@ -701,8 +704,35 @@
                 }, 3000);
             }
             
-            // Hàm xác nhận chọn linh kiện trong modal hoặc bảng
-            function confirmSelectComponent(componentType, productId, productName, price) {
+            // Hàm cập nhật trạng thái nút Select theo loại linh kiện
+            function updateSelectButtonState(componentType, productName) {
+                // Tìm nút Select tương ứng loại linh kiện
+                const iconMap = {
+                    'CPU': 'fa-microchip',
+                    'Mainboard': 'fa-server',
+                    'RAM': 'fa-memory',
+                    'GPU': 'fa-video',
+                    'Storage': 'fa-hdd',
+                    'PSU': 'fa-plug',
+                    'Case': 'fa-desktop',
+                    'Cooler': 'fa-fan'
+                };
+                const iconClass = iconMap[componentType];
+                if (!iconClass) return;
+                // Đổi tất cả nút về mặc định trước
+                $('.btn-pcbuilder-white').each(function() {
+                    $(this).css({'background':'', 'color':'', 'border':''});
+                });
+                // Đổi nút tương ứng
+                $(`.btn-pcbuilder-white i.${iconClass}`).closest('.btn-pcbuilder-white').css({
+                    'background': '#28a745',
+                    'color': '#fff',
+                    'border': '2px solid #28a745'
+                });
+            }
+
+            // Hàm xác nhận chọn linh kiện (dùng khi add to cart hoặc chọn)
+            function selectComponent(componentType, productId, productName, price) {
                 // Lưu vào sessionStorage (ghi đè nếu chọn lại)
                 const selection = {
                     productId: productId,
@@ -712,6 +742,7 @@
                 };
                 sessionStorage.setItem(`selected_${componentType}`, JSON.stringify(selection));
                 // Cập nhật UI
+                updateSelectButtonState(componentType, productName);
                 const stepElement = document.getElementById(`step-${componentType.toLowerCase()}`);
                 const selectedElement = document.getElementById(`selected-${componentType.toLowerCase()}`);
                 if (stepElement && selectedElement) {
@@ -720,12 +751,14 @@
                     selectedElement.style.color = '#28a745';
                 }
                 updateProgressBar();
-                showNotification(`Đã chọn ${componentType.toUpperCase()}: ${productName}`, 'success');
+                showNotification(`${componentType} đã được chọn: ${productName}`, 'success');
+                updateSidebarSelectedLabels(); // Cập nhật trạng thái sidebar
             }
-            
+
             // Load saved selections on page load
             window.addEventListener('load', function() {
                 updateProgressBar();
+                updateSidebarSelectedLabels(); // Cập nhật trạng thái sidebar khi load lại trang
             });
 
             // Hàm cập nhật progress bar
@@ -762,7 +795,7 @@
 
             function loadProducts(type) {
                 var displayName = getCategoryDisplayName(type);
-                $('#currentCategoryBar').html(
+                $('#currentCategoryBarTitle').html(
                   '<div class="mb-3" style="font-size:1.2em;font-weight:600;color:#0052cc;">' +
                   '<i class="fas fa-layer-group me-2"></i>Category: <span>' + displayName + '</span></div>'
                 );
@@ -778,7 +811,7 @@
                             const productId = $(this).data('product-id');
                             const productName = $(this).data('product-name');
                             const productPrice = $(this).data('product-price');
-                            confirmSelectComponent(type, productId, productName, productPrice);
+                            selectComponent(type, productId, productName, productPrice);
                         });
                     },
                     error: function() {
@@ -788,45 +821,48 @@
             }
 
             // Hàm thêm vào giỏ hàng
-            function addToCart(componentType) {
-                const selection = sessionStorage.getItem(`selected_${componentType}`);
-                if (!selection) {
-                    showNotification('Bạn chưa chọn linh kiện này!', 'warning');
-                    return;
-                }
+            function addToCart(componentType, productId, productName, price) {
+                // Chọn linh kiện trước (ghi đè nếu đã chọn)
+                selectComponent(componentType, productId, productName, price);
                 let cart = JSON.parse(sessionStorage.getItem('cart') || '[]');
-                const item = JSON.parse(selection);
-                // Tránh trùng lặp productId
-                if (!cart.some(i => i.productId == item.productId)) {
-                    cart.push(item);
-                    sessionStorage.setItem('cart', JSON.stringify(cart));
-                    showNotification(`Đã thêm ${item.productName} vào giỏ hàng!`, 'success');
-                } else {
-                    showNotification('Linh kiện đã có trong giỏ hàng!', 'info');
+                // Nếu đã có cùng loại linh kiện, thay thế mục đó, giữ lại các mục khác
+                let replaced = false;
+                cart = cart.map(item => {
+                    if (item.componentType === componentType) {
+                        replaced = true;
+                        return { productId, productName, price, componentType };
+                    }
+                    return item;
+                });
+                if (!replaced) {
+                    cart.push({ productId, productName, price, componentType });
                 }
+                sessionStorage.setItem('cart', JSON.stringify(cart));
+                showNotification(`Đã thêm ${productName} vào giỏ hàng!`, 'success');
+                renderTemporaryOrder();
+                updateSidebarSelectedLabels();
+                updateProgressBar();
+            }
+
+            function removeFromCart(componentType) {
+                let cart = JSON.parse(sessionStorage.getItem('cart') || '[]');
+                cart = cart.filter(item => item.componentType !== componentType);
+                sessionStorage.setItem('cart', JSON.stringify(cart));
+                // Xóa luôn lựa chọn ở sessionStorage cho sidebar/progress
+                sessionStorage.removeItem(`selected_${componentType}`);
+                renderTemporaryOrder();
+                updateSidebarSelectedLabels();
+                updateProgressBar();
             }
 
             // Hook lại sự kiện sau khi load sản phẩm (AJAX)
             function hookProductButtons(componentType) {
-                // Đổi nút chọn thành btn-success
-                $('.select-product').removeClass('btn-primary').addClass('btn-success');
-                // Thêm nút Thêm vào giỏ hàng nếu chưa có
-                $('.select-product').each(function() {
-                    if ($(this).siblings('.btn-add-cart').length === 0) {
-                        const btn = $('<button class="btn btn-warning btn-sm btn-add-cart ms-1" title="Thêm vào giỏ hàng"><i class="fas fa-cart-plus"></i></button>');
-                        btn.on('click', (e) => {
-                            e.stopPropagation();
-                            addToCart(componentType);
-                        });
-                        $(this).after(btn);
-                    }
-                });
-                // Sự kiện chọn linh kiện
-                $('.select-product').off('click').on('click', function() {
+                // Gắn sự kiện cho nút thêm vào giỏ hàng
+                $('.btn-add-cart').off('click').on('click', function() {
                     const productId = $(this).data('product-id');
                     const productName = $(this).data('product-name');
                     const productPrice = $(this).data('product-price');
-                    confirmSelectComponent(componentType, productId, productName, productPrice);
+                    addToCart(componentType, productId, productName, productPrice);
                 });
             }
 
@@ -834,10 +870,11 @@
             const originalLoadProducts = window.loadProducts;
             window.loadProducts = function(type) {
                 window.currentComponentType = type;
-                $('#currentCategoryBar').html(
+                $('#currentCategoryBarTitle').html(
                   '<div class="mb-3" style="font-size:1.2em;font-weight:600;color:#0052cc;">' +
                   '<i class="fas fa-layer-group me-2"></i>Category: <span>' + getCategoryDisplayName(type) + '</span></div>'
                 );
+                renderTemporaryOrder(); // Đảm bảo đơn hàng tạm thời luôn hiển thị sau tiêu đề
                 $('#productList').html('<div class="text-center py-5"><div class="spinner-border text-primary"></div><div>Đang tải sản phẩm...</div></div>');
                 $.ajax({
                     url: 'productservlet',
@@ -854,10 +891,59 @@
                 });
             };
 
-            // Khi load lại trang, cập nhật progress bar
+            // Khi load lại trang, cập nhật progress bar và trạng thái nút select
             window.addEventListener('load', function() {
                 updateProgressBar();
+                updateSidebarSelectedLabels(); // Cập nhật trạng thái sidebar khi load lại trang
+                // Nếu đã chọn linh kiện trước đó, cập nhật nút
+                const steps = ['CPU','Mainboard','RAM','GPU','Storage','PSU','Case','Cooler'];
+                steps.forEach(type => {
+                    const data = sessionStorage.getItem(`selected_${type}`);
+                    if (data) {
+                        const item = JSON.parse(data);
+                        updateSelectButtonState(type, item.productName);
+                    }
+                });
+                renderTemporaryOrder(); // Hiển thị đơn hàng tạm thời khi load lại trang
             });
+
+            // Hàm cập nhật trạng thái sidebar linh kiện đã chọn
+            function updateSidebarSelectedLabels() {
+                const steps = ['CPU','Mainboard','RAM','GPU','Storage','PSU','Case','Cooler'];
+                steps.forEach(type => {
+                    const data = sessionStorage.getItem(`selected_${type}`);
+                    const label = $(`#sidebar-selected-${type}`);
+                    if (data) {
+                        const item = JSON.parse(data);
+                        label.text(item.productName);
+                    } else {
+                        label.text(''); // hoặc 'Chưa chọn'
+                    }
+                });
+            }
+
+            // Hàm hiển thị đơn hàng tạm thời ở #currentCategoryBar
+            function renderTemporaryOrder() {
+                let cart = JSON.parse(sessionStorage.getItem('cart') || '[]');
+                let html = '';
+                if (cart.length === 0) {
+                    html = '<div class="alert alert-secondary mb-2">Chưa có linh kiện nào trong đơn hàng tạm thời.</div>';
+                    $('#temporaryOrderBar').html(html);
+                    return;
+                }
+                html += `<div class="card mb-2"><div class="card-header bg-primary text-white py-2 px-3"><i class="fas fa-shopping-cart me-2"></i>Đơn hàng tạm thời</div><div class="card-body p-2"><div class="table-responsive"><table class="table table-sm mb-0"><thead><tr><th>Loại linh kiện</th><th>Tên sản phẩm</th><th>Giá</th><th></th></tr></thead><tbody>`;
+                cart.forEach(item => {
+                    html += `<tr><td>${item.componentType}</td><td>${item.productName}</td><td>$${item.price}</td><td><button class='btn btn-danger btn-sm btn-remove-cart' data-component-type='${item.componentType}' title='Xóa'><i class='fas fa-trash'></i></button></td></tr>`;
+                });
+                html += '</tbody></table></div></div></div>';
+                $('#temporaryOrderBar').html(html);
+                // Gắn sự kiện xóa, đảm bảo không bị trùng lặp
+                $('.btn-remove-cart').off('click').on('click', function(e) {
+                    e.preventDefault();
+                    const componentType = $(this).data('component-type');
+                    removeFromCart(componentType);
+                });
+            }
         //]]>
         </script>
         <style>

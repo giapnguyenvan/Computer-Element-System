@@ -135,7 +135,7 @@ $(document).ready(function() {
         const urlParams = new URLSearchParams(window.location.search);
         const componentType = urlParams.get('componentType');
         if (window.addToCart) {
-            window.addToCart(componentType);
+            window.addToCart(componentType, productId, productName, productPrice);
         } else {
             alert(`Đã thêm: ${productName} - $${productPrice}`);
         }
