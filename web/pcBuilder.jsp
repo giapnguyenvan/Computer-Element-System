@@ -646,6 +646,7 @@
                                 </div>
                             </div>
                             <!-- Vùng hiển thị sản phẩm động -->
+                            <div id="currentCategoryBar"></div>
                             <div id="productList" class="mt-4"></div>
                         </div>
                     </div>
@@ -749,8 +750,26 @@
                 }
             }
 
-            // Hàm loadProducts thay thế selectComponent
+            function getCategoryDisplayName(type) {
+                switch(type) {
+                    case 'CPU': return 'Bộ vi xử lý';
+                    case 'Mainboard': return 'Bo mạch chủ';
+                    case 'RAM': return 'Bộ nhớ';
+                    case 'GPU': return 'Card đồ họa';
+                    case 'Storage': return 'Ổ lưu trữ';
+                    case 'PSU': return 'Nguồn';
+                    case 'Case': return 'Vỏ máy';
+                    case 'Cooler': return 'Tản nhiệt';
+                    default: return type;
+                }
+            }
+
             function loadProducts(type) {
+                var displayName = getCategoryDisplayName(type);
+                $('#currentCategoryBar').html(
+                  '<div class="mb-3" style="font-size:1.2em;font-weight:600;color:#0052cc;">' +
+                  '<i class="fas fa-layer-group me-2"></i>Category: <span>' + displayName + '</span></div>'
+                );
                 $('#productList').html('<div class="text-center py-5"><div class="spinner-border text-primary"></div><div>Đang tải sản phẩm...</div></div>');
                 $.ajax({
                     url: 'productservlet',
