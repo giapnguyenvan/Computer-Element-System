@@ -42,14 +42,20 @@ public class ProductServlet extends HttpServlet {
                     break;
 
                 case "productManagement":
-                    plist = dao.getAllProduct();
-                    request.setAttribute("product", plist);
-                    
                     // Lấy componentType từ parameter nếu có
                     String componentType = request.getParameter("componentType");
                     if (componentType != null && !componentType.isEmpty()) {
+                        int componentTypeId = ProductDAO.getComponentTypeIdByName(componentType);
+                        if (componentTypeId != -1) {
+                            plist = dao.getProductsByComponentType(componentTypeId);
+                        } else {
+                            plist = new ArrayList<>(); // Không tìm thấy loại linh kiện
+                        }
                         request.setAttribute("componentType", componentType);
+                    } else {
+                        plist = dao.getAllProduct();
                     }
+                    request.setAttribute("product", plist);
                     // AJAX fragment support
                     String ajax = request.getParameter("ajax");
                     if ("1".equals(ajax)) {
