@@ -497,6 +497,14 @@
                     font-size: 0.95em;
                 }
             }
+            #productList,
+            #productList .table,
+            #productList .table th,
+            #productList .table td,
+            #productList .alert,
+            #productList .status-badge {
+                color: #111 !important;
+            }
         </style>
     </head>
     <body>
