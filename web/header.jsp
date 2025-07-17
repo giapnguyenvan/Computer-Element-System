@@ -314,7 +314,7 @@
                         </a>
                     </c:otherwise>
                 </c:choose>
-                <a href="#" onclick="checkLoginBeforeCart(event)" class="btn btn-outline-primary position-relative">
+                <a href="#" onclick="checkLoginBeforeCart(event)" class="btn btn-outline-primary position-relative" id="cartButton">
                     <i class="fas fa-shopping-cart"></i>
                     <span id="cartCount" class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
                         0
@@ -331,6 +331,35 @@
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
 <script>
+    // Function to check login before accessing cart
+    function checkLoginBeforeCart(event) {
+        event.preventDefault();
+        
+        // Check if user is logged in
+        const isLoggedIn = ${not empty sessionScope.userAuth or not empty sessionScope.customerAuth};
+        
+        if (isLoggedIn) {
+            // User is logged in, redirect to cart
+            window.location.href = '${pageContext.request.contextPath}/view-cart';
+        } else {
+            // User is not logged in, show login prompt
+            Swal.fire({
+                title: 'Login Required',
+                text: 'Please login to view your cart',
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Go to Login',
+                cancelButtonText: 'Cancel'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    window.location.href = '${pageContext.request.contextPath}/login';
+                }
+            });
+        }
+    }
+
     document.addEventListener('DOMContentLoaded', function() {
         console.log('[Header] DOM loaded, initializing custom menu dropdown...');
         const menuDropdownToggle = document.getElementById('menuDropdown');
@@ -416,5 +445,33 @@
         const menuData = JSON.parse(document.getElementById('menuDataJsonContainer').dataset.json);
         console.log('[Header] Menu items count:', menuData.length);
         console.log('[Header] Menu items:', menuData);
+        
+        // Update cart count on page load
+        updateCartCountInHeader();
     });
+
+    // Function to update cart count in header
+    function updateCartCountInHeader() {
+        const isLoggedIn = ${not empty sessionScope.userAuth or not empty sessionScope.customerAuth};
+        
+        if (isLoggedIn) {
+            fetch('${pageContext.request.contextPath}/CartApiServlet')
+                .then(response => response.json())
+                .then(result => {
+                    if (result.success && result.data) {
+                        const totalItems = result.data.reduce((sum, item) => sum + item.quantity, 0);
+                        const cartCountElement = document.getElementById('cartCount');
+                        if (cartCountElement) {
+                            cartCountElement.textContent = totalItems;
+                        }
+                    }
+                })
+                .catch(error => {
+                    console.error('Error updating cart count:', error);
+                });
+        }
+    }
+
+    // Make updateCartCountInHeader available globally
+    window.updateCartCountInHeader = updateCartCountInHeader;
 </script>
