@@ -620,28 +620,28 @@
                             <div class="container mb-4">
                                 <div class="row mb-2 justify-content-center">
                                     <div class="col-auto mb-2">
-                                        <button class="btn btn-pcbuilder-white btn-lg" onclick="loadProducts('CPU'); return false;"><i class="fas fa-microchip me-2"></i>Select CPU</button>
+                                        <button type="button" class="btn btn-pcbuilder-white btn-lg" onclick="loadProducts('CPU'); return false;"><i class="fas fa-microchip me-2"></i>Select CPU</button>
                                     </div>
                                     <div class="col-auto mb-2">
-                                        <button class="btn btn-pcbuilder-white btn-lg" onclick="loadProducts('Mainboard'); return false;"><i class="fas fa-server me-2"></i>Select Mainboard</button>
+                                        <button type="button" class="btn btn-pcbuilder-white btn-lg" onclick="loadProducts('Mainboard'); return false;"><i class="fas fa-server me-2"></i>Select Mainboard</button>
                                     </div>
                                     <div class="col-auto mb-2">
-                                        <button class="btn btn-pcbuilder-white btn-lg" onclick="loadProducts('RAM'); return false;"><i class="fas fa-memory me-2"></i>Select RAM</button>
+                                        <button type="button" class="btn btn-pcbuilder-white btn-lg" onclick="loadProducts('RAM'); return false;"><i class="fas fa-memory me-2"></i>Select RAM</button>
                                     </div>
                                     <div class="col-auto mb-2">
-                                        <button class="btn btn-pcbuilder-white btn-lg" onclick="loadProducts('GPU'); return false;"><i class="fas fa-video me-2"></i>Select GPU</button>
+                                        <button type="button" class="btn btn-pcbuilder-white btn-lg" onclick="loadProducts('GPU'); return false;"><i class="fas fa-video me-2"></i>Select GPU</button>
                                     </div>
                                     <div class="col-auto mb-2">
-                                        <button class="btn btn-pcbuilder-white btn-lg" onclick="loadProducts('Storage'); return false;"><i class="fas fa-hdd me-2"></i>Select Storage</button>
+                                        <button type="button" class="btn btn-pcbuilder-white btn-lg" onclick="loadProducts('Storage'); return false;"><i class="fas fa-hdd me-2"></i>Select Storage</button>
                                     </div>
                                     <div class="col-auto mb-2">
-                                        <button class="btn btn-pcbuilder-white btn-lg" onclick="loadProducts('PSU'); return false;"><i class="fas fa-plug me-2"></i>Select PSU</button>
+                                        <button type="button" class="btn btn-pcbuilder-white btn-lg" onclick="loadProducts('PSU'); return false;"><i class="fas fa-plug me-2"></i>Select PSU</button>
                                     </div>
                                     <div class="col-auto mb-2">
-                                        <button class="btn btn-pcbuilder-white btn-lg" onclick="loadProducts('Case'); return false;"><i class="fas fa-desktop me-2"></i>Select Case</button>
+                                        <button type="button" class="btn btn-pcbuilder-white btn-lg" onclick="loadProducts('Case'); return false;"><i class="fas fa-desktop me-2"></i>Select Case</button>
                                     </div>
                                     <div class="col-auto mb-2">
-                                        <button class="btn btn-pcbuilder-white btn-lg" onclick="loadProducts('Cooler'); return false;"><i class="fas fa-fan me-2"></i>Select Cooler</button>
+                                        <button type="button" class="btn btn-pcbuilder-white btn-lg" onclick="loadProducts('Cooler'); return false;"><i class="fas fa-fan me-2"></i>Select Cooler</button>
                                     </div>
                                 </div>
                             </div>
@@ -875,6 +875,58 @@
                     removeFromCart(componentType);
                 });
             }
+
+            // HƯỚNG DẪN: Khi render nút Add to cart trong HTML sản phẩm, hãy dùng dạng sau:
+            // <button class="btn-add-cart" data-id="${productId}" data-name="${productName}" data-price="${price}">Add to cart</button>
+            // Sau khi load sản phẩm, gắn lại sự kiện cho nút Add to cart
+            function hookProductButtons(type) {
+                $('.btn-add-cart').off('click').on('click', function(e) {
+                    e.preventDefault();
+                    // Lấy đúng thuộc tính data-* đã render ra từ productManagement.jsp
+                    const productId = $(this).data('product-id');
+                    const productName = $(this).data('product-name');
+                    const price = $(this).data('product-price');
+                    const componentType = type;
+                    if (!productName || !price) {
+                        showNotification('Không lấy được thông tin sản phẩm!', 'danger');
+                        return;
+                    }
+                    // Thêm vào cart (chỉ 1 loại mỗi linh kiện)
+                    let cart = JSON.parse(sessionStorage.getItem('cart') || '[]');
+                    cart = cart.filter(item => item.componentType !== componentType);
+                    cart.push({ productId, productName, price, componentType });
+                    sessionStorage.setItem('cart', JSON.stringify(cart));
+                    // Gọi selectComponent để đồng bộ UI và lưu lựa chọn
+                    selectComponent(componentType, productId, productName, price);
+                    renderTemporaryOrder();
+                    calculateTotal();
+                    showNotification(`Đã thêm: ${productName} - $${price}`, 'success');
+                });
+            }
+
+            // Hàm xóa sản phẩm khỏi cart và cập nhật giao diện
+            function removeFromCart(componentType) {
+                let cart = JSON.parse(sessionStorage.getItem('cart') || '[]');
+                cart = cart.filter(item => item.componentType !== componentType);
+                sessionStorage.setItem('cart', JSON.stringify(cart));
+                // Xóa luôn lựa chọn trong sessionStorage cho đồng bộ
+                sessionStorage.removeItem(`selected_${componentType}`);
+                renderTemporaryOrder();
+                updateProgressBar();
+                updateSidebarSelectedLabels();
+                calculateTotal();
+            }
+
+            window.addToCart = function(componentType, productId, productName, price) {
+                let cart = JSON.parse(sessionStorage.getItem('cart') || '[]');
+                cart = cart.filter(item => item.componentType !== componentType);
+                cart.push({ productId, productName, price, componentType });
+                sessionStorage.setItem('cart', JSON.stringify(cart));
+                selectComponent(componentType, productId, productName, price);
+                renderTemporaryOrder();
+                calculateTotal();
+                showNotification(`Đã thêm: ${productName} - $${price}`, 'success');
+            };
         //]]>
         </script>
         <style>

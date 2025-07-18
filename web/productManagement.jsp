@@ -91,7 +91,7 @@
                     </td>
                     <td>
                         <div class="action-buttons">
-                            <button class="btn btn-warning btn-sm btn-add-cart" data-product-id="${product.productId}" data-product-name="${product.name}" data-product-price="${product.price}" title="Thêm vào giỏ hàng">
+                            <button type="button" class="btn btn-warning btn-sm btn-add-cart" data-product-id="${product.productId}" data-product-name="${product.name}" data-product-price="${product.price}" title="Thêm vào giỏ hàng">
                                 <i class="fas fa-cart-plus"></i>
                             </button>
                         </div>
