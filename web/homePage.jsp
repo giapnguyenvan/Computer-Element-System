@@ -176,17 +176,14 @@
         <section id="cpuProducts" class="py-5 bg-light">
             <jsp:include page="CPUCategory.jsp" />
         </section>
-
         <!-- GPU Products Section -->
         <section id="gpuProducts" class="py-5">
             <jsp:include page="GPUCategory.jsp" />
         </section>
-
         <!-- RAM Products Section -->
         <section id="ramProducts" class="py-5 bg-light">
             <jsp:include page="RAMCategory.jsp" />
         </section>
-
         <!-- Mainboard Products Section -->
         <section id="mainboardProducts" class="py-5">
             <jsp:include page="MainboardCategory.jsp" />
