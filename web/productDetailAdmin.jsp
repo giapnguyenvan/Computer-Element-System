@@ -21,21 +21,7 @@
                 <h2 class="mb-4">
                     <i class="fas fa-edit"></i> Edit Product
                 </h2>
-                
-                <!-- Success/Error Messages -->
-                <c:if test="${not empty successMsg}">
-                    <div class="alert alert-success alert-dismissible fade show" role="alert">
-                        ${successMsg}
-                        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-                    </div>
-                </c:if>
-                <c:if test="${not empty errorMsg}">
-                    <div class="alert alert-danger alert-dismissible fade show" role="alert">
-                        ${errorMsg}
-                        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-                    </div>
-                </c:if>
-                
+                                
                 <form action="${pageContext.request.contextPath}/producteditservlet" method="POST">
                     <input type="hidden" name="action" value="update">
                     <input type="hidden" name="productId" value="${product.productId}">

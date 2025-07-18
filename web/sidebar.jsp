@@ -55,6 +55,9 @@
         <a href="${pageContext.request.contextPath}/managevouchers" target="mainFrame" class="<%= request.getRequestURI().contains("managefeedback") ? "active" : ""%>">
             <i class="fas fa-ticket-alt me-2"></i>Vouchers
         </a>
+        <a href="${pageContext.request.contextPath}/inventorylogservlet" target="mainFrame" class="<%= request.getRequestURI().contains("inventorylog") ? "active" : ""%>">
+            <i class="fas fa-clipboard-list me-2"></i>Inventory Log
+        </a>
         <a href="${pageContext.request.contextPath}/logout">
             <i class="fas fa-sign-out-alt me-2"></i> Logout
         </a>
