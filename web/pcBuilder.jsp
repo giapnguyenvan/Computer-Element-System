@@ -831,6 +831,7 @@
                     }
                 });
                 renderTemporaryOrder(); // Hiển thị đơn hàng tạm thời khi load lại trang
+                calculateTotal(); // Đảm bảo tổng giá luôn đúng khi load lại trang
             });
 
             // Hàm cập nhật trạng thái sidebar linh kiện đã chọn
@@ -853,11 +854,11 @@
                 let cart = JSON.parse(sessionStorage.getItem('cart') || '[]');
                 let html = '';
                 if (cart.length === 0) {
-                    html = '<div class="alert alert-secondary mb-2">Chưa có linh kiện nào trong đơn hàng tạm thời.</div>';
+                    html = '<div class="alert alert-secondary mb-2">No components have been added to the temporary order yet.</div>';
                     $('#temporaryOrderBar').html(html);
                     return;
                 }
-                html += `<div class="card mb-2"><div class="card-header bg-primary text-white py-2 px-3"><i class="fas fa-shopping-cart me-2"></i>Đơn hàng tạm thời</div><div class="card-body p-2"><div class="table-responsive"><table class="table table-sm mb-0"><thead><tr><th>Loại linh kiện</th><th>Tên sản phẩm</th><th>Giá</th><th></th></tr></thead><tbody>`;
+                html += `<div class="card mb-2"><div class="card-header bg-primary text-white py-2 px-3"><i class="fas fa-shopping-cart me-2"></i>Temporary Cart</div><div class="card-body p-2"><div class="table-responsive"><table class="table table-sm mb-0"><thead><tr><th>Loại linh kiện</th><th>Tên sản phẩm</th><th>Giá</th><th></th></tr></thead><tbody>`;
                 cart.forEach(item => {
                     html += `<tr>
                         <td>${item.componentType}</td>
@@ -891,16 +892,20 @@
                         showNotification('Không lấy được thông tin sản phẩm!', 'danger');
                         return;
                     }
-                    // Thêm vào cart (chỉ 1 loại mỗi linh kiện)
+                    // Cho phép nhiều sản phẩm mỗi loại linh kiện, nhưng không trùng productId
                     let cart = JSON.parse(sessionStorage.getItem('cart') || '[]');
-                    cart = cart.filter(item => item.componentType !== componentType);
-                    cart.push({ productId, productName, price, componentType });
-                    sessionStorage.setItem('cart', JSON.stringify(cart));
-                    // Gọi selectComponent để đồng bộ UI và lưu lựa chọn
-                    selectComponent(componentType, productId, productName, price);
-                    renderTemporaryOrder();
-                    calculateTotal();
-                    showNotification(`Đã thêm: ${productName} - $${price}`, 'success');
+                    // Nếu đã có sản phẩm cùng loại và cùng productId thì không thêm nữa
+                    const exists = cart.some(item => item.componentType === componentType && item.productId === productId);
+                    if (!exists) {
+                        cart.push({ productId, productName, price, componentType });
+                        sessionStorage.setItem('cart', JSON.stringify(cart));
+                        selectComponent(componentType, productId, productName, price);
+                        renderTemporaryOrder();
+                        calculateTotal();
+                        showNotification(`Đã thêm: ${productName} - $${price}`, 'success');
+                    } else {
+                        showNotification('Sản phẩm này đã có trong đơn hàng tạm thời!', 'warning');
+                    }
                 });
             }
 
@@ -919,13 +924,18 @@
 
             window.addToCart = function(componentType, productId, productName, price) {
                 let cart = JSON.parse(sessionStorage.getItem('cart') || '[]');
-                cart = cart.filter(item => item.componentType !== componentType);
-                cart.push({ productId, productName, price, componentType });
-                sessionStorage.setItem('cart', JSON.stringify(cart));
-                selectComponent(componentType, productId, productName, price);
-                renderTemporaryOrder();
-                calculateTotal();
-                showNotification(`Đã thêm: ${productName} - $${price}`, 'success');
+                // Cho phép nhiều sản phẩm mỗi loại linh kiện, nhưng không trùng productId
+                const exists = cart.some(item => item.componentType === componentType && item.productId === productId);
+                if (!exists) {
+                    cart.push({ productId, productName, price, componentType });
+                    sessionStorage.setItem('cart', JSON.stringify(cart));
+                    selectComponent(componentType, productId, productName, price);
+                    renderTemporaryOrder();
+                    calculateTotal();
+                    showNotification(`Đã thêm: ${productName} - $${price}`, 'success');
+                } else {
+                    showNotification('Sản phẩm này đã có trong đơn hàng tạm thời!', 'warning');
+                }
             };
         //]]>
         </script>
