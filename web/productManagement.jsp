@@ -91,7 +91,7 @@
                     </td>
                     <td>
                         <div class="action-buttons">
-                            <button type="button" class="btn btn-warning btn-sm btn-add-cart" data-product-id="${product.productId}" data-product-name="${product.name}" data-product-price="${product.price}" title="Thêm vào giỏ hàng">
+                            <button type="button" class="btn btn-warning btn-sm btn-add-cart" data-product-id="${product.productId}" data-product-name="${product.name}" data-product-price="${product.price}" data-component-type="${componentType}" title="Thêm vào giỏ hàng">
                                 <i class="fas fa-cart-plus"></i>
                             </button>
                         </div>
@@ -131,9 +131,7 @@ $(document).ready(function() {
         const productId = $(this).data('product-id');
         const productName = $(this).data('product-name');
         const productPrice = $(this).data('product-price');
-        // Lấy componentType từ URL parameter
-        const urlParams = new URLSearchParams(window.location.search);
-        const componentType = urlParams.get('componentType');
+        const componentType = $(this).data('component-type');
         if (window.addToCart) {
             window.addToCart(componentType, productId, productName, productPrice);
         } else {

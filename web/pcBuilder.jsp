@@ -805,11 +805,11 @@
                 $.ajax({
                     url: 'productservlet',
                     method: 'GET',
-                    data: { service: 'productManagement', componentType: type, ajax: 1 },
+                    data: { service: 'productManagement', componentType: type, ajax: 1 }, // Đảm bảo luôn có componentType
                     cache: false,
                     success: function(html) {
                         $('#productList').html(html);
-                        hookProductButtons(type);
+                        hookProductButtons();
                     },
                     error: function() {
                         $('#productList').html('<div class="alert alert-danger">Không thể tải danh sách sản phẩm.</div>');
@@ -832,6 +832,8 @@
                 });
                 renderTemporaryOrder(); // Hiển thị đơn hàng tạm thời khi load lại trang
                 calculateTotal(); // Đảm bảo tổng giá luôn đúng khi load lại trang
+                // Tự động load sản phẩm CPU khi vào trang lần đầu
+                loadProducts('CPU');
             });
 
             // Hàm cập nhật trạng thái sidebar linh kiện đã chọn
@@ -880,21 +882,20 @@
             // HƯỚNG DẪN: Khi render nút Add to cart trong HTML sản phẩm, hãy dùng dạng sau:
             // <button class="btn-add-cart" data-id="${productId}" data-name="${productName}" data-price="${price}">Add to cart</button>
             // Sau khi load sản phẩm, gắn lại sự kiện cho nút Add to cart
-            function hookProductButtons(type) {
+            function hookProductButtons() {
                 $('.btn-add-cart').off('click').on('click', function(e) {
                     e.preventDefault();
                     // Lấy đúng thuộc tính data-* đã render ra từ productManagement.jsp
                     const productId = $(this).data('product-id');
                     const productName = $(this).data('product-name');
                     const price = $(this).data('product-price');
-                    const componentType = type;
-                    if (!productName || !price) {
+                    const componentType = $(this).data('component-type'); // Lấy trực tiếp từ button
+                    if (!productName || !price || !componentType) {
                         showNotification('Không lấy được thông tin sản phẩm!', 'danger');
                         return;
                     }
                     // Cho phép nhiều sản phẩm mỗi loại linh kiện, nhưng không trùng productId
                     let cart = JSON.parse(sessionStorage.getItem('cart') || '[]');
-                    // Nếu đã có sản phẩm cùng loại và cùng productId thì không thêm nữa
                     const exists = cart.some(item => item.componentType === componentType && item.productId === productId);
                     if (!exists) {
                         cart.push({ productId, productName, price, componentType });
