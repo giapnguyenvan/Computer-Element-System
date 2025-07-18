@@ -108,7 +108,66 @@
                             </div>
                         </div>
                     </div>
-                    <!-- Add more category cards -->
+                    <div class="col-md-4 mt-4">
+                        <div class="card category-card">
+                            <img src="https://images.unsplash.com/photo-1517336714731-489689fd1ca8" class="card-img-top" alt="Mainboard">
+                            <div class="card-body">
+                                <h5 class="card-title">Mainboard</h5>
+                                <p class="card-text">Motherboards for all platforms</p>
+                                <a href="#mainboardProducts" class="btn btn-outline-primary">Shop Now</a>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4 mt-4">
+                        <div class="card category-card">
+                            <img src="https://images.unsplash.com/photo-1519389950473-47ba0277781c" class="card-img-top" alt="Storage">
+                            <div class="card-body">
+                                <h5 class="card-title">Storage</h5>
+                                <p class="card-text">SSD, HDD, and more</p>
+                                <a href="#storageProducts" class="btn btn-outline-primary">Shop Now</a>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4 mt-4">
+                        <div class="card category-card">
+                            <img src="https://images.unsplash.com/photo-1519125323398-675f0ddb6308" class="card-img-top" alt="Power Supply">
+                            <div class="card-body">
+                                <h5 class="card-title">Power Supply (PSU)</h5>
+                                <p class="card-text">Reliable PSUs for your build</p>
+                                <a href="#psuProducts" class="btn btn-outline-primary">Shop Now</a>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4 mt-4">
+                        <div class="card category-card">
+                            <img src="https://images.unsplash.com/photo-1519125323398-675f0ddb6308" class="card-img-top" alt="Case">
+                            <div class="card-body">
+                                <h5 class="card-title">Case</h5>
+                                <p class="card-text">Stylish and functional cases</p>
+                                <a href="#caseProducts" class="btn btn-outline-primary">Shop Now</a>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4 mt-4">
+                        <div class="card category-card">
+                            <img src="https://images.unsplash.com/photo-1519125323398-675f0ddb6308" class="card-img-top" alt="Cooler">
+                            <div class="card-body">
+                                <h5 class="card-title">Cooler</h5>
+                                <p class="card-text">Air and liquid cooling solutions</p>
+                                <a href="#coolerProducts" class="btn btn-outline-primary">Shop Now</a>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4 mt-4">
+                        <div class="card category-card">
+                            <img src="https://images.unsplash.com/photo-1519125323398-675f0ddb6308" class="card-img-top" alt="Monitor">
+                            <div class="card-body">
+                                <h5 class="card-title">Monitor</h5>
+                                <p class="card-text">High refresh rate and 4K monitors</p>
+                                <a href="#monitorProducts" class="btn btn-outline-primary">Shop Now</a>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
         </section>
@@ -126,6 +185,31 @@
         <!-- RAM Products Section -->
         <section id="ramProducts" class="py-5 bg-light">
             <jsp:include page="RAMCategory.jsp" />
+        </section>
+
+        <!-- Mainboard Products Section -->
+        <section id="mainboardProducts" class="py-5">
+            <jsp:include page="MainboardCategory.jsp" />
+        </section>
+        <!-- Storage Products Section -->
+        <section id="storageProducts" class="py-5 bg-light">
+            <jsp:include page="StorageCategory.jsp" />
+        </section>
+        <!-- PSU Products Section -->
+        <section id="psuProducts" class="py-5">
+            <jsp:include page="PSUCategory.jsp" />
+        </section>
+        <!-- Case Products Section -->
+        <section id="caseProducts" class="py-5 bg-light">
+            <jsp:include page="CaseCategory.jsp" />
+        </section>
+        <!-- Cooler Products Section -->
+        <section id="coolerProducts" class="py-5">
+            <jsp:include page="CoolerCategory.jsp" />
+        </section>
+        <!-- Monitor Products Section -->
+        <section id="monitorProducts" class="py-5 bg-light">
+            <jsp:include page="MonitorCategory.jsp" />
         </section>
 
         <!-- Newsletter -->

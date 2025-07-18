@@ -98,12 +98,12 @@
                 </div>
                 <div id="columnFilterPopup" style="display:none; position:absolute; background:#fff; border:1px solid #ccc; box-shadow:0 2px 8px rgba(0,0,0,0.2); padding:10px; max-height:250px; overflow-y:auto; z-index:1000;">
                     <div style="text-align:right;">
-                        <button id="closeFilterBtn" type="button" class="btn btn-sm btn-close"></button>
+                        <button id="closeFilterBtn" type="button" class="btn btn-secondary">✕</button>
                     </div>
                     <div id="filterOptionsContainer"></div>
                     <div class="mt-2" style="display: flex; gap: 10px;">
-                        <button id="applyFilterBtn" type="button" class="btn btn-sm btn-primary">Apply Filter</button>
-                        <button id="clearFilterBtn" type="button" class="btn btn-sm btn-secondary">Clear Filter</button>
+                        <button id="applyFilterBtn" type="button" class="btn btn-primary">Apply Filter</button>
+                        <button id="clearFilterBtn" type="button" class="btn btn-secondary">Clear Filter</button>
                     </div>
                 </div>
             </div>

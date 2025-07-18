@@ -68,11 +68,11 @@
                                             </c:choose>
                                         </td>
                                         <td>
-                                            <button class="btn btn-link p-0 edit-action" title="Edit" data-product-id="${product.productId}">
-                                                <i class="fas fa-edit text-primary"></i>
+                                            <button class="btn  p-0 edit-action" title="Edit" data-product-id="${product.productId}">
+                                                <i class="fas fa-edit"></i>
                                             </button>
-                                            <button class="btn btn-link p-0 delete-action" title="Delete" data-product-id="${product.productId}">
-                                                <i class="fas fa-trash-alt text-danger"></i>
+                                            <button class="btn  p-0 delete-action text-danger" title="Delete" data-product-id="${product.productId}">
+                                                <i class="fas fa-trash-alt"></i>
                                             </button>
                                         </td>
                                     </tr>
@@ -92,12 +92,12 @@
                      overflow-y:auto;
                      z-index:1000;">
                     <div style="text-align:right;">
-                        <button id="closeFilterBtn" type="button" class="btn btn-sm btn-close"></button>
+                        <button id="closeFilterBtn" type="button" class="btn btn-secondary">✕</button>
                     </div>
                     <div id="filterOptionsContainer"></div>
                     <div class="mt-2" style="display: flex; gap: 10px;">
-                        <button id="applyFilterBtn" type="button" class="btn btn-sm btn-primary">Apply Filter</button>
-                        <button id="clearFilterBtn" type="button" class="btn btn-sm btn-secondary">Clear Filter</button>
+                        <button id="applyFilterBtn" type="button" class="btn btn-primary">Apply Filter</button>
+                        <button id="clearFilterBtn" type="button" class="btn btn-secondary">Clear Filter</button>
                     </div>
                 </div>
 
@@ -125,7 +125,7 @@
                         </div>
                         <!-- Move the buttons here, outside of #previewContainer -->
                         <div class="modal-footer" style="display: flex; justify-content: flex-end; gap: 10px; margin-top: 10px;">
-                            <button type="submit" class="btn btn-success">Confirm Upload</button>
+                            <button type="submit" class="btn btn-primary">Confirm Upload</button>
                             <button type="button" class="btn btn-secondary" onclick="closeUploadModal()">Cancel</button>
                         </div>
                     </form>
