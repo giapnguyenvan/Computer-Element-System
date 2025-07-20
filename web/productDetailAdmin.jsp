@@ -21,21 +21,7 @@
                 <h2 class="mb-4">
                     <i class="fas fa-edit"></i> Edit Product
                 </h2>
-                
-                <!-- Success/Error Messages -->
-                <c:if test="${not empty successMsg}">
-                    <div class="alert alert-success alert-dismissible fade show" role="alert">
-                        ${successMsg}
-                        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-                    </div>
-                </c:if>
-                <c:if test="${not empty errorMsg}">
-                    <div class="alert alert-danger alert-dismissible fade show" role="alert">
-                        ${errorMsg}
-                        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-                    </div>
-                </c:if>
-                
+                                
                 <form action="${pageContext.request.contextPath}/producteditservlet" method="POST">
                     <input type="hidden" name="action" value="update">
                     <input type="hidden" name="productId" value="${product.productId}">
@@ -50,9 +36,11 @@
                                         <img src="${product.imageUrl}" alt="${product.name}" class="product-image mb-3">
                                     </c:if>
                                     <div class="mb-3">
-                                        <label for="imageUrl" class="form-label">Image Path</label>
-                                        <input type="text" class="form-control" id="imageUrl" name="imageUrl" 
-                                               value="${product.imageUrl}" placeholder="Enter image file path (e.g., /images/product1.jpg)">
+                                        <label for="imageFile" class="form-label">Upload Image (JPG/PNG only)</label>
+                                        <input type="file" class="form-control" id="imageFile" name="imageFile" accept=".jpg,.jpeg,.png">
+                                        <div id="selectedImageName" class="form-text"></div>
+                                        <input type="hidden" id="imageUrl" name="imageUrl" value="${product.imageUrl}">
+                                        <img id="imagePreview" src="${product.imageUrl}" alt="Product Image" class="product-image mb-3" style="display:none; max-width: 100%; border-radius: 8px;"/>
                                     </div>
                                 </div>
                             </div>
@@ -69,7 +57,7 @@
                                             <div class="mb-3">
                                                 <label for="name" class="form-label">Product Name *</label>
                                                 <input type="text" class="form-control" id="name" name="name" 
-                                                       value="${product.name}" required>
+                                                       value="${product.name}" required maxlength="30">
                                             </div>
                                         </div>
                                         <div class="col-md-6">
@@ -131,7 +119,7 @@
                                             <div class="mb-3">
                                                 <label for="model" class="form-label">Model</label>
                                                 <input type="text" class="form-control" id="model" name="model" 
-                                                       value="${product.model}">
+                                                       value="${product.model}" maxlength="20">
                                             </div>
                                         </div>
                                     </div>
@@ -175,7 +163,7 @@
                                     <div class="mb-3">
                                         <label for="description" class="form-label">Description</label>
                                         <textarea class="form-control" id="description" name="description" 
-                                                  rows="4">${product.description}</textarea>
+                                                  rows="4" maxlength="150">${product.description}</textarea>
                                     </div>
                                 </div>
                             </div>
@@ -300,6 +288,79 @@
             brandSelect.addEventListener('change', filterSeriesOptions);
             // Initial filter on page load
             filterSeriesOptions();
+
+            // Show image preview if there is an imageUrl
+            var imgPreview = document.getElementById('imagePreview');
+            var imageUrl = document.getElementById('imageUrl').value;
+            if (imageUrl && imageUrl.trim() !== '') {
+                imgPreview.style.display = 'block';
+                imgPreview.src = imageUrl;
+            } else {
+                imgPreview.style.display = 'none';
+            }
+        });
+
+        // Add client-side validation for field lengths
+        document.querySelector('form').addEventListener('submit', function(e) {
+            const name = document.getElementById('name').value.trim();
+            const model = document.getElementById('model').value.trim();
+            const description = document.getElementById('description').value.trim();
+            let errorMsg = '';
+            if (name.length > 30) {
+                errorMsg += 'Product Name cannot exceed 30 characters.\n';
+            }
+            if (model.length > 20) {
+                errorMsg += 'Model cannot exceed 20 characters.\n';
+            }
+            if (description.length > 150) {
+                errorMsg += 'Description cannot exceed 150 characters.\n';
+            }
+            if (errorMsg) {
+                alert(errorMsg);
+                e.preventDefault();
+            }
+        });
+
+        document.getElementById('imageFile').addEventListener('change', function(e) {
+            const fileInput = e.target;
+            const file = fileInput.files[0];
+            const nameDisplay = document.getElementById('selectedImageName');
+            const imgPreview = document.getElementById('imagePreview');
+            const imageUrl = document.getElementById('imageUrl').value;
+            if (file) {
+                const fileName = file.name;
+                const ext = fileName.split('.').pop().toLowerCase();
+                if (["jpg", "jpeg", "png"].includes(ext)) {
+                    nameDisplay.textContent = fileName;
+                    // Show preview
+                    const reader = new FileReader();
+                    reader.onload = function(ev) {
+                        imgPreview.src = ev.target.result;
+                        imgPreview.style.display = 'block';
+                    };
+                    reader.readAsDataURL(file);
+                } else {
+                    nameDisplay.textContent = '';
+                    fileInput.value = '';
+                    // Revert to original image if exists
+                    if (imageUrl && imageUrl.trim() !== '') {
+                        imgPreview.src = imageUrl;
+                        imgPreview.style.display = 'block';
+                    } else {
+                        imgPreview.style.display = 'none';
+                    }
+                    alert('Only JPG and PNG files are allowed.');
+                }
+            } else {
+                nameDisplay.textContent = '';
+                // If no file selected, revert to original image if exists
+                if (imageUrl && imageUrl.trim() !== '') {
+                    imgPreview.src = imageUrl;
+                    imgPreview.style.display = 'block';
+                } else {
+                    imgPreview.style.display = 'none';
+                }
+            }
         });
     </script>
 </body>

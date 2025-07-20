@@ -53,22 +53,18 @@ public class ProductImportServlet extends HttpServlet {
         List<RowError> errors = new ArrayList<>();
         ProductDAO dao = new ProductDAO();
 
-        response.setContentType("application/json;charset=UTF-8");
-        PrintWriter out = response.getWriter();
-        Gson gson = new Gson();
-
         try {
             Part filePart = request.getPart("excelFile");
             if (filePart == null) {
-                ImportResult result = new ImportResult(false, "Excel file not found.", 0, new ArrayList<>());
-                out.println(gson.toJson(result));
+                request.setAttribute("errorMsg", "Excel file not found.");
+                request.getRequestDispatcher("/viewProduct.jsp").forward(request, response);
                 return;
             }
             
             String fileName = filePart.getSubmittedFileName();
             if (fileName == null || !(fileName.toLowerCase().endsWith(".xlsx") || fileName.toLowerCase().endsWith(".xls"))) {
-                ImportResult result = new ImportResult(false, "Invalid file type. Please upload an Excel file (.xlsx or .xls).", 0, new ArrayList<>());
-                out.println(gson.toJson(result));
+                request.setAttribute("errorMsg", "Invalid file type. Please upload an Excel file (.xlsx or .xls).");
+                request.getRequestDispatcher("/viewProduct.jsp").forward(request, response);
                 return;
             }
             
@@ -77,8 +73,8 @@ public class ProductImportServlet extends HttpServlet {
             Sheet sheet = workbook.getSheetAt(0);
             
             if (sheet.getLastRowNum() < 1) {
-                ImportResult result = new ImportResult(false, "Excel file has no data or only header row.", 0, new ArrayList<>());
-                out.println(gson.toJson(result));
+                request.setAttribute("errorMsg", "Excel file has no data or only header row.");
+                request.getRequestDispatcher("/viewProduct.jsp").forward(request, response);
                 return;
             }
 
@@ -231,24 +227,23 @@ public class ProductImportServlet extends HttpServlet {
                 errorMessages.add("Row " + error.rowIndex + ": " + error.reason);
             }
 
-            // Create result
-            ImportResult result;
             if (importedCount > 0) {
-                String message = "Successfully imported " + importedCount + " products.";
-                if (!errors.isEmpty()) {
-                    message += " " + errors.size() + " rows had errors.";
-                }
-                result = new ImportResult(true, message, importedCount, errorMessages);
+                // Optionally, set a success message in session
+                request.getSession().setAttribute("successMsg", "Successfully imported " + importedCount + " products.");
+                // Redirect to the product list servlet/JSP
+                response.sendRedirect(request.getContextPath() + "/productservlet?service=viewProduct");
+                return;
             } else {
-                result = new ImportResult(false, "No valid products to import.", 0, errorMessages);
+                // If no products imported, forward back to the upload page with error messages
+                request.setAttribute("errorMsg", "No valid products to import. " + String.join(" ", errorMessages));
+                request.getRequestDispatcher("/viewProduct.jsp").forward(request, response);
+                return;
             }
-
-            out.println(gson.toJson(result));
 
         } catch (Exception e) {
             e.printStackTrace();
-            ImportResult result = new ImportResult(false, "An error occurred while processing the Excel file: " + e.getMessage(), 0, new ArrayList<>());
-            out.println(gson.toJson(result));
+            request.setAttribute("errorMsg", "An error occurred while processing the Excel file: " + e.getMessage());
+            request.getRequestDispatcher("/viewProduct.jsp").forward(request, response);
         }
     }
 

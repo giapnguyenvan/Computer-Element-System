@@ -11,6 +11,9 @@ import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import dal.InventoryLogDAO;
+import model.InventoryLog;
+import java.util.Vector;
 
 /**
  *
@@ -31,17 +34,17 @@ public class InventoryLogServlet extends HttpServlet {
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         response.setContentType("text/html;charset=UTF-8");
-        try (PrintWriter out = response.getWriter()) {
-            /* TODO output your page here. You may use following sample code. */
-            out.println("<!DOCTYPE html>");
-            out.println("<html>");
-            out.println("<head>");
-            out.println("<title>Servlet InventoryLogServlet</title>");            
-            out.println("</head>");
-            out.println("<body>");
-            out.println("<h1>Servlet InventoryLogServlet at " + request.getContextPath() + "</h1>");
-            out.println("</body>");
-            out.println("</html>");
+        
+        try {
+            InventoryLogDAO logDAO = new InventoryLogDAO();
+            Vector<InventoryLog> logs = logDAO.getAllLogs();
+            
+            request.setAttribute("inventoryLogs", logs);
+            request.getRequestDispatcher("inventoryLog.jsp").forward(request, response);
+            
+        } catch (Exception e) {
+            e.printStackTrace();
+            response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Error loading inventory logs");
         }
     }
 

@@ -493,6 +493,27 @@ Hiển thị form đăng ký, xử lý hiển thị thông báo lỗi/thành cô
                     <input type="hidden" id="districtHidden" name="districtHidden">
                     <input type="hidden" id="wardHidden" name="wardHidden">
                     
+                    <div class="form-col">
+                        <label class="form-label" for="province">Province/City:</label>
+                        <select class="form-control" id="province" name="province" required></select>
+                        <div class="invalid-feedback" id="provinceError"></div>
+                    </div>
+                    <div class="form-col">
+                        <label class="form-label" for="district">District:</label>
+                        <select class="form-control" id="district" name="district" required disabled></select>
+                        <div class="invalid-feedback" id="districtError"></div>
+                    </div>
+                    <div class="form-col">
+                        <label class="form-label" for="ward">Ward/Commune:</label>
+                        <select class="form-control" id="ward" name="ward" required disabled></select>
+                        <div class="invalid-feedback" id="wardError"></div>
+                    </div>
+                    <div class="form-col form-col-full">
+                        <label class="form-label" for="addressDetail">Address Detail:</label>
+                        <input type="text" class="form-control" id="addressDetail" name="addressDetail" maxlength="100" placeholder="Apartment, street, ..." required>
+                        <div class="invalid-feedback" id="addressDetailError"></div>
+                    </div>
+                    
                     <button type="submit" class="btn btn-primary form-col-full">Sign Up</button>
                 </form>
                 <div class="login-link">
@@ -863,17 +884,18 @@ Hiển thị form đăng ký, xử lý hiển thị thông báo lỗi/thành cô
                     hasFieldErrors = true;
                 }
 
-                // Validate addressDetail (optional)
-                if (addressDetail && addressDetail.trim() !== '') {
-                    if (addressDetail.length < 2 || addressDetail.length > 100) {
-                        showFieldError('addressDetail', 'Length must be between 2 and 100 characters.');
+                // Validate addressDetail (bắt buộc)
+                if (!addressDetail || addressDetail.trim() === '') {
+                    showFieldError('addressDetail', 'Address detail is required.');
+                    hasFieldErrors = true;
+                } else if (addressDetail.length < 2 || addressDetail.length > 100) {
+                    showFieldError('addressDetail', 'Length must be between 2 and 100 characters.');
+                    hasFieldErrors = true;
+                } else {
+                    const dangerousChars = /[<>{}[\\]$%]/;
+                    if (dangerousChars.test(addressDetail)) {
+                        showFieldError('addressDetail', 'Contains invalid characters (<, >, {, }, [, ], \\, $, %).');
                         hasFieldErrors = true;
-                    } else {
-                        const dangerousChars = /[<>{}[\\]$%]/;
-                        if (dangerousChars.test(addressDetail)) {
-                            showFieldError('addressDetail', 'Contains invalid characters (<, >, {, }, [, ], \\, $, %).');
-                            hasFieldErrors = true;
-                        }
                     }
                 }
 

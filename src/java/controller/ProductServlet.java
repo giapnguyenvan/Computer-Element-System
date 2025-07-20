@@ -51,10 +51,10 @@ public class ProductServlet extends HttpServlet {
                         } else {
                             plist = new ArrayList<>(); // Không tìm thấy loại linh kiện
                         }
-                        request.setAttribute("componentType", componentType);
                     } else {
                         plist = dao.getAllProduct();
                     }
+                    request.setAttribute("componentType", componentType); // Đảm bảo luôn set, kể cả khi rỗng
                     request.setAttribute("product", plist);
                     // AJAX fragment support
                     String ajax = request.getParameter("ajax");

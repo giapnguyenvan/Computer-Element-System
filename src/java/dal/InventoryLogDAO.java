@@ -58,6 +58,16 @@ public class InventoryLogDAO {
                         rs.getString("note"),
                         rs.getTimestamp("created_at")
                 );
+                
+                // Set additional product information if available
+                try {
+                    log.setProductName(rs.getString("product_name"));
+                    log.setBrandName(rs.getString("brand_name"));
+                    log.setComponentTypeName(rs.getString("component_type_name"));
+                } catch (Exception e) {
+                    // If these fields don't exist in the InventoryLog model, ignore
+                }
+                
                 listLogs.add(log);
             }
 

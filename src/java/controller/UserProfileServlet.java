@@ -78,13 +78,6 @@ public class UserProfileServlet extends HttpServlet {
                     activePage = "profile";
                     break;
                 }
-                case "address": {
-                    Customer customer = customerDAO.getCustomerByEmail(email);
-                    request.setAttribute("data", customer);
-                    content = "address.jsp";
-                    activePage = "address";
-                    break;
-                }
                 case "orders": {
                     // Placeholder - No data set yet
                     content = "customerOrders.jsp";

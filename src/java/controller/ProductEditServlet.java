@@ -183,15 +183,7 @@ public class ProductEditServlet extends HttpServlet {
                     }
                 }
             }
-            
-            if (productUpdated && imageUpdated) {
-                request.setAttribute("successMsg", "Product updated successfully!");
-            } else if (!productUpdated) {
-                request.setAttribute("errorMsg", "Failed to update product!");
-            } else if (!imageUpdated) {
-                request.setAttribute("errorMsg", "Product updated but failed to update image!");
-            }
-            
+                        
             // Redirect back to the edit page to show updated data
             response.sendRedirect("producteditservlet?action=edit&id=" + productId);
         } else {

@@ -19,6 +19,11 @@ public class InventoryLog {
     private int quantity;
     private String note;
     private Timestamp created_at;
+    
+    // Additional fields for display
+    private String productName;
+    private String brandName;
+    private String componentTypeName;
 
     @Override
     public String toString() {
@@ -83,5 +88,30 @@ public class InventoryLog {
 
     public Timestamp getCreated_at() {
         return created_at;
+    }
+    
+    // Additional getters and setters for display fields
+    public String getProductName() {
+        return productName;
+    }
+
+    public void setProductName(String productName) {
+        this.productName = productName;
+    }
+
+    public String getBrandName() {
+        return brandName;
+    }
+
+    public void setBrandName(String brandName) {
+        this.brandName = brandName;
+    }
+
+    public String getComponentTypeName() {
+        return componentTypeName;
+    }
+
+    public void setComponentTypeName(String componentTypeName) {
+        this.componentTypeName = componentTypeName;
     }
 }
