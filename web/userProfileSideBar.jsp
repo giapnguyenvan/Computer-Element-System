@@ -11,7 +11,7 @@
             <i class="fas fa-user me-2"></i> Profile
         </a>
         <a href="${pageContext.request.contextPath}/userprofile?action=orders" class="${param.activePage == 'orders' ? 'active' : ''}">
-            <i class="fas fa-shopping-bag me-2"></i> Đơn hàng của tôi
+            <i class="fas fa-shopping-bag me-2"></i> My Orders
         </a>
         <a href="${pageContext.request.contextPath}/userprofile?action=voucher" class="${param.activePage == 'voucher' ? 'active' : ''}">
             <i class="fas fa-ticket me-2"></i> Vouchers

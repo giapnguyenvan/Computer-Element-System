@@ -12,6 +12,8 @@ import shop.DAO.OrderDAO;
 import shop.entities.Customer;
 import shop.entities.Order;
 import shop.entities.OrderDetail;
+import dal.MenuItemDAO;
+import model.MenuItem;
 
 @WebServlet(name = "CustomerOrderServlet", urlPatterns = {"/customer-orders"})
 public class CustomerOrderServlet extends HttpServlet {
@@ -31,6 +33,10 @@ public class CustomerOrderServlet extends HttpServlet {
         }
 
         try {
+            // Load menu items like UserProfileServlet does
+            List<MenuItem> menuItems = MenuItemDAO.getAllMenuItems();
+            request.setAttribute("menuItems", menuItems);
+            
             List<Order> orders = orderDAO.getByCustomerId(customer.getId());
             
             // Load order details, customer info, and payment method for each order
@@ -47,12 +53,16 @@ public class CustomerOrderServlet extends HttpServlet {
             
             request.setAttribute("orders", orders);
             request.setAttribute("customerId", customer.getId());
-            request.getRequestDispatcher("customerOrders.jsp").forward(request, response);
+            request.setAttribute("content", "customerOrders.jsp");
+            request.setAttribute("activePage", "orders");
+            request.getRequestDispatcher("userProfileLayout.jsp").forward(request, response);
             
         } catch (Exception e) {
             e.printStackTrace();
             request.setAttribute("error", "Có lỗi xảy ra khi tải danh sách đơn hàng. Vui lòng thử lại.");
-            request.getRequestDispatcher("customerOrders.jsp").forward(request, response);
+            request.setAttribute("content", "customerOrders.jsp");
+            request.setAttribute("activePage", "orders");
+            request.getRequestDispatcher("userProfileLayout.jsp").forward(request, response);
         }
     }
 

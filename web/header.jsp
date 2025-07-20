@@ -18,6 +18,7 @@
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
 <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
 <link href="css/header.css" rel="stylesheet">
+<link href="css/dropdown-fix.css" rel="stylesheet">
 
 <style>
     .menu-container {
@@ -297,7 +298,7 @@
                                                 <i class="fas fa-user-circle me-2"></i>Profile
                                             </a>
                                         </li>
-                                        <li><a class="dropdown-item" href="${pageContext.request.contextPath}/customer-orders"><i class="fas fa-shopping-bag me-2"></i>Đơn hàng của tôi</a></li>
+                                        <li><a class="dropdown-item" href="${pageContext.request.contextPath}/customer-orders"><i class="fas fa-shopping-bag me-2"></i>My Orders</a></li>
                                         <li><hr class="dropdown-divider"></li>
                                         <li><a class="dropdown-item text-danger" href="${pageContext.request.contextPath}/logout"><i class="fas fa-sign-out-alt me-2"></i>Logout</a></li>
                                     </ul>
@@ -336,7 +337,7 @@
         event.preventDefault();
         
         // Check if user is logged in
-        const isLoggedIn = ${not empty sessionScope.userAuth or not empty sessionScope.customerAuth};
+        const isLoggedIn = <c:choose><c:when test="${not empty sessionScope.userAuth or not empty sessionScope.customerAuth}">true</c:when><c:otherwise>false</c:otherwise></c:choose>;
         
         if (isLoggedIn) {
             // User is logged in, redirect to cart
@@ -452,7 +453,7 @@
 
     // Function to update cart count in header
     function updateCartCountInHeader() {
-        const isLoggedIn = ${not empty sessionScope.userAuth or not empty sessionScope.customerAuth};
+        const isLoggedIn = <c:choose><c:when test="${not empty sessionScope.userAuth or not empty sessionScope.customerAuth}">true</c:when><c:otherwise>false</c:otherwise></c:choose>;
         
         if (isLoggedIn) {
             fetch('${pageContext.request.contextPath}/CartApiServlet')

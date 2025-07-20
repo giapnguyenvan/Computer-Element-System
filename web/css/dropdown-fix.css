@@ -1,0 +1,16 @@
+/* Fix Vietnamese font for customer dropdown */
+.dropdown-menu {
+    font-family: 'Inter', 'Segoe UI', 'San Francisco', 'Helvetica Neue', 'Roboto', 'Arial', sans-serif !important;
+}
+
+.dropdown-item {
+    font-family: 'Inter', 'Segoe UI', 'San Francisco', 'Helvetica Neue', 'Roboto', 'Arial', sans-serif !important;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}
+
+/* Ensure proper encoding display */
+.dropdown-menu .dropdown-item {
+    text-rendering: optimizeLegibility;
+    font-feature-settings: "kern";
+} 

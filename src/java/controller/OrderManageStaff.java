@@ -42,6 +42,7 @@ public class OrderManageStaff extends HttpServlet {
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         try {
+            // Get filter parameters
             String status = request.getParameter("status");
             if (status == null) {
                 status = "all";
@@ -51,6 +52,31 @@ public class OrderManageStaff extends HttpServlet {
             request.setAttribute("fromDate", fromDateStr);
             String toDateStr = request.getParameter("toDate");
             request.setAttribute("toDate", toDateStr);
+            
+            // Get pagination parameters
+            int page = 1;
+            int pageSize = 5; // Default orders per page
+            
+            String pageParam = request.getParameter("page");
+            if (pageParam != null && !pageParam.isEmpty()) {
+                try {
+                    page = Integer.parseInt(pageParam);
+                    if (page < 1) page = 1;
+                } catch (NumberFormatException e) {
+                    page = 1;
+                }
+            }
+            
+            String pageSizeParam = request.getParameter("pageSize");
+            if (pageSizeParam != null && !pageSizeParam.isEmpty()) {
+                try {
+                    pageSize = Integer.parseInt(pageSizeParam);
+                    if (pageSize < 5) pageSize = 5;
+                    if (pageSize > 100) pageSize = 100; // Max limit
+                } catch (NumberFormatException e) {
+                    pageSize = 5;
+                }
+            }
 
             String currentYear = (new Date().getYear() + 1900) + "";
             Date fromDate;
@@ -67,39 +93,69 @@ public class OrderManageStaff extends HttpServlet {
             } else {
                 toDate = simpleDateFormat.parse(toDateStr);
             }
+            
+            // Get all orders and filter them
             List<Order> ordersAll = orderDAO.getAll();
             List<Order> filteredOrders = new ArrayList<>();
             for (Order order : ordersAll) {
                 boolean isGet = true;
-                if (status.equals("all")) {
-                } else {
+                if (!status.equals("all")) {
                     if (!status.equals(order.getStatus())) {
                         isGet = false;
                     }
                 }
                 if (isGet) {
                     if (toDate.after(order.getOrderDate()) && fromDate.before(order.getOrderDate())) {
-                        order.setorderDetailsFunc();
-                        order.setCustomerFunc();
-                        order.setPaymentMethodFunc();
-                        for (OrderDetail orderDetail : order.getOrderDetails()) {
-                            orderDetail.setProductFunc();
-                        }
                         filteredOrders.add(order);
                     }
                 }
             }
+            
+            // Calculate pagination
+            int totalOrders = filteredOrders.size();
+            int totalPages = (int) Math.ceil((double) totalOrders / pageSize);
+            if (page > totalPages && totalPages > 0) {
+                page = totalPages;
+            }
+            
+            // Get orders for current page
+            int startIndex = (page - 1) * pageSize;
+            int endIndex = Math.min(startIndex + pageSize, totalOrders);
+            List<Order> paginatedOrders = new ArrayList<>();
+            
+            if (startIndex < totalOrders) {
+                for (int i = startIndex; i < endIndex; i++) {
+                    Order order = filteredOrders.get(i);
+                    order.setorderDetailsFunc();
+                    order.setCustomerFunc();
+                    order.setPaymentMethodFunc();
+                    for (OrderDetail orderDetail : order.getOrderDetails()) {
+                        orderDetail.setProductFunc();
+                    }
+                    paginatedOrders.add(order);
+                }
+            }
 
-            request.setAttribute("orders", filteredOrders);
+            // Set attributes for JSP
+            request.setAttribute("orders", paginatedOrders);
+            request.setAttribute("currentPage", page);
+            request.setAttribute("totalPages", totalPages);
+            request.setAttribute("totalOrders", totalOrders);
+            request.setAttribute("pageSize", pageSize);
+            request.setAttribute("startIndex", startIndex + 1);
+            request.setAttribute("endIndex", Math.min(endIndex, totalOrders));
+            
             String message = (String) request.getAttribute("message");
             if (message == null) {
-                message = "Order list loaded succesfully!";
+                message = "Order list loaded successfully!";
                 request.setAttribute("message", message);
             }
             request.getRequestDispatcher("OrderManageStaff.jsp").forward(request, response);
 
         } catch (Exception e) {
             e.printStackTrace();
+            request.setAttribute("message", "Error loading orders: " + e.getMessage());
+            request.getRequestDispatcher("OrderManageStaff.jsp").forward(request, response);
         }
     }
 

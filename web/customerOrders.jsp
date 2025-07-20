@@ -56,11 +56,11 @@
     <!-- Header -->
     <div class="row mb-4">
         <div class="col">
-            <h2><i class="fas fa-shopping-bag me-2"></i>Đơn Hàng Của Tôi</h2>
+                            <h2><i class="fas fa-shopping-bag me-2"></i>My Orders</h2>
             <nav aria-label="breadcrumb">
                 <ol class="breadcrumb">
                     <li class="breadcrumb-item"><a href="${pageContext.request.contextPath}/homepageservlet">Trang chủ</a></li>
-                    <li class="breadcrumb-item active">Đơn hàng của tôi</li>
+                    <li class="breadcrumb-item active">My Orders</li>
                 </ol>
             </nav>
         </div>

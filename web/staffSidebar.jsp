@@ -22,6 +22,9 @@
         <a href="${pageContext.request.contextPath}/productservlet" target="mainFrame" class="<%= request.getRequestURI().contains("productservlet") ? "active" : "" %>">
             <i class="fas fa-box me-2"></i> Products
         </a>
+        <a href="${pageContext.request.contextPath}/order-manage-staff" target="mainFrame" class="<%= request.getRequestURI().contains("order-manage-staff") ? "active" : "" %>">
+            <i class="fas fa-shopping-bag me-2"></i> Orders
+        </a>
         <a href="${pageContext.request.contextPath}/manageblogs" target="mainFrame" class="<%= request.getRequestURI().contains("viewblogs") ? "active" : "" %>">
             <i class="fas fa-blog me-2"></i> Blogs
         </a>

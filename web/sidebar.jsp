@@ -27,6 +27,9 @@
         <a href="${pageContext.request.contextPath}/category?sort=default" target="mainFrame" class="<%= request.getRequestURI().endsWith("categoryList.jsp") ? "active" : ""%>">
             <i class="fas fa-boxes me-2"></i> Categories
         </a>
+        <a href="${pageContext.request.contextPath}/order-list-manage" target="mainFrame" class="<%= request.getRequestURI().contains("order-list-manage") ? "active" : ""%>">
+            <i class="fas fa-shopping-bag me-2"></i> Orders
+        </a>
 
         <!-- Menu Management Dropdown -->
         <div class="nav-item dropdown">
