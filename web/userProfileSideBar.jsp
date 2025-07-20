@@ -14,7 +14,7 @@
             <i class="fas fa-map-marker-alt me-2"></i> Address
         </a>
         <a href="${pageContext.request.contextPath}/userprofile?action=orders" class="${param.activePage == 'orders' ? 'active' : ''}">
-            <i class="fas fa-shopping-cart me-2"></i> Orders
+            <i class="fas fa-shopping-bag me-2"></i> Đơn hàng của tôi
         </a>
         <a href="${pageContext.request.contextPath}/userprofile?action=voucher" class="${param.activePage == 'voucher' ? 'active' : ''}">
             <i class="fas fa-ticket me-2"></i> Vouchers

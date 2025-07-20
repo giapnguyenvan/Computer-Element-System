@@ -15,6 +15,9 @@ import model.Customer;
 import model.MenuItem;
 import model.Voucher;
 import java.util.List;
+import shop.DAO.OrderDAO;
+import shop.entities.Order;
+import shop.entities.OrderDetail;
 
 /**
  *
@@ -22,6 +25,8 @@ import java.util.List;
  */
 @WebServlet(name = "UserProfileServlet", urlPatterns = {"/userprofile"})
 public class UserProfileServlet extends HttpServlet {
+    
+    private OrderDAO orderDAO = new OrderDAO();
 
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
@@ -82,8 +87,37 @@ public class UserProfileServlet extends HttpServlet {
                 }
                 case "orders": {
                     // Placeholder - No data set yet
-                    content = "orders.jsp";
-                    activePage = "orders";
+                    content = "customerOrders.jsp";
+                    activePage = "customer-orders";
+                    shop.entities.Customer customer = (shop.entities.Customer) session.getAttribute("customer");
+
+                    if (customer == null) {
+                        response.sendRedirect(request.getContextPath() + "/login");
+                        return;
+                    }
+
+                    try {
+                        List<Order> orders = orderDAO.getByCustomerId(customer.getId());
+
+                        // Load order details, customer info, and payment method for each order
+                        for (Order order : orders) {
+                            order.setorderDetailsFunc();
+                            order.setCustomerFunc();
+                            order.setPaymentMethodFunc();
+
+                            // Load product info for each order detail
+                            for (OrderDetail orderDetail : order.getOrderDetails()) {
+                                orderDetail.setProductFunc();
+                            }
+                        }
+
+                        request.setAttribute("orders", orders);
+                        request.setAttribute("customerId", customer.getId());
+
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                        request.setAttribute("error", "Có lỗi xảy ra khi tải danh sách đơn hàng. Vui lòng thử lại.");
+                    }
                     break;
                 }
                 case "voucher": {
