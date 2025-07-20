@@ -13,7 +13,7 @@ import shop.anotation.*;
  *
  * @author admin
  */
-@Table(name = "payment_methods")
+@Table(name = "paymentmethod")
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
@@ -22,12 +22,15 @@ import shop.anotation.*;
 @Setter
 public class PaymentMethod {
     @Id
-    @Column(name = "id")
+    @Column(name = "payment_method_id")
     Integer id;
     
-    @Column(name = "name")
+    @Column(name = "method_name")
     String name;
     
     @Column(name = "description")
     String description;
+    
+    @Column(name = "status")
+    String status;
 }
