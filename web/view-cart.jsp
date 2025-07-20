@@ -545,7 +545,7 @@
 
                 container.innerHTML = cartItems.map(item =>
                     '<div class="cart-item" data-item-id="' + item.id + '">' +
-                            '<img src="' + (item.product.imageUrl || '/api/placeholder/100/100') + '" ' +
+                            '<img src="' + (item.product.productImages[0].imageUrl || '/api/placeholder/100/100') + '" ' +
                             'alt="' + item.product.name + '" class="item-image">' +
                             '<div class="item-details">' +
                             '<div class="item-name">' + item.product.name + '</div>' +

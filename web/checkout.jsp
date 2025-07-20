@@ -548,7 +548,7 @@
                     total += itemTotal;
 
                     html += '<div class="cart-item" data-item-id="' + item.id + '">' +
-                            '<img src="' + (item.product.imageUrl || '${pageContext.request.contextPath}/IMG/product/default.jpg') + '" ' +
+                            '<img src="' + (item.product.productImages[0].imageUrl || '${pageContext.request.contextPath}/IMG/product/default.jpg') + '" ' +
                             'alt="' + item.product.name + '" ' +
                             'class="item-image">' +
                             '<div class="item-info">' +
