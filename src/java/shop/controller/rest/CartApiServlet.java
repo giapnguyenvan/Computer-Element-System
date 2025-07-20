@@ -121,6 +121,7 @@ public class CartApiServlet extends HttpServlet {
         // Set product data for each cart item
         for (CartItem item : cartItems) {
             item.setProductFunc();
+            item.getProduct().setProductImagesFunc();
         }
 
         JsonObject responseObj = new JsonObject();
