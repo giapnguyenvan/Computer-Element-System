@@ -17,6 +17,9 @@ import jakarta.servlet.http.HttpServletResponse;
 import shop.DAO.OrderDAO;
 import shop.entities.Order;
 import shop.entities.OrderDetail;
+import shop.DAO.TransactionDAO;
+import shop.entities.Transaction;
+import java.util.Comparator;
 
 /**
  *
@@ -117,10 +120,16 @@ public class OrderListManage extends HttpServlet {
                 page = totalPages;
             }
             
+            // Sort orders by order date (newest first)
+            filteredOrders.sort(Comparator.comparing(Order::getOrderDate).reversed());
+            
             // Get orders for current page
             int startIndex = (page - 1) * pageSize;
             int endIndex = Math.min(startIndex + pageSize, totalOrders);
             List<Order> paginatedOrders = new ArrayList<>();
+            java.util.Map<Integer, String> paymentStatusMap = new java.util.HashMap<>();
+            
+            TransactionDAO transactionDAO = new TransactionDAO();
             
             if (startIndex < totalOrders) {
                 for (int i = startIndex; i < endIndex; i++) {
@@ -128,6 +137,24 @@ public class OrderListManage extends HttpServlet {
                     order.setorderDetailsFunc();
                     order.setCustomerFunc();
                     order.setPaymentMethodFunc();
+                    
+                    // Check payment status for bank transfer orders
+                    if (order.getPaymentMethod() != null && 
+                        order.getPaymentMethod().getName().toLowerCase().contains("bank")) {
+                        try {
+                            Transaction transaction = transactionDAO.getByOrderId(order.getId());
+                            if (transaction != null) {
+                                paymentStatusMap.put(order.getId(), transaction.isPaid() ? "Paid" : "Pending");
+                            } else {
+                                paymentStatusMap.put(order.getId(), "No Transaction");
+                            }
+                        } catch (Exception e) {
+                            paymentStatusMap.put(order.getId(), "Error");
+                        }
+                    } else {
+                        paymentStatusMap.put(order.getId(), "N/A");
+                    }
+                    
                     for (OrderDetail orderDetail : order.getOrderDetails()) {
                         orderDetail.setProductFunc();
                     }
@@ -137,6 +164,7 @@ public class OrderListManage extends HttpServlet {
 
             // Set attributes for JSP
             request.setAttribute("orders", paginatedOrders);
+            request.setAttribute("paymentStatusMap", paymentStatusMap);
             request.setAttribute("currentPage", page);
             request.setAttribute("totalPages", totalPages);
             request.setAttribute("totalOrders", totalOrders);

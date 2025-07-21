@@ -114,4 +114,93 @@ public class OrderApiServlet extends HttpServlet {
         }
     }
 
+    @Override
+    protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        // Endpoint: /OrderApiServlet?id=<orderId>  -> return JSON details of the order
+        try {
+            String idParam = request.getParameter("id");
+            if (idParam == null) {
+                ResponseUtils.sendErrorResponse(response, 400, "Missing order id parameter");
+                return;
+            }
+
+            int orderId;
+            try {
+                orderId = Integer.parseInt(idParam);
+            } catch (NumberFormatException e) {
+                ResponseUtils.sendErrorResponse(response, 400, "Invalid order id");
+                return;
+            }
+
+            Order order = orderDAO.getById(orderId);
+            if (order == null) {
+                ResponseUtils.sendErrorResponse(response, 404, "Order not found");
+                return;
+            }
+
+            // Populate nested entities
+            order.setCustomerFunc();
+            order.setorderDetailsFunc();
+            order.setPaymentMethodFunc();
+
+            // Build JSON response
+            JsonObject json = new JsonObject();
+            json.addProperty("success", true);
+            json.addProperty("orderId", order.getId());
+            json.addProperty("status", order.getStatus());
+            json.addProperty("totalAmount", order.getTotalAmount() != null ? order.getTotalAmount().toString() : "0");
+            json.addProperty("shippingFee", order.getShippingFee() != null ? order.getShippingFee().toString() : "0");
+            json.addProperty("note", order.getShippingAddress() != null ? order.getShippingAddress() : "");
+
+            // Customer info
+            if (order.getCustomer() != null) {
+                JsonObject cust = new JsonObject();
+                cust.addProperty("name", order.getCustomer().getName());
+                cust.addProperty("email", order.getCustomer().getEmail());
+                cust.addProperty("id", order.getCustomer().getId());
+                json.add("customer", cust);
+            }
+
+            // Items array
+            com.google.gson.JsonArray itemsArr = new com.google.gson.JsonArray();
+            if (order.getOrderDetails() != null) {
+                for (OrderDetail od : order.getOrderDetails()) {
+                    od.setProductFunc();
+                    JsonObject itemObj = new JsonObject();
+                    itemObj.addProperty("productId", od.getProductId());
+                    itemObj.addProperty("name", od.getProduct() != null ? od.getProduct().getName() : "");
+                    itemObj.addProperty("quantity", od.getQuantity());
+                    itemObj.addProperty("price", od.getPrice() != null ? od.getPrice().toString() : "0");
+
+                    // Try to get product image
+                    String imageUrl = "";
+                    if (od.getProduct() != null) {
+                        od.getProduct().setProductImagesFunc();
+                        if (od.getProduct().getProductImages() != null && !od.getProduct().getProductImages().isEmpty()) {
+                            imageUrl = od.getProduct().getProductImages().get(0).getImageUrl();
+                        }
+                    }
+                    itemObj.addProperty("imageUrl", imageUrl);
+                    itemsArr.add(itemObj);
+                }
+            }
+            json.add("items", itemsArr);
+
+            // Status history - hiện chưa có bảng lịch sử, nên trả về lịch sử đơn giản chỉ gồm trạng thái hiện tại
+            com.google.gson.JsonArray historyArr = new com.google.gson.JsonArray();
+            JsonObject hist = new JsonObject();
+            hist.addProperty("status", order.getStatus());
+            hist.addProperty("time", order.getOrderDate() != null ? order.getOrderDate().toString() : "");
+            hist.addProperty("statusColor", "primary");
+            hist.addProperty("changedBy", "System");
+            historyArr.add(hist);
+            json.add("statusHistory", historyArr);
+
+            ResponseUtils.sendJsonResponse(response, json);
+        } catch (Exception ex) {
+            ex.printStackTrace();
+            ResponseUtils.sendErrorResponse(response, 500, "Internal server error");
+        }
+    }
+
 }

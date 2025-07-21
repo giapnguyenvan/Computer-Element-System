@@ -514,7 +514,7 @@
                     <div class="stat-card cancelled">
                         <div class="stat-icon cancelled">
                             <i class="fas fa-times-circle"></i>
-                        </div>
+                            </div>
                         <h3 class="mb-1" id="cancelledCount">0</h3>
                         <p class="text-muted mb-0">Cancelled</p>
                     </div>
@@ -576,13 +576,14 @@
                                 <th><i class="fas fa-credit-card me-2"></i>Payment</th>
                                 <th><i class="fas fa-map-marker-alt me-2"></i>Address</th>
                                 <th><i class="fas fa-flag me-2"></i>Status</th>
+                                <th><i class="fas fa-eye me-2"></i>Details</th>
                             </tr>
                         </thead>
                         <tbody>
                             <c:choose>
                                 <c:when test="${empty orders}">
                                     <tr>
-                                        <td colspan="7" class="empty-state">
+                                        <td colspan="8" class="empty-state">
                                             <i class="fas fa-inbox"></i>
                                             <h4>No Orders Found</h4>
                                             <p>There are no orders matching your current filters.</p>
@@ -634,23 +635,28 @@
                                                         >
                                                             <option value="Pending" ${order.status == "Pending" ? "selected" : ""}>Pending</option>
                                                             <option value="Shipping" ${order.status == "Shipping" ? "selected" : ""}>Shipping</option>
-                                                        </select>
+                                            </select>
                                                     </c:when>
                                                     <c:otherwise>
                                                         <span class="status-badge ${fn:toLowerCase(order.status)} readonly">
-                                                            ${order.status}
+                                            ${order.status}
                                                         </span>
                                                     </c:otherwise>
                                                 </c:choose>
                                             </td>
-                                        </tr>
-                                    </c:forEach>
+                                            <td>
+                                                <button class="btn btn-outline-primary btn-sm" onclick="showOrderDetail(${order.id})" title="View Details">
+                                                    <i class="fas fa-eye"></i>
+                                                </button>
+                                    </td>
+                                </tr>
+                            </c:forEach>
                                 </c:otherwise>
                             </c:choose>
                         </tbody>
                     </table>
                 </div>
-                
+
                 <!-- Pagination Section -->
                 <c:if test="${totalOrders > 0}">
                     <div class="pagination-wrapper">
@@ -658,8 +664,8 @@
                             <span class="text-muted">
                                 Showing <strong>${startIndex}</strong> to <strong>${endIndex}</strong> of <strong>${totalOrders}</strong> orders
                             </span>
-                        </div>
-                        
+        </div>
+
                         <!-- Only show navigation if more than 1 page -->
                         <c:if test="${totalPages > 1}">
                             <nav aria-label="Order pagination">
@@ -722,71 +728,34 @@
                                 <option value="25" ${pageSize == 25 ? 'selected' : ''}>25</option>
                                 <option value="50" ${pageSize == 50 ? 'selected' : ''}>50</option>
                             </select>
-                        </div>
+                            </div>
                     </div>
                 </c:if>
-            </div>
         </div>
 
-        <!-- Add Category Modal -->
-        <div class="modal fade" id="addCategoryModal" tabindex="-1">
-            <div class="modal-dialog modal-dialog-centered">
+        <!-- Order Detail Modal -->
+        <div class="modal fade" id="orderDetailModal" tabindex="-1" aria-hidden="true">
+          <div class="modal-dialog modal-lg modal-dialog-centered">
                 <div class="modal-content">
                     <div class="modal-header">
-                        <h5 class="modal-title">Add New Category</h5>
+                <h5 class="modal-title">Order Details #<span id="modalOrderId"></span></h5>
                         <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                     </div>
                     <div class="modal-body">
-                        <form action="/category" method="post">
-                            <input type="hidden" name="action" value="add" />
-                            <div class="mb-3">
-                                <label for="name" class="form-label">Name</label>
-                                <input type="text" class="form-control" id="name" name="name" required>
+                <div id="orderDetailContent" class="p-2 text-center text-muted">
+                  <i class="fas fa-spinner fa-spin"></i> Loading...
                             </div>
-                            <div class="mb-3">
-                                <label for="description" class="form-label">Description</label>
-                                <textarea class="form-control" id="description" name="description" rows="3"></textarea>
-                            </div>
-                            <div class="text-end">
-                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                                <button type="submit" class="btn btn-primary">Add</button>
-                            </div>
-                        </form>
                     </div>
                 </div>
             </div>
         </div>
 
-        <!-- Edit Category Modal -->
-        <div class="modal fade" id="editCategoryModal" tabindex="-1">
-            <div class="modal-dialog modal-dialog-centered">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h5 class="modal-title">Edit Category</h5>
-                        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-                    </div>
-                    <div class="modal-body">
-                        <form action="category" method="post">
-                            <input type="hidden" name="action" value="update" />
-                            <input type="hidden" name="id" id="editId">
-                            <div class="mb-3">
-                                <label for="editName" class="form-label">Name</label>
-                                <input type="text" class="form-control" id="editName" name="name" required>
-                            </div>
-                            <div class="mb-3">
-                                <label for="editDescription" class="form-label">Description</label>
-                                <textarea class="form-control" id="editDescription" name="description" rows="3"></textarea>
-                            </div>
-                            <div class="text-end">
-                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                                <button type="submit" class="btn btn-primary">Update</button>
-                            </div>
-                        </form>
-                    </div>
-                </div>
-            </div>
-        </div>
-
+        <!-- Timeline CSS -->
+        <style>
+            .timeline { list-style: none; padding-left: 0; }
+            .timeline li { position: relative; padding-left: 20px; margin-bottom: 10px; }
+            .timeline li::before { content: ''; position: absolute; left: 5px; top: 6px; width: 8px; height: 8px; border-radius: 50%; background: #667eea; }
+        </style>
 
         <form id="update_status_form" action="order-manage-staff" method="post" hidden="">
             <input type="text" name="order_id" id="order_id">
@@ -798,6 +767,7 @@
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.min.js"></script>
 
         <script>
+            const contextPath = '${pageContext.request.contextPath}';
             // Initialize stats on page load
             document.addEventListener('DOMContentLoaded', function() {
                 updateStats();
@@ -836,13 +806,13 @@
                 document.getElementById('cancelledCount').textContent = cancelled;
             }
 
-            function changeStatus(order_id) {
+                                                function changeStatus(order_id) {
                 const selectElement = document.getElementById("status_order_" + order_id);
                 const newStatus = selectElement.value;
                 const oldStatus = document.getElementById("old_order_status_" + order_id).value;
                 
                 // Show custom confirmation dialog
-                if (confirm(`Are you sure you want to change order #${order_id} status from "${oldStatus}" to "${newStatus}"?`)) {
+                if (confirm('Are you sure you want to change order #' + order_id + ' status from "' + oldStatus + '" to "' + newStatus + '"?')) {
                     // Show loading overlay
                     document.getElementById('loadingOverlay').style.display = 'flex';
                     
@@ -857,6 +827,53 @@
                     // Reset to original value
                     selectElement.value = oldStatus;
                 }
+            }
+
+            function showOrderDetail(orderId) {
+                document.getElementById('modalOrderId').textContent = orderId;
+                const contentEl = document.getElementById('orderDetailContent');
+                contentEl.innerHTML = '<div class="text-center text-muted py-4"><i class="fas fa-spinner fa-spin"></i> Loading...</div>';
+                const modal = new bootstrap.Modal(document.getElementById('orderDetailModal'));
+                modal.show();
+
+                fetch(contextPath + '/OrderApiServlet?id=' + orderId)
+                    .then(res => res.json())
+                    .then(data => {
+                        if (!data.success) {
+                            contentEl.innerHTML = '<div class="text-danger">Failed to load order details.</div>';
+                                                        return;
+                                                    }
+
+                        let html = '';
+                        html += '<h6 class="mb-3">Products</h6>';
+                        html += '<div class="table-responsive"><table class="table table-sm align-middle"><thead><tr><th>Image</th><th>Name</th><th>Qty</th><th>Price</th></tr></thead><tbody>';
+                        data.items.forEach(function(it) {
+                            html += '<tr>' +
+                                '<td><img src="' + (it.imageUrl || (contextPath + '/IMG/product/default.jpg')) + '" style="width:48px;height:48px;object-fit:cover"></td>' +
+                                '<td>' + it.name + '</td>' +
+                                '<td>' + it.quantity + '</td>' +
+                                '<td>' + Number(it.price).toLocaleString() + '</td>' +
+                            '</tr>';
+                        });
+                        html += '</tbody></table></div>';
+
+                        html += '<h6 class="mt-4">Note</h6>';
+                        html += '<p>' + (data.note ? data.note : '<span class="text-muted">None</span>') + '</p>';
+
+                        if (data.statusHistory && data.statusHistory.length > 0) {
+                            html += '<h6 class="mt-4">Status History</h6><ul class="timeline">';
+                            data.statusHistory.forEach(function(h) {
+                                html += '<li><span class="badge bg-secondary">' + h.status + '</span> <span class="ms-2">' + h.time + '</span> <span class="text-muted ms-2">' + (h.changedBy || '') + '</span></li>';
+                            });
+                            html += '</ul>';
+                        }
+
+                        contentEl.innerHTML = html;
+                    })
+                    .catch(function(err) {
+                        console.error(err);
+                        contentEl.innerHTML = '<div class="text-danger">Error loading order details.</div>';
+                    });
             }
 
             // Function to change page size

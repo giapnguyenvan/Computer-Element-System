@@ -126,15 +126,15 @@ public class OrderManageStaff extends HttpServlet {
             if (startIndex < totalOrders) {
                 for (int i = startIndex; i < endIndex; i++) {
                     Order order = filteredOrders.get(i);
-                    order.setorderDetailsFunc();
-                    order.setCustomerFunc();
-                    order.setPaymentMethodFunc();
-                    for (OrderDetail orderDetail : order.getOrderDetails()) {
-                        orderDetail.setProductFunc();
-                    }
+                        order.setorderDetailsFunc();
+                        order.setCustomerFunc();
+                        order.setPaymentMethodFunc();
+                        for (OrderDetail orderDetail : order.getOrderDetails()) {
+                            orderDetail.setProductFunc();
+                        }
                     paginatedOrders.add(order);
+                    }
                 }
-            }
 
             // Set attributes for JSP
             request.setAttribute("orders", paginatedOrders);

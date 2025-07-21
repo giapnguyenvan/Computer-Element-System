@@ -221,4 +221,25 @@
                                             function confirmCancel() {
                                                 return confirm('Bạn có chắc chắn muốn hủy đơn hàng này? Hành động này không thể hoàn tác.');
                                             }
+    // Robust collapse toggle - checks state explicitly
+    document.addEventListener('DOMContentLoaded', function(){
+        document.querySelectorAll('.order-header').forEach(function(header){
+            header.addEventListener('click', function(e){
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if(!target) return;
+
+                const collapse = bootstrap.Collapse.getOrCreateInstance(target);
+                
+                // Check if body is currently shown
+                if(target.classList.contains('show')){
+                    collapse.hide();           // Close
+                    this.classList.add('collapsed');
+                } else {
+                    collapse.show();           // Open  
+                    this.classList.remove('collapsed');
+                }
+            });
+        });
+    });
 </script>
