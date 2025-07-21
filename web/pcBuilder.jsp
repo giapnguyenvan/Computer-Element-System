@@ -858,6 +858,7 @@
                 if (cart.length === 0) {
                     html = '<div class="alert alert-secondary mb-2">No components have been added to the temporary order yet.</div>';
                     $('#temporaryOrderBar').html(html);
+                    $('#currentCategoryBar').html(html); // Cập nhật cả vùng này nếu có
                     return;
                 }
                 html += `<div class="card mb-2"><div class="card-header bg-primary text-white py-2 px-3"><i class="fas fa-shopping-cart me-2"></i>Temporary Cart</div><div class="card-body p-2"><div class="table-responsive"><table class="table table-sm mb-0"><thead><tr><th>Loại linh kiện</th><th>Tên sản phẩm</th><th>Giá</th><th></th></tr></thead><tbody>`;
@@ -871,7 +872,8 @@
                 });
                 html += '</tbody></table></div></div></div>';
                 $('#temporaryOrderBar').html(html);
-                // Gắn sự kiện xóa, đảm bảo không bị trùng lặp
+                $('#currentCategoryBar').html(html); // Cập nhật cả vùng này nếu có
+                // Gắn sự kiện xóa
                 $('.btn-remove-cart').off('click').on('click', function(e) {
                     e.preventDefault();
                     const componentType = $(this).data('component-type');
@@ -885,28 +887,34 @@
             function hookProductButtons() {
                 $('.btn-add-cart').off('click').on('click', function(e) {
                     e.preventDefault();
-                    // Lấy đúng thuộc tính data-* đã render ra từ productManagement.jsp
+                    // Lấy thông tin sản phẩm từ data-attributes
                     const productId = $(this).data('product-id');
                     const productName = $(this).data('product-name');
                     const price = $(this).data('product-price');
-                    const componentType = $(this).data('component-type'); // Lấy trực tiếp từ button
-                    if (!productName || !price || !componentType) {
-                        showNotification('Không lấy được thông tin sản phẩm!', 'danger');
-                        return;
-                    }
-                    // Cho phép nhiều sản phẩm mỗi loại linh kiện, nhưng không trùng productId
-                    let cart = JSON.parse(sessionStorage.getItem('cart') || '[]');
-                    const exists = cart.some(item => item.componentType === componentType && item.productId === productId);
-                    if (!exists) {
-                        cart.push({ productId, productName, price, componentType });
-                        sessionStorage.setItem('cart', JSON.stringify(cart));
-                        selectComponent(componentType, productId, productName, price);
-                        renderTemporaryOrder();
-                        calculateTotal();
-                        showNotification(`Đã thêm: ${productName} - $${price}`, 'success');
-                    } else {
-                        showNotification('Sản phẩm này đã có trong đơn hàng tạm thời!', 'warning');
-                    }
+                    const componentType = $(this).data('component-type');
+                    const quantity = 1; // Số lượng mặc định là 1
+
+                    // Gọi API thêm vào cart (giống home page)
+                    $.ajax({
+                        url: 'CartApiServlet',
+                        method: 'POST',
+                        contentType: 'application/json',
+                        data: JSON.stringify({
+                            productId: productId,
+                            quantity: quantity
+                        }),
+                        success: function(res) {
+                            if (res.success) {
+                                showNotification('Đã thêm vào giỏ hàng: ' + productName, 'success');
+                                renderTemporaryOrder();
+                            } else {
+                                showNotification(res.message || 'Lỗi khi thêm vào giỏ hàng', 'danger');
+                            }
+                        },
+                        error: function(xhr) {
+                            showNotification('Lỗi khi thêm vào giỏ hàng', 'danger');
+                        }
+                    });
                 });
             }
 
