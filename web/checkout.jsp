@@ -679,14 +679,22 @@
                     const result = await response.json();
 
                     if (result.success) {
-                        showSuccess('Order placed successfully! Please proceed to payment.');
-                        // Clear form
-                        form.reset();
-                        // Reload cart (should be empty now)
-                        setTimeout(() => {
-                            loadCartItems();
-                            window.location = "${pageContext.request.contextPath}/payment-servlet?orderId=" + result.orderId;
-                        }, 2000);
+                        if (orderData.paymentMethodId === 1) { // COD
+                            showSuccess('Đặt hàng thành công! Cảm ơn bạn đã mua hàng.');
+                            form.reset();
+                            setTimeout(() => {
+                                loadCartItems();
+                                // Pass a flag to homepage to show order success
+                                window.location = "${pageContext.request.contextPath}/homePage.jsp?orderSuccess=1";
+                            }, 2000);
+                        } else {
+                            showSuccess('Order placed successfully! Please proceed to payment.');
+                            form.reset();
+                            setTimeout(() => {
+                                loadCartItems();
+                                window.location = "${pageContext.request.contextPath}/payment-servlet?orderId=" + result.orderId;
+                            }, 2000);
+                        }
                     } else {
                         showError('Order failed: ' + (result.message || 'Unknown error'));
                     }

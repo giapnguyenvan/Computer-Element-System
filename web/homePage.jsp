@@ -502,5 +502,26 @@
                                             });
         </script>
 
+        <script>
+// Show order success notification if redirected from COD order
+(function() {
+    const urlParams = new URLSearchParams(window.location.search);
+    if (urlParams.get('orderSuccess') === '1') {
+        Swal.fire({
+            icon: 'success',
+            title: 'Đặt hàng thành công!',
+            text: 'Cảm ơn bạn đã mua hàng.',
+            confirmButtonText: 'OK'
+        });
+        // Optionally, remove the param from URL after showing
+        if (window.history.replaceState) {
+            const url = new URL(window.location);
+            url.searchParams.delete('orderSuccess');
+            window.history.replaceState({}, document.title, url.pathname + url.search);
+        }
+    }
+})();
+</script>
+
     </body>
 </html>
