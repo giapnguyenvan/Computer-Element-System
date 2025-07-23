@@ -30,4 +30,9 @@ public class OrderDAO extends GenericDAO<Order, Integer>{
     public boolean updateOrderStatus(String status, Integer orderId) throws SQLException {
         return executeQueryUpdateOrCheck(status, orderId);
     }
+    
+    @FindBy(columns = "shipper_id")
+    public List<Order> getByShipperId(Integer shipper_id) throws SQLException{
+        return findByAnd(shipper_id);
+    }
 }

@@ -44,6 +44,9 @@ public class OrderDetail {
     public void setProductFunc() {
         try {
             product = new ProductDAO().getById(productId);
+            if (product != null) {
+                product.setProductImagesFunc();
+            }
         } catch (Exception e) {
             e.printStackTrace();
         }
