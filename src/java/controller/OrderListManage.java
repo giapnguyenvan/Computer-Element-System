@@ -20,6 +20,8 @@ import shop.entities.OrderDetail;
 import shop.DAO.TransactionDAO;
 import shop.entities.Transaction;
 import java.util.Comparator;
+import shop.DAO.ShipperDAO;
+import shop.entities.Shipper;
 
 /**
  *
@@ -28,6 +30,7 @@ import java.util.Comparator;
 @WebServlet(name = "OrderListManage", urlPatterns = {"/order-list-manage"})
 public class OrderListManage extends HttpServlet {
 
+    private ShipperDAO shipDAO = new ShipperDAO();
     private OrderDAO orderDAO = new OrderDAO();
     private SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");
 
@@ -108,6 +111,9 @@ public class OrderListManage extends HttpServlet {
                 }
                 if (isGet) {
                     if (toDate.after(order.getOrderDate()) && fromDate.before(order.getOrderDate())) {
+                        order.setPaidFunc();
+                        order.setPaymentMethodFunc();
+                        order.setCustomerFunc();
                         filteredOrders.add(order);
                     }
                 }
@@ -162,6 +168,20 @@ public class OrderListManage extends HttpServlet {
                 }
             }
 
+            List<Shipper> shippers = shipDAO.getAll();
+            request.setAttribute("shippers", shippers);
+            // Đếm số lượng đơn theo trạng thái
+            int pendingCount = 0, shippingCount = 0, completedCount = 0, cancelledCount = 0;
+            for (Order order : ordersAll) {
+                if ("Pending".equalsIgnoreCase(order.getStatus())) pendingCount++;
+                else if ("Shipping".equalsIgnoreCase(order.getStatus())) shippingCount++;
+                else if ("Completed".equalsIgnoreCase(order.getStatus())) completedCount++;
+                else if ("Cancel".equalsIgnoreCase(order.getStatus()) || "Cancelled".equalsIgnoreCase(order.getStatus())) cancelledCount++;
+            }
+            request.setAttribute("pendingCount", pendingCount);
+            request.setAttribute("shippingCount", shippingCount);
+            request.setAttribute("completedCount", completedCount);
+            request.setAttribute("cancelledCount", cancelledCount);
             // Set attributes for JSP
             request.setAttribute("orders", paginatedOrders);
             request.setAttribute("paymentStatusMap", paymentStatusMap);
@@ -201,14 +221,25 @@ public class OrderListManage extends HttpServlet {
         try {
             String orderId = request.getParameter("order_id");
             String status = request.getParameter("order_status");
-
+            String shipperId = request.getParameter("shipper_id");
+            if(shipperId == null) shipperId = "0";
             Order order = orderDAO.getById(Integer.parseInt(orderId));
             order.setStatus(status);
+            order.setShipperId(Integer.parseInt(shipperId));
+            if(shipperId == "0"){
+                order.setShipperId(null);
+            }
+            
             orderDAO.update(order);
             request.setAttribute("message", "Update successfully");
         } catch (Exception e) {
             e.printStackTrace();
             request.setAttribute("message", "Update failure");
+        }
+        String from_page = request.getParameter("from_page");
+        if(from_page !=null&& from_page.equals("shipper")){
+            response.sendRedirect("order-list-of-shipper");
+            return;
         }
         doGet(request, response);
     }
