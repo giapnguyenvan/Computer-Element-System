@@ -8,6 +8,7 @@ import lombok.experimental.FieldDefaults;
 import shop.DAO.CustomerDAO;
 import shop.DAO.OrderDetailDAO;
 import shop.DAO.PaymentMethodDAO;
+import shop.DAO.TransactionDAO;
 import shop.anotation.*;
 
 /**
@@ -49,11 +50,16 @@ public class Order {
     @Column(name = "payment_method_id")
     Integer paymentMethodId;
 
+    @Column(name = "shipper_id")
+    Integer shipperId;
+
     Customer customer;
 
     List<OrderDetail> orderDetails;
 
     PaymentMethod paymentMethod;
+
+    boolean paid;
 
     public void setCustomerFunc() {
         try {
@@ -77,5 +83,20 @@ public class Order {
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+
+    public void setPaidFunc() {
+        try {
+            TransactionDAO transactionDAO = new TransactionDAO();
+            Transaction tran = transactionDAO.getByOrderId(id);
+            if (tran != null) {
+                this.paid = tran.isPaid();
+                return;
+            }
+            
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        this.paid = this.status.toLowerCase().equals("completed");
     }
 }

@@ -18,7 +18,7 @@
         <a href="${pageContext.request.contextPath}/shipperdashboard" class="<%= request.getRequestURI().endsWith("shipperdashboard") ? "active" : "" %>">
             <i class="fas fa-home me-2"></i> Dashboard
         </a>
-        <a href="${pageContext.request.contextPath}/shipperorderservlet" target="mainFrame" class="<%= request.getRequestURI().contains("shipperorderservlet") ? "active" : "" %>">
+        <a href="${pageContext.request.contextPath}/order-list-of-shipper" target="mainFrame" class="<%= request.getRequestURI().contains("shipperorderservlet") ? "active" : "" %>">
             <i class="fas fa-truck me-2"></i> Orders Management
         </a>
         <a href="${pageContext.request.contextPath}/logout">

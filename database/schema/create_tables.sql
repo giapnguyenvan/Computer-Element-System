@@ -30,7 +30,7 @@ DROP TABLE IF EXISTS `voucher_usage`;
 DROP TABLE IF EXISTS `menu_attribute_value`;
 DROP TABLE IF EXISTS `menu_attribute`;
 DROP TABLE IF EXISTS `menu_item`;
-
+USE project_g2;
 -- Create parent tables
 CREATE TABLE `componenttype` (
   `type_id` INT NOT NULL AUTO_INCREMENT,
@@ -59,7 +59,7 @@ CREATE TABLE `user` (
   `username` VARCHAR(100) NOT NULL,
   `password` VARCHAR(255) NOT NULL,
   `email` VARCHAR(100) DEFAULT NULL,
-  `role` ENUM('Staff', 'Admin') NOT NULL,
+  `role` ENUM('Staff', 'Admin','Shipper') NOT NULL,
   `status` ENUM('Active', 'Inactive') NOT NULL DEFAULT 'Active',
   `is_verified` TINYINT(1) NOT NULL DEFAULT '0',
   `verification_token` TEXT,
@@ -168,8 +168,9 @@ CREATE TABLE `orders` (
   `total_amount` DECIMAL(18,2) DEFAULT NULL,
   `shipping_address` VARCHAR(255) DEFAULT NULL,
   `shipping_fee` DECIMAL(10,2) DEFAULT '0.00',
-  `status` ENUM('Pending', 'Shipping', 'Completed', 'Cancel') NOT NULL DEFAULT 'Pending',
+  `status` ENUM('Pending','Processing' ,'Shipping', 'Completed', 'Cancel') NOT NULL DEFAULT 'Pending',
   `payment_method_id` INT DEFAULT NULL,
+  `shipper_id` INT NULL,
   PRIMARY KEY (`order_id`),
   KEY `customer_id` (`customer_id`),
   KEY `payment_method_id` (`payment_method_id`),
