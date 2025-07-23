@@ -56,11 +56,11 @@
     <!-- Header -->
     <div class="row mb-4">
         <div class="col">
-                            <h2><i class="fas fa-shopping-bag me-2"></i>My Orders</h2>
+                            <h2><i class="fas fa-shopping-bag me-2"></i>Order History</h2>
             <nav aria-label="breadcrumb">
                 <ol class="breadcrumb">
-                    <li class="breadcrumb-item"><a href="${pageContext.request.contextPath}/homepageservlet">Trang chủ</a></li>
-                    <li class="breadcrumb-item active">My Orders</li>
+                    <li class="breadcrumb-item"><a href="${pageContext.request.contextPath}/homepageservlet">Home</a></li>
+                    <li class="breadcrumb-item active">Order History</li>
                 </ol>
             </nav>
         </div>
@@ -86,10 +86,10 @@
         <c:when test="${empty orders}">
             <div class="text-center py-5">
                 <i class="fas fa-shopping-bag fa-3x text-muted mb-3"></i>
-                <h4 class="text-muted">Chưa có đơn hàng nào</h4>
-                <p class="text-muted">Hãy khám phá các sản phẩm và đặt hàng ngay!</p>
+                <h4 class="text-muted">No orders yet</h4>
+                <p class="text-muted">Start shopping and place your first order!</p>
                 <a href="${pageContext.request.contextPath}/homepageservlet" class="btn btn-primary">
-                    <i class="fas fa-shopping-cart me-2"></i>Mua sắm ngay
+                    <i class="fas fa-shopping-cart me-2"></i>Shop Now
                 </a>
             </div>
         </c:when>
@@ -100,7 +100,7 @@
                     <div class="order-header">
                         <div class="row align-items-center">
                             <div class="col-md-6">
-                                <h5 class="mb-1">Đơn hàng #${order.id}</h5>
+                                <h5 class="mb-1">Order #${order.id}</h5>
                                 <small class="text-muted">
                                     <i class="fas fa-calendar me-1"></i>
                                     <fmt:formatDate value="${order.orderDate}" pattern="dd/MM/yyyy HH:mm" />
@@ -109,16 +109,16 @@
                             <div class="col-md-6 text-md-end">
                                 <c:choose>
                                     <c:when test="${order.status == 'Pending'}">
-                                        <span class="badge status-pending status-badge">Đang chờ xử lý</span>
+                                        <span class="badge status-pending status-badge">Pending</span>
                                     </c:when>
                                     <c:when test="${order.status == 'Shipping'}">
-                                        <span class="badge status-shipping status-badge">Đang vận chuyển</span>
+                                        <span class="badge status-shipping status-badge">Shipping</span>
                                     </c:when>
                                     <c:when test="${order.status == 'Completed'}">
-                                        <span class="badge status-completed status-badge">Đã hoàn thành</span>
+                                        <span class="badge status-completed status-badge">Completed</span>
                                     </c:when>
                                     <c:when test="${order.status == 'Cancel'}">
-                                        <span class="badge status-cancel status-badge">Đã hủy</span>
+                                        <span class="badge status-cancel status-badge">Cancelled</span>
                                     </c:when>
                                 </c:choose>
                             </div>
@@ -131,9 +131,16 @@
                         <c:forEach var="orderDetail" items="${order.orderDetails}">
                             <div class="row mb-3 pb-3 border-bottom">
                                 <div class="col-md-2">
-                                    <div class="product-image d-flex align-items-center justify-content-center bg-light">
-                                        <i class="fas fa-microchip fa-2x text-primary"></i>
-                                    </div>
+                                    <c:choose>
+                                        <c:when test="${not empty orderDetail.product.productImages and not empty orderDetail.product.productImages[0].imageUrl}">
+                                            <img src="${orderDetail.product.productImages[0].imageUrl}" class="product-image" alt="${orderDetail.product.name}" />
+                                        </c:when>
+                                        <c:otherwise>
+                                            <div class="product-image d-flex align-items-center justify-content-center bg-light">
+                                                <i class="fas fa-microchip fa-2x text-primary"></i>
+                                            </div>
+                                        </c:otherwise>
+                                    </c:choose>
                                 </div>
                                 <div class="col-md-6">
                                     <h6 class="mb-1">${orderDetail.product.name}</h6>
@@ -141,7 +148,7 @@
                                         <p class="text-muted mb-1 small">${orderDetail.product.description}</p>
                                     </c:if>
                                     <small class="text-muted">
-                                        <span class="badge bg-secondary">Số lượng: ${orderDetail.quantity}</span>
+                                        <span class="badge bg-secondary">Quantity: ${orderDetail.quantity}</span>
                                         <c:if test="${not empty orderDetail.product.status}">
                                             <span class="badge bg-info ms-1">${orderDetail.product.status}</span>
                                         </c:if>
@@ -168,11 +175,11 @@
                         <div class="row">
                             <div class="col-md-8">
                                 <div class="order-info">
-                                    <p class="mb-1"><i class="fas fa-map-marker-alt me-2"></i><strong>Địa chỉ giao hàng:</strong></p>
+                                    <p class="mb-1"><i class="fas fa-map-marker-alt me-2"></i><strong>Shipping Address:</strong></p>
                                     <p class="text-muted mb-2">${order.shippingAddress}</p>
 
                                     <c:if test="${not empty order.paymentMethod}">
-                                        <p class="mb-1"><i class="fas fa-credit-card me-2"></i><strong>Phương thức thanh toán:</strong></p>
+                                        <p class="mb-1"><i class="fas fa-credit-card me-2"></i><strong>Payment Method:</strong></p>
                                         <p class="text-muted">${order.paymentMethod.name}</p>
                                     </c:if>
                                 </div>
@@ -180,14 +187,14 @@
                             <div class="col-md-4">
                                 <div class="order-summary">
                                     <div class="d-flex justify-content-between mb-2">
-                                        <span>Phí vận chuyển:</span>
+                                        <span>Shipping Fee:</span>
                                         <span>
                                             <fmt:formatNumber value="${order.shippingFee}" type="currency" 
                                                               currencySymbol="₫" groupingUsed="true" />
                                         </span>
                                     </div>
                                     <div class="d-flex justify-content-between mb-3">
-                                        <strong>Tổng tiền:</strong>
+                                        <strong>Total:</strong>
                                         <strong class="text-primary">
                                             <fmt:formatNumber value="${order.totalAmount}" type="currency" 
                                                               currencySymbol="₫" groupingUsed="true" />
@@ -200,7 +207,7 @@
                                             <input type="hidden" name="action" value="cancel">
                                             <input type="hidden" name="orderId" value="${order.id}">
                                             <button type="submit" class="btn btn-outline-danger btn-sm w-100">
-                                                <i class="fas fa-times me-2"></i>Hủy đơn hàng
+                                                <i class="fas fa-times me-2"></i>Cancel Order
                                             </button>
                                         </form>
                                     </c:if>
@@ -219,7 +226,7 @@
 
 <script>
                                             function confirmCancel() {
-                                                return confirm('Bạn có chắc chắn muốn hủy đơn hàng này? Hành động này không thể hoàn tác.');
+                                                return confirm('Are you sure you want to cancel this order? This action cannot be undone.');
                                             }
     // Robust collapse toggle - checks state explicitly
     document.addEventListener('DOMContentLoaded', function(){
