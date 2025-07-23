@@ -16,8 +16,10 @@ import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import shop.DAO.OrderDAO;
+import shop.DAO.ShipperDAO;
 import shop.entities.Order;
 import shop.entities.OrderDetail;
+import shop.entities.Shipper;
 
 /**
  *
@@ -26,6 +28,7 @@ import shop.entities.OrderDetail;
 @WebServlet(name = "OrderManageStaff", urlPatterns = {"/order-manage-staff"})
 public class OrderManageStaff extends HttpServlet {
 
+    private ShipperDAO shipDAO = new ShipperDAO();
     private OrderDAO orderDAO = new OrderDAO();
     private SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");
 
@@ -127,6 +130,7 @@ public class OrderManageStaff extends HttpServlet {
                 for (int i = startIndex; i < endIndex; i++) {
                     Order order = filteredOrders.get(i);
                         order.setorderDetailsFunc();
+                        order.setPaidFunc();
                         order.setCustomerFunc();
                         order.setPaymentMethodFunc();
                         for (OrderDetail orderDetail : order.getOrderDetails()) {
@@ -136,7 +140,22 @@ public class OrderManageStaff extends HttpServlet {
                     }
                 }
 
+            // Đếm số lượng đơn theo trạng thái
+            int pendingCount = 0, shippingCount = 0, completedCount = 0, cancelledCount = 0;
+            for (Order order : ordersAll) {
+                if ("Pending".equalsIgnoreCase(order.getStatus())) pendingCount++;
+                else if ("Shipping".equalsIgnoreCase(order.getStatus())) shippingCount++;
+                else if ("Completed".equalsIgnoreCase(order.getStatus())) completedCount++;
+                else if ("Cancel".equalsIgnoreCase(order.getStatus()) || "Cancelled".equalsIgnoreCase(order.getStatus())) cancelledCount++;
+            }
+            request.setAttribute("pendingCount", pendingCount);
+            request.setAttribute("shippingCount", shippingCount);
+            request.setAttribute("completedCount", completedCount);
+            request.setAttribute("cancelledCount", cancelledCount);
+
             // Set attributes for JSP
+            List<Shipper> shippers = shipDAO.getAll();
+            request.setAttribute("shippers", shippers);
             request.setAttribute("orders", paginatedOrders);
             request.setAttribute("currentPage", page);
             request.setAttribute("totalPages", totalPages);
