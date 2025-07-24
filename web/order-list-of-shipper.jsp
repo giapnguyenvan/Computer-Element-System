@@ -606,7 +606,7 @@
                                 <th><i class="fas fa-map-marker-alt me-2"></i>Address</th>
                                 <th><i class="fas fa-flag me-2"></i>Status</th>
                                 <th><i class="fas fa-credit-card me-2"></i>Paid</th>
-                                <th><i class="fas fa-eye me-2"></i>Details</th>
+                                <th><i class="fas fa-eye me-2"></i>Action</th>
                             </tr>
                         </thead>
                         <tbody>
