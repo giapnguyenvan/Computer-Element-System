@@ -807,18 +807,18 @@
             window.loadProducts = function(type) {
                 window.currentComponentType = type;
                 $('#currentCategoryBarTitle').html(
-                  '<div class="mb-3" style="font-size:1.2em;font-weight:600;color:#0052cc;">' +
-                  '<i class="fas fa-layer-group me-2"></i>Category: <span>' + getCategoryDisplayName(type) + '</span></div>'
+                    '<div class="mb-3" style="font-size:1.2em;font-weight:600;color:#0052cc;">' +
+                    '<i class="fas fa-layer-group me-2"></i>Category: <span>' + getCategoryDisplayName(type) + '</span></div>'
                 );
                 $('#productList').html('<div class="text-center py-5"><div class="spinner-border text-primary"></div><div>Đang tải sản phẩm...</div></div>');
                 $.ajax({
                     url: 'productservlet',
                     method: 'GET',
-                    data: { service: 'productManagement', componentType: type, ajax: 1 }, // Đảm bảo luôn có componentType
+                    data: { service: 'productManagement', componentType: type, ajax: 1 },
                     cache: false,
                     success: function(html) {
-                        // Đảm bảo nút là btn-select-component
-                        html = html.replace(/btn-add-cart/g, 'btn-select-component').replace(/Add to cart/g, 'Select');
+                        // Đổi nút thành "Add to Cart"
+                        html = html.replace(/btn-select-component/g, 'btn-add-cart').replace(/Select/g, 'Add to Cart');
                         $('#productList').html(html);
                         hookProductButtons();
                     },
@@ -828,101 +828,25 @@
                 });
             };
 
-            // Khi load lại trang, cập nhật progress bar và trạng thái nút select
-            window.addEventListener('load', function() {
-                updateProgressBar();
-                updateSidebarSelectedLabels(); // Cập nhật trạng thái sidebar khi load lại trang
-                // Nếu đã chọn linh kiện trước đó, cập nhật nút
-                const steps = ['CPU','Mainboard','RAM','GPU','Storage','PSU','Case','Cooler'];
-                steps.forEach(type => {
-                    const data = sessionStorage.getItem(`selected_${type}`);
-                    if (data) {
-                        const item = JSON.parse(data);
-                        updateSelectButtonState(type, item.productName);
-                    }
-                });
-                renderTemporaryOrder(); // Hiển thị đơn hàng tạm thời khi load lại trang
-                calculateTotal(); // Đảm bảo tổng giá luôn đúng khi load lại trang
-                // Tự động load sản phẩm CPU khi vào trang lần đầu
-                loadProducts('CPU');
-            });
-
-            // Hàm cập nhật trạng thái sidebar linh kiện đã chọn
-            function updateSidebarSelectedLabels() {
-                const steps = ['CPU','Mainboard','RAM','GPU','Storage','PSU','Case','Cooler'];
-                steps.forEach(type => {
-                    const data = sessionStorage.getItem(`selected_${type}`);
-                    const label = $(`#sidebar-selected-${type}`);
-                    if (data) {
-                        const item = JSON.parse(data);
-                        label.text(item.productName);
-                    } else {
-                        label.text(''); // hoặc 'Chưa chọn'
-                    }
-                });
-            }
-
-            // Hàm hiển thị đơn hàng tạm thời ở #currentCategoryBar
-            function renderTemporaryOrder() {
-                let tempCart = JSON.parse(sessionStorage.getItem('tempCart') || '{}');
-                let items = [];
-                for (const type in tempCart) {
-                    if (Array.isArray(tempCart[type]) && tempCart[type].length > 0) {
-                        items.push(tempCart[type][0]);
-                    }
-                }
-                let html = '';
-                if (items.length === 0) {
-                    html = '<div class="alert alert-secondary mb-2">No components have been selected yet.</div>';
-                    $('#temporaryOrderBar').html(html);
-                    return;
-                }
-                html += `<div class="card mb-2"><div class="card-header bg-primary text-white py-2 px-3"><i class="fas fa-shopping-cart me-2"></i>Selected Components</div><div class="card-body p-2"><div class="table-responsive"><table class="table table-sm mb-0"><thead><tr><th>Component</th><th>Product Name</th><th>Price</th><th></th></tr></thead><tbody>`;
-                items.forEach(item => {
-                    html += `<tr>
-                        <td>${item.componentType}</td>
-                        <td>${item.productName}</td>
-                        <td>$${item.price}</td>
-                        <td><button class='btn btn-danger btn-sm btn-remove-cart' data-component-type='${item.componentType}' title='Remove'><i class='fas fa-trash'></i></button></td>
-                    </tr>`;
-                });
-                html += '</tbody></table></div></div></div>';
-                $('#temporaryOrderBar').html(html);
-                // Gắn sự kiện xóa
-                $('.btn-remove-cart').off('click').on('click', function(e) {
-                    e.preventDefault();
-                    const componentType = $(this).data('component-type');
-                    removeFromCart(componentType);
-                });
-            }
-
-            // HƯỚNG DẪN: Khi render nút Add to cart trong HTML sản phẩm, hãy dùng dạng sau:
-            // <button class="btn-select-component" data-product-id="${productId}" data-product-name="${productName}" data-product-price="${price}" data-component-type="${componentType}">Select</button>
-            // Sau khi load sản phẩm, gắn lại sự kiện cho nút Add to cart
+            // Hàm xử lý nút Add to Cart như homepage
             function hookProductButtons() {
-                $('.btn-select-component').off('click').on('click', function (e) {
+                $('.btn-add-cart').off('click').on('click', function (e) {
                     e.preventDefault();
-
-                    // Lấy thông tin sản phẩm từ data-attributes
-                    const productId = $(this).data('product-id');
-                    const productName = $(this).data('product-name');
-                    const productPrice = $(this).data('product-price');
+                    // Lấy thông tin sản phẩm từ data-attributes, fallback nếu không có
+                    const productId = $(this).attr('data-product-id') || $(this).data('product-id');
+                    const productName = $(this).attr('data-product-name') || $(this).data('product-name');
+                    const price = $(this).attr('data-product-price') || $(this).data('product-price');
                     const addButton = this;
 
-                    // Lấy userId từ session (JSP code, hoặc JS global nếu đã có)
-                    let currentUserId = 0;
-                    <%-- JSP lấy userId từ session --%>
-                    <c:choose>
-                        <c:when test="${not empty sessionScope.customerAuth}">
-                            currentUserId = ${sessionScope.customerAuth.customer_id};
-                        </c:when>
-                        <c:when test="${not empty sessionScope.userAuth}">
-                            currentUserId = ${sessionScope.userAuth.id};
-                        </c:when>
-                        <c:otherwise>
-                            currentUserId = 0;
-                        </c:otherwise>
-                    </c:choose>
+                    // Nếu thiếu thông tin, báo lỗi rõ ràng
+                    if (!productId || !productName || !price) {
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Lỗi dữ liệu sản phẩm!',
+                            text: 'Không thể lấy thông tin sản phẩm. Vui lòng thử lại hoặc liên hệ quản trị viên.'
+                        });
+                        return;
+                    }
 
                     // Kiểm tra đăng nhập
                     if (currentUserId === 0) {
@@ -959,7 +883,7 @@
                             Swal.fire({
                                 icon: 'success',
                                 title: 'Success!',
-                                text: productName + ' has been added to your cart!',
+                                text: productName + ' đã được thêm vào giỏ hàng!',
                                 timer: 2000,
                                 showConfirmButton: false
                             });
@@ -967,7 +891,7 @@
                             addButton.innerHTML = '<i class="fas fa-check me-2"></i>Added!';
                             setTimeout(() => {
                                 addButton.classList.remove('btn-success');
-                                addButton.innerHTML = '<i class="fas fa-cart-plus me-2"></i>Select';
+                                addButton.innerHTML = '<i class="fas fa-cart-plus me-2"></i>Add to Cart';
                             }, 2000);
                             updateCartCount();
                         } else {
@@ -984,7 +908,7 @@
                     .finally(() => {
                         addButton.disabled = false;
                         if (!addButton.classList.contains('btn-success')) {
-                            addButton.innerHTML = '<i class="fas fa-cart-plus me-2"></i>Select';
+                            addButton.innerHTML = '<i class="fas fa-cart-plus me-2"></i>Add to Cart';
                         }
                     });
                 });
@@ -992,20 +916,6 @@
 
             // Hàm cập nhật số lượng sản phẩm trong cart (nếu có icon hiển thị)
             function updateCartCount() {
-                // Lấy userId từ session (nếu đã có)
-                let currentUserId = 0;
-                <%-- JSP lấy userId từ session --%>
-                <c:choose>
-                    <c:when test="${not empty sessionScope.customerAuth}">
-                        currentUserId = ${sessionScope.customerAuth.customer_id};
-                    </c:when>
-                    <c:when test="${not empty sessionScope.userAuth}">
-                        currentUserId = ${sessionScope.userAuth.id};
-                    </c:when>
-                    <c:otherwise>
-                        currentUserId = 0;
-                    </c:otherwise>
-                </c:choose>
                 fetch('CartApiServlet?customerId=' + currentUserId)
                     .then(response => response.json())
                     .then(result => {
@@ -1022,75 +932,8 @@
             document.addEventListener('DOMContentLoaded', function () {
                 updateCartCount();
             });
-        //]]>
+
+            // Không còn temporary cart, không cần renderTemporaryOrder hay các hàm liên quan
         </script>
-        <style>
-            #productList {
-                background: #fff;
-                border-radius: 12px;
-                box-shadow: 0 2px 12px rgba(0,0,0,0.08);
-                padding: 24px 12px;
-                margin-bottom: 32px;
-                min-height: 300px;
-                transition: box-shadow 0.2s;
-            }
-            @media (max-width: 767px) {
-                #productList {
-                    padding: 8px 2px;
-                    font-size: 0.98em;
-                }
-                #productList table {
-                    font-size: 0.95em;
-                }
-            }
-        </style>
-        <script>
-$(document).ready(function () {
-    function hookProductButtons() {
-        $('.btn-add-cart').off('click').on('click', function () {
-            // Lấy đúng data-attributes
-            const productId = $(this).attr('data-product-id') || $(this).data('product-id');
-            const productName = $(this).attr('data-product-name') || $(this).data('product-name');
-            const productPrice = $(this).attr('data-product-price') || $(this).data('product-price');
-            const componentType = $(this).attr('data-component-type') || $(this).data('component-type');
-
-            // Kiểm tra dữ liệu đầu vào
-            if (!productId || !productName || !productPrice || !componentType) {
-                alert('Product data is missing. Please try again.');
-                return;
-            }
-
-            // Lấy temporary cart từ sessionStorage
-            let tempCart = JSON.parse(sessionStorage.getItem('tempCart') || '{}');
-            if (!tempCart[componentType]) {
-                tempCart[componentType] = [];
-            }
-
-            // Kiểm tra trùng lặp sản phẩm
-            const exists = tempCart[componentType].some(item => item.productId == productId);
-            if (exists) {
-                alert('This product is already in the temporary cart!');
-                return;
-            }
-
-            // Thêm sản phẩm vào temporary cart
-            tempCart[componentType].push({
-                productId: productId,
-                productName: productName,
-                productPrice: productPrice
-            });
-            sessionStorage.setItem('tempCart', JSON.stringify(tempCart));
-            alert('Product added to temporary cart!');
-        });
-    }
-
-    hookProductButtons();
-
-    // Nếu có AJAX render sản phẩm, hãy gọi lại hookProductButtons() sau khi render xong
-    // $.ajax({...}).done(function() {
-    //     hookProductButtons();
-    // });
-});
-</script>
     </body>
 </html>
