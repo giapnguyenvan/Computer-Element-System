@@ -1,4 +1,4 @@
-                                                    <%@page contentType="text/html" pageEncoding="UTF-8"%>
+<%@page contentType="text/html" pageEncoding="UTF-8"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 <!DOCTYPE html>
@@ -968,5 +968,53 @@
                 }
             }
         </style>
+        <script>
+$(document).ready(function () {
+    function hookProductButtons() {
+        $('.btn-add-cart').off('click').on('click', function () {
+            // Lấy đúng data-attributes
+            const productId = $(this).attr('data-product-id') || $(this).data('product-id');
+            const productName = $(this).attr('data-product-name') || $(this).data('product-name');
+            const productPrice = $(this).attr('data-product-price') || $(this).data('product-price');
+            const componentType = $(this).attr('data-component-type') || $(this).data('component-type');
+
+            // Kiểm tra dữ liệu đầu vào
+            if (!productId || !productName || !productPrice || !componentType) {
+                alert('Product data is missing. Please try again.');
+                return;
+            }
+
+            // Lấy temporary cart từ sessionStorage
+            let tempCart = JSON.parse(sessionStorage.getItem('tempCart') || '{}');
+            if (!tempCart[componentType]) {
+                tempCart[componentType] = [];
+            }
+
+            // Kiểm tra trùng lặp sản phẩm
+            const exists = tempCart[componentType].some(item => item.productId == productId);
+            if (exists) {
+                alert('This product is already in the temporary cart!');
+                return;
+            }
+
+            // Thêm sản phẩm vào temporary cart
+            tempCart[componentType].push({
+                productId: productId,
+                productName: productName,
+                productPrice: productPrice
+            });
+            sessionStorage.setItem('tempCart', JSON.stringify(tempCart));
+            alert('Product added to temporary cart!');
+        });
+    }
+
+    hookProductButtons();
+
+    // Nếu có AJAX render sản phẩm, hãy gọi lại hookProductButtons() sau khi render xong
+    // $.ajax({...}).done(function() {
+    //     hookProductButtons();
+    // });
+});
+</script>
     </body>
-</html> 
+</html>
