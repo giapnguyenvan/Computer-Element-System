@@ -32,6 +32,8 @@
         </a>
 
         <!-- Menu Management Dropdown -->
+        <!-- Đã xóa toàn bộ dropdown Menu Management bên dưới -->
+        <!--
         <div class="nav-item dropdown">
             <a class="nav-link dropdown-toggle <%= request.getRequestURI().contains("menuItemManagement") || request.getRequestURI().contains("menuAttributeManagement") || request.getRequestURI().contains("menuAttributeValueManagement") ? "active" : ""%>" href="#" id="navbarDropdownMenuManagement" role="button" data-bs-toggle="dropdown" aria-expanded="false">
                 <i class="fas fa-bars me-2"></i> Menu Management
@@ -42,6 +44,7 @@
                 <li><a class="dropdown-item <%= request.getRequestURI().contains("menuAttributeValueManagement") ? "active" : ""%>" href="${pageContext.request.contextPath}/menuAttributeValueManagement" target="mainFrame">Menu Level 3</a></li>
             </ul>
         </div>
+        -->
 
         <a href="${pageContext.request.contextPath}/productservlet" target="mainFrame" class="<%= request.getRequestURI().contains("productservlet") ? "active" : ""%>">
             <i class="fas fa-box me-2"></i> Products
