@@ -817,9 +817,42 @@
                     data: { service: 'productManagement', componentType: type, ajax: 1 },
                     cache: false,
                     success: function(html) {
-                        // Đổi nút thành "Add to Cart"
+                        // Đảm bảo nút Add to Cart có đầy đủ data-attributes
+                        // Nếu server trả về HTML chưa có data-product-id, data-product-name, data-product-price,
+                        // hãy parse lại từng nút và bổ sung thuộc tính từ dữ liệu sản phẩm (nếu có thể).
+                        // Nếu server trả về đúng thì không cần sửa đoạn này.
+                        // Nếu không, bạn có thể dùng đoạn sau để kiểm tra và bổ sung (nếu cần):
+
+                        // Chuyển đổi class và text nút
                         html = html.replace(/btn-select-component/g, 'btn-add-cart').replace(/Select/g, 'Add to Cart');
                         $('#productList').html(html);
+
+                        // Bổ sung data-attributes nếu thiếu
+                        $('#productList .btn-add-cart').each(function() {
+                            const $row = $(this).closest('tr');
+                            if (!$(this).attr('data-product-id')) {
+                                let id = $row.find('td:eq(0)').text().trim();
+                                if (!id) id = $row.find('td[data-field="id"]').text().trim();
+                                if (id) $(this).attr('data-product-id', id);
+                            }
+                            if (!$(this).attr('data-product-name')) {
+                                let name = $row.find('td:eq(1)').text().trim();
+                                if (!name) name = $row.find('td[data-field="name"]').text().trim();
+                                if (name) $(this).attr('data-product-name', name);
+                            }
+                            if (!$(this).attr('data-product-price')) {
+                                let price = $row.find('td:eq(2)').text().trim();
+                                if (!price) price = $row.find('td[data-field="price"]').text().trim();
+                                if (price) $(this).attr('data-product-price', price);
+                            }
+                            // Kiểm tra log
+                            console.log('Product button:', {
+                                id: $(this).attr('data-product-id'),
+                                name: $(this).attr('data-product-name'),
+                                price: $(this).attr('data-product-price')
+                            });
+                        });
+
                         hookProductButtons();
                     },
                     error: function() {
@@ -933,7 +966,23 @@
                 updateCartCount();
             });
 
-            // Không còn temporary cart, không cần renderTemporaryOrder hay các hàm liên quan
+            let currentUserId = 0;
+<%-- JSP lấy userId từ session --%>
+<c:choose>
+    <c:when test="${not empty sessionScope.customerAuth}">
+        currentUserId = ${sessionScope.customerAuth.customer_id};
+    </c:when>
+    <c:when test="${not empty sessionScope.userAuth}">
+        currentUserId = ${sessionScope.userAuth.id};
+    </c:when>
+    <c:otherwise>
+        currentUserId = 0;
+    </c:otherwise>
+</c:choose>
+
+function updateSidebarSelectedLabels() {
+    // TODO: Bổ sung logic cập nhật sidebar nếu cần
+}
         </script>
     </body>
 </html>
