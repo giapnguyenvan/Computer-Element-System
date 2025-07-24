@@ -359,13 +359,13 @@
                     <div class="qr-section" style="display: flex; flex-direction: column; justify-content: center; align-items: center">
                         <h1><i class="fas fa-qrcode me-2"></i>Scan to pay</h1>
 
-                        <img src="https://img.vietqr.io/image/MB-0817300803-qr_only.jpg?amount=${transaction.totalAmount}&addInfo=${transaction.transactionCode}&accountName=Nguyen%20Duc%20Cuong" 
+                        <img src="https://img.vietqr.io/image/MB-0343811285-qr_only.jpg?amount=${transaction.totalAmount}&addInfo=${transaction.transactionCode}&accountName=Truong%20Duc%20Kien" 
                              alt="Payment QR Code" class="qr-code pulse" id="qrCode">
 
                         <div class="payment-info">
                             <div><i class="fas fa-university me-2"></i><strong>Bank:</strong> MB Bank</div>
-                            <div><i class="fas fa-credit-card me-2"></i><strong>Account Number:</strong> 0817300803</div>
-                            <div><i class="fas fa-user me-2"></i><strong>Account Name:</strong>Nguyen Duc Cuong</div>
+                            <div><i class="fas fa-credit-card me-2"></i><strong>Account Number:</strong> 0343811285</div>
+                            <div><i class="fas fa-user me-2"></i><strong>Account Name:</strong>Truong Duc Kien</div>
                             <div class="payment-amount">
                                 <i class="fas fa-coins me-1"></i>${transaction.totalAmount} VND
                             </div>
@@ -463,7 +463,7 @@
             // Google Sheets Integration (Alternative approach)
             async function checkGoogleSheets() {
                 const HEAD_URL = "https://docs.google.com/spreadsheets/d/";
-                const SHEET_ID = "1eBH93hAdhslmqjEsqEj2KCHVHdSjy553BZs_ZJ6ZEr4";
+                const SHEET_ID = "1MARmRVl1EmxijN9fsb4QbWgOxDtL2c_yIPtHJc8hkBY";
                 const GID_STRING = "gviz/tq?sheet=trans";
                 const sizeOfCell = 10;
                 try {
