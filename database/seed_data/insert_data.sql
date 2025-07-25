@@ -294,6 +294,72 @@ FROM product p
 JOIN componenttype ct ON p.component_type_id = ct.type_id
 WHERE ct.name = 'RAM';
 
+INSERT INTO `productimage` (product_id, image_url, alt_text, is_primary)
+SELECT p.product_id, 'IMG/product/main1.jpg', p.name, TRUE
+FROM product p
+JOIN componenttype ct ON p.component_type_id = ct.type_id
+WHERE ct.name = 'Mainboard';
+
+INSERT INTO `productimage` (product_id, image_url, alt_text, is_primary)
+SELECT p.product_id, 'IMG/product/storage1.webp', p.name, TRUE
+FROM product p
+JOIN componenttype ct ON p.component_type_id = ct.type_id
+WHERE ct.name = 'Storage';
+
+INSERT INTO `productimage` (product_id, image_url, alt_text, is_primary)
+SELECT p.product_id, 'IMG/product/psu1.jpg', p.name, TRUE
+FROM product p
+JOIN componenttype ct ON p.component_type_id = ct.type_id
+WHERE ct.name = 'PSU';
+
+INSERT INTO `productimage` (product_id, image_url, alt_text, is_primary)
+SELECT p.product_id, 'IMG/product/case1.jpg', p.name, TRUE
+FROM product p
+JOIN componenttype ct ON p.component_type_id = ct.type_id
+WHERE ct.name = 'Case';
+
+INSERT INTO `productimage` (product_id, image_url, alt_text, is_primary)
+SELECT p.product_id, 'IMG/product/mouse1.jpg', p.name, TRUE
+FROM product p
+JOIN componenttype ct ON p.component_type_id = ct.type_id
+WHERE ct.name = 'Mouse';
+
+INSERT INTO `productimage` (product_id, image_url, alt_text, is_primary)
+SELECT p.product_id, 'IMG/product/keyboard1.jpg', p.name, TRUE
+FROM product p
+JOIN componenttype ct ON p.component_type_id = ct.type_id
+WHERE ct.name = 'Keyboard';
+
+INSERT INTO `productimage` (product_id, image_url, alt_text, is_primary)
+SELECT p.product_id, 'IMG/product/cooler1.jpg', p.name, TRUE
+FROM product p
+JOIN componenttype ct ON p.component_type_id = ct.type_id
+WHERE ct.name = 'Cooler';
+
+INSERT INTO `productimage` (product_id, image_url, alt_text, is_primary)
+SELECT p.product_id, 'IMG/product/headphone1.jpg', p.name, TRUE
+FROM product p
+JOIN componenttype ct ON p.component_type_id = ct.type_id
+WHERE ct.name = 'Headphone';
+
+INSERT INTO `productimage` (product_id, image_url, alt_text, is_primary)
+SELECT p.product_id, 'IMG/product/monitor1.jpg', p.name, TRUE
+FROM product p
+JOIN componenttype ct ON p.component_type_id = ct.type_id
+WHERE ct.name = 'Monitor';
+
+INSERT INTO `productimage` (product_id, image_url, alt_text, is_primary)
+SELECT p.product_id, 'IMG/product/chair1.jpg', p.name, TRUE
+FROM product p
+JOIN componenttype ct ON p.component_type_id = ct.type_id
+WHERE ct.name = 'Chair';
+
+INSERT INTO `productimage` (product_id, image_url, alt_text, is_primary)
+SELECT p.product_id, 'IMG/product/ram1.jpg', p.name, TRUE
+FROM product p
+JOIN componenttype ct ON p.component_type_id = ct.type_id
+WHERE ct.name = 'Desk';
+
 -- Select all data from tables
 SELECT * FROM admin;
 SELECT * FROM blog;
@@ -319,6 +385,10 @@ SELECT * FROM menu_item;
 SELECT * FROM menu_attribute;
 SELECT * FROM menu_attribute_value;
 
+-- Product Specifications for Product ID 1: AMD Ryzen 7 9800X3D
+-- This file contains detailed specifications for the AMD Ryzen 7 9800X3D CPU
+
+-- Clear existing specifications for product ID 1 (if any)
 DELETE FROM `productspecification` WHERE `product_id` = 1;
 
 -- Insert comprehensive specifications for AMD Ryzen 7 9800X3D
