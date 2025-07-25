@@ -301,7 +301,7 @@ JOIN componenttype ct ON p.component_type_id = ct.type_id
 WHERE ct.name = 'Mainboard';
 
 INSERT INTO `productimage` (product_id, image_url, alt_text, is_primary)
-SELECT p.product_id, 'IMG/product/storage1.webp', p.name, TRUE
+SELECT p.product_id, 'IMG/product/storage1.jpg', p.name, TRUE
 FROM product p
 JOIN componenttype ct ON p.component_type_id = ct.type_id
 WHERE ct.name = 'Storage';
@@ -355,7 +355,7 @@ JOIN componenttype ct ON p.component_type_id = ct.type_id
 WHERE ct.name = 'Chair';
 
 INSERT INTO `productimage` (product_id, image_url, alt_text, is_primary)
-SELECT p.product_id, 'IMG/product/ram1.jpg', p.name, TRUE
+SELECT p.product_id, 'IMG/product/desk1.jpg', p.name, TRUE
 FROM product p
 JOIN componenttype ct ON p.component_type_id = ct.type_id
 WHERE ct.name = 'Desk';
