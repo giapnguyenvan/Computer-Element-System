@@ -100,7 +100,7 @@ public class PCBuilderServlet extends HttpServlet {
             request.setAttribute("coolerProducts", coolerProducts);
 
             // Forward to PC Builder page
-            request.getRequestDispatcher("pcBuilder.jsp").forward(request, response);
+            request.getRequestDispatcher("pcBuilder.jsp?select").forward(request, response);
             
         } catch (Exception e) {
             System.err.println("Error in PCBuilderServlet: " + e.getMessage());
@@ -228,6 +228,6 @@ public class PCBuilderServlet extends HttpServlet {
         request.setAttribute("totalPrice", totalPrice);
 
         // Forward to confirmation page
-        request.getRequestDispatcher("pcBuilderConfirmation.jsp").forward(request, response);
+        request.getRequestDispatcher("pcBuilderConfirmation.jsp?select").forward(request, response);
     }
 }
