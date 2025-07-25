@@ -831,15 +831,17 @@
                             '<th></th></tr></thead><tbody>';
                         data.products.forEach(product => {
                             tableHtml += '<tr>' +
-                                '<td>' + (product.id !== undefined ? product.id : (product.product_id !== undefined ? product.product_id : '')) + '</td>' +
-                                '<td>' + (product.image ? '<img src="' + product.image + '" alt="' + (product.name || product.product_name || '') + '" style="max-width:60px;max-height:60px;object-fit:cover;border-radius:8px;" />' : '<span class="text-muted">No image</span>') + '</td>' +
-                                '<td>' + (product.name || product.product_name || '') + '</td>' +
-                                '<td>' + (product.price !== undefined ? product.price : '') + '</td>' +
-                                '<td>' + (product.status ? '<span class="badge bg-success">' + product.status + '</span>' : '<span class="badge bg-secondary">Unknown</span>') + '</td>' +
+                                '<td>' + (product.productId !== undefined ? product.productId : '') + '</td>' +
+                                '<td>' + (product.imageUrl ? '<img src="' + product.imageUrl + '" class="product-image" alt="Product" />' : '<div class="product-image bg-light d-flex align-items-center justify-content-center"><i class="fas fa-image text-muted"></i></div>') + '</td>' +
+                                '<td>' + (product.name || '') + '</td>' +
+                                '<td>' + (product.price !== undefined ? ('$' + product.price) : '') + '</td>' +
+                                '<td>' + (product.status ? ('<span class="status-badge ' + (product.status === 'Active' ? 'status-active' : 'status-inactive') + '">' + product.status + '</span>') : '<span class="status-badge status-active">Active</span>') + '</td>' +
                                 '<td><button type="button" class="btn btn-primary btn-add-cart" ' +
-                                    'data-product-id="' + (product.id !== undefined ? product.id : (product.product_id !== undefined ? product.product_id : '')) + '" ' +
-                                    'data-product-name="' + (product.name || product.product_name || '') + '" ' +
-                                    'data-product-price="' + (product.price !== undefined ? product.price : '') + '">' +
+                                    'data-product-id="' + (product.productId !== undefined ? product.productId : '') + '" ' +
+                                    'data-product-name="' + (product.name || '') + '" ' +
+                                    'data-product-price="' + (product.price !== undefined ? product.price : '') + '" ' +
+                                    'data-component-type="' + (type || '') + '" ' +
+                                    'title="Thêm vào giỏ hàng">' +
                                     '<i class="fas fa-cart-plus me-2"></i>Add to Cart</button></td>' +
                                 '</tr>';
                         });
@@ -856,95 +858,21 @@
             function hookProductButtons() {
                 $('.btn-add-cart').off('click').on('click', function (e) {
                     e.preventDefault();
-                    // Lấy thông tin sản phẩm từ data-attributes
-                    const productId = $(this).attr('data-product-id') || $(this).data('product-id');
-                    const productName = $(this).attr('data-product-name') || $(this).data('product-name');
-                    const price = $(this).attr('data-product-price') || $(this).data('product-price');
-                    const addButton = this;
-
-                    // Log kiểm tra dữ liệu trước khi gửi
-                    const jsonData = {
-                        customerId: currentUserId,
-                        productId: productId,
-                        quantity: 1
-                    };
-                    console.log('JSON gửi lên khi Add to Cart:', JSON.stringify(jsonData));
-
-                    // Nếu thiếu thông tin, báo lỗi rõ ràng
-                    if (!productId || !productName || !price) {
-                        Swal.fire({
-                            icon: 'error',
-                            title: 'Lỗi dữ liệu sản phẩm!',
-                            text: 'Không thể lấy thông tin sản phẩm. Vui lòng thử lại hoặc liên hệ quản trị viên.'
-                        });
-                        return;
-                    }
-
-                    if (currentUserId === 0) {
-                        Swal.fire({
-                            icon: 'warning',
-                            title: 'Please Login',
-                            text: 'You need to login to add products to cart'
-                        });
-                        return;
-                    }
-
-                    // Disable button và show loading
-                    addButton.disabled = true;
-                    addButton.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Adding...';
-
-                    // Gửi request add to cart
-                    fetch('CartApiServlet', {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json'
-                        },
-                        body: JSON.stringify(jsonData)
-                    })
-                    .then(response => response.text())
-                    .then(text => {
-                        // Log kiểm tra dữ liệu trả về từ server
-                        console.log('JSON trả về từ server:', text);
-                        try {
-                            return JSON.parse(text);
-                        } catch (err) {
-                            console.error('LỖI JSON:', text);
-                            throw new Error('Phản hồi từ server không phải JSON hợp lệ!');
-                        }
-                    })
-                    .then(result => {
-                        if (result.success) {
-                            Swal.fire({
-                                icon: 'success',
-                                title: 'Success!',
-                                text: productName + ' đã được thêm vào giỏ hàng!',
-                                timer: 2000,
-                                showConfirmButton: false
-                            });
-                            addButton.classList.add('btn-success');
-                            addButton.innerHTML = '<i class="fas fa-check me-2"></i>Added!';
-                            setTimeout(() => {
-                                addButton.classList.remove('btn-success');
-                                addButton.innerHTML = '<i class="fas fa-cart-plus me-2"></i>Add to Cart';
-                            }, 2000);
-                            updateCartCount();
-                        } else {
-                            throw new Error(result.message || 'Failed to add to cart');
-                        }
-                    })
-                    .catch(error => {
-                        Swal.fire({
-                            icon: 'error',
-                            title: 'Error!',
-                            text: error.message || 'Failed to add product to cart. Please try again.'
-                        });
-                    })
-                    .finally(() => {
-                        addButton.disabled = false;
-                        if (!addButton.classList.contains('btn-success')) {
-                            addButton.innerHTML = '<i class="fas fa-cart-plus me-2"></i>Add to Cart';
-                        }
+                    const productId = $(this).attr('data-product-id');
+                    const productName = $(this).attr('data-product-name');
+                    const productPrice = $(this).attr('data-product-price');
+                    const componentType = $(this).attr('data-component-type');
+                    console.log('Add to Cart Clicked:', {
+                        productId,
+                        productName,
+                        productPrice,
+                        componentType
                     });
+                    if (window.addToCart) {
+                        window.addToCart(componentType, productId, productName, productPrice);
+                    } else {
+                        alert(`Đã thêm: ${productName} - $${productPrice}`);
+                    }
                 });
             }
 
