@@ -149,7 +149,7 @@ public class PCBuilderServlet extends HttpServlet {
             case "cooler":
                 products = productDAO.getProductsByComponentType(8);
                 break;
-        }
+         }
         
         // Filter by brand if specified
         if (brandFilter != null && !brandFilter.isEmpty()) {
