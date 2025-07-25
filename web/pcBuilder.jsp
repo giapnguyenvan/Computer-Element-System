@@ -824,32 +824,22 @@
                         }
                         let tableHtml = '<table class="table table-bordered table-hover"><thead><tr>' +
                             '<th>ID</th>' +
+                            '<th>Image</th>' +
                             '<th>Name</th>' +
-                            '<th>Brand</th>' +
-                            '<th>Model</th>' +
-                            '<th>Type</th>' +
-                            '<th>Specs</th>' +
                             '<th>Price</th>' +
-                            '<th>Warranty</th>' +
-                            '<th>Stock</th>' +
-                            '<th>Description</th>' +
+                            '<th>Status</th>' +
                             '<th></th></tr></thead><tbody>';
                         data.products.forEach(product => {
                             tableHtml += '<tr>' +
-                                '<td>' + (product.id || product.product_id || '') + '</td>' +
+                                '<td>' + (product.id !== undefined ? product.id : (product.product_id !== undefined ? product.product_id : '')) + '</td>' +
+                                '<td>' + (product.image ? '<img src="' + product.image + '" alt="' + (product.name || product.product_name || '') + '" style="max-width:60px;max-height:60px;object-fit:cover;border-radius:8px;" />' : '<span class="text-muted">No image</span>') + '</td>' +
                                 '<td>' + (product.name || product.product_name || '') + '</td>' +
-                                '<td>' + (product.brand || '') + '</td>' +
-                                '<td>' + (product.model || '') + '</td>' +
-                                '<td>' + (product.type || '') + '</td>' +
-                                '<td>' + (product.specs || product.specifications || '') + '</td>' +
-                                '<td>' + (product.price || '') + '</td>' +
-                                '<td>' + (product.warranty || '') + '</td>' +
-                                '<td>' + (product.stock || '') + '</td>' +
-                                '<td>' + (product.description || '') + '</td>' +
+                                '<td>' + (product.price !== undefined ? product.price : '') + '</td>' +
+                                '<td>' + (product.status ? '<span class="badge bg-success">' + product.status + '</span>' : '<span class="badge bg-secondary">Unknown</span>') + '</td>' +
                                 '<td><button type="button" class="btn btn-primary btn-add-cart" ' +
-                                    'data-product-id="' + (product.id || product.product_id || '') + '" ' +
+                                    'data-product-id="' + (product.id !== undefined ? product.id : (product.product_id !== undefined ? product.product_id : '')) + '" ' +
                                     'data-product-name="' + (product.name || product.product_name || '') + '" ' +
-                                    'data-product-price="' + (product.price || '') + '">' +
+                                    'data-product-price="' + (product.price !== undefined ? product.price : '') + '">' +
                                     '<i class="fas fa-cart-plus me-2"></i>Add to Cart</button></td>' +
                                 '</tr>';
                         });
