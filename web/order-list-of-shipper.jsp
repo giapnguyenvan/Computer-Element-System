@@ -606,6 +606,7 @@
                                 <th><i class="fas fa-map-marker-alt me-2"></i>Address</th>
                                 <th><i class="fas fa-flag me-2"></i>Status</th>
                                 <th><i class="fas fa-credit-card me-2"></i>Paid</th>
+                                <th><i class="fas fa-eye me-2"></i>View Detail</th>
                                 <th><i class="fas fa-eye me-2"></i>Action</th>
                             </tr>
                         </thead>
@@ -613,7 +614,7 @@
                             <c:choose>
                                 <c:when test="${empty orders}">
                                     <tr>
-                                        <td colspan="9" class="empty-state">
+                                        <td colspan="10" class="empty-state">
                                             <i class="fas fa-inbox"></i>
                                             <h4>No Orders Found</h4>
                                             <p>There are no orders matching your current filters.</p>
@@ -675,6 +676,11 @@
                                                         <span class="badge bg-warning">Not yet</span>
                                                     </c:otherwise>
                                                 </c:choose>
+                                            </td>
+                                            <td>
+                                                <button class="btn btn-outline-primary btn-sm" onclick="showOrderDetail(${order.id})" title="View Details">
+                                                    <i class="fas fa-eye"></i>
+                                                </button>
                                             </td>
                                             <td>
                                                 <c:choose>
