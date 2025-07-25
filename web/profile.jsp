@@ -47,9 +47,14 @@
         <p>
             <strong>Date of Birth:</strong>
             <fmt:formatDate value="${data.dateOfBirth}" pattern="dd/MM/yyyy" />
+            <button type="button" class="custom-btn" onclick="showEditDobModal()">Edit</button>
         </p>
 
-        <p><strong>Shipping Address:</strong> ${data.shipping_address}</p>
+        <p>
+            <strong>Shipping Address:</strong>
+            ${data.shipping_address}
+            <button type="button" class="custom-btn" onclick="showEditAddressModal()">Edit</button>
+        </p>
 
         <button type="button" class="custom-btn" onclick="showChangePasswordModal()">Change Password</button>
     </div>               
@@ -112,6 +117,37 @@
         <button type="button" onclick="closeVerifyPasswordModal()">Cancel</button>
     </form>
 </div>
+<!-- DoB Edit Modal -->
+<div id="editDobModal" style="display:none; position:fixed; top:30%; left:50%; transform:translate(-50%,-50%); background:#fff; padding:20px; border:1px solid #ccc; z-index:1000;">
+    <form id="editDobForm" onsubmit="submitNewDob(event)">
+        <label>Day:</label>
+        <input type="number" id="dobDay" min="1" max="31" required style="width:60px;"> /
+        <label>Month:</label>
+        <input type="number" id="dobMonth" min="1" max="12" required style="width:60px;"> /
+        <label>Year:</label>
+        <input type="number" id="dobYear" min="1900" max="2100" required style="width:80px;">
+        <div id="dobError" style="color:red; font-size:13px; margin:5px 0;"></div>
+        <button type="submit">Save</button>
+        <button type="button" onclick="closeEditDobModal()">Cancel</button>
+    </form>
+</div>
+<!-- Address Edit Modal -->
+<div id="editAddressModal" style="display:none; position:fixed; top:20%; left:50%; transform:translate(-50%,-50%); background:#fff; padding:20px; border:1px solid #ccc; z-index:1000; min-width:350px;">
+    <form id="editAddressForm" onsubmit="submitNewAddress(event)">
+        <label>Province/City:</label>
+        <select id="modalProvince" required style="width:100%; margin-bottom:5px;"></select>
+        <label>District:</label>
+        <select id="modalDistrict" required style="width:100%; margin-bottom:5px;" disabled></select>
+        <label>Ward/Commune:</label>
+        <select id="modalWard" required style="width:100%; margin-bottom:5px;" disabled></select>
+        <label>Address Detail:</label>
+        <input type="text" id="modalAddressDetail" maxlength="100" required style="width:100%; margin-bottom:5px;">
+        <div id="addressError" style="color:red; font-size:13px; margin:5px 0;"></div>
+        <button type="submit">Save</button>
+        <button type="button" onclick="closeEditAddressModal()">Cancel</button>
+    </form>
+</div>
+<script src="vietnam-provinces.json" type="application/json" id="locationsData"></script>
 <script>
     function showEditEmailModal() {
         document.getElementById('editEmailModal').style.display = 'block';
@@ -341,4 +377,384 @@
                 });
     }
 
+    function showProfileSuccess(msg) {
+        alert(msg);
+    }
+// --- DoB Inline Logic ---
+function showEditDobModal() {
+    // Pre-fill with current DoB if available
+    const dob = "${data.dateOfBirth}";
+    if (dob && dob !== 'null') {
+        let d = null;
+        if (dob.includes('-')) d = new Date(dob);
+        else if (dob.includes('/')) {
+            let [day, month, year] = dob.split('/');
+            d = new Date(`${year}-${month}-${day}`);
+        }
+        if (d && !isNaN(d)) {
+            document.getElementById('dobDay').value = d.getDate();
+            document.getElementById('dobMonth').value = d.getMonth() + 1;
+            document.getElementById('dobYear').value = d.getFullYear();
+        }
+    }
+    document.getElementById('dobError').textContent = '';
+    document.getElementById('editDobModal').style.display = 'block';
+    document.getElementById('modalOverlay').style.display = 'block';
+}
+function closeEditDobModal() {
+    document.getElementById('editDobModal').style.display = 'none';
+    document.getElementById('modalOverlay').style.display = 'none';
+}
+function isValidDate(d, m, y) {
+    const date = new Date(y, m - 1, d);
+    return date.getFullYear() === y && date.getMonth() === m - 1 && date.getDate() === d;
+}
+function submitNewDob(event) {
+    event.preventDefault();
+    const day = parseInt(document.getElementById('dobDay').value, 10);
+    const month = parseInt(document.getElementById('dobMonth').value, 10);
+    const year = parseInt(document.getElementById('dobYear').value, 10);
+    const now = new Date();
+    const dobError = document.getElementById('dobError');
+    dobError.textContent = '';
+    if (!isValidDate(day, month, year)) {
+        dobError.textContent = 'Invalid date!';
+        return;
+    }
+    const dob = new Date(year, month - 1, day);
+    const age = now.getFullYear() - dob.getFullYear() - (now < new Date(now.getFullYear(), dob.getMonth(), dob.getDate()) ? 1 : 0);
+    if (age < 13 || age > 120) {
+        dobError.textContent = 'Age must be between 13 and 120.';
+        return;
+    }
+    // Format as dd/MM/yyyy
+    const dobStr = (day < 10 ? '0' : '') + day + '/' + (month < 10 ? '0' : '') + month + '/' + year;
+    fetch('editProfile', {
+        method: 'POST',
+        headers: {'Content-Type': 'application/x-www-form-urlencoded'},
+        body: 'action=editDoB&newDoB=' + encodeURIComponent(dobStr)
+    })
+    .then(res => res.json())
+    .then(data => {
+        if (data.success) {
+            alert('Date of Birth updated successfully!');
+            window.location.reload();
+        } else {
+            dobError.textContent = data.error || 'An error occurred!';
+        }
+    });
+}
+// --- Address Inline Logic ---
+let locationsData = [];
+fetch('vietnam-provinces.json')
+    .then(response => response.json())
+    .then(data => {
+        locationsData = data;
+        populateProvinces();
+        setAddressInputs();
+    });
+function populateProvinces() {
+    const provinceSelect = document.getElementById('province');
+    provinceSelect.innerHTML = '<option value="">-- Select province --</option>';
+    locationsData.forEach(province => {
+        const option = document.createElement('option');
+        option.value = province.name;
+        option.textContent = province.name;
+        provinceSelect.appendChild(option);
+    });
+    document.getElementById('district').innerHTML = '<option value="">-- Select district --</option>';
+    document.getElementById('district').disabled = true;
+    document.getElementById('ward').innerHTML = '<option value="">-- Select ward --</option>';
+    document.getElementById('ward').disabled = true;
+}
+document.getElementById('province').addEventListener('change', function() {
+    const provinceName = this.value;
+    const province = locationsData.find(p => p.name === provinceName);
+    const districtSelect = document.getElementById('district');
+    const wardSelect = document.getElementById('ward');
+    if (province) {
+        districtSelect.innerHTML = '<option value="">-- Select district --</option>';
+        province.districts.forEach(district => {
+            const option = document.createElement('option');
+            option.value = district.name;
+            option.textContent = district.name;
+            districtSelect.appendChild(option);
+        });
+        districtSelect.disabled = false;
+        wardSelect.innerHTML = '<option value="">-- Select ward --</option>';
+        wardSelect.disabled = true;
+    } else {
+        districtSelect.innerHTML = '<option value="">-- Select district --</option>';
+        districtSelect.disabled = true;
+        wardSelect.innerHTML = '<option value="">-- Select ward --</option>';
+        wardSelect.disabled = true;
+    }
+});
+document.getElementById('district').addEventListener('change', function() {
+    const provinceName = document.getElementById('province').value;
+    const province = locationsData.find(p => p.name === provinceName);
+    const districtName = this.value;
+    const district = province ? province.districts.find(d => d.name === districtName) : null;
+    const wardSelect = document.getElementById('ward');
+    if (district) {
+        wardSelect.innerHTML = '<option value="">-- Select ward --</option>';
+        district.wards.forEach(ward => {
+            const option = document.createElement('option');
+            option.value = ward.name;
+            option.textContent = ward.name;
+            wardSelect.appendChild(option);
+        });
+        wardSelect.disabled = false;
+    } else {
+        wardSelect.innerHTML = '<option value="">-- Select ward --</option>';
+        wardSelect.disabled = true;
+    }
+});
+function setAddressInputs() {
+    // Pre-fill with current address if available
+    const address = "${data.shipping_address}";
+    let province = '', district = '', ward = '', detail = '';
+    if (address && address.split(',')) {
+        const parts = address.split(',').map(s => s.trim());
+        if (parts.length >= 4) {
+            detail = parts[0];
+            ward = parts[1];
+            district = parts[2];
+            province = parts[3];
+        }
+    }
+    document.getElementById('addressDetail').value = detail;
+    setTimeout(() => {
+        document.getElementById('province').value = province;
+        document.getElementById('province').dispatchEvent(new Event('change'));
+        setTimeout(() => {
+            document.getElementById('district').value = district;
+            document.getElementById('district').dispatchEvent(new Event('change'));
+            setTimeout(() => {
+                document.getElementById('ward').value = ward;
+            }, 100);
+        }, 100);
+    }, 100);
+}
+function submitAddress() {
+    const province = document.getElementById('province').value;
+    const district = document.getElementById('district').value;
+    const ward = document.getElementById('ward').value;
+    const detail = document.getElementById('addressDetail').value.trim();
+    const addressError = document.getElementById('addressError');
+    addressError.textContent = '';
+    if (!province || !district || !ward || !detail) {
+        addressError.textContent = 'All fields are required.';
+        return;
+    }
+    if (detail.length < 2 || detail.length > 100) {
+        addressError.textContent = 'Address detail must be 2-100 characters.';
+        return;
+    }
+    if (/[<>{}\\[\\]$%]/.test(detail)) {
+        addressError.textContent = 'Address contains invalid characters.';
+        return;
+    }
+    // Format: detail, ward, district, province
+    const fullAddress = `${detail}, ${ward}, ${district}, ${province}`;
+    fetch('editProfile', {
+        method: 'POST',
+        headers: {'Content-Type': 'application/x-www-form-urlencoded'},
+        body: 'action=editAddress&newAddress=' + encodeURIComponent(fullAddress)
+    })
+    .then(res => res.json())
+    .then(data => {
+        console.log(data); // <-- Add this for debugging
+        if (data.success) {
+            showProfileSuccess('Shipping Address updated successfully!');
+            window.location.reload(); // <-- Add this
+        } else {
+            addressError.textContent = data.error || 'An error occurred!';
+        }
+    });
+}
+
+function showEditAddressModal() {
+    populateModalProvinces();
+    // Pre-fill with current address if available
+    const address = "${data.shipping_address}";
+    let province = '', district = '', ward = '', detail = '';
+    if (address && address.split(',')) {
+        const parts = address.split(',').map(s => s.trim());
+        if (parts.length >= 4) {
+            detail = parts[0];
+            ward = parts[1];
+            district = parts[2];
+            province = parts[3];
+        }
+    }
+    document.getElementById('modalAddressDetail').value = detail;
+    setTimeout(() => {
+        document.getElementById('modalProvince').value = province;
+        document.getElementById('modalProvince').dispatchEvent(new Event('change'));
+        setTimeout(() => {
+            document.getElementById('modalDistrict').value = district;
+            document.getElementById('modalDistrict').dispatchEvent(new Event('change'));
+            setTimeout(() => {
+                document.getElementById('modalWard').value = ward;
+            }, 100);
+        }, 100);
+    }, 100);
+    document.getElementById('addressError').textContent = '';
+    document.getElementById('editAddressModal').style.display = 'block';
+    document.getElementById('modalOverlay').style.display = 'block';
+
+    // Attach event listeners only once
+    if (!window._modalProvinceListenerAdded) {
+        document.getElementById('modalProvince').addEventListener('change', function() {
+            const provinceName = this.value;
+            const province = locationsData.find(p => p.name === provinceName);
+            const districtSelect = document.getElementById('modalDistrict');
+            const wardSelect = document.getElementById('modalWard');
+            if (province) {
+                districtSelect.innerHTML = '<option value="">-- Select district --</option>';
+                province.districts.forEach(district => {
+                    const option = document.createElement('option');
+                    option.value = district.name;
+                    option.textContent = district.name;
+                    districtSelect.appendChild(option);
+                });
+                districtSelect.disabled = false;
+                wardSelect.innerHTML = '<option value="">-- Select ward --</option>';
+                wardSelect.disabled = true;
+            } else {
+                districtSelect.innerHTML = '<option value="">-- Select district --</option>';
+                districtSelect.disabled = true;
+                wardSelect.innerHTML = '<option value="">-- Select ward --</option>';
+                wardSelect.disabled = true;
+            }
+        });
+        window._modalProvinceListenerAdded = true;
+    }
+    if (!window._modalDistrictListenerAdded) {
+        document.getElementById('modalDistrict').addEventListener('change', function() {
+            const provinceName = document.getElementById('modalProvince').value;
+            const province = locationsData.find(p => p.name === provinceName);
+            const districtName = this.value;
+            const district = province ? province.districts.find(d => d.name === districtName) : null;
+            const wardSelect = document.getElementById('modalWard');
+            if (district) {
+                wardSelect.innerHTML = '<option value="">-- Select ward --</option>';
+                district.wards.forEach(ward => {
+                    const option = document.createElement('option');
+                    option.value = ward.name;
+                    option.textContent = ward.name;
+                    wardSelect.appendChild(option);
+                });
+                wardSelect.disabled = false;
+            } else {
+                wardSelect.innerHTML = '<option value="">-- Select ward --</option>';
+                wardSelect.disabled = true;
+            }
+        });
+        window._modalDistrictListenerAdded = true;
+    }
+}
+function closeEditAddressModal() {
+    document.getElementById('editAddressModal').style.display = 'none';
+    document.getElementById('modalOverlay').style.display = 'none';
+}
+function populateModalProvinces() {
+    const provinceSelect = document.getElementById('modalProvince');
+    const districtSelect = document.getElementById('modalDistrict');
+    const wardSelect = document.getElementById('modalWard');
+    provinceSelect.innerHTML = '<option value="">-- Select province --</option>';
+    locationsData.forEach(province => {
+        const option = document.createElement('option');
+        option.value = province.name;
+        option.textContent = province.name;
+        provinceSelect.appendChild(option);
+    });
+    districtSelect.innerHTML = '<option value="">-- Select district --</option>';
+    districtSelect.disabled = true;
+    wardSelect.innerHTML = '<option value="">-- Select ward --</option>';
+    wardSelect.disabled = true;
+}
+document.getElementById('modalProvince').addEventListener('change', function() {
+    const provinceName = this.value;
+    const province = locationsData.find(p => p.name === provinceName);
+    const districtSelect = document.getElementById('modalDistrict');
+    const wardSelect = document.getElementById('modalWard');
+    if (province) {
+        districtSelect.innerHTML = '<option value="">-- Select district --</option>';
+        province.districts.forEach(district => {
+            const option = document.createElement('option');
+            option.value = district.name;
+            option.textContent = district.name;
+            districtSelect.appendChild(option);
+        });
+        districtSelect.disabled = false;
+        wardSelect.innerHTML = '<option value="">-- Select ward --</option>';
+        wardSelect.disabled = true;
+    } else {
+        districtSelect.innerHTML = '<option value="">-- Select district --</option>';
+        districtSelect.disabled = true;
+        wardSelect.innerHTML = '<option value="">-- Select ward --</option>';
+        wardSelect.disabled = true;
+    }
+});
+document.getElementById('modalDistrict').addEventListener('change', function() {
+    const provinceName = document.getElementById('modalProvince').value;
+    const province = locationsData.find(p => p.name === provinceName);
+    const districtName = this.value;
+    const district = province ? province.districts.find(d => d.name === districtName) : null;
+    const wardSelect = document.getElementById('modalWard');
+    if (district) {
+        wardSelect.innerHTML = '<option value="">-- Select ward --</option>';
+        district.wards.forEach(ward => {
+            const option = document.createElement('option');
+            option.value = ward.name;
+            option.textContent = ward.name;
+            wardSelect.appendChild(option);
+        });
+        wardSelect.disabled = false;
+    } else {
+        wardSelect.innerHTML = '<option value="">-- Select ward --</option>';
+        wardSelect.disabled = true;
+    }
+});
+function submitNewAddress(event) {
+    event.preventDefault();
+    const province = document.getElementById('modalProvince').value;
+    const district = document.getElementById('modalDistrict').value;
+    const ward = document.getElementById('modalWard').value;
+    const detail = document.getElementById('modalAddressDetail').value.trim();
+    const addressError = document.getElementById('addressError');
+    addressError.textContent = '';
+    if (!province || !district || !ward || !detail) {
+        addressError.textContent = 'All fields are required.';
+        return;
+    }
+    if (detail.length < 2 || detail.length > 100) {
+        addressError.textContent = 'Address detail must be 2-100 characters.';
+        return;
+    }
+    if (/[<>{}\\[\\]$%]/.test(detail)) {
+        addressError.textContent = 'Address contains invalid characters.';
+        return;
+    }
+    // Format: detail, ward, district, province
+    const fullAddress = `${detail}, ${ward}, ${district}, ${province}`;
+    fetch('editProfile', {
+        method: 'POST',
+        headers: {'Content-Type': 'application/x-www-form-urlencoded'},
+        body: 'action=editAddress&newAddress=' + encodeURIComponent(fullAddress)
+    })
+    .then(res => res.json())
+    .then(data => {
+        if (data.success) {
+            alert('Shipping Address updated successfully!');
+            window.location.reload();
+        } else {
+            addressError.textContent = data.error || 'An error occurred!';
+        }
+    });
+}
+
 </script>
+

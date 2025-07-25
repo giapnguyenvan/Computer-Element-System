@@ -256,4 +256,26 @@ public class CustomerDAO {
         }
     }
 
+    public boolean updateDateOfBirth(String email, java.util.Date dateOfBirth) throws SQLException {
+        String sql = "UPDATE customer SET date_of_birth = ? WHERE email = ?";
+        try (Connection conn = dbContext.getConnection(); PreparedStatement ps = conn.prepareStatement(sql)) {
+            if (dateOfBirth != null) {
+                ps.setDate(1, new java.sql.Date(dateOfBirth.getTime()));
+            } else {
+                ps.setNull(1, java.sql.Types.DATE);
+            }
+            ps.setString(2, email);
+            return ps.executeUpdate() > 0;
+        }
+    }
+
+    public boolean updateShippingAddress(String email, String address) throws SQLException {
+        String sql = "UPDATE customer SET shipping_address = ? WHERE email = ?";
+        try (Connection conn = dbContext.getConnection(); PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setString(1, address);
+            ps.setString(2, email);
+            return ps.executeUpdate() > 0;
+        }
+    }
+
 }

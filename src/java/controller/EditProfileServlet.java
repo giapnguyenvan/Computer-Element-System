@@ -182,5 +182,65 @@ public class EditProfileServlet extends HttpServlet {
             }
             return;
         }
+
+        if ("editDoB".equals(action)) {
+            String newDoB = request.getParameter("newDoB");
+            if (newDoB == null || newDoB.trim().isEmpty()) {
+                out.print("{\"success\":false,\"error\":\"Date of Birth cannot be empty.\"}");
+                return;
+            }
+            try {
+                // Parse dd/MM/yyyy
+                String[] parts = newDoB.split("/");
+                if (parts.length != 3) throw new Exception("Invalid date format");
+                int day = Integer.parseInt(parts[0]);
+                int month = Integer.parseInt(parts[1]);
+                int year = Integer.parseInt(parts[2]);
+                java.util.Calendar cal = java.util.Calendar.getInstance();
+                cal.setLenient(false);
+                cal.set(year, month - 1, day, 0, 0, 0);
+                java.util.Date dob = cal.getTime();
+                CustomerDAO dao = new CustomerDAO();
+                boolean updated = dao.updateDateOfBirth(email, dob);
+                if (updated) {
+                    Customer currentUser = (Customer) session.getAttribute("customerAuth");
+                    if (currentUser != null) {
+                        currentUser.setDateOfBirth(dob);
+                        session.setAttribute("customerAuth", currentUser);
+                    }
+                    out.print("{\"success\":true}");
+                } else {
+                    out.print("{\"success\":false,\"error\":\"Failed to update Date of Birth.\"}");
+                }
+            } catch (Exception ex) {
+                out.print("{\"success\":false,\"error\":\"Invalid date: " + ex.getMessage() + "\"}");
+            }
+            return;
+        }
+
+        if ("editAddress".equals(action)) {
+            String newAddress = request.getParameter("newAddress");
+            if (newAddress == null || newAddress.trim().isEmpty()) {
+                out.print("{\"success\":false,\"error\":\"Address cannot be empty.\"}");
+                return;
+            }
+            try {
+                CustomerDAO dao = new CustomerDAO();
+                boolean updated = dao.updateShippingAddress(email, newAddress);
+                if (updated) {
+                    Customer currentUser = (Customer) session.getAttribute("customerAuth");
+                    if (currentUser != null) {
+                        currentUser.setShipping_address(newAddress);
+                        session.setAttribute("customerAuth", currentUser);
+                    }
+                    out.print("{\"success\":true}");
+                } else {
+                    out.print("{\"success\":false,\"error\":\"Failed to update address.\"}");
+                }
+            } catch (Exception ex) {
+                out.print("{\"success\":false,\"error\":\"Unable to update address: " + ex.getMessage() + "\"}");
+            }
+            return;
+        }
     }
 }
