@@ -506,6 +506,18 @@
             #productList .status-badge {
                 color: #111 !important;
             }
+            .status-active {
+                background-color: #28a745;
+                color: white;
+                padding: 2px 8px;
+                border-radius: 4px;
+            }
+            .status-inactive {
+                background-color: #dc3545;
+                color: white;
+                padding: 2px 8px;
+                border-radius: 4px;
+            }
         </style>
     </head>
     <body>
@@ -679,22 +691,9 @@
 
         <script>
         //<![CDATA[
-            // Add JavaScript to calculate total price when components are selected
-            document.querySelectorAll('select').forEach(select => {
-                select.addEventListener('change', calculateTotal);
-            });
-            function calculateTotal() {
-                let total = 0;
-                document.querySelectorAll('select').forEach(select => {
-                    const selectedOption = select.options[select.selectedIndex];
-                    if (selectedOption.value) {
-                        const price = parseFloat(selectedOption.text.split('$')[1]);
-                        total += price;
-                    }
-                });
-                document.getElementById('totalPrice').textContent = total.toFixed(2);
-            }
-            
+            // Ensure currentUserId is defined
+            let currentUserId = '<%= session.getAttribute("user") != null ? ((User)session.getAttribute("user")).getId() : "" %>';
+
             // Function to show notifications
             function showNotification(message, type = 'info') {
                 const notification = document.createElement('div');
@@ -714,9 +713,28 @@
                 }, 3000);
             }
             
+            // Function to calculate total price from sessionStorage
+            function calculateTotal() {
+                let total = 0;
+                const components = ['CPU', 'Mainboard', 'RAM', 'GPU', 'Storage', 'PSU', 'Case', 'Cooler'];
+                components.forEach(component => {
+                    const data = sessionStorage.getItem(`selected_${component}`);
+                    if (data) {
+                        try {
+                            const selection = JSON.parse(data);
+                            if (selection.price) {
+                                total += parseFloat(selection.price);
+                            }
+                        } catch (e) {
+                            console.error(`Error parsing sessionStorage for ${component}:`, e);
+                        }
+                    }
+                });
+                document.getElementById('totalPrice').textContent = total.toFixed(2);
+            }
+            
             // Hàm cập nhật trạng thái nút Select theo loại linh kiện
             function updateSelectButtonState(componentType, productName) {
-                // Tìm nút Select tương ứng loại linh kiện
                 const iconMap = {
                     'CPU': 'fa-microchip',
                     'Mainboard': 'fa-server',
@@ -729,11 +747,11 @@
                 };
                 const iconClass = iconMap[componentType];
                 if (!iconClass) return;
-                // Đổi tất cả nút về mặc định trước
+                // Reset all buttons to default
                 $('.btn-pcbuilder-white').each(function() {
-                    $(this).css({'background':'', 'color':'', 'border':''});
+                    $(this).css({'background': '', 'color': '', 'border': ''});
                 });
-                // Đổi nút tương ứng
+                // Update the corresponding button
                 $(`.btn-pcbuilder-white i.${iconClass}`).closest('.btn-pcbuilder-white').css({
                     'background': '#28a745',
                     'color': '#fff',
@@ -741,9 +759,19 @@
                 });
             }
 
-            // Hàm xác nhận chọn linh kiện (dùng khi add to cart hoặc chọn)
+            // Hàm xác nhận chọn linh kiện
             function selectComponent(componentType, productId, productName, price) {
-                // Lưu vào sessionStorage (ghi đè nếu chọn lại)
+                if (!currentUserId) {
+                    showNotification('Vui lòng đăng nhập để chọn linh kiện.', 'warning');
+                    window.location.href = 'login.jsp'; // Adjust to your login page
+                    return;
+                }
+                // Update hidden form input
+                const inputElement = document.getElementById(`input-${componentType.toLowerCase()}`);
+                if (inputElement) {
+                    inputElement.value = productId;
+                }
+                // Lưu vào sessionStorage
                 const selection = {
                     productId: productId,
                     productName: productName,
@@ -761,15 +789,10 @@
                     selectedElement.style.color = '#28a745';
                 }
                 updateProgressBar();
+                calculateTotal();
                 showNotification(`${componentType} đã được chọn: ${productName}`, 'success');
-                updateSidebarSelectedLabels(); // Cập nhật trạng thái sidebar
+                updateSidebarSelectedLabels();
             }
-
-            // Load saved selections on page load
-            window.addEventListener('load', function() {
-                updateProgressBar();
-                updateSidebarSelectedLabels(); // Cập nhật trạng thái sidebar khi load lại trang
-            });
 
             // Hàm cập nhật progress bar
             function updateProgressBar() {
@@ -803,8 +826,7 @@
                 }
             }
 
-            // XÓA các phiên bản cũ của hàm loadProducts (nếu có)
-            // ... giữ lại phiên bản này ở cuối file ...
+            // Load products for a component type
             window.loadProducts = function(type) {
                 window.currentComponentType = type;
                 $('#currentCategoryBarTitle').html(
@@ -812,9 +834,6 @@
                     '<i class="fas fa-layer-group me-2"></i>Category: <span>' + getCategoryDisplayName(type) + '</span></div>'
                 );
                 $('#productList').html('<div class="text-center py-5"><div class="spinner-border text-primary"></div><div>Đang tải sản phẩm...</div></div>');
-                // Tạo bảng sản phẩm mới, không dùng bảng từ productManagement.jsp
-                // Giả sử có một API trả về JSON danh sách sản phẩm theo loại linh kiện
-                $('#productList').html('<div class="text-center py-5"><div class="spinner-border text-primary"></div><div>Loading products...</div></div>');
                 fetch('ProductApiServlet?componentType=' + encodeURIComponent(type))
                     .then(response => response.json())
                     .then(data => {
@@ -854,54 +873,148 @@
                     });
             };
 
-            // Hàm xử lý nút Add to Cart như homepage
+            // Hàm xử lý nút Add to Cart
             function hookProductButtons() {
                 $('.btn-add-cart').off('click').on('click', function (e) {
                     e.preventDefault();
-                    const productId = $(this).attr('data-product-id');
-                    const productName = $(this).attr('data-product-name');
-                    const productPrice = $(this).attr('data-product-price');
-                    const componentType = $(this).attr('data-component-type');
-                    console.log('Add to Cart Clicked:', {
+                    const $btn = $(this);
+                    const productId = $btn.data('product-id');
+                    const productName = $btn.data('product-name');
+                    const productPrice = $btn.data('product-price');
+                    const componentType = $btn.data('component-type');
+
+                    console.log('Add to Cart Button Clicked (pcBuilder):', {
+                        html: $btn[0].outerHTML,
                         productId,
                         productName,
                         productPrice,
                         componentType
                     });
+
+                    // Validate inputs
+                    if (!productId || !productName || !productPrice || !componentType) {
+                        showNotification('Error: Missing product information.', 'danger');
+                        return;
+                    }
+
+                    // Update UI and sessionStorage
+                    selectComponent(componentType, productId, productName, productPrice);
+
+                    // Check if user is logged in
+                    if (!currentUserId) {
+                        showNotification('Vui lòng đăng nhập để thêm vào giỏ hàng.', 'warning');
+                        window.location.href = 'login.jsp'; // Adjust to your login page
+                        return;
+                    }
+
+                    // Add to cart
                     if (window.addToCart) {
                         window.addToCart(componentType, productId, productName, productPrice);
                     } else {
-                        alert(`Đã thêm: ${productName} - $${productPrice}`);
+                        // Fallback: Send request to server to add to cart
+                        fetch('CartApiServlet', {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json'
+                            },
+                            body: JSON.stringify({
+                                customerId: currentUserId,
+                                productId: productId,
+                                productName: productName,
+                                price: productPrice,
+                                quantity: 1
+                            })
+                        })
+                        .then(response => {
+                            if (!response.ok) {
+                                throw new Error(`HTTP error! Status: ${response.status}`);
+                            }
+                            return response.json();
+                        })
+                        .then(result => {
+                            if (result.success) {
+                                showNotification(`Đã thêm: ${productName} - $${productPrice}`, 'success');
+                                updateCartCount();
+                            } else {
+                                showNotification('Không thể thêm vào giỏ hàng: ' + (result.message || 'Unknown error'), 'danger');
+                            }
+                        })
+                        .catch(error => {
+                            console.error('Error adding to cart:', error);
+                            showNotification('Lỗi khi thêm vào giỏ hàng: ' + error.message, 'danger');
+                        });
                     }
                 });
             }
 
-            // Hàm cập nhật số lượng sản phẩm trong cart (nếu có icon hiển thị)
+            // Hàm cập nhật số lượng sản phẩm trong cart
             function updateCartCount() {
-                fetch('CartApiServlet?customerId=' + currentUserId)
-                    .then(response => response.json())
-                    .then(result => {
-                        if (result.success && result.data) {
-                            const totalItems = result.data.reduce((sum, item) => sum + item.quantity, 0);
-                            if (document.getElementById('cartCount')) {
-                                document.getElementById('cartCount').textContent = totalItems;
-                            }
+                if (!currentUserId) {
+                    // Optionally update UI to show 0 items or hide cart count
+                    const cartCountElement = document.getElementById('cartCount');
+                    if (cartCountElement) {
+                        cartCountElement.textContent = '0';
+                    }
+                    return;
+                }
+                fetch('CartApiServlet?customerId=' + encodeURIComponent(currentUserId), {
+                    method: 'GET'
+                })
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error(`HTTP error! Status: ${response.status}`);
+                    }
+                    return response.json();
+                })
+                .then(result => {
+                    if (result.success && result.data) {
+                        const totalItems = result.data.reduce((sum, item) => sum + item.quantity, 0);
+                        const cartCountElement = document.getElementById('cartCount');
+                        if (cartCountElement) {
+                            cartCountElement.textContent = totalItems;
                         }
-                    });
+                    }
+                })
+                .catch(error => {
+                    console.error('Error fetching cart count:', error);
+                });
             }
 
-            // Khởi tạo lại số lượng cart khi load trang
+            // Hàm cập nhật trạng thái sidebar
+            function updateSidebarSelectedLabels() {
+                const components = ['CPU', 'Mainboard', 'RAM', 'GPU', 'Storage', 'PSU', 'Case', 'Cooler'];
+                components.forEach(component => {
+                    const data = sessionStorage.getItem(`selected_${component}`);
+                    if (data) {
+                        try {
+                            const selection = JSON.parse(data);
+                            const sidebarLabel = document.getElementById(`sidebar-selected-${component}`);
+                            const stepElement = document.getElementById(`step-${component.toLowerCase()}`);
+                            const selectedElement = document.getElementById(`selected-${component.toLowerCase()}`);
+                            if (sidebarLabel) {
+                                sidebarLabel.textContent = selection.productName;
+                            }
+                            if (stepElement && selectedElement) {
+                                stepElement.classList.add('selected');
+                                selectedElement.textContent = selection.productName;
+                                selectedElement.style.color = '#28a745';
+                            }
+                            updateSelectButtonState(component, selection.productName);
+                        } catch (e) {
+                            console.error(`Error parsing sessionStorage for ${component}:`, e);
+                            sessionStorage.removeItem(`selected_${component}`); // Clear invalid data
+                        }
+                    }
+                });
+                calculateTotal(); // Update total price after loading selections
+            }
+
+            // Load saved selections and update cart count on page load
             document.addEventListener('DOMContentLoaded', function () {
+                updateSidebarSelectedLabels();
+                updateProgressBar();
                 updateCartCount();
             });
-
-
-
-
-
-function updateSidebarSelectedLabels() {
-    // TODO: Bổ sung logic cập nhật sidebar nếu cần
-}
         </script>
     </body>
 </html>

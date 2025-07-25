@@ -143,7 +143,7 @@ $(document).ready(function() {
         if (window.addToCart) {
             window.addToCart(componentType, productId, productName, productPrice);
         } else {
-            alert(`Đã thêm: ${productName} - $${productPrice}`);
+            alert('productId: ' + productId + '\nproductName: ' + productName + '\nproductPrice: ' + productPrice + '\ncomponentType: ' + componentType);
         }
     });
 });
