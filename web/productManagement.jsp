@@ -128,10 +128,18 @@ $(document).ready(function() {
     });
     // Gắn sự kiện cho nút thêm vào giỏ hàng
     $('.btn-add-cart').off('click').on('click', function() {
-        const productId = $(this).data('product-id');
-        const productName = $(this).data('product-name');
-        const productPrice = $(this).data('product-price');
-        const componentType = $(this).data('component-type');
+        const $btn = $(this);
+        const productId = $btn.attr('data-product-id');
+        const productName = $btn.attr('data-product-name');
+        const productPrice = $btn.attr('data-product-price');
+        const componentType = $btn.attr('data-component-type');
+        console.log('Add to Cart Button Clicked:', {
+            html: $btn[0].outerHTML,
+            productId,
+            productName,
+            productPrice,
+            componentType
+        });
         if (window.addToCart) {
             window.addToCart(componentType, productId, productName, productPrice);
         } else {
