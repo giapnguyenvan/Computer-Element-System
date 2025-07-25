@@ -692,7 +692,8 @@
         <script>
         //<![CDATA[
             // Ensure currentUserId is defined
-            let currentUserId = '<%= session.getAttribute("user") != null ? ((User)session.getAttribute("user")).getId() : "" %>';
+let currentUserId = '<%= session.getAttribute("user") != null ? ((User)session.getAttribute("user")).getId() : "" %>';
+console.log('currentUserId on page load:', currentUserId);
 
             // Function to show notifications
             function showNotification(message, type = 'info') {
@@ -761,11 +762,7 @@
 
             // Hàm xác nhận chọn linh kiện
             function selectComponent(componentType, productId, productName, price) {
-                if (!currentUserId) {
-                    showNotification('Vui lòng đăng nhập để chọn linh kiện.', 'warning');
-                    window.location.href = 'login.jsp'; // Adjust to your login page
-                    return;
-                }
+                // Không cần kiểm tra đăng nhập lại, đã kiểm tra ở DOMContentLoaded
                 // Update hidden form input
                 const inputElement = document.getElementById(`input-${componentType.toLowerCase()}`);
                 if (inputElement) {
@@ -888,7 +885,8 @@
                         productId,
                         productName,
                         productPrice,
-                        componentType
+                        componentType,
+                        currentUserId
                     });
 
                     // Validate inputs
@@ -897,15 +895,10 @@
                         return;
                     }
 
+                    // Không cần kiểm tra đăng nhập lại, đã kiểm tra ở DOMContentLoaded
+
                     // Update UI and sessionStorage
                     selectComponent(componentType, productId, productName, productPrice);
-
-                    // Check if user is logged in
-                    if (!currentUserId) {
-                        showNotification('Vui lòng đăng nhập để thêm vào giỏ hàng.', 'warning');
-                        window.location.href = 'login.jsp'; // Adjust to your login page
-                        return;
-                    }
 
                     // Add to cart
                     if (window.addToCart) {
@@ -1011,6 +1004,15 @@
 
             // Load saved selections and update cart count on page load
             document.addEventListener('DOMContentLoaded', function () {
+                // Kiểm tra đăng nhập 1 lần khi load trang
+                console.log('currentUserId in DOMContentLoaded:', currentUserId);
+                if (!currentUserId || currentUserId === "") {
+                    showNotification('Vui lòng đăng nhập để sử dụng chức năng PC Builder.', 'warning');
+                    setTimeout(function() {
+                        window.location.href = 'login.jsp'; // Điều hướng đến trang đăng nhập
+                    }, 1200);
+                    return;
+                }
                 updateSidebarSelectedLabels();
                 updateProgressBar();
                 updateCartCount();
