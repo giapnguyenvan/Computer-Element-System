@@ -684,6 +684,8 @@
         </div>
      
         <jsp:include page="footer.jsp"/>
+        <!-- Thêm SweetAlert2 cho popup đẹp -->
+        <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
         <!-- Thêm DataTable & jQuery nếu chưa có -->
         <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
         <link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/jquery.dataTables.min.css">
@@ -885,25 +887,25 @@ console.log('currentUserId on page load:', currentUserId);
 
             // Hàm xử lý nút Add to Cart
             function hookProductButtons() {
-                // Nếu chưa đăng nhập thì chỉ disable nút Add to Cart, vẫn cho phép chọn/đổi linh kiện
-                if (!currentUserId || currentUserId === "") {
-                    $('.btn-add-cart').prop('disabled', true).addClass('disabled').attr('title', 'Vui lòng đăng nhập để thêm vào giỏ hàng');
-                    $('.btn-add-cart').off('click').on('click', function (e) {
-                        e.preventDefault();
-                        showNotification('Vui lòng đăng nhập để thêm vào giỏ hàng.', 'warning');
-                    });
-                    // Enable select component buttons cho guest
-                    $('.btn-pcbuilder-white').prop('disabled', false).removeClass('disabled').attr('title', 'Chọn linh kiện');
-                    $('.btn-pcbuilder-white').off('click').on('click', function () {
-                        // Gọi hàm loadProducts tương ứng
-                        const type = $(this).text().replace('Select ', '').trim();
-                        loadProducts(type);
-                    });
-                    return;
-                }
-                // Nếu đã đăng nhập thì cho phép thao tác như bình thường
+                // Luôn enable nút Add to Cart cho mọi user
                 $('.btn-add-cart').prop('disabled', false).removeClass('disabled').attr('title', 'Thêm vào giỏ hàng');
                 $('.btn-add-cart').off('click').on('click', function (e) {
+                    if (!currentUserId || currentUserId === "") {
+                        e.preventDefault();
+                        Swal.fire({
+                            icon: 'warning',
+                            title: 'Yêu cầu đăng nhập',
+                            text: 'Vui lòng đăng nhập để thêm vào giỏ hàng!',
+                            confirmButtonText: 'Đăng nhập',
+                            showCancelButton: true,
+                            cancelButtonText: 'Để sau'
+                        }).then((result) => {
+                            if (result.isConfirmed) {
+                                window.location.href = 'login.jsp';
+                            }
+                        });
+                        return;
+                    }
                     e.preventDefault();
                     const $btn = $(this);
                     const productId = $btn.data('product-id');
@@ -949,7 +951,7 @@ console.log('currentUserId on page load:', currentUserId);
                         showNotification('Lỗi khi thêm vào giỏ hàng: ' + error.message, 'danger');
                     });
                 });
-                // Enable select component buttons
+                // Enable select component buttons cho mọi user
                 $('.btn-pcbuilder-white').prop('disabled', false).removeClass('disabled').attr('title', 'Chọn linh kiện');
                 $('.btn-pcbuilder-white').off('click').on('click', function () {
                     // Gọi hàm loadProducts tương ứng
