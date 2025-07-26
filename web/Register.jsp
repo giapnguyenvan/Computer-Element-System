@@ -423,7 +423,7 @@ Hiển thị form đăng ký, xử lý hiển thị thông báo lỗi/thành cô
                     Join us to build your dream PC and enjoy exclusive member benefits.<br>
                     Sign up now and start your journey!
                 </p>
-                <a href="PCBuilderServlet" class="btn btn-primary btn-lg" style="color: white">Build PC</a>
+                <a href="pcBuilder.jsp" class="btn btn-primary btn-lg" style="color: white">Build PC</a>
             </div>
         </div>
         <%--

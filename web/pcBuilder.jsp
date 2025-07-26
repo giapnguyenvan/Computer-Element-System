@@ -692,7 +692,7 @@
         <script>
         //<![CDATA[
             // Ensure currentUserId is defined
-let currentUserId = '<%= session.getAttribute("user") != null ? ((User)session.getAttribute("user")).getId() : "" %>';
+let currentUserId = '<%= session.getAttribute("customer") != null ? ((shop.entities.Customer)session.getAttribute("customer")).getId() : "" %>';
 console.log('currentUserId on page load:', currentUserId);
 
             // Function to show notifications
@@ -747,17 +747,30 @@ console.log('currentUserId on page load:', currentUserId);
                     'Cooler': 'fa-fan'
                 };
                 const iconClass = iconMap[componentType];
-                if (!iconClass) return;
+                if (!iconClass) {
+                    console.warn('updateSelectButtonState: Unknown componentType', componentType);
+                    // Không thực hiện selector nếu iconClass undefined
+                    return;
+                }
                 // Reset all buttons to default
                 $('.btn-pcbuilder-white').each(function() {
                     $(this).css({'background': '', 'color': '', 'border': ''});
                 });
-                // Update the corresponding button
-                $(`.btn-pcbuilder-white i.${iconClass}`).closest('.btn-pcbuilder-white').css({
-                    'background': '#28a745',
-                    'color': '#fff',
-                    'border': '2px solid #28a745'
-                });
+                // Update the corresponding button (chỉ thực hiện nếu iconClass hợp lệ)
+                try {
+                    const $btn = $(`.btn-pcbuilder-white i.${iconClass}`).closest('.btn-pcbuilder-white');
+                    if ($btn.length) {
+                        $btn.css({
+                            'background': '#28a745',
+                            'color': '#fff',
+                            'border': '2px solid #28a745'
+                        });
+                    } else {
+                        console.warn('updateSelectButtonState: No button found for iconClass', iconClass);
+                    }
+                } catch (e) {
+                    console.error('updateSelectButtonState selector error:', e);
+                }
             }
 
             // Hàm xác nhận chọn linh kiện
@@ -872,6 +885,24 @@ console.log('currentUserId on page load:', currentUserId);
 
             // Hàm xử lý nút Add to Cart
             function hookProductButtons() {
+                // Nếu chưa đăng nhập thì chỉ disable nút Add to Cart, vẫn cho phép chọn/đổi linh kiện
+                if (!currentUserId || currentUserId === "") {
+                    $('.btn-add-cart').prop('disabled', true).addClass('disabled').attr('title', 'Vui lòng đăng nhập để thêm vào giỏ hàng');
+                    $('.btn-add-cart').off('click').on('click', function (e) {
+                        e.preventDefault();
+                        showNotification('Vui lòng đăng nhập để thêm vào giỏ hàng.', 'warning');
+                    });
+                    // Enable select component buttons cho guest
+                    $('.btn-pcbuilder-white').prop('disabled', false).removeClass('disabled').attr('title', 'Chọn linh kiện');
+                    $('.btn-pcbuilder-white').off('click').on('click', function () {
+                        // Gọi hàm loadProducts tương ứng
+                        const type = $(this).text().replace('Select ', '').trim();
+                        loadProducts(type);
+                    });
+                    return;
+                }
+                // Nếu đã đăng nhập thì cho phép thao tác như bình thường
+                $('.btn-add-cart').prop('disabled', false).removeClass('disabled').attr('title', 'Thêm vào giỏ hàng');
                 $('.btn-add-cart').off('click').on('click', function (e) {
                     e.preventDefault();
                     const $btn = $(this);
@@ -879,64 +910,51 @@ console.log('currentUserId on page load:', currentUserId);
                     const productName = $btn.data('product-name');
                     const productPrice = $btn.data('product-price');
                     const componentType = $btn.data('component-type');
-
-                    console.log('Add to Cart Button Clicked (pcBuilder):', {
-                        html: $btn[0].outerHTML,
-                        productId,
-                        productName,
-                        productPrice,
-                        componentType,
-                        currentUserId
-                    });
-
                     // Validate inputs
                     if (!productId || !productName || !productPrice || !componentType) {
                         showNotification('Error: Missing product information.', 'danger');
                         return;
                     }
-
-                    // Không cần kiểm tra đăng nhập lại, đã kiểm tra ở DOMContentLoaded
-
-                    // Update UI and sessionStorage
                     selectComponent(componentType, productId, productName, productPrice);
-
-                    // Add to cart
-                    if (window.addToCart) {
-                        window.addToCart(componentType, productId, productName, productPrice);
-                    } else {
-                        // Fallback: Send request to server to add to cart
-                        fetch('CartApiServlet', {
-                            method: 'POST',
-                            headers: {
-                                'Content-Type': 'application/json'
-                            },
-                            body: JSON.stringify({
-                                customerId: currentUserId,
-                                productId: productId,
-                                productName: productName,
-                                price: productPrice,
-                                quantity: 1
-                            })
-                        })
-                        .then(response => {
-                            if (!response.ok) {
-                                throw new Error(`HTTP error! Status: ${response.status}`);
-                            }
-                            return response.json();
-                        })
-                        .then(result => {
-                            if (result.success) {
-                                showNotification(`Đã thêm: ${productName} - $${productPrice}`, 'success');
-                                updateCartCount();
-                            } else {
-                                showNotification('Không thể thêm vào giỏ hàng: ' + (result.message || 'Unknown error'), 'danger');
-                            }
-                        })
-                        .catch(error => {
-                            console.error('Error adding to cart:', error);
-                            showNotification('Lỗi khi thêm vào giỏ hàng: ' + error.message, 'danger');
-                        });
+                    // Lấy quantity từ input nếu có, mặc định là 1
+                    let quantity = 1;
+                    const quantityInput = document.getElementById('quantity_' + productId);
+                    if (quantityInput) {
+                        const val = parseInt(quantityInput.value);
+                        if (!isNaN(val) && val > 0) quantity = val;
                     }
+                    // Gửi dữ liệu giống homepage
+                    fetch('CartApiServlet', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({
+                            customerId: currentUserId,
+                            productId: productId,
+                            quantity: quantity
+                        })
+                    })
+                    .then(response => response.json())
+                    .then(result => {
+                        if (result.success) {
+                            showNotification(`Đã thêm: ${productName} - $${productPrice}`, 'success');
+                            updateCartCount();
+                        } else {
+                            showNotification('Không thể thêm vào giỏ hàng: ' + (result.message || 'Unknown error'), 'danger');
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error adding to cart:', error);
+                        showNotification('Lỗi khi thêm vào giỏ hàng: ' + error.message, 'danger');
+                    });
+                });
+                // Enable select component buttons
+                $('.btn-pcbuilder-white').prop('disabled', false).removeClass('disabled').attr('title', 'Chọn linh kiện');
+                $('.btn-pcbuilder-white').off('click').on('click', function () {
+                    // Gọi hàm loadProducts tương ứng
+                    const type = $(this).text().replace('Select ', '').trim();
+                    loadProducts(type);
                 });
             }
 
@@ -1004,10 +1022,53 @@ console.log('currentUserId on page load:', currentUserId);
 
             // Load saved selections and update cart count on page load
             document.addEventListener('DOMContentLoaded', function () {
-                // Kiểm tra đăng nhập 1 lần khi load trang, chỉ cảnh báo, không redirect
+                // Kiểm tra đăng nhập 1 lần khi load trang, chỉ cảnh báo nếu chưa login
                 console.log('currentUserId in DOMContentLoaded:', currentUserId);
                 if (!currentUserId || currentUserId === "") {
                     showNotification('Vui lòng đăng nhập để sử dụng chức năng PC Builder.', 'warning');
+                } else {
+                    // Nếu vừa login lại và có pending add to cart thì thực hiện luôn, sau đó cho add to cart bình thường
+                    try {
+                        const pendingStr = sessionStorage.getItem('pendingAddToCart');
+                        if (pendingStr) {
+                            let pending = null;
+                            try {
+                                pending = JSON.parse(pendingStr);
+                            } catch (err) {
+                                console.error('Lỗi JSON.parse pendingAddToCart:', err);
+                                sessionStorage.removeItem('pendingAddToCart');
+                            }
+                            if (pending && pending.productId && pending.productName && pending.productPrice && pending.componentType) {
+                                selectComponent(pending.componentType, pending.productId, pending.productName, pending.productPrice);
+                                // Gửi đúng format CartApiServlet (không gửi productName, price)
+                                fetch('CartApiServlet', {
+                                    method: 'POST',
+                                    headers: {
+                                        'Content-Type': 'application/json'
+                                    },
+                                    body: JSON.stringify({
+                                        customerId: currentUserId,
+                                        productId: pending.productId,
+                                        quantity: 1
+                                    })
+                                })
+                                .then(response => response.json())
+                                .then(result => {
+                                    if (result.success) {
+                                        showNotification(`Đã thêm: ${pending.productName} - $${pending.productPrice}`, 'success');
+                                        updateCartCount();
+                                    } else {
+                                        showNotification('Không thể thêm vào giỏ hàng: ' + (result.message || 'Unknown error'), 'danger');
+                                    }
+                                })
+                                .catch(error => {
+                                    console.error('Error adding to cart:', error);
+                                    showNotification('Lỗi khi thêm vào giỏ hàng: ' + error.message, 'danger');
+                                });
+                                sessionStorage.removeItem('pendingAddToCart');
+                            }
+                        }
+                    } catch (e) { console.error(e); }
                 }
                 updateSidebarSelectedLabels();
                 updateProgressBar();
