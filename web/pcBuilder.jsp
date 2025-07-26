@@ -1004,14 +1004,10 @@ console.log('currentUserId on page load:', currentUserId);
 
             // Load saved selections and update cart count on page load
             document.addEventListener('DOMContentLoaded', function () {
-                // Kiểm tra đăng nhập 1 lần khi load trang
+                // Kiểm tra đăng nhập 1 lần khi load trang, chỉ cảnh báo, không redirect
                 console.log('currentUserId in DOMContentLoaded:', currentUserId);
                 if (!currentUserId || currentUserId === "") {
                     showNotification('Vui lòng đăng nhập để sử dụng chức năng PC Builder.', 'warning');
-                    setTimeout(function() {
-                        window.location.href = 'login.jsp'; // Điều hướng đến trang đăng nhập
-                    }, 1200);
-                    return;
                 }
                 updateSidebarSelectedLabels();
                 updateProgressBar();
