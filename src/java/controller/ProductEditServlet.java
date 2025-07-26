@@ -155,11 +155,11 @@ public class ProductEditServlet extends HttpServlet {
             boolean imageUpdated = true; // Default to true in case no image is provided
             if (imageUrl != null && !imageUrl.trim().isEmpty()) {
                 String lowerImageUrl = imageUrl.trim().toLowerCase();
-                if (lowerImageUrl.endsWith(".jpg") || lowerImageUrl.endsWith(".jpeg") || lowerImageUrl.endsWith(".png") || lowerImageUrl.endsWith(".webp")) {
+                if (lowerImageUrl.endsWith(".jpg") || lowerImageUrl.endsWith(".jpeg") || lowerImageUrl.endsWith(".png")) {
                     imageUpdated = productDAO.updateProductImage(productId, imageUrl.trim());
                 } else {
                     imageUpdated = false;
-                    request.setAttribute("errorMsg", "Invalid image file type. Only jpg, jpeg, png, gif, webp are allowed.");
+                    request.setAttribute("errorMsg", "Invalid image file type. Only jpg, jpeg, png are allowed.");
                 }
             }
             

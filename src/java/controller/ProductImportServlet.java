@@ -161,7 +161,9 @@ public class ProductImportServlet extends HttpServlet {
                     Products existing = dao.importFilter(
                             imported.getName(),
                             imported.getBrandId(),
-                            imported.getComponentTypeId()
+                            imported.getComponentTypeId(),
+                            imported.getModel(),
+                            imported.getSku()
                     );
 
                     if (existing != null) {
@@ -170,7 +172,7 @@ public class ProductImportServlet extends HttpServlet {
                                 || (imported.getImportPrice() != null && imported.getImportPrice().equals(existing.getImportPrice()));
 
                         if (samePrice && sameImport) {
-                            // Same product → update stock
+                            // Same product -> update stock
                             int oldStock = existing.getStock();
                             existing.setStock(existing.getStock() + imported.getStock());
                             dao.updateStock(existing);
@@ -183,7 +185,7 @@ public class ProductImportServlet extends HttpServlet {
                             log.setCreated_at(new java.sql.Timestamp(System.currentTimeMillis()));
                             logDAO.insertLog(log);
                         } else {
-                            // Different price or import price → update them
+                            // Different price or import price -> update
                             int oldStock = existing.getStock();
                             existing.setPrice(imported.getPrice());
                             existing.setImportPrice(imported.getImportPrice());
@@ -199,13 +201,15 @@ public class ProductImportServlet extends HttpServlet {
                             logDAO.insertLog(log);
                         }
                     } else {
-                        // New product → insert
+                        // New product -> insert
                         dao.insertProduct(imported);
                         // Get the inserted product to get its ID
                         Products newProduct = dao.importFilter(
                             imported.getName(),
                             imported.getBrandId(),
-                            imported.getComponentTypeId()
+                            imported.getComponentTypeId(),
+                            imported.getModel(),
+                            imported.getSku()
                         );
                         if (newProduct != null) {
                             InventoryLog log = new InventoryLog();

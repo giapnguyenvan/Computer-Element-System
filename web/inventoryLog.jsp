@@ -116,8 +116,7 @@
             $(document).ready(function () {
                 const table = $('#inventoryLogTable').DataTable({
                     pagingType: "full_numbers",
-                    lengthMenu: [[5, 10, 15], [5, 10, 15]],
-                    pageLength: 10,
+                    pageLength: 5,
                     ordering: true,
                     dom: 'ftip',
                     columnDefs: [

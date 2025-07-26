@@ -512,9 +512,9 @@ public class ProductDAO {
         }
     }
 
-    public Products importFilter(String name, int brandId, int componentTypeId) {
-        DBContext db = DBContext.getInstance();
-        String sql = """
+public Products importFilter(String name, int brandId, int componentTypeId, String model, String sku) {
+    DBContext db = DBContext.getInstance();
+    String sql = """
         SELECT
             p.product_id,
             p.name,
@@ -542,41 +542,43 @@ public class ProductDAO {
         JOIN brand b ON p.brand_id = b.brand_id
         JOIN componenttype ct ON p.component_type_id = ct.type_id
         LEFT JOIN series s ON p.series_id = s.series_id
-        WHERE p.name = ? AND p.brand_id = ? AND p.component_type_id = ?
+        WHERE p.name = ? AND p.brand_id = ? AND p.component_type_id = ? AND p.model = ? AND p.sku = ?
         LIMIT 1
     """;
 
-        try (PreparedStatement ptm = db.getConnection().prepareStatement(sql)) {
-            ptm.setString(1, name);
-            ptm.setInt(2, brandId);
-            ptm.setInt(3, componentTypeId);
-            ResultSet rs = ptm.executeQuery();
-            if (rs.next()) {
-                Products p = new Products();
-                p.setProductId(rs.getInt("product_id"));
-                p.setName(rs.getString("name"));
-                p.setComponentTypeId(rs.getInt("component_type_id"));
-                p.setBrandId(rs.getInt("brand_id"));
-                p.setSeriesId(rs.getObject("series_id") != null ? rs.getInt("series_id") : null);
-                p.setModel(rs.getString("model"));
-                p.setPrice(rs.getDouble("price"));
-                p.setImportPrice(rs.getObject("import_price") != null ? rs.getDouble("import_price") : null);
-                p.setStock(rs.getInt("stock"));
-                p.setSku(rs.getString("sku"));
-                p.setDescription(rs.getString("description"));
-                p.setStatus(rs.getString("status"));
-                p.setCreatedAt(rs.getTimestamp("created_at"));
-                p.setBrandName(rs.getString("brand_name"));
-                p.setComponentTypeName(rs.getString("component_type_name"));
-                p.setSeriesName(rs.getString("series_name"));
-                p.setImageUrl(rs.getString("image_url"));
-                return p;
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
+    try (PreparedStatement ptm = db.getConnection().prepareStatement(sql)) {
+        ptm.setString(1, name);
+        ptm.setInt(2, brandId);
+        ptm.setInt(3, componentTypeId);
+        ptm.setString(4, model);
+        ptm.setString(5, sku);
+        ResultSet rs = ptm.executeQuery();
+        if (rs.next()) {
+            Products p = new Products();
+            p.setProductId(rs.getInt("product_id"));
+            p.setName(rs.getString("name"));
+            p.setComponentTypeId(rs.getInt("component_type_id"));
+            p.setBrandId(rs.getInt("brand_id"));
+            p.setSeriesId(rs.getObject("series_id") != null ? rs.getInt("series_id") : null);
+            p.setModel(rs.getString("model"));
+            p.setPrice(rs.getDouble("price"));
+            p.setImportPrice(rs.getObject("import_price") != null ? rs.getDouble("import_price") : null);
+            p.setStock(rs.getInt("stock"));
+            p.setSku(rs.getString("sku"));
+            p.setDescription(rs.getString("description"));
+            p.setStatus(rs.getString("status"));
+            p.setCreatedAt(rs.getTimestamp("created_at"));
+            p.setBrandName(rs.getString("brand_name"));
+            p.setComponentTypeName(rs.getString("component_type_name"));
+            p.setSeriesName(rs.getString("series_name"));
+            p.setImageUrl(rs.getString("image_url"));
+            return p;
         }
-        return null;
+    } catch (SQLException e) {
+        e.printStackTrace();
     }
+    return null;
+}
 
     public boolean updateStock(Products p) {
         DBContext db = DBContext.getInstance();
